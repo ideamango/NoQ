@@ -295,7 +295,7 @@ final highlightTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 19.0);
 
 final BoxDecoration darkContainer = new BoxDecoration(
-    border: Border.all(color: Colors.blueGrey[300]),
+    //   border: Border.all(color: Colors.blueGrey[300]),
     shape: BoxShape.rectangle,
     color: Colors.blueGrey[500],
     borderRadius: BorderRadius.only(

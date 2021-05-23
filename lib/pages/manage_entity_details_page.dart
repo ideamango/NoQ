@@ -196,7 +196,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   bool isPublic = false;
   bool isActive = false;
   bool isBookable = false;
-  bool isVideoChatEnabled = false;
+  bool isOnlineEnabled = false;
+  bool isOfflineEnabled = false;
   Position pos;
   GlobalState _gs;
   String _phCountryCode;
@@ -256,7 +257,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       isPublic = (entity.isPublic) ?? false;
       isBookable = (entity.isBookable) ?? false;
       isActive = (entity.isActive) ?? false;
-      isVideoChatEnabled = entity.allowOnlineAppointment ?? false;
+      isOnlineEnabled = entity.allowOnlineAppointment ?? false;
+      isOfflineEnabled = entity.allowWalkinAppointment ?? false;
 
       if (entity.offer != null) {
         insertOffer = entity.offer;
@@ -577,6 +579,17 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       msg =
           "WhatsApp phone number should be provided, for enabling Online Consultation.";
     }
+    return msg;
+  }
+
+  String validateFieldsForOfflineConsultation() {
+    //Whatsapp number should be given
+    String msg;
+    //TODO: SMita
+    // if (Utils.isStrNullOrEmpty(_whatsappPhoneController.text)) {
+    //   msg =
+    //       "WhatsApp phone number should be provided, for enabling Online Consultation.";
+    // }
     return msg;
   }
 
@@ -1219,7 +1232,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange)),
         ),
         validator: (value) {
-          if (isVideoChatEnabled) {
+          if (isOnlineEnabled) {
             if (Utils.isStrNullOrEmpty(value)) {
               return "Field is empty.";
             }
@@ -3703,17 +3716,35 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                             children: <Widget>[
                                               Container(
                                                 //  width: rowWidth * .5,
-                                                child: Text(
-                                                    'Online Consultation',
-                                                    style: TextStyle(
-                                                        fontSize: 14)),
-                                              ),
-                                              SizedBox(
-                                                width: rowWidth * .1,
-                                                child: Icon(
-                                                  Icons.info,
-                                                  color: Colors.blueGrey[600],
-                                                  size: 17,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                            'Enable Online Booking mode',
+                                                            style: TextStyle(
+                                                                fontSize: 14)),
+                                                        SizedBox(
+                                                          width: rowWidth * .1,
+                                                          child: Icon(
+                                                            Icons.info,
+                                                            color: Colors
+                                                                .blueGrey[600],
+                                                            size: 17,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Container(
+                                                      width: rowWidth * .6,
+                                                      child: Text(
+                                                          '(Booking will be a Video call over WhatsApp)',
+                                                          style: TextStyle(
+                                                              fontSize: 10)),
+                                                    )
+                                                  ],
                                                 ),
                                               ),
                                             ],
@@ -3760,13 +3791,13 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                         child: Switch(
                                           materialTapTargetSize:
                                               MaterialTapTargetSize.shrinkWrap,
-                                          value: isVideoChatEnabled,
+                                          value: isOnlineEnabled,
 
                                           onChanged: (value) {
                                             if (widget.isManager) {
                                               return;
                                             } else {
-                                              isVideoChatEnabled = value;
+                                              isOnlineEnabled = value;
                                               entity.allowOnlineAppointment =
                                                   value;
                                               if (value) {
@@ -3789,8 +3820,143 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                       ),
                                                       msg,
                                                       "");
-                                                  isVideoChatEnabled = !value;
+                                                  isOnlineEnabled = !value;
                                                   entity.allowOnlineAppointment =
+                                                      !value;
+                                                }
+                                              }
+
+                                              setState(() {});
+                                            }
+                                          },
+                                          // activeTrackColor: Colors.green,
+                                          activeColor: Colors.green,
+                                          inactiveThumbColor: Colors.grey[300],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      width: rowWidth * .8,
+                                      child: MaterialButton(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: EdgeInsets.all(0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Container(
+                                                //  width: rowWidth * .5,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                            'Enable Offline Booking mode',
+                                                            style: TextStyle(
+                                                                fontSize: 14)),
+                                                        SizedBox(
+                                                          width: rowWidth * .1,
+                                                          child: Icon(
+                                                            Icons.info,
+                                                            color: Colors
+                                                                .blueGrey[600],
+                                                            size: 17,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                        '(Booking will be a In-person visit to your place)',
+                                                        style: TextStyle(
+                                                            fontSize: 10)),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          onPressed: () {
+                                            if (!_isVideoExpanded) {
+                                              setState(() {
+                                                _isVideoExpanded = true;
+                                                _videoMargin =
+                                                    EdgeInsets.fromLTRB(
+                                                        0, 0, 0, 5);
+                                                _videoWidth =
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        .9;
+                                                _videoText = AutoSizeText(
+                                                    videoInfo,
+                                                    minFontSize: 8,
+                                                    maxFontSize: 14,
+                                                    style:
+                                                        textBotSheetTextStyle);
+
+                                                _videoHeight = 60;
+                                              });
+                                            } else {
+                                              setState(() {
+                                                _isVideoExpanded = false;
+                                                _videoWidth = 0;
+                                                _videoHeight = 0;
+                                              });
+                                            }
+                                          }),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .08,
+                                      width: MediaQuery.of(context).size.width *
+                                          .2,
+                                      child: Transform.scale(
+                                        scale: .7,
+                                        alignment: Alignment.centerRight,
+                                        child: Switch(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          value: isOfflineEnabled,
+
+                                          onChanged: (value) {
+                                            if (widget.isManager) {
+                                              return;
+                                            } else {
+                                              isOfflineEnabled = value;
+                                              entity.allowWalkinAppointment =
+                                                  value;
+                                              if (value) {
+                                                String msg =
+                                                    validateFieldsForOfflineConsultation();
+                                                if (Utils.isNotNullOrEmpty(
+                                                    msg)) {
+                                                  // if (whatsappPhoneKey
+                                                  //         .currentState !=
+                                                  //     null) {
+                                                  //   whatsappPhoneKey
+                                                  //       .currentState
+                                                  //       .validate();
+                                                  // }
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 6,
+                                                      ),
+                                                      msg,
+                                                      "");
+                                                  isOfflineEnabled = !value;
+                                                  entity.allowWalkinAppointment =
                                                       !value;
                                                 }
                                               }
