@@ -2969,7 +2969,7 @@ class DBTest {
 
     FormInputFieldText specialNotes = FormInputFieldText(
         "Special notes",
-        true,
+        false,
         "Please enter other details about patient's condition, symptoms, allergies, etc.",
         500);
     admissionForm.addField(specialNotes);
@@ -2991,7 +2991,7 @@ class DBTest {
 
     doctorConsultationForm.isSystemTemplate = true;
     doctorConsultationForm.id = formId;
-    doctorConsultationForm.autoApproved = false;
+    doctorConsultationForm.autoApproved = true;
     doctorConsultationForm.allowedOnline = true;
 
     FormInputFieldText nameInput = FormInputFieldText("Name of the Patient",
@@ -3102,7 +3102,7 @@ class DBTest {
 
     FormInputFieldText specialNotes = FormInputFieldText(
         "Special notes",
-        true,
+        false,
         "Please enter other details about patient's condition, symptoms, allergies, etc.",
         500);
     doctorConsultationForm.addField(specialNotes);
@@ -3242,7 +3242,7 @@ class DBTest {
     medicalTestForm.addField(medicalPrescription);
 
     FormInputFieldText specialNotes = FormInputFieldText(
-        "Special notes", true, "Please provide additonal details", 500);
+        "Special notes", false, "Please provide additonal details", 500);
     medicalTestForm.addField(specialNotes);
 
     return medicalTestForm;

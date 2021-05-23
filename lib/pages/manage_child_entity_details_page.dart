@@ -2146,8 +2146,8 @@ class _ManageChildEntityDetailsPageState
           barrierDismissible: false,
           context: context,
           builder: (_) => AlertDialog(
-                titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
-                contentPadding: EdgeInsets.all(0),
+                titlePadding: EdgeInsets.all(10),
+                contentPadding: EdgeInsets.all(8),
                 actionsPadding: EdgeInsets.all(0),
                 //buttonPadding: EdgeInsets.all(0),
                 title: Column(
@@ -2157,6 +2157,7 @@ class _ManageChildEntityDetailsPageState
                       bookable,
                       style: TextStyle(
                         fontSize: 15,
+                        fontFamily: 'Roboto',
                         color: Colors.blueGrey[600],
                       ),
                     ),
@@ -2557,9 +2558,8 @@ class _ManageChildEntityDetailsPageState
                                               if (!_isBookExpanded) {
                                                 setState(() {
                                                   _isBookExpanded = true;
-                                                  _bookMargin =
-                                                      EdgeInsets.fromLTRB(
-                                                          0, 0, 0, 0);
+                                                  _bookMargin = EdgeInsets.only(
+                                                      bottom: 5);
                                                   _bookWidth =
                                                       MediaQuery.of(context)
                                                               .size
@@ -2567,10 +2567,16 @@ class _ManageChildEntityDetailsPageState
                                                           .9;
                                                   _bookText = AutoSizeText(
                                                       bookableInfo,
-                                                      minFontSize: 8,
+                                                      minFontSize: 10,
                                                       maxFontSize: 14,
-                                                      style:
-                                                          textBotSheetTextStyle);
+                                                      style: TextStyle(
+                                                          color:
+                                                              primaryDarkColor,
+                                                          // fontWeight: FontWeight.w800,
+                                                          fontFamily:
+                                                              'Monsterrat',
+                                                          letterSpacing: 0.5,
+                                                          height: 1.5));
 
                                                   _bookHeight = 60;
                                                 });
@@ -2641,15 +2647,14 @@ class _ManageChildEntityDetailsPageState
                                   AnimatedContainer(
                                     // Use the properties stored in the State class.
                                     margin: _bookMargin,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 5),
+                                    padding: EdgeInsets.all(8),
                                     width: _bookWidth,
                                     height: _bookHeight,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       color: Colors.transparent,
                                       border:
-                                          Border.all(color: Colors.blueGrey),
+                                          Border.all(color: primaryDarkColor),
                                       borderRadius: _borderRadius,
                                     ),
                                     // Define how long the animation should take.
@@ -2667,7 +2672,7 @@ class _ManageChildEntityDetailsPageState
                                           alignment: Alignment.centerLeft,
                                           padding:
                                               EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                          width: rowWidth * .7,
+                                          width: rowWidth * .8,
                                           child: MaterialButton(
                                               visualDensity:
                                                   VisualDensity.compact,
@@ -2703,9 +2708,9 @@ class _ManageChildEntityDetailsPageState
                                                           ],
                                                         ),
                                                         Container(
-                                                          width: rowWidth * .6,
+                                                          width: rowWidth * .7,
                                                           child: Text(
-                                                              '(Booking will be a Video call over WhatsApp)',
+                                                              '(Booking refers to the Service provided upon an In-person visit of the person to your place.)',
                                                               style: TextStyle(
                                                                   fontSize:
                                                                       10)),
@@ -2828,7 +2833,7 @@ class _ManageChildEntityDetailsPageState
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: <Widget>[
                                                   Container(
-                                                    //  width: rowWidth * .5,
+                                                    // width: rowWidth * .7,
                                                     child: Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
@@ -2854,10 +2859,14 @@ class _ManageChildEntityDetailsPageState
                                                             ),
                                                           ],
                                                         ),
-                                                        Text(
-                                                            '(Booking will be a In-person visit to your place)',
-                                                            style: TextStyle(
-                                                                fontSize: 10)),
+                                                        Container(
+                                                          width: rowWidth * .7,
+                                                          child: Text(
+                                                              '(Booking refers to the Service provided upon an In-person visit of the person to your place.)',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      10)),
+                                                        ),
                                                       ],
                                                     ),
                                                   ),
@@ -2984,93 +2993,94 @@ class _ManageChildEntityDetailsPageState
                         SizedBox(
                           height: 7,
                         ),
-                        Container(
-                          width: MediaQuery.of(context).size.width * .9,
-                          margin: EdgeInsets.all(5),
-                          padding: EdgeInsets.all(0),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: borderColor),
-                              color: Colors.grey[50],
-                              shape: BoxShape.rectangle,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0))),
-                          foregroundDecoration: widget.isManager
-                              ? BoxDecoration(
-                                  color: Colors.grey[50],
-                                  backgroundBlendMode: BlendMode.saturation,
-                                )
-                              : BoxDecoration(),
-                          // padding: EdgeInsets.all(5.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Column(
-                                children: <Widget>[
-                                  Container(
-                                    decoration: darkContainer,
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.white,
-                                        accentColor: Colors.grey[50],
-                                      ),
-                                      child: CustomExpansionTile(
-                                        //key: PageStorageKey(this.widget.headerTitle),
-                                        initiallyExpanded: false,
-                                        title: Row(
+                        if (isBookable)
+                          Container(
+                            width: MediaQuery.of(context).size.width * .9,
+                            margin: EdgeInsets.all(5),
+                            padding: EdgeInsets.all(0),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: borderColor),
+                                color: Colors.grey[50],
+                                shape: BoxShape.rectangle,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0))),
+                            foregroundDecoration: widget.isManager
+                                ? BoxDecoration(
+                                    color: Colors.grey[50],
+                                    backgroundBlendMode: BlendMode.saturation,
+                                  )
+                                : BoxDecoration(),
+                            // padding: EdgeInsets.all(5.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Container(
+                                      decoration: darkContainer,
+                                      child: Theme(
+                                        data: ThemeData(
+                                          unselectedWidgetColor: Colors.white,
+                                          accentColor: Colors.grey[50],
+                                        ),
+                                        child: CustomExpansionTile(
+                                          //key: PageStorageKey(this.widget.headerTitle),
+                                          initiallyExpanded: false,
+                                          title: Row(
+                                            children: <Widget>[
+                                              Text(
+                                                "Booking Details",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 15),
+                                              ),
+                                              SizedBox(width: 5),
+                                            ],
+                                          ),
+                                          backgroundColor: Colors.blueGrey[500],
+
                                           children: <Widget>[
-                                            Text(
-                                              "Booking Details",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 15),
+                                            new Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .94,
+                                              decoration: darkContainer,
+                                              padding: EdgeInsets.all(2.0),
+                                              child: Expanded(
+                                                child: Text(basicInfoStr,
+                                                    style: buttonXSmlTextStyle),
+                                              ),
                                             ),
-                                            SizedBox(width: 5),
                                           ],
                                         ),
-                                        backgroundColor: Colors.blueGrey[500],
-
+                                      ),
+                                    ),
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(left: 5.0, right: 5),
+                                      child: Column(
                                         children: <Widget>[
-                                          new Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .94,
-                                            decoration: darkContainer,
-                                            padding: EdgeInsets.all(2.0),
-                                            child: Expanded(
-                                              child: Text(basicInfoStr,
-                                                  style: buttonXSmlTextStyle),
-                                            ),
-                                          ),
+                                          opensTimeField,
+                                          closeTimeField,
+                                          breakSartTimeField,
+                                          breakEndTimeField,
+                                          daysClosedField,
+                                          slotDuration,
+                                          advBookingInDays,
+                                          maxpeopleInASlot,
+                                          maxTokenPerDay,
+                                          maxTokenPerSlotInDay,
+                                          maxPeopleInAToken,
+                                          whatsappPhone,
                                         ],
                                       ),
                                     ),
-                                  ),
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(left: 5.0, right: 5),
-                                    child: Column(
-                                      children: <Widget>[
-                                        opensTimeField,
-                                        closeTimeField,
-                                        breakSartTimeField,
-                                        breakEndTimeField,
-                                        daysClosedField,
-                                        slotDuration,
-                                        advBookingInDays,
-                                        maxpeopleInASlot,
-                                        maxTokenPerDay,
-                                        maxTokenPerSlotInDay,
-                                        maxPeopleInAToken,
-                                        whatsappPhone,
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
                         SizedBox(
                           height: 7,
                         ),

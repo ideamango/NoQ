@@ -3740,7 +3740,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                     Container(
                                                       width: rowWidth * .6,
                                                       child: Text(
-                                                          '(Booking will be a Video call over WhatsApp)',
+                                                          '(Booking refers to the service provided to the user over a Video call on WhatsApp)',
                                                           style: TextStyle(
                                                               fontSize: 10)),
                                                     )
@@ -3876,7 +3876,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                       ],
                                                     ),
                                                     Text(
-                                                        '(Booking will be a In-person visit to your place)',
+                                                        '(Booking refers to the Service provided upon an In-person visit of the person to your place.)',
                                                         style: TextStyle(
                                                             fontSize: 10)),
                                                   ],
