@@ -217,6 +217,7 @@ class _ManageChildEntityDetailsPageState
   final itemSize = 80.0;
 
   Eventify.Listener removeManagerListener;
+  FocusNode whatsappFocus;
 
   @override
   void initState() {
@@ -225,6 +226,7 @@ class _ManageChildEntityDetailsPageState
 
     getGlobalState().whenComplete(() {
       initializeEntity().whenComplete(() {
+        whatsappFocus = new FocusNode();
         title = Utils.getEntityTypeDisplayName(serviceEntity.type);
         setState(() {
           _initCompleted = true;
@@ -1366,6 +1368,7 @@ class _ManageChildEntityDetailsPageState
       },
     );
     final whatsappPhone = TextFormField(
+      focusNode: whatsappFocus,
       obscureText: false,
       key: whatsappPhnKey,
       maxLines: 1,
@@ -2481,9 +2484,7 @@ class _ManageChildEntityDetailsPageState
                                       children: <Widget>[
                                         nameField,
                                         descField,
-                                        // entityType,
                                         regNumField,
-
                                         callingPhone,
                                         emailId
                                       ],
@@ -2779,6 +2780,9 @@ class _ManageChildEntityDetailsPageState
                                                   if (value) {
                                                     String msg =
                                                         validateFieldsForOnlineConsultation();
+                                                    FocusScope.of(context)
+                                                        .requestFocus(
+                                                            whatsappFocus);
                                                     if (Utils.isNotNullOrEmpty(
                                                         msg)) {
                                                       if (whatsappPhoneKey
@@ -2795,6 +2799,22 @@ class _ManageChildEntityDetailsPageState
                                                             seconds: 6,
                                                           ),
                                                           msg,
+                                                          "");
+                                                      isOnlineEnabled = !value;
+                                                      serviceEntity
+                                                              .allowOnlineAppointment =
+                                                          !value;
+                                                    }
+                                                  } else {
+                                                    if (!isOnlineEnabled &&
+                                                        !isOfflineEnabled) {
+                                                      Utils.showMyFlushbar(
+                                                          context,
+                                                          Icons.info_outline,
+                                                          Duration(
+                                                            seconds: 6,
+                                                          ),
+                                                          onlineOfflineMsg,
                                                           "");
                                                       isOnlineEnabled = !value;
                                                       serviceEntity
@@ -2953,6 +2973,22 @@ class _ManageChildEntityDetailsPageState
                                                               .allowWalkinAppointment =
                                                           !value;
                                                     }
+                                                  } else {
+                                                    if (!isOnlineEnabled &&
+                                                        !isOfflineEnabled) {
+                                                      Utils.showMyFlushbar(
+                                                          context,
+                                                          Icons.info_outline,
+                                                          Duration(
+                                                            seconds: 6,
+                                                          ),
+                                                          onlineOfflineMsg,
+                                                          "");
+                                                      isOfflineEnabled = !value;
+                                                      serviceEntity
+                                                              .allowWalkinAppointment =
+                                                          !value;
+                                                    }
                                                   }
 
                                                   setState(() {});
@@ -3061,6 +3097,7 @@ class _ManageChildEntityDetailsPageState
                                           EdgeInsets.only(left: 5.0, right: 5),
                                       child: Column(
                                         children: <Widget>[
+                                          whatsappPhone,
                                           opensTimeField,
                                           closeTimeField,
                                           breakSartTimeField,
@@ -3072,7 +3109,6 @@ class _ManageChildEntityDetailsPageState
                                           maxTokenPerDay,
                                           maxTokenPerSlotInDay,
                                           maxPeopleInAToken,
-                                          whatsappPhone,
                                         ],
                                       ),
                                     ),
@@ -3651,7 +3687,7 @@ class _ManageChildEntityDetailsPageState
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .height *
-                                              .08,
+                                              .06,
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
@@ -3783,7 +3819,7 @@ class _ManageChildEntityDetailsPageState
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .height *
-                                              .08,
+                                              .06,
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
