@@ -204,7 +204,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                           fontSize: 12.0,
                         ),
                         children: <TextSpan>[
-                          TextSpan(text: "Add from these "),
+                          TextSpan(text: "Add from the following "),
                           TextSpan(
                             text: 'Sample Application Forms',
                             style: new TextStyle(
@@ -215,7 +215,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                           ),
                           TextSpan(
                               text:
-                                  " which are required to request booking of token and submitting applications by the user."),
+                                  " which you want to enable for your place. User will be able to select the Form and submit the request after selecting the time-slot."),
                         ],
                       ),
                     ),
@@ -617,7 +617,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                               primaryAccentColor,
                                                         ),
                                                         Text(
-                                                          "Auto Approve Token on Application Submit",
+                                                          "Automatically issue Token when user submits the request",
                                                           style: TextStyle(
                                                               fontSize: 11),
                                                         ),

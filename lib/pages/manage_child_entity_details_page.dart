@@ -2563,7 +2563,7 @@ class _ManageChildEntityDetailsPageState
                                                       Container(
                                                         width: rowWidth * .6,
                                                         child: Text(
-                                                            '(Booking will be a Video call over WhatsApp)',
+                                                            '(Booking refers to the Service provided over a Video call on WhatsApp)',
                                                             style: TextStyle(
                                                                 fontSize: 10)),
                                                       )
@@ -2709,7 +2709,7 @@ class _ManageChildEntityDetailsPageState
                                                         ],
                                                       ),
                                                       Text(
-                                                          '(Booking will be a In-person visit to your place)',
+                                                          '(Booking refers to the Service provided upon an In-person visit of the person to your place.)',
                                                           style: TextStyle(
                                                               fontSize: 10)),
                                                     ],
