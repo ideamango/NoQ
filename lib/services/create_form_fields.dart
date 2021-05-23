@@ -32,12 +32,14 @@ class CreateFormFields extends StatefulWidget {
   final MetaEntity metaEntity;
   final String bookingFormId;
   final DateTime preferredSlotTime;
+  final bool isOnlineToken;
   final dynamic backRoute;
   CreateFormFields(
       {Key key,
       @required this.metaEntity,
       @required this.bookingFormId,
       @required this.preferredSlotTime,
+      @required this.isOnlineToken,
       @required this.backRoute})
       : super(key: key);
 

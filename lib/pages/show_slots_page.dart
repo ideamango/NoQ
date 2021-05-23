@@ -226,10 +226,50 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   child: Column(
                     children: <Widget>[
-                      Container(
-                          height: MediaQuery.of(context).size.height * .17,
-                          padding: EdgeInsets.all(4),
-                          child: Text('Details about Entity goes here.')),
+                      if (entitySupportsVideo)
+                        Container(
+                          height: MediaQuery.of(context).size.height * .05,
+                          width: MediaQuery.of(context).size.width * .95,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Opt for Video Consultation",
+                                    style: TextStyle(
+                                        color: Colors.blueGrey[800],
+                                        fontSize: 15),
+                                  ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        .08,
+                                    width:
+                                        MediaQuery.of(context).size.width * .2,
+                                    child: Transform.scale(
+                                      scale: .7,
+                                      alignment: Alignment.centerRight,
+                                      child: Switch(
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+
+                                        value: enableVideoChat,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            enableVideoChat = value;
+                                          });
+                                        },
+                                        // activeTrackColor: Colors.green,
+                                        activeColor: Colors.green,
+                                        inactiveThumbColor: Colors.grey[300],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       Container(
                         height: MediaQuery.of(context).size.width * .11,
                         padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
@@ -365,43 +405,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                             // SizedBox(
                             //   height: 10,
                             // ),
-                            if (entitySupportsVideo)
-                              Container(
-                                height:
-                                    MediaQuery.of(context).size.height * .05,
-                                width: MediaQuery.of(context).size.width * .9,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("Opt for Video Consultation"),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .08,
-                                      width: MediaQuery.of(context).size.width *
-                                          .2,
-                                      child: Transform.scale(
-                                        scale: .7,
-                                        alignment: Alignment.centerRight,
-                                        child: Switch(
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-
-                                          value: enableVideoChat,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              enableVideoChat = value;
-                                            });
-                                          },
-                                          // activeTrackColor: Colors.green,
-                                          activeColor: Colors.green,
-                                          inactiveThumbColor: Colors.grey[300],
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -696,14 +699,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     if (!Utils.isNullOrEmpty(metaEntity.forms)) {
       if (metaEntity.forms.length >= 1) {
         //Show Booking request form SELECTION page
-        Navigator.of(context)
-            .push(PageAnimation.createRoute(BookingFormSelection(
-          entityId: metaEntity.entityId,
-          entity: null,
-          preferredSlotTime: selectedSlot.dateTime,
-          isAdmin: false,
-          backRoute: SearchEntityPage(),
-        )));
+        Navigator.of(context).push(PageAnimation.createRoute(
+            BookingFormSelection(
+                entityId: metaEntity.entityId,
+                entity: null,
+                preferredSlotTime: selectedSlot.dateTime,
+                isAdmin: false,
+                backRoute: SearchEntityPage(),
+                isOnlineToken: enableVideoChat)));
       }
     } else {
       bookSlotForStore(metaEntity, selectedSlot, enableVideoChat).then((value) {

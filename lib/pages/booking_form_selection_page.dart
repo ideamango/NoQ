@@ -23,6 +23,7 @@ class BookingFormSelection extends StatefulWidget {
   final Entity entity;
   final DateTime preferredSlotTime;
   final dynamic isAdmin;
+  final bool isOnlineToken;
   final dynamic backRoute;
   BookingFormSelection(
       {Key key,
@@ -30,6 +31,7 @@ class BookingFormSelection extends StatefulWidget {
       @required this.entity,
       @required this.preferredSlotTime,
       @required this.isAdmin,
+      @required this.isOnlineToken,
       @required this.backRoute})
       : super(key: key);
 
@@ -84,6 +86,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
           bookingFormId: forms[_selectedValue].id,
           metaEntity: entity.getMetaEntity(),
           preferredSlotTime: widget.preferredSlotTime,
+          isOnlineToken: widget.isOnlineToken,
           backRoute: SearchEntityPage(),
         );
 
