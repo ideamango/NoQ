@@ -18,6 +18,20 @@ const AUTO_APPROVED = "Auto Approved";
 const SYSTEM = "SYSTEM";
 
 const TOKEN_COUNTER_PREFIX = "TOKENCOUNTER";
+const INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_DAY_1 =
+    "You are allowed to make upto ";
+const INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_DAY_2 =
+    " booking(s) in a day";
+
+const INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_SLOT_1 = "You can book upto ";
+const INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_SLOT_2 =
+    " token(s) in a slot";
+
+const INFORMATION_RECOMMEND_ONLINE_CONSULTATION =
+    "We encourage you to choose Online mode of interaction with the Service Provider. Opt-out of Online mode only when it's necessary to visit the place.";
+
+const INFORMATION_ONLY_ONLINE_CONSULTATION =
+    "This place only supports Online mode of interaction. Make sure you have active internet and WhatsApp installed on your phone.";
 
 const VERIFICATION_PENDING = "Verification Pending";
 const VERIFICATION_VERIFIED = "Verified";
