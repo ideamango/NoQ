@@ -31,7 +31,7 @@ const INFORMATION_RECOMMEND_ONLINE_CONSULTATION =
     "We encourage you to choose Online mode of interaction with the Service Provider. Opt-out of Online mode only when it's necessary to visit the place.";
 
 const INFORMATION_ONLY_ONLINE_CONSULTATION =
-    "This place only supports Online mode of interaction. Make sure you have active WhatsApp installed on your phone.";
+    "This place only supports Online mode of interaction. Make sure you have active internet and WhatsApp installed on your phone.";
 
 const VERIFICATION_PENDING = "Verification Pending";
 const VERIFICATION_VERIFIED = "Verified";
