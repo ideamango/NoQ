@@ -1,17 +1,24 @@
 class MetaForm {
-  MetaForm({this.id, this.name, this.description, this.autoApproved});
+  MetaForm(
+      {this.id,
+      this.name,
+      this.description,
+      this.autoApproved,
+      this.allowedOnline});
 
   //just need an id which is unique even if later phone or firebase id changes
   String id;
   String name;
   String description;
   bool autoApproved;
+  bool allowedOnline;
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'description': description,
-        'autoApproved': autoApproved
+        'autoApproved': autoApproved,
+        'allowedOnline': allowedOnline
       };
 
   static MetaForm fromJson(Map<String, dynamic> json) {
@@ -19,6 +26,7 @@ class MetaForm {
         id: json['id'],
         name: json['name'],
         description: json["description"],
-        autoApproved: json['autoApproved']);
+        autoApproved: json['autoApproved'],
+        allowedOnline: json['allowedOnline']);
   }
 }

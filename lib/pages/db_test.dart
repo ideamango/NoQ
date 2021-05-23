@@ -34,6 +34,7 @@ import '../enum/entity_role.dart';
 
 class DBTest {
   String Covid_Vacination_center = "Selenium-Covid-Vacination-Center";
+  String Test_Hospital_center = "TEST_HOSPITAL_CENTER";
   String Multi_Forms_School_ID = "Selenium-School_Multiple_Forms";
 
   GlobalState _gs;
@@ -130,6 +131,20 @@ class DBTest {
           .deleteApplicationsForEntity('SalonMyHomeApartment');
     } catch (e) {
       print("SalonMyHomeApartment is not cleared");
+    }
+
+    try {
+      await _gs.getEntityService().deleteEntity(Test_Hospital_center);
+      await _gs.getTokenService().deleteSlotsForEntity(Test_Hospital_center);
+      await _gs.getTokenService().deleteTokensForEntity(Test_Hospital_center);
+      await _gs
+          .getTokenService()
+          .deleteTokenCountersForEntity(Test_Hospital_center);
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity(Test_Hospital_center);
+    } catch (e) {
+      print("Test Selenium Hospital is not cleared");
     }
 
     try {
@@ -899,6 +914,8 @@ class DBTest {
     await testAddManagerAndExecutivesToApartmentWithSalon();
 
     await testRemoveAdminManagerAndExecutive();
+
+    await createTestHospital();
 
     print(
         "<==========================================TESTING DONE=========================================>");
@@ -2902,7 +2919,7 @@ class DBTest {
     FormInputFieldOptions bloodGroup = FormInputFieldOptions(
         "Blood group",
         false,
-        "Please select the Patient's Blood group/type",
+        "Please select the Patient's Blood group/type. If it's not known, don't select any option.",
         [
           Value('O+'),
           Value('O-'),
@@ -2911,7 +2928,7 @@ class DBTest {
           Value('B+'),
           Value('B-'),
           Value('AB+'),
-          Value('AB-'),
+          Value('AB-')
         ],
         false);
 
@@ -2964,7 +2981,7 @@ class DBTest {
   }
 
   Future<BookingForm> createDoctorConsultationForm(String formId) async {
-    BookingForm admissionForm = new BookingForm(
+    BookingForm doctorConsultationForm = new BookingForm(
         formName: "Doctor Consultation Request",
         headerMsg:
             "Your request will be approved based on the information provided by you, please enter the correct information.",
@@ -2972,15 +2989,16 @@ class DBTest {
             "Please carry previous medical test results and doctor's prescription (if any). Please mark your presence 5 minutes prior to your appointment time.",
         autoApproved: false);
 
-    admissionForm.isSystemTemplate = true;
-    admissionForm.id = formId;
-    admissionForm.autoApproved = false;
+    doctorConsultationForm.isSystemTemplate = true;
+    doctorConsultationForm.id = formId;
+    doctorConsultationForm.autoApproved = false;
+    doctorConsultationForm.allowedOnline = true;
 
     FormInputFieldText nameInput = FormInputFieldText("Name of the Patient",
         true, "Please enter patient name as per Government ID proof", 100);
     nameInput.isMeta = true;
 
-    admissionForm.addField(nameInput);
+    doctorConsultationForm.addField(nameInput);
 
     FormInputFieldDateTime dob = FormInputFieldDateTime(
         "Year of Birth of the Patient",
@@ -2990,7 +3008,7 @@ class DBTest {
     dob.isAge = true;
     dob.yearOnly = true;
 
-    admissionForm.addField(dob);
+    doctorConsultationForm.addField(dob);
 
     FormInputFieldOptions gender = FormInputFieldOptions(
         "Gender",
@@ -3002,12 +3020,12 @@ class DBTest {
     gender.isMeta = false;
     gender.defaultValueIndex = 0;
 
-    admissionForm.addField(gender);
+    doctorConsultationForm.addField(gender);
 
     FormInputFieldOptions bloodGroup = FormInputFieldOptions(
         "Blood group",
         false,
-        "Please select the Patient's Blood group/type",
+        "Please select the Patient's Blood group/type. If it's not known, don't select any option.",
         [
           Value('O+'),
           Value('O-'),
@@ -3023,7 +3041,7 @@ class DBTest {
     bloodGroup.isMeta = true;
     bloodGroup.defaultValueIndex = 0;
 
-    admissionForm.addField(bloodGroup);
+    doctorConsultationForm.addField(bloodGroup);
 
     FormInputFieldOptions problemType = FormInputFieldOptions(
         "Medical Condition",
@@ -3058,7 +3076,7 @@ class DBTest {
     problemType.isMeta = true;
     problemType.defaultValueIndex = 0;
 
-    admissionForm.addField(problemType);
+    doctorConsultationForm.addField(problemType);
 
     FormInputFieldPhone patientContactPhone = FormInputFieldPhone(
         "Patient's phone number",
@@ -3066,33 +3084,33 @@ class DBTest {
         "Please enter Patient's phone number on which Doctor can contact");
     patientContactPhone.isMeta = false;
 
-    admissionForm.addField(patientContactPhone);
+    doctorConsultationForm.addField(patientContactPhone);
 
     FormInputFieldAttachment medicalReport = FormInputFieldAttachment(
         "Medical Report",
         false,
         "Please attach Medical report, if you have (optional)");
 
-    admissionForm.addField(medicalReport);
+    doctorConsultationForm.addField(medicalReport);
 
     FormInputFieldAttachment medicalPrescription = FormInputFieldAttachment(
         "Doctor's prescription",
         false,
         "Please attach Doctor's prescription, if you have (optional)");
 
-    admissionForm.addField(medicalPrescription);
+    doctorConsultationForm.addField(medicalPrescription);
 
     FormInputFieldText specialNotes = FormInputFieldText(
         "Special notes",
         true,
         "Please enter other details about patient's condition, symptoms, allergies, etc.",
         500);
-    admissionForm.addField(specialNotes);
+    doctorConsultationForm.addField(specialNotes);
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(admissionForm);
+    await _gs.getApplicationService().saveBookingForm(doctorConsultationForm);
 
-    return admissionForm;
+    return doctorConsultationForm;
   }
 
   Future<BookingForm> createMedicalTestRequestFormForHospital(
@@ -3228,5 +3246,79 @@ class DBTest {
     medicalTestForm.addField(specialNotes);
 
     return medicalTestForm;
+  }
+
+  void createTestHospital() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    List<MetaForm> forms = [];
+
+    BookingForm hospitalDoctorConsultation = await _gs
+        .getApplicationService()
+        .getBookingForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
+    hospitalDoctorConsultation.autoApproved = true;
+    hospitalDoctorConsultation.allowedOnline = true;
+
+    BookingForm hospitalMedicalCheckup = await _gs
+        .getApplicationService()
+        .getBookingForm(MEDICAL_TEST_HOSPITAL_FORM);
+    hospitalMedicalCheckup.autoApproved = false;
+    hospitalMedicalCheckup.allowedOnline = false;
+
+    BookingForm hospitalAdmission = await _gs
+        .getApplicationService()
+        .getBookingForm(HOSPITAL_ADMISSION_FORM);
+    hospitalAdmission.autoApproved = false;
+    hospitalAdmission.allowedOnline = false;
+
+    forms.add(hospitalDoctorConsultation.getMetaForm());
+    forms.add(hospitalMedicalCheckup.getMetaForm());
+    forms.add(hospitalAdmission.getMetaForm());
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: Test_Hospital_center,
+        name: "Test Selenium Hospital",
+        address: adrs,
+        advanceDays: 7,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_FRIDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_HOSPITAL,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_VERIFIED,
+        coordinates: geoPoint,
+        offer: null,
+        upiPhoneNumber: "+919611009823",
+        phone: "+918328592031",
+        upiId: "+919611009823",
+        whatsapp: "+918328592031",
+        forms: forms,
+        maxTokensPerSlotByUser: 2,
+        maxTokensByUserInDay: 15,
+        allowOnlineAppointment: true,
+        allowWalkinAppointment: true);
+
+    try {
+      entity.regNum = "testReg111";
+      await _gs.getEntityService().upsertEntity(entity);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
   }
 }

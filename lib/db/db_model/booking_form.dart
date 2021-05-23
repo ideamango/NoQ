@@ -16,6 +16,7 @@ class BookingForm {
   bool appointmentRequired = true;
   bool isActive = true;
   String originalFormID;
+  bool allowedOnline = false;
 
   //This is not supposed to be created by Entity Manager or Admin, right not will be done via backend on Request.
   //This implies that this BookingForm is global form not specific to any Entity
@@ -51,7 +52,8 @@ class BookingForm {
         'generateTokenOnApproval': generateTokenOnApproval,
         'appointmentRequired': appointmentRequired,
         'isActive': isActive,
-        'originalFormID': originalFormID
+        'originalFormID': originalFormID,
+        'allowedOnline': allowedOnline
       };
 
   List<dynamic> _formFieldsToJson(List<Field> fields) {
@@ -76,6 +78,7 @@ class BookingForm {
     form.appointmentRequired = this.appointmentRequired;
     form.isActive = this.isActive;
     form.originalFormID = this.id;
+    form.allowedOnline = this.allowedOnline;
 
     for (Field f in _formFields) {
       form.addField(f);
@@ -89,6 +92,7 @@ class BookingForm {
     mf.id = this.id;
     mf.name = this.formName;
     mf.autoApproved = this.autoApproved;
+    mf.allowedOnline = this.allowedOnline;
     return mf;
   }
 
@@ -107,6 +111,7 @@ class BookingForm {
     bf.appointmentRequired = json["appointmentRequired"];
     bf.isActive = json['isActive'];
     bf.originalFormID = json['originalFormID'];
+    bf.allowedOnline = json['allowedOnline'];
 
     return bf;
   }
