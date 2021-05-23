@@ -1817,7 +1817,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         _bookingFormKey.currentState.save();
         _gs
             .getApplicationService()
-            .submitApplication(bookingApplication, widget.metaEntity)
+            .submitApplication(
+                bookingApplication, widget.metaEntity, widget.isOnlineToken)
             .then((token) {
           if (token != null) {
             final dtFormat = new DateFormat(dateDisplayFormat);
