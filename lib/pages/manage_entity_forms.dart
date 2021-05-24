@@ -616,10 +616,17 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                           checkColor:
                                                               primaryAccentColor,
                                                         ),
-                                                        Text(
-                                                          "Automatically issue Token when user submits the request",
-                                                          style: TextStyle(
-                                                              fontSize: 11),
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .66,
+                                                          child: Text(
+                                                            "Automatically issue Token when user submits the request.",
+                                                            style: TextStyle(
+                                                                fontSize: 11),
+                                                          ),
                                                         ),
                                                       ],
                                                     ),

@@ -1109,7 +1109,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         keyboardType: TextInputType.number,
         controller: _maxPeopleController,
         decoration: InputDecoration(
-          labelText: 'Max. people allowed in a given time slot',
+          labelText: 'Max. People allowed in a given Time-Slot',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -3077,8 +3077,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                         advBookingInDays,
                                         maxpeopleInASlot,
                                         maxTokenPerDay,
-                                        maxTokenPerSlotInDay,
-                                        maxPeopleInAToken,
+                                        //maxTokenPerSlotInDay,
+                                        // maxPeopleInAToken,
                                       ],
                                     ),
                                   ),

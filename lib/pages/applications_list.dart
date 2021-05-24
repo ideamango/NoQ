@@ -1075,7 +1075,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         },
                         child: Container(
                           padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                          child: Text("View full details..",
+                          child: Text("View entire details..",
                               style:
                                   TextStyle(color: Colors.blue, fontSize: 14)),
                         ),
