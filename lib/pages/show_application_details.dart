@@ -430,11 +430,11 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             FormInputFieldOptions newfield = field;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .9,
-              //  height: MediaQuery.of(context).size.height * .08,
+              // height: MediaQuery.of(context).size.height * .08,
               child: TextField(
                 controller: listOfControllers[field.label],
                 readOnly: true,
-                maxLines: 2,
+                maxLines: null,
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.indigo[900],
@@ -645,7 +645,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 children: [
                   SizedBox(
                     width: MediaQuery.of(context).size.width * .9,
-                    height: MediaQuery.of(context).size.height * .08,
+                    //  height: MediaQuery.of(context).size.height * .08,
                     child: TextField(
                       controller: listOfControllers[field.label],
                       readOnly: true,
@@ -653,6 +653,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                         fontSize: 14,
                         color: Colors.indigo[900],
                       ),
+                      maxLines: null,
                       textAlign: TextAlign.start,
                       decoration: InputDecoration(
                         labelText: newfield.label,

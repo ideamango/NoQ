@@ -430,13 +430,13 @@ class _ShowUserApplicationDetailsState
         case FieldType.OPTIONS:
           {
             FormInputFieldOptions newfield = field;
-            fieldWidget = SizedBox(
+            fieldWidget = Container(
               width: MediaQuery.of(context).size.width * .9,
-              height: MediaQuery.of(context).size.height * .08,
+              // height: MediaQuery.of(context).size.height * .08,
               child: TextField(
                 controller: listOfControllers[field.label],
                 readOnly: true,
-                maxLines: 2,
+                maxLines: null,
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.indigo[900],
@@ -594,7 +594,7 @@ class _ShowUserApplicationDetailsState
                             "No attachments found.",
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.indigo[900],
+                              color: Colors.blueGrey[600],
                             ),
                           ),
                         ),
@@ -638,6 +638,7 @@ class _ShowUserApplicationDetailsState
                     child: TextField(
                       controller: listOfControllers[field.label],
                       readOnly: true,
+                      maxLines: null,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.indigo[900],

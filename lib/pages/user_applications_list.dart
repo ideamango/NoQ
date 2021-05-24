@@ -1349,7 +1349,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     minFontSize: 12,
                     maxFontSize: 14,
                     maxLines: 1,
-                    overflow: TextOverflow.clip,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         fontSize: 14,
                         color: Colors.indigo[900],
@@ -1567,8 +1567,57 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Container(
+                        padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                        //   margin: EdgeInsets.only(bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                    // width: cardWidth * .45,
+                                    child: AutoSizeText(
+                                  "Request Submitted On",
+                                  group: labelGroup,
+                                  minFontSize: 10,
+                                  maxFontSize: 11,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                )),
+                                Container(
+                                  padding: EdgeInsets.all(0),
+                                  child: AutoSizeText(
+                                    ((ba.preferredSlotTiming != null)
+                                        ? DateFormat('yyyy-MM-dd – kk:mm')
+                                            .format(ba.timeOfSubmission)
+                                        : "None"),
+                                    // group: medCondGroup,
+                                    minFontSize: 12,
+                                    maxFontSize: 14,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.indigo[900],
+                                        //  fontWeight: FontWeight.bold,
+                                        fontFamily: 'Roboto'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                       Container(
                         padding: EdgeInsets.all(5),
                         margin: EdgeInsets.all(0),
@@ -1805,7 +1854,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
             // ),
             Container(
               padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
-              margin: EdgeInsets.only(bottom: 10),
+              //   margin: EdgeInsets.only(bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -1859,7 +1908,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     child: Container(
                       padding: EdgeInsets.all(5),
                       alignment: Alignment.bottomCenter,
-                      child: Text("View More Details..",
+                      child: Text("View All Details..",
                           style: TextStyle(color: Colors.blue, fontSize: 12)),
                     ),
                   ),
@@ -1885,25 +1934,25 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                               'Cancel Application')
                           .then((remarks) {
                         //Update application status change on server.
-                        if (Utils.isNotNullOrEmpty(remarks)) {
-                          _gs
-                              .getApplicationService()
-                              .withDrawApplication(widget.ba.id, remarks)
-                              .then((value) {
-                            widget.ba.notesOnCancellation = remarks;
-                            setState(() {
-                              widget.ba.status = ApplicationStatus.CANCELLED;
-                            });
-
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.check,
-                                Duration(seconds: 4),
-                                "Application Cancelled!!",
-                                "",
-                                successGreenSnackBar);
+                        // if (Utils.isNotNullOrEmpty(remarks)) {
+                        _gs
+                            .getApplicationService()
+                            .withDrawApplication(widget.ba.id, remarks)
+                            .then((value) {
+                          widget.ba.notesOnCancellation = remarks;
+                          setState(() {
+                            widget.ba.status = ApplicationStatus.CANCELLED;
                           });
-                        }
+
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.check,
+                              Duration(seconds: 4),
+                              "Application Cancelled!!",
+                              "",
+                              successGreenSnackBar);
+                        });
+                        //   }
                       });
                     },
                     child: Row(
@@ -1925,6 +1974,30 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                           )
                         ])),
               ),
+            if (widget.ba.status == ApplicationStatus.CANCELLED)
+              Container(
+                  margin: EdgeInsets.all(9),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Reason for Cancellation - ",
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.indigo[900],
+                            //  fontWeight: FontWeight.bold,
+                            fontFamily: 'Roboto'),
+                      ),
+                      Container(
+                          width: MediaQuery.of(context).size.width * .4,
+                          child: Text(
+                            Utils.isNotNullOrEmpty(
+                                    widget.ba.notesOnCancellation)
+                                ? widget.ba.notesOnCancellation
+                                : 'No Comments found.',
+                            style: TextStyle(color: Colors.black, fontSize: 10),
+                          )),
+                    ],
+                  )),
 //             Row(
 //               mainAxisAlignment: MainAxisAlignment.end,
 //               children: [

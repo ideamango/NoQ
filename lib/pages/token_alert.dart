@@ -214,13 +214,13 @@ Future<String> showApplicationStatusDialog(BuildContext context,
                       ),
                       keyboardType: TextInputType.multiline,
                       maxLength: null,
-                      maxLines: 2,
-                      validator: (value) {
-                        if (Utils.isNotNullOrEmpty(value))
-                          return null;
-                        else
-                          return 'Field is empty, Please enter remarks.';
-                      },
+                      maxLines: null,
+                      // validator: (value) {
+                      //   if (Utils.isNotNullOrEmpty(value))
+                      //     return null;
+                      //   else
+                      //     return 'Field is empty, Please enter remarks.';
+                      // },
                     ),
                   ),
                   //   Divider(color: Colors.blueGrey[400], height: 1),
@@ -266,8 +266,7 @@ Future<String> showApplicationStatusDialog(BuildContext context,
                   textAlign: TextAlign.center,
                 ),
                 onPressed: () {
-                  if (remarksKey.currentState.validate())
-                    Navigator.of(_).pop(rmksController.text);
+                  Navigator.of(_).pop(rmksController.text);
                   return;
                 },
               ),

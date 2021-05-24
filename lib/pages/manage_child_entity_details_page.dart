@@ -343,15 +343,15 @@ class _ManageChildEntityDetailsPageState
               ? serviceEntity.maxTokensByUserInDay.toString()
               : "";
 //Max Bookings in a slot by User
-      _maxBookingsInTimeSlotForUserController.text =
-          (serviceEntity.maxTokensPerSlotByUser != null)
-              ? serviceEntity.maxTokensPerSlotByUser.toString()
-              : "";
+      // _maxBookingsInTimeSlotForUserController.text =
+      //     (serviceEntity.maxTokensPerSlotByUser != null)
+      //         ? serviceEntity.maxTokensPerSlotByUser.toString()
+      //         : "";
 //Max People in a token by User
-      _maxPeoplePerTokenController.text =
-          (serviceEntity.maxPeoplePerToken != null)
-              ? serviceEntity.maxPeoplePerToken.toString()
-              : "";
+      // _maxPeoplePerTokenController.text =
+      //     (serviceEntity.maxPeoplePerToken != null)
+      //         ? serviceEntity.maxPeoplePerToken.toString()
+      //         : "";
 
       _whatsappPhoneController.text =
           Utils.isNotNullOrEmpty(serviceEntity.whatsapp)
@@ -729,12 +729,13 @@ class _ManageChildEntityDetailsPageState
       if (maxTokenUserKey.currentState != null) {
         error = (maxTokenUserKey.currentState.validate());
       }
-      if (maxTokenUserInSlotKey.currentState != null) {
-        error = (maxTokenUserInSlotKey.currentState.validate());
-      }
-      if (maxPeoplePerTokenKey.currentState != null) {
-        error = (maxPeoplePerTokenKey.currentState.validate());
-      }
+      //TODO : Phase2
+      // if (maxTokenUserInSlotKey.currentState != null) {
+      //   error = (maxTokenUserInSlotKey.currentState.validate());
+      // }
+      // if (maxPeoplePerTokenKey.currentState != null) {
+      //   error = (maxPeoplePerTokenKey.currentState.validate());
+      // }
 
       if (latKey.currentState != null) {
         error = (latKey.currentState.validate());
@@ -4148,31 +4149,20 @@ class _ManageChildEntityDetailsPageState
                                                       //                           parentEntity))));
                                                       // });
 //TODO: Problem in this method, not deleting entity from list
-                                                      deleteEntity(serviceEntity
-                                                              .entityId)
-                                                          .whenComplete(() {
-                                                        _gs
-                                                            .getEntity(
-                                                                parentEntityId)
-                                                            .then((value) => {
-                                                                  parentEntity =
-                                                                      value
-                                                                          .item1
-                                                                })
-                                                            .whenComplete(() {
-                                                          _gs.removeEntity(
+
+                                                      _gs
+                                                          .removeEntity(
                                                               serviceEntity
-                                                                  .entityId);
-                                                          Navigator.pop(
-                                                              context);
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (context) =>
-                                                                      ManageChildEntityListPage(
-                                                                          entity:
-                                                                              parentEntity)));
-                                                        });
+                                                                  .entityId)
+                                                          .then((value) {
+                                                        Navigator.pop(context);
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    ManageChildEntityListPage(
+                                                                        entity:
+                                                                            parentEntity)));
                                                       });
                                                     }
                                                   },

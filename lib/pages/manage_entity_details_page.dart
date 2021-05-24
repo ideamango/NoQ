@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:LESSs/db/exceptions/access_denied_exception.dart';
+import 'package:LESSs/db/exceptions/entity_deletion_denied_child_exists_exception.dart';
+import 'package:LESSs/db/exceptions/entity_does_not_exists_exception.dart';
+import 'package:LESSs/db/exceptions/not_admin_parent_entity_exception.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -2075,6 +2079,34 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       processGoBackWithTimer() async {
         var duration = new Duration(seconds: 1);
         return new Timer(duration, backRoute);
+      }
+
+      handleDeleteEntityErrors(Exception error) {
+        switch (error.runtimeType) {
+          case EntityDoesNotExistsException:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                (error as EntityDoesNotExistsException).cause, "");
+            break;
+          case EntityDeletionDeniedChildExistsException:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                (error as EntityDeletionDeniedChildExistsException).cause, "");
+
+            break;
+          case NotAdminParentEntityException:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                (error as NotAdminParentEntityException).cause, "");
+
+            break;
+          case AccessDeniedException:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                (error as AccessDeniedException).cause, "");
+
+            break;
+          default:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+                error.toString(), "");
+            break;
+        }
       }
 
       // Future<void> showLocationAccessDialog() async {
@@ -4336,16 +4368,24 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                       (_delEnabled) ? 20 : 0,
                                                   onPressed: () {
                                                     if (_delEnabled) {
-                                                      deleteEntity(
+                                                      _gs
+                                                          .removeEntity(
                                                               entity.entityId)
-                                                          .whenComplete(() {
-                                                        _gs.removeEntity(
-                                                            entity.entityId);
-                                                        Navigator.pop(context);
-                                                        Navigator.of(context)
-                                                            .push(PageAnimation
-                                                                .createRoute(
-                                                                    ManageEntityListPage()));
+                                                          .then((value) {
+                                                        if (value) {
+                                                          Navigator.pop(
+                                                              context);
+                                                          Navigator.of(context)
+                                                              .push(PageAnimation
+                                                                  .createRoute(
+                                                                      ManageEntityListPage()));
+                                                        } else {
+                                                          //Entity not deleted.
+
+                                                        }
+                                                      }).catchError((error) {
+                                                        handleDeleteEntityErrors(
+                                                            error);
                                                       });
                                                     } else {
                                                       setState(() {

@@ -601,6 +601,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                       ? (' | ' + val.value.toString())
                       : val.value.toString());
             }
+            if (Utils.isStrNullOrEmpty(responseVals))
+              responseVals = "No Data Found";
 
             fieldWidget = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
