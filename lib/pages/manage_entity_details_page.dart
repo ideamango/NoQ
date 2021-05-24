@@ -124,7 +124,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
   TextEditingController _maxBookingsInTimeSlotForUserController =
       TextEditingController();
-  TextEditingController _maxPeoplePerTokenController = TextEditingController();
+  //TextEditingController _maxPeoplePerTokenController = TextEditingController();
 
   TextEditingController _whatsappPhoneController = TextEditingController();
   TextEditingController _contactPhoneController = TextEditingController();
@@ -342,14 +342,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               ? entity.maxTokensByUserInDay.toString()
               : "";
 //Max Bookings in a slot by User
-      _maxBookingsInTimeSlotForUserController.text =
-          (entity.maxTokensPerSlotByUser != null)
-              ? entity.maxTokensPerSlotByUser.toString()
-              : "";
-//Max People in a token by User
-      _maxPeoplePerTokenController.text = (entity.maxPeoplePerToken != null)
-          ? entity.maxPeoplePerToken.toString()
-          : "";
+//       _maxBookingsInTimeSlotForUserController.text =
+//           (entity.maxTokensPerSlotByUser != null)
+//               ? entity.maxTokensPerSlotByUser.toString()
+//               : "";
+// //Max People in a token by User
+//       _maxPeoplePerTokenController.text = (entity.maxPeoplePerToken != null)
+//           ? entity.maxPeoplePerToken.toString()
+//           : "";
 
       _whatsappPhoneController.text = entity.whatsapp != null
           ? entity.whatsapp.toString().substring(3)
@@ -556,12 +556,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       if (maxTokenUserKey.currentState != null) {
         error = (maxTokenUserKey.currentState.validate());
       }
-      if (maxTokenUserInSlotKey.currentState != null) {
-        error = (maxTokenUserInSlotKey.currentState.validate());
-      }
-      if (maxPeoplePerTokenKey.currentState != null) {
-        error = (maxPeoplePerTokenKey.currentState.validate());
-      }
+      // if (maxTokenUserInSlotKey.currentState != null) {
+      //   error = (maxTokenUserInSlotKey.currentState.validate());
+      // }
+      // if (maxPeoplePerTokenKey.currentState != null) {
+      //   error = (maxPeoplePerTokenKey.currentState.validate());
+      // }
       if (latKey.currentState != null) {
         error = (latKey.currentState.validate());
       }
@@ -1158,67 +1158,67 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           entity.maxTokensByUserInDay = int.tryParse(value);
         },
       );
-      final maxTokenPerSlotInDay = TextFormField(
-        key: maxTokenUserInSlotKey,
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        autovalidateMode: AutovalidateMode.always,
-        enabled: widget.isManager ? false : true,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.number,
-        controller: _maxBookingsInTimeSlotForUserController,
-        decoration: InputDecoration(
-          labelText: 'Max. bookings allowed for a user in a Time-Slot',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        validator: (value) {
-          if (isBookable) {
-            return validateText(value);
-          }
-          return null;
-        },
-        onChanged: (value) {
-          entity.maxTokensPerSlotByUser = int.tryParse(value);
-        },
-        onSaved: (String value) {
-          entity.maxTokensPerSlotByUser = int.tryParse(value);
-        },
-      );
+      // final maxTokenPerSlotInDay = TextFormField(
+      //   key: maxTokenUserInSlotKey,
+      //   obscureText: false,
+      //   maxLines: 1,
+      //   minLines: 1,
+      //   autovalidateMode: AutovalidateMode.always,
+      //   enabled: widget.isManager ? false : true,
+      //   style: textInputTextStyle,
+      //   keyboardType: TextInputType.number,
+      //   controller: _maxBookingsInTimeSlotForUserController,
+      //   decoration: InputDecoration(
+      //     labelText: 'Max. bookings allowed for a user in a Time-Slot',
+      //     enabledBorder:
+      //         UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+      //     focusedBorder: UnderlineInputBorder(
+      //         borderSide: BorderSide(color: Colors.orange)),
+      //   ),
+      //   validator: (value) {
+      //     if (isBookable) {
+      //       return validateText(value);
+      //     }
+      //     return null;
+      //   },
+      //   onChanged: (value) {
+      //     entity.maxTokensPerSlotByUser = int.tryParse(value);
+      //   },
+      //   onSaved: (String value) {
+      //     entity.maxTokensPerSlotByUser = int.tryParse(value);
+      //   },
+      // );
 
-      final maxPeopleInAToken = TextFormField(
-        key: maxPeoplePerTokenKey,
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        autovalidateMode: AutovalidateMode.always,
-        enabled: widget.isManager ? false : true,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.number,
-        controller: _maxPeoplePerTokenController,
-        decoration: InputDecoration(
-          labelText: 'Max. people allowed with a user per Token',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        validator: (value) {
-          if (isBookable) {
-            return validateText(value);
-          }
-          return null;
-        },
-        onChanged: (value) {
-          entity.maxPeoplePerToken = int.tryParse(value);
-        },
-        onSaved: (String value) {
-          entity.maxPeoplePerToken = int.tryParse(value);
-        },
-      );
+      // final maxPeopleInAToken = TextFormField(
+      //   key: maxPeoplePerTokenKey,
+      //   obscureText: false,
+      //   maxLines: 1,
+      //   minLines: 1,
+      //   autovalidateMode: AutovalidateMode.always,
+      //   enabled: widget.isManager ? false : true,
+      //   style: textInputTextStyle,
+      //   keyboardType: TextInputType.number,
+      //   controller: _maxPeoplePerTokenController,
+      //   decoration: InputDecoration(
+      //     labelText: 'Max. people allowed with a user per Token',
+      //     enabledBorder:
+      //         UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+      //     focusedBorder: UnderlineInputBorder(
+      //         borderSide: BorderSide(color: Colors.orange)),
+      //   ),
+      //   validator: (value) {
+      //     if (isBookable) {
+      //       return validateText(value);
+      //     }
+      //     return null;
+      //   },
+      //   onChanged: (value) {
+      //     entity.maxPeoplePerToken = int.tryParse(value);
+      //   },
+      //   onSaved: (String value) {
+      //     entity.maxPeoplePerToken = int.tryParse(value);
+      //   },
+      // );
 
       final whatsappPhone = TextFormField(
         focusNode: whatsappFocus,
