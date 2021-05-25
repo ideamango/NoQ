@@ -743,11 +743,10 @@ class _UserHomePageState extends State<UserHomePage>
                                   0,
                                   0),
                               child: Text(
-                                'sdfsd dsfg dfg sdfhg sdghsdfhg sdfghdfgh sdfghg',
-                                // token.parent.entityName +
-                                //     (token.parent.address != null
-                                //         ? (', ' + token.parent.address)
-                                //         : ''),
+                                token.parent.entityName +
+                                    (token.parent.address != null
+                                        ? (', ' + token.parent.address)
+                                        : ''),
                                 overflow: TextOverflow.ellipsis,
                                 style: tokenDataTextStyle,
                               ),
