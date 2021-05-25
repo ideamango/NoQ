@@ -44,7 +44,8 @@ class UserHomePage extends StatefulWidget {
   _UserHomePageState createState() => _UserHomePageState();
 }
 
-class _UserHomePageState extends State<UserHomePage> {
+class _UserHomePageState extends State<UserHomePage>
+    with TickerProviderStateMixin {
   int i;
   List<UserToken> _pastBookingsList;
   List<UserToken> _newBookingsList;
@@ -86,9 +87,18 @@ class _UserHomePageState extends State<UserHomePage> {
     return result;
   }
 
+  AnimationController _animationController;
+  Animation animation;
+
   @override
   void initState() {
     super.initState();
+
+    _animationController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    _animationController.repeat(reverse: true);
+    animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
+
     getGlobalState().whenComplete(() {
       _loadBookings();
 //Start Code for UPI pay -donation
@@ -718,25 +728,73 @@ class _UserHomePageState extends State<UserHomePage> {
                       // mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.fromLTRB(
-                              MediaQuery.of(context).size.height * .008,
-                              0,
-                              0,
-                              0),
-                          padding: EdgeInsets.fromLTRB(
-                              MediaQuery.of(context).size.height * .008,
-                              0,
-                              0,
-                              0),
-                          child: Text(
-                            token.parent.entityName +
-                                (token.parent.address != null
-                                    ? (', ' + token.parent.address)
-                                    : ''),
-                            overflow: TextOverflow.ellipsis,
-                            style: tokenDataTextStyle,
-                          ),
+                        Row(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.fromLTRB(
+                                  MediaQuery.of(context).size.height * .008,
+                                  0,
+                                  0,
+                                  0),
+                              padding: EdgeInsets.fromLTRB(
+                                  MediaQuery.of(context).size.height * .008,
+                                  0,
+                                  0,
+                                  0),
+                              child: Text(
+                                token.parent.entityName +
+                                    (token.parent.address != null
+                                        ? (', ' + token.parent.address)
+                                        : ''),
+                                overflow: TextOverflow.ellipsis,
+                                style: tokenDataTextStyle,
+                              ),
+                            ),
+                            FadeTransition(
+                              opacity: animation,
+                              child: GestureDetector(
+                                onTap: () {
+                                  String phoneNo = token.parent.entityWhatsApp;
+                                  if (phoneNo != null && phoneNo != "") {
+                                    try {
+                                      launchWhatsApp(
+                                          message: whatsappVideoToPlaceOwner_1 +
+                                              token.getDisplayName() +
+                                              whatsappVideoToPlaceOwner_2,
+                                          phone: phoneNo);
+                                    } catch (error) {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.error,
+                                          Duration(seconds: 5),
+                                          "Could not connect to the Whatsapp number $phoneNo !!",
+                                          "Try again later");
+                                    }
+                                  } else {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 5),
+                                        "Whatsapp contact information not found!!",
+                                        "");
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.zero,
+                                  margin: EdgeInsets.zero,
+                                  width:
+                                      MediaQuery.of(context).size.width * .08,
+                                  height:
+                                      MediaQuery.of(context).size.height * .04,
+                                  child: Icon(
+                                    Icons.videocam,
+                                    color: Colors.orange[700],
+                                    size: 30,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * .008,
