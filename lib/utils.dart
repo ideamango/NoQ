@@ -8,6 +8,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import './db/db_model/address.dart';
 import './db/db_model/booking_application.dart';
 import './db/db_model/meta_entity.dart';
@@ -633,28 +634,21 @@ class Utils {
   }
 
   static String getTokenDisplayName(String entityName, String tokenId) {
-    String displayName = "";
+    String displayName;
 
     String first3Letters = entityName.substring(0, 4);
-    displayName = displayName + first3Letters;
+    displayName = first3Letters;
 
     List<String> tokenParts = tokenId.split('#');
-    String date = tokenParts[1];
-    String time = tokenParts[2];
+
     String number = tokenParts[4];
 
-    List<String> dateParts = date.split('~');
-    String year = dateParts[0];
-    String month = dateParts[1];
-    String day = dateParts[2];
+    DateTime dateTime = getTokenDate(tokenId);
 
-    displayName = displayName + "-" + year + month + day;
+    DateFormat formatter = DateFormat('-yyMMdd-hhmm-');
+    String formattedDate = formatter.format(dateTime);
 
-    List<String> timeParts = time.split('~');
-    String hour = timeParts[0];
-    String minute = timeParts[1];
-
-    displayName = displayName + "-" + hour + minute + '-' + number;
+    displayName = displayName + formattedDate + "-" + number;
     return displayName;
   }
 
@@ -663,7 +657,6 @@ class Utils {
     List<String> tokenParts = tokenId.split('#');
     String date = tokenParts[1];
     String time = tokenParts[2];
-    String number = tokenParts[4];
 
     List<String> dateParts = date.split('~');
     String year = dateParts[0];
