@@ -1097,7 +1097,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                       ),
                                     ),
                                     AutoSizeText(
-                                      ('${Utils.getToken}'),
+                                      ('${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}'),
                                       minFontSize: 9,
                                       maxFontSize: 15,
                                       maxLines: 1,
@@ -1146,7 +1146,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     ),
                                     horizontalSpacer,
                                     AutoSizeText(
-                                      ('${DateFormat('yyyy-MM-dd – kk:mm').format(applicationNewSlotMap.containsKey(ba.id) ? applicationNewSlotMap[ba.id] : ba.preferredSlotTiming)}'),
+                                      ('${DateFormat('yyyy-MM-dd – kk:mm').format(Utils.getTokenDate(ba.tokenId))}'),
                                       // group: medCondGroup,
                                       minFontSize: 9,
                                       maxFontSize: 15,
@@ -1181,6 +1181,19 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             ),
                           ],
                         )),
+                  if (Utils.isNotNullOrEmpty(ba.tokenId))
+                    Container(
+                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      padding: EdgeInsets.all(5),
+                      width: MediaQuery.of(context).size.width * .9,
+                      // color: Colors.cyan[100],
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.blueGrey[100]),
+                          color: Colors.white,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Text('No Token Issues yet'),
+                    ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.end,

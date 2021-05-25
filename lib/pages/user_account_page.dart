@@ -1,4 +1,7 @@
 //import 'package:barcode_scan/barcode_scan.dart';
+import 'package:LESSs/db/exceptions/no_token_found_exception.dart';
+import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
+import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
 import 'package:LESSs/events/event_bus.dart';
 import 'package:LESSs/events/events.dart';
 import 'package:LESSs/pages/upi_payment_page.dart';
@@ -379,7 +382,12 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                     }
                                     //booking number is -1 means its already been cancelled, Do Nothing
                                     else if (booking.number == -1)
-                                      return null;
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "This Token is already Cancelled.",
+                                          "");
                                     else
                                       showCancelBooking(booking);
                                   },
@@ -619,6 +627,34 @@ class _UserAccountPageState extends State<UserAccountPage> {
         ));
   }
 
+  void handleErrorsForTokenCancellation(dynamic error) {
+    switch (error.runtimeType) {
+      case TokenAlreadyCancelledException:
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 6),
+            "Could not Cancel the Token.",
+            "Token number is Already Cancelled.",
+            Colors.red);
+        break;
+      case NoTokenFoundException:
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 6),
+            "Could not Cancel the Token.",
+            "The Token number is either Incorrect or Cancelled",
+            Colors.red);
+        break;
+
+      default:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+            "Could not Cancel the Token.", error.toString(), Colors.red);
+        break;
+    }
+  }
+
   void showCancelBooking(UserToken booking) {
     showDialog(
         barrierDismissible: false,
@@ -664,26 +700,60 @@ class _UserAccountPageState extends State<UserAccountPage> {
                     onPressed: () {
                       print("Cancel booking");
                       bool cancelDone = false;
-                      cancelToken(booking).then((value) {
-                        setState(() {
-                          booking.number = -1;
+                      if (Utils.isNotNullOrEmpty(booking.applicationId)) {
+                        _gs
+                            .getApplicationService()
+                            .withDrawApplication(booking.applicationId, "")
+                            .then((value) {
+                          if (value) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.check,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Token & Application are Cancelled Successfully.",
+                                "");
+                            cancelDone = value;
+                            setState(() {
+                              booking.number = -1;
+                            });
+                          } else {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.check,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Token & Application could not be Cancelled.",
+                                "Please try again later.");
+                          }
+                        }).catchError((error) {
+                          handleErrorsForTokenCancellation(error);
                         });
+                      } else {
+                        cancelToken(booking).then((value) {
+                          setState(() {
+                            booking.number = -1;
+                          });
 
-                        cancelDone = value;
-                        if (!cancelDone) {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info_outline,
-                              Duration(
-                                seconds: 5,
-                              ),
-                              "Couldn't cancel your booking for some reason. ",
-                              "Please try again later.");
-                        }
-                      }).catchError((e) {
-                        print(e);
-                      });
-                      Navigator.of(context, rootNavigator: true).pop();
+                          cancelDone = value;
+                          if (!cancelDone) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Couldn't cancel your booking for some reason. ",
+                                "Please try again later.");
+                          }
+                        }).catchError((error) {
+                          handleErrorsForTokenCancellation(error);
+                        });
+                      }
+
+                      Navigator.of(_).pop();
                       Utils.showMyFlushbar(
                           context,
                           Icons.cancel,
