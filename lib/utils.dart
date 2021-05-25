@@ -633,7 +633,29 @@ class Utils {
   }
 
   static String getTokenDisplayName(String entityName, String tokenId) {
-    return null;
+    String displayName = "";
+
+    String first3Letters = entityName.substring(0, 4);
+    displayName = displayName + first3Letters;
+
+    List<String> tokenParts = tokenId.split('#');
+    String date = tokenParts[1];
+    String time = tokenParts[2];
+    String number = tokenParts[4];
+
+    List<String> dateParts = date.split('~');
+    String year = dateParts[0];
+    String month = dateParts[1];
+    String day = dateParts[2];
+
+    displayName = displayName + "-" + year + month + day;
+
+    List<String> timeParts = time.split('~');
+    String hour = timeParts[0];
+    String minute = timeParts[1];
+
+    displayName = displayName + "-" + hour + minute + '-' + number;
+    return displayName;
   }
 
   static DateTime getTokenDate(String tokenId) {
@@ -652,9 +674,10 @@ class Utils {
     String hour = timeParts[0];
     String minute = timeParts[1];
 
-    return null;
+    DateTime dt = new DateTime(int.parse(year), int.parse(month),
+        int.parse(day), int.parse(hour), int.parse(minute));
 
-    //DateTime dt  = new DateTime(year: int.parse(year))
+    return dt;
   }
 
   static Future<Position> getCurrLocation() async {
