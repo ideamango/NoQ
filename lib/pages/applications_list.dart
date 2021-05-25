@@ -1181,7 +1181,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             ),
                           ],
                         )),
-                  if (Utils.isNotNullOrEmpty(ba.tokenId))
+                  if (Utils.isStrNullOrEmpty(ba.tokenId))
                     Container(
                       margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                       padding: EdgeInsets.all(5),
@@ -1311,6 +1311,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               Icons.thumb_up,
                               size: 21,
                             ),
+                            SizedBox(
+                              height: 2,
+                            ),
                             Text('COMPLETE',
                                 style: TextStyle(
                                     fontSize: 11,
@@ -1411,6 +1414,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             Icon(
                               Icons.check_circle,
                               size: 22,
+                            ),
+                            SizedBox(
+                              height: 2,
                             ),
                             Text('APPROVE',
                                 style: TextStyle(
@@ -1520,6 +1526,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             Icons.pan_tool_rounded,
                             size: 19,
                           ),
+                          SizedBox(
+                            height: 2,
+                          ),
                           Text('ON-HOLD',
                               style: TextStyle(
                                   fontSize: 11,
@@ -1621,6 +1630,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           Icon(
                             Icons.cancel,
                             size: 23,
+                          ),
+                          SizedBox(
+                            height: 2,
                           ),
                           Text('REJECT',
                               style: TextStyle(
