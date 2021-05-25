@@ -731,6 +731,7 @@ class _UserHomePageState extends State<UserHomePage>
                         Row(
                           children: [
                             Container(
+                              width: MediaQuery.of(context).size.width * .6,
                               margin: EdgeInsets.fromLTRB(
                                   MediaQuery.of(context).size.height * .008,
                                   0,
@@ -742,58 +743,62 @@ class _UserHomePageState extends State<UserHomePage>
                                   0,
                                   0),
                               child: Text(
-                                token.parent.entityName +
-                                    (token.parent.address != null
-                                        ? (', ' + token.parent.address)
-                                        : ''),
+                                'sdfsd dsfg dfg sdfhg sdghsdfhg sdfghdfgh sdfghg',
+                                // token.parent.entityName +
+                                //     (token.parent.address != null
+                                //         ? (', ' + token.parent.address)
+                                //         : ''),
                                 overflow: TextOverflow.ellipsis,
                                 style: tokenDataTextStyle,
                               ),
                             ),
-                            FadeTransition(
-                              opacity: animation,
-                              child: GestureDetector(
-                                onTap: () {
-                                  String phoneNo = token.parent.entityWhatsApp;
-                                  if (phoneNo != null && phoneNo != "") {
-                                    try {
-                                      launchWhatsApp(
-                                          message: whatsappVideoToPlaceOwner_1 +
-                                              token.getDisplayName() +
-                                              whatsappVideoToPlaceOwner_2,
-                                          phone: phoneNo);
-                                    } catch (error) {
+                            if (token.parent.isOnlineAppointment)
+                              FadeTransition(
+                                opacity: animation,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    String phoneNo =
+                                        token.parent.entityWhatsApp;
+                                    if (phoneNo != null && phoneNo != "") {
+                                      try {
+                                        launchWhatsApp(
+                                            message:
+                                                whatsappVideoToPlaceOwner_1 +
+                                                    token.getDisplayName() +
+                                                    whatsappVideoToPlaceOwner_2,
+                                            phone: phoneNo);
+                                      } catch (error) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.error,
+                                            Duration(seconds: 5),
+                                            "Could not connect to the Whatsapp number $phoneNo !!",
+                                            "Try again later");
+                                      }
+                                    } else {
                                       Utils.showMyFlushbar(
                                           context,
-                                          Icons.error,
+                                          Icons.info,
                                           Duration(seconds: 5),
-                                          "Could not connect to the Whatsapp number $phoneNo !!",
-                                          "Try again later");
+                                          "Whatsapp contact information not found!!",
+                                          "");
                                     }
-                                  } else {
-                                    Utils.showMyFlushbar(
-                                        context,
-                                        Icons.info,
-                                        Duration(seconds: 5),
-                                        "Whatsapp contact information not found!!",
-                                        "");
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.zero,
-                                  margin: EdgeInsets.zero,
-                                  width:
-                                      MediaQuery.of(context).size.width * .08,
-                                  height:
-                                      MediaQuery.of(context).size.height * .04,
-                                  child: Icon(
-                                    Icons.videocam,
-                                    color: Colors.orange[700],
-                                    size: 30,
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.zero,
+                                    margin: EdgeInsets.zero,
+                                    width:
+                                        MediaQuery.of(context).size.width * .08,
+                                    height: MediaQuery.of(context).size.height *
+                                        .04,
+                                    child: Icon(
+                                      Icons.videocam,
+                                      color: Colors.orange[600],
+                                      size: 30,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
+                              )
                           ],
                         ),
                         SizedBox(
