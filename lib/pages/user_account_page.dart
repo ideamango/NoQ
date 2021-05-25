@@ -300,77 +300,26 @@ class _UserAccountPageState extends State<UserAccountPage>
                       // mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Row(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * .6,
-                              margin: EdgeInsets.fromLTRB(
-                                  MediaQuery.of(context).size.height * .008,
-                                  0,
-                                  0,
-                                  0),
-                              padding: EdgeInsets.fromLTRB(
-                                  MediaQuery.of(context).size.height * .008,
-                                  0,
-                                  0,
-                                  0),
-                              child: Text(
-                                booking.parent.entityName +
-                                    (booking.parent.address != null
-                                        ? (', ' + booking.parent.address)
-                                        : ''),
-                                overflow: TextOverflow.ellipsis,
-                                style: tokenDataTextStyle,
-                              ),
-                            ),
-                            if (booking.parent.isOnlineAppointment)
-                              FadeTransition(
-                                opacity: animation,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    String phoneNo =
-                                        booking.parent.entityWhatsApp;
-                                    if (phoneNo != null && phoneNo != "") {
-                                      try {
-                                        launchWhatsApp(
-                                            message:
-                                                whatsappVideoToPlaceOwner_1 +
-                                                    booking.getDisplayName() +
-                                                    whatsappVideoToPlaceOwner_2,
-                                            phone: phoneNo);
-                                      } catch (error) {
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.error,
-                                            Duration(seconds: 5),
-                                            "Could not connect to the Whatsapp number $phoneNo !!",
-                                            "Try again later");
-                                      }
-                                    } else {
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.info,
-                                          Duration(seconds: 5),
-                                          "Whatsapp contact information not found!!",
-                                          "");
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.zero,
-                                    margin: EdgeInsets.zero,
-                                    width:
-                                        MediaQuery.of(context).size.width * .08,
-                                    height: MediaQuery.of(context).size.height *
-                                        .04,
-                                    child: Icon(
-                                      Icons.videocam,
-                                      color: Colors.orange[600],
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
-                              )
-                          ],
+                        Container(
+                          width: MediaQuery.of(context).size.width * .68,
+                          margin: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.height * .008,
+                              0,
+                              0,
+                              0),
+                          padding: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.height * .008,
+                              0,
+                              0,
+                              0),
+                          child: Text(
+                            booking.parent.entityName +
+                                (booking.parent.address != null
+                                    ? (', ' + booking.parent.address)
+                                    : ''),
+                            overflow: TextOverflow.ellipsis,
+                            style: tokenDataTextStyle,
+                          ),
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * .008,
@@ -601,43 +550,97 @@ class _UserAccountPageState extends State<UserAccountPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      margin: EdgeInsets.all(0),
-                      height: ticketwidth * .1,
-                      width: ticketwidth * .1,
-                      child: IconButton(
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          alignment: Alignment.center,
-                          highlightColor: Colors.orange[300],
-                          mouseCursor: SystemMouseCursors.click,
-                          icon: ImageIcon(
-                            AssetImage('assets/qrcode.png'),
-                            size: 30,
-                            color: Colors.white,
+                    if (booking.parent.isOnlineAppointment)
+                      FadeTransition(
+                        opacity: animation,
+                        child: GestureDetector(
+                          onTap: () {
+                            if (booking.parent.dateTime
+                                .isBefore(DateTime.now())) {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.error,
+                                  Duration(seconds: 6),
+                                  "Could not start Whatsapp call as this Booking has expired.",
+                                  "Please contact Owner/Manager of this Place");
+                            } else {
+                              String phoneNo = booking.parent.entityWhatsApp;
+                              if (phoneNo != null && phoneNo != "") {
+                                try {
+                                  launchWhatsApp(
+                                      message: whatsappVideoToPlaceOwner_1 +
+                                          booking.getDisplayName() +
+                                          whatsappVideoToPlaceOwner_2,
+                                      phone: phoneNo);
+                                } catch (error) {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.error,
+                                      Duration(seconds: 5),
+                                      "Could not connect to the Whatsapp number $phoneNo !!",
+                                      "Try again later");
+                                }
+                              } else {
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.info,
+                                    Duration(seconds: 5),
+                                    "Whatsapp contact information not found!!",
+                                    "");
+                              }
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.zero,
+                            margin: EdgeInsets.zero,
+                            width: MediaQuery.of(context).size.width * .08,
+                            height: MediaQuery.of(context).size.height * .04,
+                            child: Icon(
+                              Icons.videocam,
+                              color: Colors.orange[600],
+                              size: 30,
+                            ),
                           ),
-                          onPressed: () {
-                            print(booking.applicationId);
+                        ),
+                      ),
+                    if (!booking.parent.isOnlineAppointment)
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        margin: EdgeInsets.all(0),
+                        height: ticketwidth * .1,
+                        width: ticketwidth * .1,
+                        child: IconButton(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            alignment: Alignment.center,
+                            highlightColor: Colors.orange[300],
+                            mouseCursor: SystemMouseCursors.click,
+                            icon: ImageIcon(
+                              AssetImage('assets/qrcode.png'),
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              print(booking.applicationId);
 
-                            print('Unique identifier for TOKEN -  ' +
-                                booking.parent.slotId +
-                                '%3A' +
-                                booking.parent.userId);
+                              print('Unique identifier for TOKEN -  ' +
+                                  booking.parent.slotId +
+                                  '%3A' +
+                                  booking.parent.userId);
 
-                            String id =
-                                booking.parent.slotId.replaceAll('#', ':') +
-                                    ':' +
-                                    booking.parent.userId;
+                              String id =
+                                  booking.parent.slotId.replaceAll('#', ':') +
+                                      ':' +
+                                      booking.parent.userId;
 
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(
-                                    GenerateQrUserApplication(
-                              entityName: "Application QR code",
-                              backRoute: "UserAppsList",
-                              uniqueTokenIdentifier: id,
-                            )));
-                          }),
-                    ),
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      GenerateQrUserApplication(
+                                entityName: "Application QR code",
+                                backRoute: "UserAppsList",
+                                uniqueTokenIdentifier: id,
+                              )));
+                            }),
+                      ),
                     Container(
                       height: 5,
                     ),
