@@ -1909,7 +1909,8 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                       padding: EdgeInsets.all(5),
                       alignment: Alignment.bottomCenter,
                       child: Text("View All Details..",
-                          style: TextStyle(color: Colors.blue, fontSize: 12)),
+                          style: TextStyle(
+                              color: Colors.blueAccent[400], fontSize: 12)),
                     ),
                   ),
                 ],
@@ -1935,23 +1936,26 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                           .then((remarks) {
                         //Update application status change on server.
                         // if (Utils.isNotNullOrEmpty(remarks)) {
-                        _gs
-                            .getApplicationService()
-                            .withDrawApplication(widget.ba.id, remarks)
-                            .then((value) {
-                          widget.ba.notesOnCancellation = remarks;
-                          setState(() {
-                            widget.ba.status = ApplicationStatus.CANCELLED;
-                          });
+                        if ((remarks[1])) {
+                          ba.notesOnPuttingOnHold = (remarks[0]);
+                          _gs
+                              .getApplicationService()
+                              .withDrawApplication(widget.ba.id, remarks[0])
+                              .then((value) {
+                            widget.ba.notesOnCancellation = remarks[0];
+                            setState(() {
+                              widget.ba.status = ApplicationStatus.CANCELLED;
+                            });
 
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.check,
-                              Duration(seconds: 4),
-                              "Application Cancelled!!",
-                              "",
-                              successGreenSnackBar);
-                        });
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.check,
+                                Duration(seconds: 4),
+                                "Application Cancelled!!",
+                                "",
+                                successGreenSnackBar);
+                          });
+                        }
                         //   }
                       });
                     },

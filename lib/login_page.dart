@@ -145,195 +145,200 @@ class _LoginPageState extends State<LoginPage> {
                   image: AssetImage("assets/background.png"),
                   fit: BoxFit.cover)),
           //color: Colors.white,
-          margin: new EdgeInsets.fromLTRB(10, 5.0, 10, 5),
+
           child: Stack(
             children: [
-              new Form(
-                key: _loginPageFormKey,
-                autovalidate: _autoValidate,
-                child: new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    //  SizedBox(height: MediaQuery.of(context).size.height * .1),
-                    SizedBox(
-                      //height: MediaQuery.of(context).size.height * .15,
-                      child: Image.asset(
-                        "assets/less_name.png",
-                        fit: BoxFit.contain,
+              Container(
+                margin: new EdgeInsets.fromLTRB(10, 5.0, 10, 5),
+                child: new Form(
+                  key: _loginPageFormKey,
+                  autovalidate: _autoValidate,
+                  child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      //  SizedBox(height: MediaQuery.of(context).size.height * .1),
+                      SizedBox(
+                        //height: MediaQuery.of(context).size.height * .15,
+                        child: Image.asset(
+                          "assets/less_name.png",
+                          fit: BoxFit.contain,
+                        ),
+                        // child: Text(
+                        //   "LESSs",
+                        //   style: TextStyle(
+                        //       fontFamily: "AnandaNamaste",
+                        //       fontSize: 90,
+                        //       color: primaryAccentColor),
+                        // ),
                       ),
-                      // child: Text(
-                      //   "LESSs",
-                      //   style: TextStyle(
-                      //       fontFamily: "AnandaNamaste",
-                      //       fontSize: 90,
-                      //       color: primaryAccentColor),
-                      // ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(
-                            //height: MediaQuery.of(context).size.height * .07,
-                            width: MediaQuery.of(context).size.width * .7,
-                            child: Image.asset(
-                              "assets/sukoon_subheading.png",
-                              fit: BoxFit.contain,
-                            )),
-                      ],
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * .05),
-                    phNumField,
-                    verticalSpacer,
-                    Container(
-                      height: MediaQuery.of(context).size.height * .05,
-                      child: Row(
-                        children: <Widget>[
-                          RichText(
-                            text: TextSpan(
-                              style: subHeadingTextStyle,
-                              children: <TextSpan>[
-                                TextSpan(
-                                    text:
-                                        "By clicking Continue, I agree to the "),
-                                TextSpan(
-                                  text: 'Terms of Use',
-                                  style: new TextStyle(
-                                      color: Colors.cyan[400],
-                                      //decoration: TextDecoration.underline,
-                                      decorationColor: primaryDarkColor),
-                                  recognizer: new TapGestureRecognizer()
-                                    ..onTap = () {
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TermsOfUsePage()));
-                                    },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    verticalSpacer,
-                    loginButon,
-                    verticalSpacer,
-                    (_errorMsg != null
-                        ? Container(
-                            child: Text('$_errorMsg', style: errorTextStyle))
-                        : Container()),
-                    // Container(
-                    //   padding: EdgeInsets.all(5),
-                    //   alignment: Alignment.center,
-                    //   width: MediaQuery.of(context).size.width * .8,
-                    //   child: Text(
-                    //     "To know more about LESSs",
-                    //     style: TextStyle(
-                    //       color: Colors.white,
-                    //     ),
-                    //   ),
-                    // ),
-                    Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * .8,
-                      child: Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        //mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Container(
-                            //alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.all(0),
-                            margin: EdgeInsets.all(0),
-                            height: MediaQuery.of(context).size.height * .05,
-                            width: MediaQuery.of(context).size.width * .4,
-                            child: RaisedButton(
-                              elevation: 20,
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[600]),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0))),
-                              padding: EdgeInsets.all(0),
-                              color: Colors.transparent,
-                              splashColor: highlightColor.withOpacity(.8),
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                    PageAnimation.createRoute(
-                                        ExplorePageForBusiness()));
-                              },
-                              child: Text(
-                                "Business Owners",
-                                style: TextStyle(
-                                  color: highlightColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                          //horizontalSpacer,
-                          Container(
-                            //  alignment: Alignment.centerRight,
-                            padding: EdgeInsets.all(0),
-                            margin: EdgeInsets.all(0),
-                            height: MediaQuery.of(context).size.height * .05,
-                            width: MediaQuery.of(context).size.width * .4,
-                            child: RaisedButton(
-                              elevation: 20,
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[600]),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0))),
-                              padding: EdgeInsets.all(0),
-                              color: Colors.transparent,
-                              splashColor: highlightColor.withOpacity(.8),
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                    PageAnimation.createRoute(
-                                        ExplorePageForUser()));
-                              },
-                              child: Text(
-                                "Users",
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  color: highlightColor,
-                                ),
-                              ),
-                            ),
-                          ),
+                          SizedBox(
+                              //height: MediaQuery.of(context).size.height * .07,
+                              width: MediaQuery.of(context).size.width * .7,
+                              child: Image.asset(
+                                "assets/sukoon_subheading.png",
+                                fit: BoxFit.contain,
+                              )),
                         ],
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * .05),
+                      phNumField,
+                      verticalSpacer,
+                      Container(
+                        height: MediaQuery.of(context).size.height * .05,
+                        child: Row(
+                          children: <Widget>[
+                            RichText(
+                              text: TextSpan(
+                                style: subHeadingTextStyle,
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text:
+                                          "By clicking Continue, I agree to the "),
+                                  TextSpan(
+                                    text: 'Terms of Use',
+                                    style: new TextStyle(
+                                        color: Colors.cyan[400],
+                                        //decoration: TextDecoration.underline,
+                                        decorationColor: primaryDarkColor),
+                                    recognizer: new TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.pop(context);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TermsOfUsePage()));
+                                      },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      verticalSpacer,
+                      loginButon,
+                      verticalSpacer,
+                      (_errorMsg != null
+                          ? Container(
+                              child: Text('$_errorMsg', style: errorTextStyle))
+                          : Container()),
+                      // Container(
+                      //   padding: EdgeInsets.all(5),
+                      //   alignment: Alignment.center,
+                      //   width: MediaQuery.of(context).size.width * .8,
+                      //   child: Text(
+                      //     "To know more about LESSs",
+                      //     style: TextStyle(
+                      //       color: Colors.white,
+                      //     ),
+                      //   ),
+                      // ),
+                      Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width * .8,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          //mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Container(
+                              //alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.all(0),
+                              margin: EdgeInsets.all(0),
+                              height: MediaQuery.of(context).size.height * .05,
+                              width: MediaQuery.of(context).size.width * .4,
+                              child: RaisedButton(
+                                elevation: 20,
+                                shape: RoundedRectangleBorder(
+                                    side:
+                                        BorderSide(color: Colors.blueGrey[600]),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                padding: EdgeInsets.all(0),
+                                color: Colors.transparent,
+                                splashColor: highlightColor.withOpacity(.8),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                      PageAnimation.createRoute(
+                                          ExplorePageForBusiness()));
+                                },
+                                child: Text(
+                                  "Business Owners",
+                                  style: TextStyle(
+                                    color: highlightColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            //horizontalSpacer,
+                            Container(
+                              //  alignment: Alignment.centerRight,
+                              padding: EdgeInsets.all(0),
+                              margin: EdgeInsets.all(0),
+                              height: MediaQuery.of(context).size.height * .05,
+                              width: MediaQuery.of(context).size.width * .4,
+                              child: RaisedButton(
+                                elevation: 20,
+                                shape: RoundedRectangleBorder(
+                                    side:
+                                        BorderSide(color: Colors.blueGrey[600]),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                padding: EdgeInsets.all(0),
+                                color: Colors.transparent,
+                                splashColor: highlightColor.withOpacity(.8),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                      PageAnimation.createRoute(
+                                          ExplorePageForUser()));
+                                },
+                                child: Text(
+                                  "Users",
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    color: highlightColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               if (showLoading)
                 Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 10.0, bottom: 10),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      color: Colors.black.withOpacity(.5),
-                      // decoration: BoxDecoration(
-                      //   color: Colors.white,
-                      //   backgroundBlendMode: BlendMode.saturation,
-                      // ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * .15,
-                            height: MediaQuery.of(context).size.width * .15,
-                            child: CircularProgressIndicator(
-                              backgroundColor: Colors.amber[600],
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                              strokeWidth: 2,
-                            ),
-                          )
-                        ],
-                      ),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    color: Colors.black.withOpacity(.5),
+                    // decoration: BoxDecoration(
+                    //   color: Colors.white,
+                    //   backgroundBlendMode: BlendMode.saturation,
+                    // ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          color: Colors.transparent,
+                          padding: EdgeInsets.all(12),
+                          width: MediaQuery.of(context).size.width * .15,
+                          height: MediaQuery.of(context).size.width * .15,
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.black,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            strokeWidth: 2,
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 )

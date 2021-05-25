@@ -158,11 +158,11 @@ Future<String> showMessageDialog(
   });
 }
 
-Future<String> showApplicationStatusDialog(BuildContext context,
-    String headerMsg, String mainMsg, String subMsg, String btnText) async {
+Future<List> showApplicationStatusDialog(BuildContext context, String headerMsg,
+    String mainMsg, String subMsg, String btnText) async {
   TextEditingController rmksController = new TextEditingController();
   final remarksKey = GlobalKey<FormFieldState>();
-  String remarksVal = await showDialog(
+  List remarksVal = await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) {
@@ -244,7 +244,7 @@ Future<String> showApplicationStatusDialog(BuildContext context,
                   style: TextStyle(color: btnColor),
                 ),
                 onPressed: () {
-                  Navigator.of(_).pop(null);
+                  Navigator.of(_).pop([null, false]);
                 },
               ),
             ),
@@ -266,7 +266,7 @@ Future<String> showApplicationStatusDialog(BuildContext context,
                   textAlign: TextAlign.center,
                 ),
                 onPressed: () {
-                  Navigator.of(_).pop(rmksController.text);
+                  Navigator.of(_).pop([rmksController.text, true]);
                   return;
                 },
               ),
