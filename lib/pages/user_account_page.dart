@@ -924,7 +924,7 @@ class _UserAccountPageState extends State<UserAccountPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                  height: MediaQuery.of(context).size.height * .73,
+                  height: MediaQuery.of(context).size.height * .78,
                   child: Scrollbar(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.all(
