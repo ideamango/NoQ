@@ -4,6 +4,7 @@ import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/db/exceptions/entity_deletion_denied_child_exists_exception.dart';
 import 'package:LESSs/db/exceptions/entity_does_not_exists_exception.dart';
 import 'package:LESSs/db/exceptions/not_admin_parent_entity_exception.dart';
+import 'package:LESSs/services/handle_exceptions.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -2079,34 +2080,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       processGoBackWithTimer() async {
         var duration = new Duration(seconds: 1);
         return new Timer(duration, backRoute);
-      }
-
-      handleDeleteEntityErrors(Exception error) {
-        switch (error.runtimeType) {
-          case EntityDoesNotExistsException:
-            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-                (error as EntityDoesNotExistsException).cause, "");
-            break;
-          case EntityDeletionDeniedChildExistsException:
-            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-                (error as EntityDeletionDeniedChildExistsException).cause, "");
-
-            break;
-          case NotAdminParentEntityException:
-            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-                (error as NotAdminParentEntityException).cause, "");
-
-            break;
-          case AccessDeniedException:
-            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-                (error as AccessDeniedException).cause, "");
-
-            break;
-          default:
-            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-                error.toString(), "");
-            break;
-        }
       }
 
       // Future<void> showLocationAccessDialog() async {
@@ -4274,7 +4247,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                         barrierDismissible: true,
                                         builder: (BuildContext context) {
                                           return StatefulBuilder(
-                                              builder: (context, setState) {
+                                              builder: (_, setState) {
                                             return new AlertDialog(
                                               backgroundColor: Colors.grey[200],
                                               // titleTextStyle: inputTextStyle,
@@ -4360,7 +4333,36 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                               contentPadding:
                                                   EdgeInsets.all(10),
                                               actions: <Widget>[
-                                                RaisedButton(
+                                                MaterialButton(
+                                                  color: Colors.white,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          color: Colors
+                                                              .blueGrey[500]),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  5.0))),
+                                                  onPressed: () {
+                                                    Navigator.of(_).pop(false);
+                                                  },
+                                                  splashColor: (_delEnabled)
+                                                      ? highlightColor
+                                                      : Colors.blueGrey[200],
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .3,
+                                                    alignment: Alignment.center,
+                                                    child: Text("Cancel",
+                                                        style: TextStyle(
+                                                            color: btnColor)),
+                                                  ),
+                                                ),
+                                                MaterialButton(
                                                   color: (_delEnabled)
                                                       ? btnColor
                                                       : Colors.blueGrey[200],
@@ -4368,25 +4370,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                       (_delEnabled) ? 20 : 0,
                                                   onPressed: () {
                                                     if (_delEnabled) {
-                                                      _gs
-                                                          .removeEntity(
-                                                              entity.entityId)
-                                                          .then((value) {
-                                                        if (value) {
-                                                          Navigator.pop(
-                                                              context);
-                                                          Navigator.of(context)
-                                                              .push(PageAnimation
-                                                                  .createRoute(
-                                                                      ManageEntityListPage()));
-                                                        } else {
-                                                          //Entity not deleted.
-
-                                                        }
-                                                      }).catchError((error) {
-                                                        handleDeleteEntityErrors(
-                                                            error);
-                                                      });
+                                                      Navigator.of(_).pop(true);
                                                     } else {
                                                       setState(() {
                                                         _errorMessage =
@@ -4413,7 +4397,34 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                               ],
                                             );
                                           });
-                                        });
+                                        }).then((returnVal) {
+                                      if (returnVal != null) {
+                                        if (returnVal) {
+                                          _gs
+                                              .removeEntity(entity.entityId)
+                                              .then((value) {
+                                            if (value) {
+                                              Navigator.pop(context);
+                                              Navigator.of(context).push(
+                                                  PageAnimation.createRoute(
+                                                      ManageEntityListPage()));
+                                            } else {
+                                              //Entity not deleted.
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.error,
+                                                  Duration(seconds: 5),
+                                                  'Could not Delete this place',
+                                                  "Please try again.",
+                                                  Colors.red);
+                                            }
+                                          }).catchError((error) {
+                                            ErrorsUtil.handleDeleteEntityErrors(
+                                                context, error);
+                                          });
+                                        }
+                                      }
+                                    });
                                   }
                                 })),
                       ),

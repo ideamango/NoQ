@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:LESSs/enum/entity_role.dart';
+import 'package:LESSs/services/handle_exceptions.dart';
 import 'package:LESSs/tuple.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -4033,7 +4034,7 @@ class _ManageChildEntityDetailsPageState
                                         barrierDismissible: true,
                                         builder: (BuildContext context) {
                                           return StatefulBuilder(
-                                              builder: (context, setState) {
+                                              builder: (_, setState) {
                                             return new AlertDialog(
                                               backgroundColor: Colors.grey[200],
                                               // titleTextStyle: inputTextStyle,
@@ -4119,7 +4120,36 @@ class _ManageChildEntityDetailsPageState
                                               contentPadding:
                                                   EdgeInsets.all(10),
                                               actions: <Widget>[
-                                                RaisedButton(
+                                                MaterialButton(
+                                                  color: Colors.white,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          color: Colors
+                                                              .blueGrey[500]),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  5.0))),
+                                                  onPressed: () {
+                                                    Navigator.of(_).pop(false);
+                                                  },
+                                                  splashColor: (_delEnabled)
+                                                      ? highlightColor
+                                                      : Colors.blueGrey[200],
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .3,
+                                                    alignment: Alignment.center,
+                                                    child: Text("Cancel",
+                                                        style: TextStyle(
+                                                            color: btnColor)),
+                                                  ),
+                                                ),
+                                                MaterialButton(
                                                   color: (_delEnabled)
                                                       ? btnColor
                                                       : Colors.blueGrey[200],
@@ -4127,43 +4157,7 @@ class _ManageChildEntityDetailsPageState
                                                       (_delEnabled) ? 20 : 0,
                                                   onPressed: () {
                                                     if (_delEnabled) {
-                                                      String parentEntityId =
-                                                          serviceEntity
-                                                              .parentId;
-
-                                                      Entity parentEntity;
-
-                                                      //     .deleteEntity(serviceEntity.id)
-                                                      //     .whenComplete(() {
-                                                      //   Navigator.pop(context);
-
-                                                      //   getEntity(parentEntityId)
-                                                      //       .then((value) =>
-                                                      //           parentEntity = value)
-                                                      //       .whenComplete(() => Navigator.push(
-                                                      //           context,
-                                                      //           MaterialPageRoute(
-                                                      //               builder: (context) =>
-                                                      //                   EntityServicesListPage(
-                                                      //                       entity:
-                                                      //                           parentEntity))));
-                                                      // });
-//TODO: Problem in this method, not deleting entity from list
-
-                                                      _gs
-                                                          .removeEntity(
-                                                              serviceEntity
-                                                                  .entityId)
-                                                          .then((value) {
-                                                        Navigator.pop(context);
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    ManageChildEntityListPage(
-                                                                        entity:
-                                                                            parentEntity)));
-                                                      });
+                                                      Navigator.of(_).pop(true);
                                                     }
                                                   },
                                                   splashColor: (_delEnabled)
@@ -4191,7 +4185,48 @@ class _ManageChildEntityDetailsPageState
                                               ],
                                             );
                                           });
-                                        });
+                                        }).then((returnVal) {
+                                      if (returnVal != null) {
+                                        if (returnVal) {
+                                          String parentEntityId =
+                                              serviceEntity.parentId;
+                                          Entity parentEntity;
+
+                                          _gs
+                                              .removeEntity(
+                                                  serviceEntity.entityId)
+                                              .then((value) {
+                                            if (value) {
+                                              Navigator.pop(context);
+                                              _gs
+                                                  .getEntity(parentEntityId)
+                                                  .then((value) {
+                                                parentEntity = value.item1;
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ManageChildEntityListPage(
+                                                                entity:
+                                                                    parentEntity)));
+                                              });
+                                            } else {
+                                              //Entity not deleted.
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.error,
+                                                  Duration(seconds: 5),
+                                                  'Could not Delete this place',
+                                                  "Please try again.",
+                                                  Colors.red);
+                                            }
+                                          }).catchError((error) {
+                                            ErrorsUtil.handleDeleteEntityErrors(
+                                                context, error);
+                                          });
+                                        }
+                                      }
+                                    });
                                   }
                                 }),
                           ),
