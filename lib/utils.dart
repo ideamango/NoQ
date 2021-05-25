@@ -632,6 +632,31 @@ class Utils {
     return entity;
   }
 
+  static String getTokenDisplayName(String entityName, String tokenId) {
+    return null;
+  }
+
+  static DateTime getTokenDate(String tokenId) {
+    //980c1e20-bb79-11eb-9857-7109440c1073#2021~5~28#15~0#+919876543210#1
+    List<String> tokenParts = tokenId.split('#');
+    String date = tokenParts[1];
+    String time = tokenParts[2];
+    String number = tokenParts[4];
+
+    List<String> dateParts = date.split('~');
+    String year = dateParts[0];
+    String month = dateParts[1];
+    String day = dateParts[2];
+
+    List<String> timeParts = time.split('~');
+    String hour = timeParts[0];
+    String minute = timeParts[1];
+
+    return null;
+
+    //DateTime dt  = new DateTime(year: int.parse(year))
+  }
+
   static Future<Position> getCurrLocation() async {
     //TODO SMita = getting lost at this statement
     LocationPermission permission = await Geolocator.checkPermission();
