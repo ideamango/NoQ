@@ -45,7 +45,8 @@ class UserAccountPage extends StatefulWidget {
   _UserAccountPageState createState() => _UserAccountPageState();
 }
 
-class _UserAccountPageState extends State<UserAccountPage> {
+class _UserAccountPageState extends State<UserAccountPage>
+    with TickerProviderStateMixin {
   int _page = 0;
   PageController _pageController;
   int i;
@@ -69,10 +70,17 @@ class _UserAccountPageState extends State<UserAccountPage> {
   Eventify.Listener _eventListener;
   //ScrollController _scrollController;
   // bool _expansionClick = false;
+  AnimationController _animationController;
+  Animation animation;
 
   @override
   void initState() {
     super.initState();
+    _animationController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    _animationController.repeat(reverse: true);
+    animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
+
     if (!kIsWeb) _setTargetPlatformForDesktop();
     _pageController = PageController(initialPage: 8);
 
@@ -292,25 +300,77 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       // mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.fromLTRB(
-                              MediaQuery.of(context).size.height * .008,
-                              0,
-                              0,
-                              0),
-                          padding: EdgeInsets.fromLTRB(
-                              MediaQuery.of(context).size.height * .008,
-                              0,
-                              0,
-                              0),
-                          child: Text(
-                            booking.parent.entityName +
-                                (booking.parent.address != null
-                                    ? (', ' + booking.parent.address)
-                                    : ''),
-                            overflow: TextOverflow.ellipsis,
-                            style: tokenDataTextStyle,
-                          ),
+                        Row(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * .6,
+                              margin: EdgeInsets.fromLTRB(
+                                  MediaQuery.of(context).size.height * .008,
+                                  0,
+                                  0,
+                                  0),
+                              padding: EdgeInsets.fromLTRB(
+                                  MediaQuery.of(context).size.height * .008,
+                                  0,
+                                  0,
+                                  0),
+                              child: Text(
+                                booking.parent.entityName +
+                                    (booking.parent.address != null
+                                        ? (', ' + booking.parent.address)
+                                        : ''),
+                                overflow: TextOverflow.ellipsis,
+                                style: tokenDataTextStyle,
+                              ),
+                            ),
+                            if (booking.parent.isOnlineAppointment)
+                              FadeTransition(
+                                opacity: animation,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    String phoneNo =
+                                        booking.parent.entityWhatsApp;
+                                    if (phoneNo != null && phoneNo != "") {
+                                      try {
+                                        launchWhatsApp(
+                                            message:
+                                                whatsappVideoToPlaceOwner_1 +
+                                                    booking.getDisplayName() +
+                                                    whatsappVideoToPlaceOwner_2,
+                                            phone: phoneNo);
+                                      } catch (error) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.error,
+                                            Duration(seconds: 5),
+                                            "Could not connect to the Whatsapp number $phoneNo !!",
+                                            "Try again later");
+                                      }
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "Whatsapp contact information not found!!",
+                                          "");
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.zero,
+                                    margin: EdgeInsets.zero,
+                                    width:
+                                        MediaQuery.of(context).size.width * .08,
+                                    height: MediaQuery.of(context).size.height *
+                                        .04,
+                                    child: Icon(
+                                      Icons.videocam,
+                                      color: Colors.orange[600],
+                                      size: 30,
+                                    ),
+                                  ),
+                                ),
+                              )
+                          ],
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * .008,
