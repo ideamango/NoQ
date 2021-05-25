@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/db/exceptions/slot_full_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
+import 'package:LESSs/tuple.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -631,6 +632,18 @@ class Utils {
         allowWalkinAppointment: isWalkInAppointment);
 
     return entity;
+  }
+
+  static Tuple<String, int> getTokenIdWithoutNumber(String tokenId) {
+    List<String> tokenIdSplitted = tokenId.split("#");
+
+    String number = tokenIdSplitted[tokenIdSplitted.length - 1];
+    int tokenNumber = int.parse(number);
+
+    int beforeLastHash = tokenId.length - number.length - 1;
+
+    String tokenIdWithoutNumber = tokenId.substring(0, beforeLastHash);
+    return new Tuple(item1: tokenIdWithoutNumber, item2: tokenNumber);
   }
 
   static String getTokenDisplayName(String entityName, String tokenId) {
