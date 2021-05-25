@@ -496,19 +496,13 @@ class BookingApplicationService {
         if (Utils.isNotNullOrEmpty(ba.tokenId)) {
           //token id format - Selenium-Covid-Vacination-Center#2021~2~17#10~30#9898989899#2
 
-          List<String> tokenIdSplitted = ba.tokenId.split("#");
-
-          String number = tokenIdSplitted[tokenIdSplitted.length - 1];
-          int tokenNumber = int.parse(number);
-
-          int beforeLastHash = ba.tokenId.length - number.length - 1;
-
-          String tokenId = ba.tokenId.substring(0, beforeLastHash);
-
+          Tuple<String, int> tokenIdSplitted =
+              Utils.getTokenIdWithoutNumber(ba.tokenId);
+          String tokenIdWithoutNumber = tokenIdSplitted.item1;
+          int tokenNumber = tokenIdSplitted.item2;
           //cancel the token
-          cancelledToken = await _gs
-              .getTokenService()
-              .cancelTokenInTransaction(tx, userPhone, tokenId, tokenNumber);
+          cancelledToken = await _gs.getTokenService().cancelTokenInTransaction(
+              tx, userPhone, tokenIdWithoutNumber, tokenNumber);
 
           //update the GlobalState bookings collection with the cancelled token
           int index = -1;
@@ -642,6 +636,7 @@ class BookingApplicationService {
     BookingApplicationCounter localCounter;
     //BookingApplicationCounter globalCounter;
     ApplicationStatus existingStatus;
+    UserTokens cancelledToken;
 
     String localCounterId;
     //String globalCounterId;
@@ -819,6 +814,20 @@ class BookingApplicationService {
           //     globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
           //   }
           // }
+          if (application.tokenId != null) {
+            //this means that the application was approved earlier (auto or by admin),
+            //but now has been put on hold, resulting into the cancellation of the token
+            Tuple<String, int> tokenIdSplitted =
+                Utils.getTokenIdWithoutNumber(application.tokenId);
+            String tokenIdWithoutNumber = tokenIdSplitted.item1;
+            int tokenNumber = tokenIdSplitted.item2;
+
+            cancelledToken = await _gs
+                .getTokenService()
+                .cancelTokenInTransaction(
+                    tx, userPhone, tokenIdWithoutNumber, tokenNumber);
+          }
+
           if (localCounter != null) {
             localCounter.numberOfPutOnHold++;
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -843,6 +852,19 @@ class BookingApplicationService {
           //     globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
           //   }
           // }
+
+          if (application.tokenId != null) {
+            Tuple<String, int> tokenIdSplitted =
+                Utils.getTokenIdWithoutNumber(application.tokenId);
+            String tokenIdWithoutNumber = tokenIdSplitted.item1;
+            int tokenNumber = tokenIdSplitted.item2;
+
+            cancelledToken = await _gs
+                .getTokenService()
+                .cancelTokenInTransaction(
+                    tx, userPhone, tokenIdWithoutNumber, tokenNumber);
+          }
+
           if (localCounter != null) {
             localCounter.numberOfRejected++;
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {

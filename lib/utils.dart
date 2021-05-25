@@ -2,12 +2,14 @@ import 'dart:async';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/db/exceptions/slot_full_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
+import 'package:LESSs/tuple.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import './db/db_model/address.dart';
 import './db/db_model/booking_application.dart';
 import './db/db_model/meta_entity.dart';
@@ -632,8 +634,35 @@ class Utils {
     return entity;
   }
 
+  static Tuple<String, int> getTokenIdWithoutNumber(String tokenId) {
+    List<String> tokenIdSplitted = tokenId.split("#");
+
+    String number = tokenIdSplitted[tokenIdSplitted.length - 1];
+    int tokenNumber = int.parse(number);
+
+    int beforeLastHash = tokenId.length - number.length - 1;
+
+    String tokenIdWithoutNumber = tokenId.substring(0, beforeLastHash);
+    return new Tuple(item1: tokenIdWithoutNumber, item2: tokenNumber);
+  }
+
   static String getTokenDisplayName(String entityName, String tokenId) {
-    return null;
+    String displayName;
+
+    String first3Letters = entityName.substring(0, 4);
+    displayName = first3Letters;
+
+    List<String> tokenParts = tokenId.split('#');
+
+    String number = tokenParts[4];
+
+    DateTime dateTime = getTokenDate(tokenId);
+
+    DateFormat formatter = DateFormat('-yyMMdd-hhmm-');
+    String formattedDate = formatter.format(dateTime);
+
+    displayName = displayName + formattedDate + "-" + number;
+    return displayName;
   }
 
   static DateTime getTokenDate(String tokenId) {
@@ -641,7 +670,6 @@ class Utils {
     List<String> tokenParts = tokenId.split('#');
     String date = tokenParts[1];
     String time = tokenParts[2];
-    String number = tokenParts[4];
 
     List<String> dateParts = date.split('~');
     String year = dateParts[0];
@@ -652,9 +680,10 @@ class Utils {
     String hour = timeParts[0];
     String minute = timeParts[1];
 
-    return null;
+    DateTime dt = new DateTime(int.parse(year), int.parse(month),
+        int.parse(day), int.parse(hour), int.parse(minute));
 
-    //DateTime dt  = new DateTime(year: int.parse(year))
+    return dt;
   }
 
   static Future<Position> getCurrLocation() async {
