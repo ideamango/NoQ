@@ -199,7 +199,7 @@ String placeDetailNoOffers = "No active offers currently.";
 String missingInfoStr = "Some fields are either empty or have invalid details.";
 String missingInfoSubStr =
     "Please verify all the information provided and try again.";
-String entityUpsertErrStr = "Coold not Save the details!!";
+String entityUpsertErrStr = "Could not Save the details!!";
 String entityUpsertErrSubStr = "Check your internet connection and try again.";
 
 //* Start * Validation error msgs for Token Booking form

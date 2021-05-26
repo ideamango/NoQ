@@ -403,12 +403,6 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     itemNameController.text = newAdminRowItem;
     double cardMargin = MediaQuery.of(context).size.width * .03;
     return Container(
-      foregroundDecoration: widget.isManager
-          ? BoxDecoration(
-              color: Colors.grey[50],
-              backgroundBlendMode: BlendMode.saturation,
-            )
-          : BoxDecoration(),
       height: 25,
       //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
       margin: EdgeInsets.fromLTRB(4, 8, 4, 6),
@@ -735,17 +729,12 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                               ),
                               (adminsList.length != 0)
                                   ? Container(
-                                      foregroundDecoration: widget.isManager
-                                          ? BoxDecoration(
-                                              color: Colors.blueGrey[50],
-                                              backgroundBlendMode:
-                                                  BlendMode.saturation,
-                                            )
-                                          : BoxDecoration(),
                                       width: MediaQuery.of(context).size.width *
                                           .9,
                                       child: RaisedButton(
-                                        color: btnColor,
+                                        color: widget.isManager
+                                            ? disabledColor
+                                            : btnColor,
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -849,6 +838,13 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                 margin: EdgeInsets.all(
                                     MediaQuery.of(context).size.width * .03),
                                 child: Container(
+                                  foregroundDecoration: widget.isManager
+                                      ? BoxDecoration(
+                                          color: Colors.blueGrey[50],
+                                          backgroundBlendMode:
+                                              BlendMode.saturation,
+                                        )
+                                      : BoxDecoration(),
                                   padding: EdgeInsets.all(5),
                                   decoration: BoxDecoration(
                                       border: Border.all(color: highlightColor),
@@ -960,6 +956,13 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                 margin: EdgeInsets.all(
                                     MediaQuery.of(context).size.width * .03),
                                 child: Container(
+                                  foregroundDecoration: widget.isManager
+                                      ? BoxDecoration(
+                                          color: Colors.blueGrey[50],
+                                          backgroundBlendMode:
+                                              BlendMode.saturation,
+                                        )
+                                      : BoxDecoration(),
                                   padding: EdgeInsets.all(5),
                                   decoration: BoxDecoration(
                                       border: Border.all(color: highlightColor),

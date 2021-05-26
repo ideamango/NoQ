@@ -44,6 +44,7 @@ class EntityRowState extends State<EntityRow> {
   bool isManager = false;
   bool isAdmin = false;
   bool hideAll = false;
+  bool readOnly;
   @override
   void initState() {
     super.initState();
@@ -71,7 +72,7 @@ class EntityRowState extends State<EntityRow> {
 
         hideAll = true;
       }
-
+      readOnly = isManager || isExec;
       //Setstate after init complete
       if (this.mounted) {
         setState(() {
@@ -481,6 +482,7 @@ class EntityRowState extends State<EntityRow> {
                                 preferredSlotTime: null,
                                 isAdmin: isAdmin,
                                 backRoute: ManageEntityListPage(),
+                                isOnlineToken: null,
                               )));
                             } else {
                               Utils.showMyFlushbar(
@@ -605,20 +607,19 @@ class EntityRowState extends State<EntityRow> {
                         print("To Add details page");
                         Navigator.of(context)
                             .push(PageAnimation.createRoute(ManageEntityForms(
-                          // forms: _metaEntity.forms,
                           metaEntity: _metaEntity,
                           preferredSlotTime: null,
-                          isFullPermission: isManager || isAdmin,
+                          isFullPermission: !readOnly,
                           backRoute: ManageEntityListPage(),
-                          isReadOnly: isExec,
+                          isReadOnly: readOnly,
                         )));
                       } else {
                         Utils.showMyFlushbar(
                             context,
                             Icons.info_outline,
                             Duration(seconds: 5),
-                            "Only Admins have permission to view forms!!",
-                            "");
+                            "$noViewPermission forms!!",
+                            contactAdmin);
                       }
                     },
                     child: Container(

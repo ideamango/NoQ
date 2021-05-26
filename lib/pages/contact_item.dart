@@ -484,11 +484,10 @@ class ContactRowState extends State<ContactRow> {
                                         }
                                         if (removeThisId != null) {
                                           _gs
-                                              .getEntityService()
                                               .removeEmployee(
-                                                widget.entity.entityId,
-                                                contact.ph,
-                                              )
+                                            widget.entity.entityId,
+                                            contact.ph,
+                                          )
                                               .then((retVal) {
                                             if (retVal) {
                                               print("Success");
@@ -537,11 +536,10 @@ class ContactRowState extends State<ContactRow> {
                                         if (removeThisId != null) {
                                           //TODO call remove employee from Global state
                                           _gs
-                                              .getEntityService()
                                               .removeEmployee(
-                                                widget.entity.entityId,
-                                                contact.ph,
-                                              )
+                                            widget.entity.entityId,
+                                            contact.ph,
+                                          )
                                               .then((retVal) {
                                             if (retVal) {
                                               print("Success");
@@ -629,7 +627,6 @@ class ContactRowState extends State<ContactRow> {
                                       return;
                                     } else {
                                       _gs
-                                          .getEntityService()
                                           .addEmployee(widget.entity.entityId,
                                               contact, widget.empType)
                                           .then((retVal) {

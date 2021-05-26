@@ -409,10 +409,11 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 entityId: entity.entityId,
                                 entity: entity,
                                 preferredSlotTime: null,
-                                isAdmin: true,
+                                isAdmin: isAdmin,
                                 backRoute: ManageChildEntityListPage(
                                   entity: parentEntity,
                                 ),
+                                isOnlineToken: null,
                               )));
                               // } else {
                               //   Navigator.of(context).push(
