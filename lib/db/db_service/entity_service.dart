@@ -406,6 +406,7 @@ class EntityService {
 
     AppUser u;
     bool isSuccess = true;
+    Entity entity;
 
     final DocumentReference userRef = fStore.doc('users/' + phone);
     final DocumentReference entityRef = fStore.doc('entities/' + entityId);
@@ -545,7 +546,7 @@ class EntityService {
         tx.set(entityPrivateRef, ePrivate.toJson());
         tx.set(entityRef, ent.toJson());
 
-        return ent;
+        entity = ent;
       } catch (e) {
         print("Transactio Error: While making admin - " + e.toString());
         isSuccess = false;
@@ -560,7 +561,7 @@ class EntityService {
       throw cantRemoveAdminWithOneAdminException;
     }
 
-    return null;
+    return entity;
   }
 
   Future<bool> upsertChildEntityToParent(
@@ -736,6 +737,7 @@ class EntityService {
 
     AppUser u;
     bool isSuccess = true;
+    Entity entity;
 
     AccessDeniedException accessDeniedException;
     EntityDoesNotExistsException entityDoesNotExistsException;
@@ -873,7 +875,7 @@ class EntityService {
           tx.set(entityPrivateRef, ePrivate.toJson());
         }
 
-        return ent;
+        entity = ent;
       } catch (e) {
         print("Transactio Error: While removing admin - " + e.toString());
         isSuccess = false;
@@ -892,7 +894,7 @@ class EntityService {
       throw accessDeniedException;
     }
 
-    return null;
+    return entity;
   }
 
   Future<bool> addEntityToUserFavourite(MetaEntity me) async {
