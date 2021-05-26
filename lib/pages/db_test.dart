@@ -697,9 +697,7 @@ class DBTest {
     await _gs.getEntityService().removeEmployee('Child101-1', "+913611009823");
 
     try {
-      bool removed = await _gs
-          .getEntityService()
-          .removeEmployee('Child101-1', "+919999999999");
+      bool removed = await _gs.removeEmployee('Child101-1', "+919999999999");
       if (removed) {
         print(
             "Remove Admin failed as per expectation, as +919999999999 was the only admin --> FAILURE");
@@ -879,9 +877,8 @@ class DBTest {
     emp2.ph = "+919611006955";
     emp2.name = "FName2 User2";
 
-    bool admin6955 = await _gs
-        .getEntityService()
-        .addEmployee("Child101-3", emp2, EntityRole.Admin);
+    bool admin6955 =
+        await _gs.addEmployee("Child101-3", emp2, EntityRole.Admin);
 
     print(
         "+919611006955 added as an admin to the Child101-3, check on the real device");

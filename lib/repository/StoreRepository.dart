@@ -53,7 +53,7 @@ Future<EntityPrivate> fetchAdmins(String entityId) async {
 
 Future<bool> removeAdmin(String entityId, String phone) async {
   GlobalState gs = await GlobalState.getGlobalState();
-  bool status = await gs.getEntityService().removeEmployee(entityId, phone);
+  bool status = await gs.removeEmployee(entityId, phone);
   return status;
 }
 
