@@ -483,35 +483,31 @@ class ContactRowState extends State<ContactRow> {
                                           }
                                         }
                                         if (removeThisId != null) {
-                                          if (widget.isManager) {
-                                            return;
-                                          } else {
-                                            _gs
-                                                .getEntityService()
-                                                .removeEmployee(
-                                                  widget.entity.entityId,
-                                                  contact.ph,
-                                                )
-                                                .then((retVal) {
-                                              if (retVal) {
-                                                print("Success");
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.check,
-                                                    Duration(seconds: 3),
-                                                    "Manager Removed Successfully!",
-                                                    "",
-                                                    successGreenSnackBar);
-                                              } else {
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info,
-                                                    Duration(seconds: 3),
-                                                    "Oho! Could not Remove Manager.",
-                                                    "");
-                                              }
-                                            });
-                                          }
+                                          _gs
+                                              .getEntityService()
+                                              .removeEmployee(
+                                                widget.entity.entityId,
+                                                contact.ph,
+                                              )
+                                              .then((retVal) {
+                                            if (retVal) {
+                                              print("Success");
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.check,
+                                                  Duration(seconds: 3),
+                                                  "Manager Removed Successfully!",
+                                                  "",
+                                                  successGreenSnackBar);
+                                            } else {
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.info,
+                                                  Duration(seconds: 3),
+                                                  "Oho! Could not Remove Manager.",
+                                                  "");
+                                            }
+                                          });
 
                                           setState(() {
                                             contact = null;
@@ -539,6 +535,33 @@ class ContactRowState extends State<ContactRow> {
                                           }
                                         }
                                         if (removeThisId != null) {
+                                          //TODO call remove employee from Global state
+                                          _gs
+                                              .getEntityService()
+                                              .removeEmployee(
+                                                widget.entity.entityId,
+                                                contact.ph,
+                                              )
+                                              .then((retVal) {
+                                            if (retVal) {
+                                              print("Success");
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.check,
+                                                  Duration(seconds: 3),
+                                                  "Executive Removed Successfully!",
+                                                  "",
+                                                  successGreenSnackBar);
+                                            } else {
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.info,
+                                                  Duration(seconds: 3),
+                                                  "Oho! Could not Remove Executive.",
+                                                  "");
+                                            }
+                                          });
+
                                           setState(() {
                                             contact = null;
                                             // _entity.managers.removeWhere(

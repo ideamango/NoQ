@@ -45,12 +45,12 @@ class ManageEmployeePage extends StatefulWidget {
 }
 
 class _ManageEmployeePageState extends State<ManageEmployeePage> {
-  List<Employee> contactList = new List<Employee>();
-  List<Employee> executiveList = new List<Employee>();
+  List<Employee> managersList = [];
+  List<Employee> executiveList = [];
   MetaEntity metaEntity;
-  List<Widget> contactRowWidgets = new List<Widget>();
-  List<Widget> execRowWidgets = new List<Widget>();
-  List<Widget> contactRowWidgetsNew = new List<Widget>();
+  List<Widget> contactRowWidgets = [];
+  List<Widget> execRowWidgets = [];
+  List<Widget> contactRowWidgetsNew = [];
   bool _initCompleted = false;
   GlobalState _gs;
   Entity entity;
@@ -59,7 +59,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
   PersistentBottomSheetController bottomSheetController;
   final employeeListPagekey = new GlobalKey<ScaffoldState>();
   TextEditingController _adminItemController = new TextEditingController();
-  List<String> adminsList = new List<String>();
+  List<String> adminsList = [];
   final GlobalKey<FormFieldState> adminPhoneKey =
       new GlobalKey<FormFieldState>();
   String _item;
@@ -213,13 +213,10 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       contactRowWidgets.add(showCircularProgress());
     });
     //refreshContacts();
-    contactList
+    managersList
         .removeWhere((element) => element.id == event.eventData.toString());
 
-    processRefreshContactsWithTimer();
-    print("printing event.eventData");
-    print("In parent page" + event.eventData);
-    print(event.eventData);
+    refreshContacts();
   }
 
   void refreshOnExecutiveRemove(event, args) {
@@ -227,11 +224,10 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       execRowWidgets.clear();
       execRowWidgets.add(showCircularProgress());
     });
-    //refreshContacts();
-    processRefreshContactsWithTimer();
-    print("printing event.eventData");
-    print("In parent page" + event.eventData);
-    print(event.eventData);
+    managersList
+        .removeWhere((element) => element.id == event.eventData.toString());
+
+    refreshExecutives();
   }
 
   processRefreshContactsWithTimer() async {
@@ -262,13 +258,13 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       }
 
       if (!(Utils.isNullOrEmpty(entity.managers))) {
-        contactList = entity.managers;
-        contactList.forEach((element) {
+        managersList = entity.managers;
+        managersList.forEach((element) {
           contactRowWidgets.add(new ContactRow(
             contact: element,
             empType: EntityRole.Manager,
             entity: entity,
-            list: contactList,
+            list: managersList,
             isManager: widget.isManager,
           ));
         });
@@ -290,12 +286,12 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
 
   refreshContacts() {
     List<Widget> newList = new List<Widget>();
-    for (int i = 0; i < contactList.length; i++) {
+    for (int i = 0; i < managersList.length; i++) {
       newList.add(new ContactRow(
-        contact: contactList[i],
+        contact: managersList[i],
         empType: EntityRole.Manager,
         entity: entity,
-        list: contactList,
+        list: managersList,
         isManager: widget.isManager,
       ));
     }
@@ -303,7 +299,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       contactRowWidgets.clear();
       contactRowWidgets.addAll(newList);
     });
-    entity.managers = contactList;
+    entity.managers = managersList;
   }
 
   refreshExecutives() {
@@ -321,29 +317,29 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       execRowWidgets.clear();
       execRowWidgets.addAll(newList);
     });
-    entity.executives = contactList;
+    entity.executives = executiveList;
   }
 
   void _addNewContactRow() {
     Employee contact = new Employee();
     var uuid = new Uuid();
     contact.id = uuid.v1();
-    contactList.add(contact);
+    managersList.add(contact);
 
     List<Widget> newList = new List<Widget>();
     // for (int i = 0; i < contactList.length; i++) {
     newList.add(new ContactRow(
-      contact: contactList[contactList.length - 1],
+      contact: managersList[managersList.length - 1],
       empType: EntityRole.Manager,
       entity: entity,
-      list: contactList,
+      list: managersList,
       isManager: widget.isManager,
     ));
     // }
     setState(() {
       //  contactRowWidgets.clear();
       contactRowWidgets.addAll(newList);
-      entity.managers = contactList;
+      entity.managers = managersList;
       // _contactCount = _contactCount + 1;
     });
   }
@@ -890,7 +886,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                               //         style: errorTextStyle,
                               //       )
                               //     : Container(),
-                              if (!Utils.isNullOrEmpty(contactList))
+                              if (!Utils.isNullOrEmpty(managersList))
                                 Column(children: contactRowWidgets),
                             ]),
                           ]),
