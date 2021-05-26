@@ -390,7 +390,7 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<bool> addEmployee(
+  Future<Entity> addEmployee(
       String entityId, Employee employee, EntityRole role) async {
     User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
@@ -544,6 +544,8 @@ class EntityService {
         tx.set(userRef, u.toJson());
         tx.set(entityPrivateRef, ePrivate.toJson());
         tx.set(entityRef, ent.toJson());
+
+        return ent;
       } catch (e) {
         print("Transactio Error: While making admin - " + e.toString());
         isSuccess = false;
@@ -558,7 +560,7 @@ class EntityService {
       throw cantRemoveAdminWithOneAdminException;
     }
 
-    return isSuccess;
+    return null;
   }
 
   Future<bool> upsertChildEntityToParent(
@@ -725,7 +727,7 @@ class EntityService {
   }
 
   //Throws: CantRemoveAdminWithOneAdminException, AccessDeniedException,
-  Future<bool> removeEmployee(String entityId, String phone) async {
+  Future<Entity> removeEmployee(String entityId, String phone) async {
     //check of the current user is admin
     //remove from the user.entities collection
     //remove from the entity.admin collection
@@ -870,6 +872,8 @@ class EntityService {
           ePrivate.roles.remove(phone);
           tx.set(entityPrivateRef, ePrivate.toJson());
         }
+
+        return ent;
       } catch (e) {
         print("Transactio Error: While removing admin - " + e.toString());
         isSuccess = false;
@@ -888,7 +892,7 @@ class EntityService {
       throw accessDeniedException;
     }
 
-    return isSuccess;
+    return null;
   }
 
   Future<bool> addEntityToUserFavourite(MetaEntity me) async {

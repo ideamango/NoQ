@@ -27,6 +27,7 @@ import './tuple.dart';
 
 import './utils.dart';
 import 'package:package_info/package_info.dart';
+import 'db/db_model/employee.dart';
 import 'db/db_service/notification_service.dart';
 import 'db/db_service/user_service.dart';
 import 'enum/entity_role.dart';
@@ -374,6 +375,29 @@ class GlobalState {
     } else if (_entities.containsKey(id)) {
       return new Tuple(item1: _entities[id], item2: _entityState[id]);
     }
+  }
+
+  Future<bool> removeEmployee(String entityId, String phone) async {
+    Entity updatedEntity =
+        await _gs.getEntityService().removeEmployee(entityId, phone);
+    if (updatedEntity != null) {
+      putEntity(updatedEntity, false);
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> addEmployee(
+      String entityId, Employee employee, EntityRole role) async {
+    Entity updatedEntity =
+        await _gs.getEntityService().addEmployee(entityId, employee, role);
+    if (updatedEntity != null) {
+      putEntity(updatedEntity, false);
+      return true;
+    }
+
+    return false;
   }
 
   Future<bool> removeEntity(String id, [String parentId]) async {
