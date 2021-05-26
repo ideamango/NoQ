@@ -2693,7 +2693,7 @@ class _ManageChildEntityDetailsPageState
                                                         Row(
                                                           children: [
                                                             Text(
-                                                                'Enable Online Booking mode',
+                                                                'Enable Online mode of Interaction',
                                                                 style: TextStyle(
                                                                     fontSize:
                                                                         14)),
@@ -2713,7 +2713,7 @@ class _ManageChildEntityDetailsPageState
                                                         Container(
                                                           width: rowWidth * .7,
                                                           child: Text(
-                                                              '(Booking refers to the Service provided upon an In-person visit of the person to your place.)',
+                                                              ADMIN_INFO_ONLINE_MODE,
                                                               style: TextStyle(
                                                                   fontSize:
                                                                       10)),
@@ -2864,7 +2864,7 @@ class _ManageChildEntityDetailsPageState
                                                         Row(
                                                           children: [
                                                             Text(
-                                                                'Enable Offline Booking mode',
+                                                                'Allow in-person visit from Customers',
                                                                 style: TextStyle(
                                                                     fontSize:
                                                                         14)),
@@ -2884,7 +2884,7 @@ class _ManageChildEntityDetailsPageState
                                                         Container(
                                                           width: rowWidth * .7,
                                                           child: Text(
-                                                              '(Booking refers to the Service provided upon an In-person visit of the person to your place.)',
+                                                              ADMIN_INFO_OFFLINE_MODE,
                                                               style: TextStyle(
                                                                   fontSize:
                                                                       10)),
@@ -4194,7 +4194,8 @@ class _ManageChildEntityDetailsPageState
 
                                           _gs
                                               .removeEntity(
-                                                  serviceEntity.entityId)
+                                                  serviceEntity.entityId,
+                                                  parentEntityId)
                                               .then((value) {
                                             if (value) {
                                               Navigator.pop(context);

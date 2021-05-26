@@ -376,7 +376,7 @@ class GlobalState {
     }
   }
 
-  Future<bool> removeEntity(String id) async {
+  Future<bool> removeEntity(String id, [String parentId]) async {
     bool isDeleted = await _entityService.deleteEntity(id);
 
     if (isDeleted) {
@@ -384,6 +384,11 @@ class GlobalState {
       _currentUser.entityVsRole.remove(id);
       _entities.remove(id);
       _entityState.remove(id);
+      if (Utils.isNotNullOrEmpty(parentId)) {
+        Tuple<Entity, bool> parent = await getEntity(parentId, false);
+        Entity parentEnt = parent.item1;
+        parentEnt.removeChildEntity(id);
+      }
     }
     return isDeleted;
   }
