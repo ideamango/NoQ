@@ -265,6 +265,28 @@ class Entity {
         allowWalkinAppointment: json['allowWalkinAppointment']);
   }
 
+  bool removeChildEntity(String childEntityId) {
+    if (childEntities == null) {
+      return false;
+    }
+    int index = -1;
+    bool matched = false;
+    for (MetaEntity me in childEntities) {
+      index++;
+      if (me.entityId == childEntityId) {
+        matched = true;
+        break;
+      }
+    }
+
+    if (matched) {
+      childEntities.removeAt(index);
+      return true;
+    }
+
+    return false;
+  }
+
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
     return Address.fromJson(json);
   }

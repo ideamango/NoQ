@@ -27,6 +27,7 @@ import './tuple.dart';
 
 import './utils.dart';
 import 'package:package_info/package_info.dart';
+import 'db/db_model/employee.dart';
 import 'db/db_service/notification_service.dart';
 import 'db/db_service/user_service.dart';
 import 'enum/entity_role.dart';
@@ -376,7 +377,30 @@ class GlobalState {
     }
   }
 
-  Future<bool> removeEntity(String id) async {
+  Future<bool> removeEmployee(String entityId, String phone) async {
+    Entity updatedEntity =
+        await _gs.getEntityService().removeEmployee(entityId, phone);
+    if (updatedEntity != null) {
+      putEntity(updatedEntity, false);
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> addEmployee(
+      String entityId, Employee employee, EntityRole role) async {
+    Entity updatedEntity =
+        await _gs.getEntityService().addEmployee(entityId, employee, role);
+    if (updatedEntity != null) {
+      putEntity(updatedEntity, false);
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> removeEntity(String id, [String parentId]) async {
     bool isDeleted = await _entityService.deleteEntity(id);
 
     if (isDeleted) {
@@ -384,6 +408,11 @@ class GlobalState {
       _currentUser.entityVsRole.remove(id);
       _entities.remove(id);
       _entityState.remove(id);
+      if (Utils.isNotNullOrEmpty(parentId)) {
+        Tuple<Entity, bool> parent = await getEntity(parentId, false);
+        Entity parentEnt = parent.item1;
+        parentEnt.removeChildEntity(id);
+      }
     }
     return isDeleted;
   }

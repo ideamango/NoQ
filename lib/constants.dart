@@ -37,6 +37,12 @@ const VERIFICATION_PENDING = "Verification Pending";
 const VERIFICATION_VERIFIED = "Verified";
 const VERIFICATION_REJECTED = "Rejected";
 
+const ADMIN_INFO_ONLINE_MODE =
+    "Your customers will be able select Online consultation mode when they book a slot. You need to have good Internet connection and WhatsApp installed on the Phone for interaction with your customer.";
+
+const ADMIN_INFO_OFFLINE_MODE =
+    "Your customers can visit in-person to your place to avail the Service.";
+
 const WEEK_DAY_SUNDAY = 'sunday';
 const WEEK_DAY_MONDAY = 'monday';
 const WEEK_DAY_TUESDAY = 'tuesday';
