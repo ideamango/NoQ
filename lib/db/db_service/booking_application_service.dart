@@ -349,6 +349,7 @@ class BookingApplicationService {
           tok = lastTok;
         }
 
+        ba.isOnlineModeOfInteraction = enableVideoChat;
         tx.set(applicationRef, ba.toJson());
         tx.set(localCounterRef, localCounter.toJson());
         // if (globalCounter != null) {
