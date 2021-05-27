@@ -1212,7 +1212,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 8),
                         child: AutoSizeText(
-                          'ONLINE or WLAKIN',
+                          (ba.isOnlineModeOfInteraction) ? 'Online' : 'Walk-in',
                           minFontSize: 12,
                           maxFontSize: 14,
                           maxLines: 1,
