@@ -50,6 +50,8 @@ class BookingApplication {
 
   String notes;
 
+  bool isOnlineModeOfInteraction;
+
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {
       'id': id,
@@ -96,7 +98,8 @@ class BookingApplication {
       'preferredSlotTiming': (preferredSlotTiming != null)
           ? preferredSlotTiming.millisecondsSinceEpoch
           : null,
-      'notes': notes
+      'notes': notes,
+      'isOnlineModeOfInteraction': isOnlineModeOfInteraction
     };
 
     for (Field f in responseForm.getFormFields()) {
@@ -201,6 +204,8 @@ class BookingApplication {
     ba.preferredSlotTiming = (json['preferredSlotTiming'] != null)
         ? new DateTime.fromMillisecondsSinceEpoch(json['preferredSlotTiming'])
         : null;
+
+    ba.isOnlineModeOfInteraction = json['isOnlineModeOfInteraction'];
 
     return ba;
   }
