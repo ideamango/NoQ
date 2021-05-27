@@ -945,14 +945,15 @@ class _UserAccountPageState extends State<UserAccountPage>
                                 children: <Widget>[
                                   Container(
                                     height: MediaQuery.of(context).size.height *
-                                        .13,
+                                        .07,
                                     width:
-                                        MediaQuery.of(context).size.width * .35,
+                                        MediaQuery.of(context).size.width * .25,
                                     child: Image(
                                       image:
                                           AssetImage('assets/user_account.png'),
                                     ),
                                   ),
+                                  horizontalSpacer,
                                   RichText(
                                       text: TextSpan(
                                           style: userAccountHeadingTextStyle,
