@@ -139,8 +139,9 @@ class _UserHomePageState extends State<UserHomePage>
 
   @override
   void dispose() {
-    super.dispose();
+    _animationController.dispose();
     _state = null;
+    super.dispose();
   }
 
   Future<void> getGlobalState() async {

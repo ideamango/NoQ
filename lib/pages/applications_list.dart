@@ -868,6 +868,124 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 ),
               ),
             ]),
+            if (Utils.isNotNullOrEmpty(ba.tokenId))
+              Container(
+                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  padding: EdgeInsets.all(5),
+                  width: MediaQuery.of(context).size.width * .9,
+                  // color: Colors.cyan[100],
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blueGrey[100]),
+                      color: Colors.white,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width * .38,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AutoSizeText(
+                                'Token#',
+                                group: labelGroup,
+                                minFontSize: 10,
+                                maxFontSize: 11,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                              AutoSizeText(
+                                ('${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}'),
+                                minFontSize: 9,
+                                maxFontSize: 15,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    color: (ba.status == ApplicationStatus.NEW)
+                                        ? Colors.blue
+                                        : (ba.status == ApplicationStatus.ONHOLD
+                                            ? Colors.yellow[700]
+                                            : (ba.status ==
+                                                    ApplicationStatus.REJECTED
+                                                ? Colors.red
+                                                : (ba.status ==
+                                                        ApplicationStatus
+                                                            .APPROVED
+                                                    ? Colors.greenAccent[700]
+                                                    : (ba.status ==
+                                                            ApplicationStatus
+                                                                .COMPLETED
+                                                        ? Colors.purple
+                                                        : Colors.blueGrey)))),
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ]),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * .38,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AutoSizeText(
+                                'Time-Slot',
+                                group: labelGroup,
+                                minFontSize: 10,
+                                maxFontSize: 11,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                              horizontalSpacer,
+                              AutoSizeText(
+                                ('${DateFormat('yyyy-MM-dd – kk:mm').format(Utils.getTokenDate(ba.tokenId))}'),
+                                // group: medCondGroup,
+                                minFontSize: 9,
+                                maxFontSize: 15,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    color: (ba.status == ApplicationStatus.NEW)
+                                        ? Colors.blue
+                                        : (ba.status == ApplicationStatus.ONHOLD
+                                            ? Colors.yellow[700]
+                                            : (ba.status ==
+                                                    ApplicationStatus.REJECTED
+                                                ? Colors.red
+                                                : (ba.status ==
+                                                        ApplicationStatus
+                                                            .APPROVED
+                                                    ? Colors.greenAccent[700]
+                                                    : (ba.status ==
+                                                            ApplicationStatus
+                                                                .COMPLETED
+                                                        ? Colors.purple
+                                                        : Colors.blueGrey)))),
+                                    //  fontWeight: FontWeight.bold,
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ]),
+                      ),
+                    ],
+                  )),
+            if (Utils.isStrNullOrEmpty(ba.tokenId))
+              Container(
+                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                padding: EdgeInsets.all(5),
+                width: MediaQuery.of(context).size.width * .9,
+                // color: Colors.cyan[100],
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blueGrey[100]),
+                    color: Colors.white,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                child: Text('No Token Issues yet'),
+              ),
             ListView.builder(
               itemCount: listOfMeta.length,
               physics: NeverScrollableScrollPhysics(),
@@ -1065,180 +1183,68 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         ],
                       ),
                     ),
-                  if (Utils.isNotNullOrEmpty(ba.tokenId))
-                    Container(
-                        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        padding: EdgeInsets.all(5),
-                        width: MediaQuery.of(context).size.width * .9,
-                        // color: Colors.cyan[100],
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.blueGrey[100]),
-                            color: Colors.white,
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * .38,
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    AutoSizeText(
-                                      'Token#',
-                                      group: labelGroup,
-                                      minFontSize: 10,
-                                      maxFontSize: 11,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.clip,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    AutoSizeText(
-                                      ('${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}'),
-                                      minFontSize: 9,
-                                      maxFontSize: 15,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.clip,
-                                      style: TextStyle(
-                                          color: (ba.status ==
-                                                  ApplicationStatus.NEW)
-                                              ? Colors.blue
-                                              : (ba.status ==
-                                                      ApplicationStatus.ONHOLD
-                                                  ? Colors.yellow[700]
-                                                  : (ba.status ==
-                                                          ApplicationStatus
-                                                              .REJECTED
-                                                      ? Colors.red
-                                                      : (ba.status ==
-                                                              ApplicationStatus
-                                                                  .APPROVED
-                                                          ? Colors
-                                                              .greenAccent[700]
-                                                          : (ba.status ==
-                                                                  ApplicationStatus
-                                                                      .COMPLETED
-                                                              ? Colors.purple
-                                                              : Colors
-                                                                  .blueGrey)))),
-                                          fontFamily: 'Roboto'),
-                                    ),
-                                  ]),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .38,
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    AutoSizeText(
-                                      'Time-Slot',
-                                      group: labelGroup,
-                                      minFontSize: 10,
-                                      maxFontSize: 11,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.clip,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    horizontalSpacer,
-                                    AutoSizeText(
-                                      ('${DateFormat('yyyy-MM-dd – kk:mm').format(Utils.getTokenDate(ba.tokenId))}'),
-                                      // group: medCondGroup,
-                                      minFontSize: 9,
-                                      maxFontSize: 15,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.clip,
-                                      style: TextStyle(
-                                          color: (ba.status ==
-                                                  ApplicationStatus.NEW)
-                                              ? Colors.blue
-                                              : (ba.status ==
-                                                      ApplicationStatus.ONHOLD
-                                                  ? Colors.yellow[700]
-                                                  : (ba.status ==
-                                                          ApplicationStatus
-                                                              .REJECTED
-                                                      ? Colors.red
-                                                      : (ba.status ==
-                                                              ApplicationStatus
-                                                                  .APPROVED
-                                                          ? Colors
-                                                              .greenAccent[700]
-                                                          : (ba.status ==
-                                                                  ApplicationStatus
-                                                                      .COMPLETED
-                                                              ? Colors.purple
-                                                              : Colors
-                                                                  .blueGrey)))),
-                                          //  fontWeight: FontWeight.bold,
-                                          fontFamily: 'Roboto'),
-                                    ),
-                                  ]),
-                            ),
-                          ],
-                        )),
-                  if (Utils.isStrNullOrEmpty(ba.tokenId))
-                    Container(
-                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      padding: EdgeInsets.all(5),
-                      width: MediaQuery.of(context).size.width * .9,
-                      // color: Colors.cyan[100],
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.blueGrey[100]),
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: Text('No Token Issues yet'),
-                    ),
+                  verticalSpacer,
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        child: AutoSizeText(
-                          'Mode',
-                          group: labelGroup,
-                          minFontSize: 9,
-                          maxFontSize: 11,
-                          maxLines: 1,
-                          overflow: TextOverflow.clip,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'RalewayRegular'),
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.zero,
+                                  padding: EdgeInsets.zero,
+                                  child: AutoSizeText(
+                                    'Mode',
+                                    group: labelGroup,
+                                    minFontSize: 9,
+                                    maxFontSize: 11,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'RalewayRegular'),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.zero,
+                                  padding: EdgeInsets.zero,
+                                  child: AutoSizeText(
+                                    (ba.isOnlineModeOfInteraction)
+                                        ? 'Online'
+                                        : 'Walk-in',
+                                    minFontSize: 12,
+                                    maxFontSize: 14,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.indigo[900],
+                                        fontFamily: 'Roboto'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          (ba.isOnlineModeOfInteraction)
+                              ? Container(
+                                  padding: EdgeInsets.zero,
+                                  margin: EdgeInsets.symmetric(horizontal: 8),
+                                  child: Icon(
+                                    Icons.videocam,
+                                    size: 25,
+                                    color: highlightColor,
+                                  ))
+                              : SizedBox(
+                                  width: 0,
+                                  height: 0,
+                                ),
+                        ],
                       ),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 8),
-                        child: AutoSizeText(
-                          (ba.isOnlineModeOfInteraction) ? 'Online' : 'Walk-in',
-                          minFontSize: 12,
-                          maxFontSize: 14,
-                          maxLines: 1,
-                          overflow: TextOverflow.clip,
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.indigo[900],
-                              fontFamily: 'Roboto'),
-                        ),
-                      ),
-                      MaterialButton(
-                        child: Row(
-                          children: [Text("Join"), Icon(Icons.videocam)],
-                        ),
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.blueGrey[500]),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        onPressed: () {},
-                      )
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
@@ -1247,14 +1253,18 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           )));
                         },
                         child: Container(
-                          margin: EdgeInsets.only(bottom: 8),
-                          padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                          child: Text("View All Details..",
+                          padding: EdgeInsets.zero,
+                          child: Text("..show more",
                               style:
                                   TextStyle(color: Colors.blue, fontSize: 14)),
                         ),
                       ),
                     ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [],
                   ),
                 ],
               ),
