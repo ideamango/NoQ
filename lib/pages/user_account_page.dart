@@ -924,7 +924,7 @@ class _UserAccountPageState extends State<UserAccountPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                  height: MediaQuery.of(context).size.height * .78,
+                  height: MediaQuery.of(context).size.height * .75,
                   child: Scrollbar(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.all(
@@ -1234,7 +1234,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                   // padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                   height: MediaQuery.of(context).size.height * .05,
                   width: MediaQuery.of(context).size.width * .95,
-                  child: RaisedButton(
+                  child: MaterialButton(
                       color: btnColor,
                       textColor: Colors.white,
                       splashColor: highlightColor,

@@ -1,5 +1,6 @@
 import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/pages/token_alert.dart';
+import 'package:LESSs/services/url_services.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -1231,14 +1232,44 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             ),
                           ),
                           (ba.isOnlineModeOfInteraction)
-                              ? Container(
-                                  padding: EdgeInsets.zero,
-                                  margin: EdgeInsets.symmetric(horizontal: 8),
-                                  child: Icon(
-                                    Icons.videocam,
-                                    size: 25,
-                                    color: highlightColor,
-                                  ))
+                              ? GestureDetector(
+                                  onTap: () {
+                                    //Whatsapp launch
+                                    String phoneNo = ba.userId;
+                                    if (phoneNo != null && phoneNo != "") {
+                                      try {
+                                        launchWhatsApp(
+                                            message: whatsappMessageToPlaceOwner +
+                                                '${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}' +
+                                                "\n\n<Type your message here..>",
+                                            phone: phoneNo);
+                                      } catch (error) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.error,
+                                            Duration(seconds: 5),
+                                            "Could not connect to the Whatsapp number $phoneNo !!",
+                                            "Try again later");
+                                      }
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "Whatsapp contact information not found!!",
+                                          "");
+                                    }
+                                  },
+                                  child: Container(
+                                      padding: EdgeInsets.zero,
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 8),
+                                      child: Icon(
+                                        Icons.videocam,
+                                        size: 25,
+                                        color: highlightColor,
+                                      )),
+                                )
                               : SizedBox(
                                   width: 0,
                                   height: 0,
@@ -1254,7 +1285,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         },
                         child: Container(
                           padding: EdgeInsets.zero,
-                          child: Text("..show more",
+                          child: Text("..show all details",
                               style:
                                   TextStyle(color: Colors.blue, fontSize: 14)),
                         ),
