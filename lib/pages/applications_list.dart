@@ -1195,6 +1195,47 @@ class _ApplicationsListState extends State<ApplicationsList> {
                       child: Text('No Token Issues yet'),
                     ),
                   Row(
+                    children: [
+                      Container(
+                        child: AutoSizeText(
+                          'Mode',
+                          group: labelGroup,
+                          minFontSize: 9,
+                          maxFontSize: 11,
+                          maxLines: 1,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'RalewayRegular'),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 8),
+                        child: AutoSizeText(
+                          'ONLINE or WLAKIN',
+                          minFontSize: 12,
+                          maxFontSize: 14,
+                          maxLines: 1,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.indigo[900],
+                              fontFamily: 'Roboto'),
+                        ),
+                      ),
+                      MaterialButton(
+                        child: Row(
+                          children: [Text("Join"), Icon(Icons.videocam)],
+                        ),
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blueGrey[500]),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        onPressed: () {},
+                      )
+                    ],
+                  ),
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -1272,7 +1313,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           widget.metaEntity,
                                           bookingDate)
                                       .then((value) {
-                                    if (value) {
+                                    if (value != null) {
                                       setState(() {
                                         ba.status = ApplicationStatus.COMPLETED;
                                       });
@@ -1373,12 +1414,12 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           remarks[0],
                                           widget.metaEntity,
                                           bookingDate)
-                                      .then((value) {
-                                    if (value) {
+                                      .then((newBa) {
+                                    if (newBa != null) {
                                       setState(() {
                                         ba.status = ApplicationStatus.APPROVED;
                                         //set tokenId with new values from Server.
-                                        ba.tokenId = value.tokenId;
+                                        ba.tokenId = newBa.tokenId;
                                       });
                                       Utils.showMyFlushbar(
                                           context,
@@ -1485,7 +1526,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   setState(() {
                                     showLoading = false;
                                   });
-                                  if (value) {
+                                  if (value != null) {
                                     setState(() {
                                       ba.status = ApplicationStatus.ONHOLD;
                                     });
@@ -1593,7 +1634,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                         widget.metaEntity,
                                         bookingDate)
                                     .then((value) {
-                                  if (value) {
+                                  if (value != null) {
                                     setState(() {
                                       ba.status = ApplicationStatus.REJECTED;
                                     });

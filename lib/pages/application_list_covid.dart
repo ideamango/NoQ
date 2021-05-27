@@ -902,7 +902,7 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
                                       widget.metaEntity,
                                       ba.preferredSlotTiming)
                                   .then((value) {
-                                if (value) {
+                                if (value != null) {
                                   setState(() {
                                     ba.status = ApplicationStatus.COMPLETED;
                                   });
@@ -939,7 +939,7 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
                                       widget.metaEntity,
                                       ba.preferredSlotTiming)
                                   .then((value) {
-                                if (value) {
+                                if (value != null) {
                                   setState(() {
                                     ba.status = ApplicationStatus.APPROVED;
                                   });
@@ -979,7 +979,7 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
                                     widget.metaEntity,
                                     ba.preferredSlotTiming)
                                 .then((value) {
-                              if (value) {
+                              if (value != null) {
                                 setState(() {
                                   ba.status = ApplicationStatus.ONHOLD;
                                 });
@@ -1016,7 +1016,7 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
                                     widget.metaEntity,
                                     ba.preferredSlotTiming)
                                 .then((value) {
-                              if (value) {
+                              if (value != null) {
                                 setState(() {
                                   ba.status = ApplicationStatus.REJECTED;
                                 });
