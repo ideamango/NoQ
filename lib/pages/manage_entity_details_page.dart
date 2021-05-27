@@ -2661,81 +2661,80 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                         padding:
                                             EdgeInsets.fromLTRB(10, 0, 10, 0),
                                         width: rowWidth * .8,
-                                        child: MaterialButton(
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            padding: EdgeInsets.all(0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Container(
-                                                  //  width: rowWidth * .5,
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                        // child: MaterialButton(
+                                        //     visualDensity:
+                                        //         VisualDensity.compact,
+                                        //     padding: EdgeInsets.all(0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Container(
+                                              //  width: rowWidth * .5,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
                                                     children: [
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                              'Enable Online mode of Interaction',
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      14)),
-                                                          SizedBox(
-                                                            width:
-                                                                rowWidth * .1,
-                                                            child: Icon(
-                                                              Icons.info,
-                                                              color: Colors
-                                                                      .blueGrey[
-                                                                  600],
-                                                              size: 17,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Container(
-                                                        width: rowWidth * .7,
-                                                        child: Text(
-                                                            ADMIN_INFO_ONLINE_MODE,
-                                                            style: TextStyle(
-                                                                fontSize: 10)),
-                                                      )
+                                                      Text(
+                                                          'Enable Online mode of Interaction',
+                                                          style: TextStyle(
+                                                              fontSize: 14)),
+                                                      // SizedBox(
+                                                      //   width:
+                                                      //       rowWidth * .1,
+                                                      //   child: Icon(
+                                                      //     Icons.info,
+                                                      //     color: Colors
+                                                      //             .blueGrey[
+                                                      //         600],
+                                                      //     size: 17,
+                                                      //   ),
+                                                      // ),
                                                     ],
                                                   ),
-                                                ),
-                                              ],
+                                                  Container(
+                                                    width: rowWidth * .7,
+                                                    child: Text(
+                                                        ADMIN_INFO_ONLINE_MODE,
+                                                        style: TextStyle(
+                                                            fontSize: 10)),
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                            onPressed: () {
-                                              if (!_isVideoExpanded) {
-                                                setState(() {
-                                                  _isVideoExpanded = true;
-                                                  _videoMargin =
-                                                      EdgeInsets.fromLTRB(
-                                                          0, 0, 0, 5);
-                                                  _videoWidth =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _videoText = AutoSizeText(
-                                                      videoInfo,
-                                                      minFontSize: 8,
-                                                      maxFontSize: 14,
-                                                      style:
-                                                          textBotSheetTextStyle);
+                                          ],
+                                        ),
+                                        // onPressed: () {
+                                        //   if (!_isVideoExpanded) {
+                                        //     setState(() {
+                                        //       _isVideoExpanded = true;
+                                        //       _videoMargin =
+                                        //           EdgeInsets.fromLTRB(
+                                        //               0, 0, 0, 5);
+                                        //       _videoWidth =
+                                        //           MediaQuery.of(context)
+                                        //                   .size
+                                        //                   .width *
+                                        //               .9;
+                                        //       _videoText = AutoSizeText(
+                                        //           videoInfo,
+                                        //           minFontSize: 8,
+                                        //           maxFontSize: 14,
+                                        //           style:
+                                        //               textBotSheetTextStyle);
 
-                                                  _videoHeight = 60;
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  _isVideoExpanded = false;
-                                                  _videoWidth = 0;
-                                                  _videoHeight = 0;
-                                                });
-                                              }
-                                            }),
+                                        //       _videoHeight = 60;
+                                        //     });
+                                        //   } else {
+                                        //     setState(() {
+                                        //       _isVideoExpanded = false;
+                                        //       _videoWidth = 0;
+                                        //       _videoHeight = 0;
+                                        //     });
+                                        //   }
+                                        // }
+                                        //),
                                       ),
                                       SizedBox(
                                         height:
@@ -2826,81 +2825,76 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                         padding:
                                             EdgeInsets.fromLTRB(10, 0, 10, 0),
                                         width: rowWidth * .8,
-                                        child: MaterialButton(
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            padding: EdgeInsets.all(0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Container(
-                                                  // width: rowWidth * .7,
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                        // child: MaterialButton(
+                                        //     visualDensity:
+                                        //         VisualDensity.compact,
+                                        //     padding: EdgeInsets.all(0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Container(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
                                                     children: [
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                              'Allow in-person visit from Customers',
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      14)),
-                                                          SizedBox(
-                                                            width:
-                                                                rowWidth * .1,
-                                                            child: Icon(
-                                                              Icons.info,
-                                                              color: Colors
-                                                                      .blueGrey[
-                                                                  600],
-                                                              size: 17,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Container(
-                                                        width: rowWidth * .7,
-                                                        child: Text(
-                                                            ADMIN_INFO_OFFLINE_MODE,
-                                                            style: TextStyle(
-                                                                fontSize: 10)),
-                                                      ),
+                                                      Text(
+                                                          'Allow in-person visit from Customers',
+                                                          style: TextStyle(
+                                                              fontSize: 14)),
+                                                      // SizedBox(
+                                                      //   width: rowWidth * .1,
+                                                      //   child: Icon(
+                                                      //     Icons.info,
+                                                      //     color: Colors
+                                                      //         .blueGrey[600],
+                                                      //     size: 17,
+                                                      //   ),
+                                                      // ),
                                                     ],
                                                   ),
-                                                ),
-                                              ],
+                                                  Container(
+                                                    width: rowWidth * .7,
+                                                    child: Text(
+                                                        ADMIN_INFO_OFFLINE_MODE,
+                                                        style: TextStyle(
+                                                            fontSize: 10)),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                            onPressed: () {
-                                              if (!_isVideoExpanded) {
-                                                setState(() {
-                                                  _isVideoExpanded = true;
-                                                  _videoMargin =
-                                                      EdgeInsets.fromLTRB(
-                                                          0, 0, 0, 5);
-                                                  _videoWidth =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _videoText = AutoSizeText(
-                                                      videoInfo,
-                                                      minFontSize: 8,
-                                                      maxFontSize: 14,
-                                                      style:
-                                                          textBotSheetTextStyle);
+                                          ],
+                                        ),
+                                        // onPressed: () {
+                                        //   if (!_isVideoExpanded) {
+                                        //     setState(() {
+                                        //       _isVideoExpanded = true;
+                                        //       _videoMargin =
+                                        //           EdgeInsets.fromLTRB(
+                                        //               0, 0, 0, 5);
+                                        //       _videoWidth =
+                                        //           MediaQuery.of(context)
+                                        //                   .size
+                                        //                   .width *
+                                        //               .9;
+                                        //       _videoText = AutoSizeText(
+                                        //           videoInfo,
+                                        //           minFontSize: 8,
+                                        //           maxFontSize: 14,
+                                        //           style:
+                                        //               textBotSheetTextStyle);
 
-                                                  _videoHeight = 60;
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  _isVideoExpanded = false;
-                                                  _videoWidth = 0;
-                                                  _videoHeight = 0;
-                                                });
-                                              }
-                                            }),
+                                        //       _videoHeight = 60;
+                                        //     });
+                                        //   } else {
+                                        //     setState(() {
+                                        //       _isVideoExpanded = false;
+                                        //       _videoWidth = 0;
+                                        //       _videoHeight = 0;
+                                        //     });
+                                        //   }
+                                        // }),
                                       ),
                                       SizedBox(
                                         height:
