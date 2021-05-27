@@ -600,7 +600,7 @@ class BookingApplicationService {
   //To be called by Manager of the Entity who has restricted rights or by the Admin
   //Throws: SlotTimeNotDefinedCantApproveException, ApplicationStatusNotAllowed, TokenAlreadyExistsException
   //MaxTokenReachedByUserPerSlotException, SlotFullException, MaxTokenReachedByUserPerDayException,
-  Future<bool> updateApplicationStatus(
+  Future<BookingApplication> updateApplicationStatus(
       String applicationId,
       ApplicationStatus status,
       String note,
@@ -941,7 +941,7 @@ class BookingApplicationService {
       throw e;
     }
 
-    return requestProcessed;
+    return application;
   }
 
   Future<BookingApplicationCounter> getApplicationsOverview(
