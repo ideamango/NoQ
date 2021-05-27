@@ -121,10 +121,9 @@ class EntityRowState extends State<EntityRow> {
 
         if (isSavedOnServer) {
           Navigator.of(context).push(PageAnimation.createRoute(
-              ManageChildEntityListPage(entity: ent)));
+              ManageChildEntityListPage(entity: ent, isReadOnly: readOnly)));
         } else {
           //No entity created yet.. show msg to create entity first.
-
           Utils.showMyFlushbar(
               context,
               Icons.info_outline,

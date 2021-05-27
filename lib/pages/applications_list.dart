@@ -1377,6 +1377,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     if (value) {
                                       setState(() {
                                         ba.status = ApplicationStatus.APPROVED;
+                                        //set tokenId with new values from Server.
+                                        ba.tokenId = value.tokenId;
                                       });
                                       Utils.showMyFlushbar(
                                           context,

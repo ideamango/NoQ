@@ -29,7 +29,9 @@ import '../tuple.dart';
 
 class ManageChildEntityListPage extends StatefulWidget {
   final Entity entity;
-  ManageChildEntityListPage({Key key, @required this.entity}) : super(key: key);
+  final bool isReadOnly;
+  ManageChildEntityListPage({Key key, @required this.entity, this.isReadOnly})
+      : super(key: key);
   @override
   _ManageChildEntityListPageState createState() =>
       _ManageChildEntityListPageState();
@@ -65,23 +67,34 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 
     return GestureDetector(
         onTap: () {
-          categoryType = type;
-          childBottomSheetController.close();
-          childBottomSheetController = null;
-          //   Navigator.of(context).pop();
-          setState(() {
-            _subEntityType = categoryType;
-          });
-          //If user has selected any type then add a row else show msg to user
-          if (_subEntityType != null) {
-            _addNewServiceRow();
+          if (!widget.isReadOnly) {
+            categoryType = type;
+            childBottomSheetController.close();
+            childBottomSheetController = null;
+            //   Navigator.of(context).pop();
+            setState(() {
+              _subEntityType = categoryType;
+            });
+            //If user has selected any type then add a row else show msg to user
+            if (_subEntityType != null) {
+              _addNewServiceRow();
+            } else {
+              //Utils.showMyFlushbar(context, icon, duration, title, msg)
+              print("Select sth ");
+            }
+            EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
           } else {
-            //Utils.showMyFlushbar(context, icon, duration, title, msg)
-            print("Select sth ");
+            Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 5),
+                '$noEditPermission the child places', '');
           }
-          EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
         },
         child: Container(
+          foregroundDecoration: widget.isReadOnly
+              ? BoxDecoration(
+                  color: Colors.grey[50],
+                  backgroundBlendMode: BlendMode.saturation,
+                )
+              : BoxDecoration(),
           width: MediaQuery.of(context).size.width * .2,
           child: Column(
             children: <Widget>[
@@ -263,7 +276,16 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                         ),
                         onTap: () {
                           print("Tappped");
-                          showCategorySheet();
+                          if (!widget.isReadOnly) {
+                            showCategorySheet();
+                          } else {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info,
+                                Duration(seconds: 5),
+                                '$noEditPermission the child places',
+                                '');
+                          }
                         },
                       ),
                     ),
