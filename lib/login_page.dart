@@ -443,6 +443,9 @@ class _LoginPageState extends State<LoginPage> {
         break;
     }
 
+    setState(() {
+      showLoading = false;
+    });
     Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6), message,
         "Please try again later.");
   }

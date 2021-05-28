@@ -96,6 +96,9 @@ String bookNowMsg = "Book now to save time later!";
 
 String whatsappMessageToPlaceOwner = "Hey there! My LESSs Token number is ";
 String whatsappVideoToPlaceOwner_1 = "Hey there! My LESSs Token number is ";
+String whatsappVideoToUser_1 = "Hey there! Your LESSs Token number is ";
+String whatsappVideoToUser_2 =
+    "\n\nAre you ready for the Online Consultation. \nShall we start call?";
 String whatsappVideoToPlaceOwner_2 =
     "\n\nI am ready for the online consultation. \nShall we start call?";
 String whatsappMessage =
