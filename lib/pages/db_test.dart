@@ -33,8 +33,9 @@ import '../utils.dart';
 import '../enum/entity_role.dart';
 
 class DBTest {
-  String Covid_Vacination_center = "Selenium-Covid-Vacination-Center";
+  String Covid_Vacination_Center = "Selenium-Covid-Vacination-Center";
   String Test_Hospital_center = "TEST_HOSPITAL_CENTER";
+  String Test_Hospital_Child_Clinic = "TEST_HOSPITAL_CHILD_CLINIC";
   String Multi_Forms_School_ID = "Selenium-School_Multiple_Forms";
 
   GlobalState _gs;
@@ -145,6 +146,24 @@ class DBTest {
           .deleteApplicationsForEntity(Test_Hospital_center);
     } catch (e) {
       print("Test Selenium Hospital is not cleared");
+    }
+
+    try {
+      await _gs.getEntityService().deleteEntity(Test_Hospital_Child_Clinic);
+      await _gs
+          .getTokenService()
+          .deleteSlotsForEntity(Test_Hospital_Child_Clinic);
+      await _gs
+          .getTokenService()
+          .deleteTokensForEntity(Test_Hospital_Child_Clinic);
+      await _gs
+          .getTokenService()
+          .deleteTokenCountersForEntity(Test_Hospital_Child_Clinic);
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity(Test_Hospital_Child_Clinic);
+    } catch (e) {
+      print("Test Selenium Hospital Child clinic is not cleared");
     }
 
     try {
@@ -339,19 +358,19 @@ class DBTest {
     await _gs.getUserService().deleteCurrentUser();
 
     try {
-      await _gs.getEntityService().deleteEntity(Covid_Vacination_center);
-      await _gs.getTokenService().deleteSlotsForEntity(Covid_Vacination_center);
+      await _gs.getEntityService().deleteEntity(Covid_Vacination_Center);
+      await _gs.getTokenService().deleteSlotsForEntity(Covid_Vacination_Center);
       await _gs
           .getTokenService()
-          .deleteTokensForEntity(Covid_Vacination_center);
+          .deleteTokensForEntity(Covid_Vacination_Center);
       await _gs
           .getTokenService()
-          .deleteTokenCountersForEntity(Covid_Vacination_center);
+          .deleteTokenCountersForEntity(Covid_Vacination_Center);
       await _gs
           .getApplicationService()
-          .deleteApplicationsForEntity(Covid_Vacination_center);
+          .deleteApplicationsForEntity(Covid_Vacination_Center);
     } catch (e) {
-      print(Covid_Vacination_center + " is not cleared");
+      print(Covid_Vacination_Center + " is not cleared");
     }
 
     try {
@@ -2039,7 +2058,7 @@ class DBTest {
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
-        entityId: Covid_Vacination_center,
+        entityId: Covid_Vacination_Center,
         name: "Selenium Covid Vacination Center",
         address: adrs,
         advanceDays: 7,
@@ -2097,7 +2116,7 @@ class DBTest {
     //Case 3: Counter increment for Global and Local both
 
     Entity vacinationCenter =
-        await _gs.getEntityService().getEntity(Covid_Vacination_center);
+        await _gs.getEntityService().getEntity(Covid_Vacination_Center);
 
     for (int i = 0; i < 10; i++) {
       FormInputFieldText nameInput = bf.getFormFields()[0];
@@ -2163,7 +2182,7 @@ class DBTest {
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
-            Covid_Vacination_center, DateTime.now().year);
+            Covid_Vacination_Center, DateTime.now().year);
 
     // if (globalOverView.numberOfApproved == 0 &&
     //     globalOverView.numberOfNew == 10 &&
@@ -2193,7 +2212,7 @@ class DBTest {
         .getApplicationService()
         .getApplications(
             COVID_VACCINATION_BOOKING_FORM_ID,
-            Covid_Vacination_center,
+            Covid_Vacination_Center,
             null,
             null,
             null,
@@ -2206,7 +2225,7 @@ class DBTest {
             -1);
 
     Entity testingCenter =
-        await _gs.getEntityService().getEntity(Covid_Vacination_center);
+        await _gs.getEntityService().getEntity(Covid_Vacination_Center);
 
     BookingApplication bs1 = applications[0].item1;
     await _gs.getApplicationService().updateApplicationStatus(
@@ -2249,7 +2268,7 @@ class DBTest {
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
-            Covid_Vacination_center, DateTime.now().year);
+            Covid_Vacination_Center, DateTime.now().year);
 
     // if (globalOverView.numberOfApproved == 2 &&
     //     globalOverView.numberOfNew == 5 &&
@@ -2304,7 +2323,7 @@ class DBTest {
     List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
         await _gs.getApplicationService().getApplications(
             COVID_VACCINATION_BOOKING_FORM_ID,
-            Covid_Vacination_center,
+            Covid_Vacination_Center,
             ApplicationStatus.APPROVED,
             null,
             null,
@@ -2341,7 +2360,7 @@ class DBTest {
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
-            Covid_Vacination_center, DateTime.now().year);
+            Covid_Vacination_Center, DateTime.now().year);
 
     // if (globalOverView.numberOfApproved == 1 &&
     //     globalOverView.numberOfNew == 5 &&
@@ -2401,7 +2420,7 @@ class DBTest {
     List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
         await _gs.getApplicationService().getApplications(
             COVID_VACCINATION_BOOKING_FORM_ID,
-            Covid_Vacination_center,
+            Covid_Vacination_Center,
             ApplicationStatus.APPROVED,
             null,
             null,
@@ -2510,7 +2529,7 @@ class DBTest {
     List<Tuple<BookingApplication, DocumentSnapshot>> top5Applications =
         await _gs.getApplicationService().getApplications(
             COVID_VACCINATION_BOOKING_FORM_ID,
-            Covid_Vacination_center,
+            Covid_Vacination_Center,
             null,
             null,
             null,
@@ -2534,7 +2553,7 @@ class DBTest {
     List<Tuple<BookingApplication, DocumentSnapshot>> next5Applications =
         await _gs.getApplicationService().getApplications(
             COVID_VACCINATION_BOOKING_FORM_ID,
-            Covid_Vacination_center,
+            Covid_Vacination_Center,
             null,
             null,
             null,
@@ -2558,7 +2577,7 @@ class DBTest {
             .getApplicationService()
             .getApplications(
                 COVID_VACCINATION_BOOKING_FORM_ID,
-                Covid_Vacination_center,
+                Covid_Vacination_Center,
                 null,
                 null,
                 null,
@@ -3246,6 +3265,7 @@ class DBTest {
   }
 
   void createTestHospital() async {
+    print("Creating the Test Hospital...");
     Address adrs = new Address(
         city: "Hyderbad",
         state: "Telangana",
@@ -3253,12 +3273,6 @@ class DBTest {
         address: "Shop 61, Towli Chowk Bazar, Gachibowli");
 
     List<MetaForm> forms = [];
-
-    BookingForm hospitalDoctorConsultation = await _gs
-        .getApplicationService()
-        .getBookingForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
-    hospitalDoctorConsultation.autoApproved = true;
-    hospitalDoctorConsultation.allowedOnline = true;
 
     BookingForm hospitalMedicalCheckup = await _gs
         .getApplicationService()
@@ -3272,11 +3286,11 @@ class DBTest {
     hospitalAdmission.autoApproved = false;
     hospitalAdmission.allowedOnline = false;
 
-    forms.add(hospitalDoctorConsultation.getMetaForm());
     forms.add(hospitalMedicalCheckup.getMetaForm());
     forms.add(hospitalAdmission.getMetaForm());
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+
     Entity entity = new Entity(
         entityId: Test_Hospital_center,
         name: "Test Selenium Hospital",
@@ -3317,5 +3331,61 @@ class DBTest {
     } catch (e) {
       print("Exception occured " + e.toString());
     }
+
+    print("Test Hospital create.");
+
+    //create child medical clinic and diagnostics center
+
+    print("Creating the Test Hospital Child clinic...");
+    List<MetaForm> clinicForms = [];
+
+    BookingForm hospitalDoctorConsultation = await _gs
+        .getApplicationService()
+        .getBookingForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
+    hospitalDoctorConsultation.autoApproved = true;
+    hospitalDoctorConsultation.allowedOnline = true;
+    clinicForms.add(hospitalDoctorConsultation.getMetaForm());
+
+    Entity childClinic = new Entity(
+        entityId: Test_Hospital_Child_Clinic,
+        name: "Test Selenium Hospital Clinic",
+        address: adrs,
+        advanceDays: 7,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_FRIDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_MEDICAL_CLINIC,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_VERIFIED,
+        coordinates: geoPoint,
+        offer: null,
+        upiPhoneNumber: "+919611009823",
+        phone: "+918328592031",
+        upiId: "+919611009823",
+        whatsapp: "+918328592031",
+        forms: clinicForms,
+        maxTokensPerSlotByUser: 2,
+        maxTokensByUserInDay: 15,
+        allowOnlineAppointment: true,
+        allowWalkinAppointment: true);
+    try {
+      await _gs
+          .getEntityService()
+          .upsertChildEntityToParent(childClinic, entity.entityId);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+    print("Test Hospital clild clinic created.");
   }
 }
