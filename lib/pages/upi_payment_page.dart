@@ -67,7 +67,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
 
       if (Platform.isAndroid) {
         _appsFuture = UpiPay.getInstalledUpiApplications();
-        _upiAddressController.text = 'smita.agarwal123@okicici';
+        // _upiAddressController.text = 'smita.agarwal123@okicici';
         _upiAddressController.text = widget.upiId;
       }
       if (Platform.isIOS) {
