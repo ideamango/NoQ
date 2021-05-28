@@ -408,15 +408,12 @@ class _LoginPageState extends State<LoginPage> {
       case 'invalid-phone-number':
         message = "The provided phone number is not valid.";
         break;
-      case 'firebaseAuth':
-        message = 'Invalid phone number';
-        break;
       case 'too-many-requests':
         message =
             'You have sent too many requests, Account is disabled temporarily..';
         break;
       case 'invalid-verification-code':
-        message = 'OTP is invalid, Please try again.';
+        message = 'Phone number Or OTP is invalid, Please try again.';
         break;
       case "session-expired":
         message = 'The OTP has expired. Please click ReSend OTP.';
