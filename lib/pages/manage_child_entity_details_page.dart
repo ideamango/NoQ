@@ -2673,82 +2673,34 @@ class _ManageChildEntityDetailsPageState
                                       children: [
                                         Container(
                                           alignment: Alignment.centerLeft,
-                                          padding:
-                                              EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                          margin: EdgeInsets.zero,
+                                          padding: EdgeInsets.fromLTRB(
+                                              rowWidth * .03, 0, 0, 0),
                                           width: rowWidth * .8,
-                                          // child: MaterialButton(
-                                          //     visualDensity:
-                                          //         VisualDensity.compact,
-                                          //     padding: EdgeInsets.all(0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
                                               Container(
-                                                //  width: rowWidth * .5,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                            'Enable Online mode of Interaction',
-                                                            style: TextStyle(
-                                                                fontSize: 14)),
-                                                        // SizedBox(
-                                                        //   width:
-                                                        //       rowWidth * .1,
-                                                        //   child: Icon(
-                                                        //     Icons.info,
-                                                        //     color: Colors
-                                                        //             .blueGrey[
-                                                        //         600],
-                                                        //     size: 17,
-                                                        //   ),
-                                                        // ),
-                                                      ],
-                                                    ),
-                                                    Container(
-                                                      width: rowWidth * .7,
-                                                      child: Text(
-                                                          ADMIN_INFO_ONLINE_MODE,
-                                                          style: TextStyle(
-                                                              fontSize: 10)),
-                                                    )
-                                                  ],
+                                                margin: EdgeInsets.zero,
+                                                padding: EdgeInsets.zero,
+                                                width: rowWidth * .77,
+                                                child: AutoSizeText(
+                                                  'Enable Online mode of Interaction',
+                                                  minFontSize: 10,
+                                                  maxFontSize: 14,
                                                 ),
                                               ),
+                                              Container(
+                                                margin: EdgeInsets.zero,
+                                                width: rowWidth * .78,
+                                                child: Text(
+                                                    ADMIN_INFO_ONLINE_MODE,
+                                                    style: TextStyle(
+                                                        fontSize: 10)),
+                                              )
                                             ],
                                           ),
-                                          // onPressed: () {
-                                          //   if (!_isVideoExpanded) {
-                                          //     setState(() {
-                                          //       _isVideoExpanded = true;
-                                          //       _videoMargin =
-                                          //           EdgeInsets.fromLTRB(
-                                          //               0, 0, 0, 5);
-                                          //       _videoWidth =
-                                          //           MediaQuery.of(context)
-                                          //                   .size
-                                          //                   .width *
-                                          //               .9;
-                                          //       _videoText = AutoSizeText(
-                                          //           videoInfo,
-                                          //           minFontSize: 8,
-                                          //           maxFontSize: 14,
-                                          //           style:
-                                          //               textBotSheetTextStyle);
-
-                                          //       _videoHeight = 60;
-                                          //     });
-                                          //   } else {
-                                          //     setState(() {
-                                          //       _isVideoExpanded = false;
-                                          //       _videoWidth = 0;
-                                          //       _videoHeight = 0;
-                                          //     });
-                                          //   }
-                                          // }),
                                         ),
                                         SizedBox(
                                           height: MediaQuery.of(context)
@@ -2841,82 +2793,34 @@ class _ManageChildEntityDetailsPageState
                                       children: [
                                         Container(
                                           alignment: Alignment.centerLeft,
-                                          padding:
-                                              EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                          margin: EdgeInsets.only(bottom: 10),
+                                          padding: EdgeInsets.fromLTRB(
+                                              rowWidth * .03, 0, 0, 0),
                                           width: rowWidth * .8,
-                                          // child: MaterialButton(
-                                          //     visualDensity:
-                                          //         VisualDensity.compact,
-                                          //     padding: EdgeInsets.all(0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
                                               Container(
-                                                // width: rowWidth * .7,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                            'Allow in-person visit from Customers',
-                                                            style: TextStyle(
-                                                                fontSize: 14)),
-                                                        // SizedBox(
-                                                        //   width:
-                                                        //       rowWidth * .1,
-                                                        //   child: Icon(
-                                                        //     Icons.info,
-                                                        //     color: Colors
-                                                        //             .blueGrey[
-                                                        //         600],
-                                                        //     size: 17,
-                                                        //   ),
-                                                        // ),
-                                                      ],
-                                                    ),
-                                                    Container(
-                                                      width: rowWidth * .7,
-                                                      child: Text(
-                                                          ADMIN_INFO_OFFLINE_MODE,
-                                                          style: TextStyle(
-                                                              fontSize: 10)),
-                                                    ),
-                                                  ],
+                                                margin: EdgeInsets.zero,
+                                                padding: EdgeInsets.zero,
+                                                width: rowWidth * .77,
+                                                child: AutoSizeText(
+                                                  'Allow in-person visit from Customers',
+                                                  minFontSize: 10,
+                                                  maxFontSize: 14,
                                                 ),
                                               ),
+                                              Container(
+                                                margin: EdgeInsets.zero,
+                                                width: rowWidth * .78,
+                                                child: Text(
+                                                    ADMIN_INFO_OFFLINE_MODE,
+                                                    style: TextStyle(
+                                                        fontSize: 10)),
+                                              )
                                             ],
                                           ),
-                                          // onPressed: () {
-                                          //   if (!_isVideoExpanded) {
-                                          //     setState(() {
-                                          //       _isVideoExpanded = true;
-                                          //       _videoMargin =
-                                          //           EdgeInsets.fromLTRB(
-                                          //               0, 0, 0, 5);
-                                          //       _videoWidth =
-                                          //           MediaQuery.of(context)
-                                          //                   .size
-                                          //                   .width *
-                                          //               .9;
-                                          //       _videoText = AutoSizeText(
-                                          //           videoInfo,
-                                          //           minFontSize: 8,
-                                          //           maxFontSize: 14,
-                                          //           style:
-                                          //               textBotSheetTextStyle);
-
-                                          //       _videoHeight = 60;
-                                          //     });
-                                          //   } else {
-                                          //     setState(() {
-                                          //       _isVideoExpanded = false;
-                                          //       _videoWidth = 0;
-                                          //       _videoHeight = 0;
-                                          //     });
-                                          //   }
-                                          // }),
                                         ),
                                         SizedBox(
                                           height: MediaQuery.of(context)

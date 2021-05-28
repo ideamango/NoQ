@@ -67,6 +67,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
 
       if (Platform.isAndroid) {
         _appsFuture = UpiPay.getInstalledUpiApplications();
+        // _upiAddressController.text = 'smita.agarwal123@okicici';
         _upiAddressController.text = widget.upiId;
       }
       if (Platform.isIOS) {
@@ -135,20 +136,72 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     setState(() {
       _amountError = null;
     });
+    print(_upiAddressController.text);
 
     final transactionRef = Random.secure().nextInt(1 << 32).toString();
     print("Starting transaction with id $transactionRef");
 
-    final a = await UpiPay.initiateTransaction(
+    final response = await UpiPay.initiateTransaction(
       amount: _amountController.text,
       app: app.upiApplication,
       receiverName: 'LESSs',
-      receiverUpiAddress: upiId,
+      receiverUpiAddress: _upiAddressController.text,
       // receiverUpiAddress: _upiAddressController.text,
       transactionRef: transactionRef,
       merchantCode: '7372',
-    );
-    print(a);
+    ).onError((error, stackTrace) => handleUpiPayErrors(error));
+    print(response);
+    if (response.status == UpiTransactionStatus.failure) {
+      Utils.showMyFlushbar(
+          context,
+          Icons.error,
+          Duration(seconds: 6),
+          "Could not process UPI payment at this time.",
+          "Try again with correct UPI Id.",
+          Colors.red);
+    }
+  }
+
+  handleUpiPayErrors(dynamic error) {
+    print(error.toString());
+    String mainMsg;
+    String subMsg;
+    switch (error.runtimeType) {
+      case InvalidAmountException:
+        String errorMessage = (error as InvalidAmountException).message;
+        subMsg = "Please enter correct amount and try again.";
+        if (errorMessage.contains('greater than 1')) {
+          mainMsg = 'Amount must be greater than 1';
+        } else if (errorMessage.contains('not a valid')) {
+          mainMsg = 'The amount entered is not a valid Number.';
+        } else if (errorMessage.contains('upper limit')) {
+          mainMsg =
+              'Amount must be less then 1,00,000 since that is the upper limit per UPI transaction';
+        }
+
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            mainMsg, subMsg, Colors.red);
+        break;
+      case InvalidAmountException:
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 6),
+            "Could not process UPI payment at this time.",
+            "Try again with correct UPI Id.",
+            Colors.red);
+        break;
+
+      default:
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 5),
+            "Could not process UPI payment at this time.",
+            error.toString(),
+            Colors.red);
+        break;
+    }
   }
 
   _launchURL(String toMailId, String subject, String body) async {
