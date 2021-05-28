@@ -412,6 +412,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   var labelGroup = AutoSizeGroup();
   var responseGroup = AutoSizeGroup();
+  var btnLabelGroup = AutoSizeGroup();
   Widget buildChildItem(Field field, BookingApplication ba) {
     Widget fieldWidget = SizedBox();
     print(field.label);
@@ -1312,13 +1313,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    margin: EdgeInsets.zero,
-                    padding: EdgeInsets.zero,
+                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                     width: cardWidth * .2,
                     child: IconButton(
                         alignment: Alignment.center,
                         //    visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 8),
                         color: (ba.status != ApplicationStatus.COMPLETED &&
                                 ba.status != ApplicationStatus.CANCELLED)
                             ? Colors.purple[400]
@@ -1388,19 +1389,26 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           }
                         },
                         icon: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.thumb_up,
                               size: 21,
                             ),
-                            SizedBox(
-                              height: 2,
+                            Container(
+                              width: cardWidth * .2,
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              child: AutoSizeText('COMPLETE',
+                                  group: btnLabelGroup,
+                                  minFontSize: 8,
+                                  maxFontSize: 13,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: Colors.blueGrey[900],
+                                      fontFamily: 'Roboto')),
                             ),
-                            Text('COMPLETE',
-                                style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.blueGrey[900],
-                                    fontFamily: 'Roboto')),
                           ],
                         )),
                   ),
@@ -1412,8 +1420,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     color: Colors.blueGrey[400],
                   ),
                   Container(
-                    margin: EdgeInsets.zero,
-                    padding: EdgeInsets.zero,
+                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                     width: cardWidth * .2,
                     child: IconButton(
                         alignment: Alignment.center,
@@ -1494,19 +1502,26 @@ class _ApplicationsListState extends State<ApplicationsList> {
 //Update application status change on server.
                         },
                         icon: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.check_circle,
                               size: 22,
                             ),
-                            SizedBox(
-                              height: 2,
+                            Container(
+                              width: cardWidth * .2,
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              child: AutoSizeText('APPROVE',
+                                  group: btnLabelGroup,
+                                  minFontSize: 8,
+                                  maxFontSize: 13,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: Colors.blueGrey[900],
+                                      fontFamily: 'Roboto')),
                             ),
-                            Text('APPROVE',
-                                style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.blueGrey[900],
-                                    fontFamily: 'Roboto')),
                           ],
                         )),
                   ),
@@ -1518,13 +1533,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     color: Colors.blueGrey[400],
                   ),
                   Container(
-                    margin: EdgeInsets.zero,
-                    padding: EdgeInsets.zero,
+                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                     width: cardWidth * .2,
                     child: IconButton(
                       alignment: Alignment.center,
                       //    visualDensity: VisualDensity.compact,
-                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                      padding: const EdgeInsets.all(0),
                       visualDensity: VisualDensity.compact,
 
                       color: (ba.status != ApplicationStatus.COMPLETED &&
@@ -1605,19 +1620,26 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         }
                       },
                       icon: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.pan_tool_rounded,
                             size: 19,
                           ),
-                          SizedBox(
-                            height: 2,
+                          Container(
+                            width: cardWidth * .2,
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: AutoSizeText('ON-HOLD',
+                                group: btnLabelGroup,
+                                minFontSize: 8,
+                                maxFontSize: 13,
+                                maxLines: 1,
+                                style: TextStyle(
+                                    color: Colors.blueGrey[900],
+                                    fontFamily: 'Roboto')),
                           ),
-                          Text('ON-HOLD',
-                              style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.blueGrey[900],
-                                  fontFamily: 'Roboto')),
                         ],
                       ),
                     ),
@@ -1630,8 +1652,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     color: Colors.blueGrey[400],
                   ),
                   Container(
-                    margin: EdgeInsets.zero,
-                    padding: EdgeInsets.zero,
+                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                     width: cardWidth * .2,
                     child: IconButton(
                       // visualDensity: VisualDensity.compact,
@@ -1710,19 +1732,26 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         }
                       },
                       icon: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.cancel,
                             size: 23,
                           ),
-                          SizedBox(
-                            height: 2,
+                          Container(
+                            width: cardWidth * .2,
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: AutoSizeText('REJECT',
+                                group: btnLabelGroup,
+                                minFontSize: 8,
+                                maxFontSize: 13,
+                                maxLines: 1,
+                                style: TextStyle(
+                                    color: Colors.blueGrey[900],
+                                    fontFamily: 'Roboto')),
                           ),
-                          Text('REJECT',
-                              style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.blueGrey[900],
-                                  fontFamily: 'Roboto')),
                         ],
                       ),
                     ),
