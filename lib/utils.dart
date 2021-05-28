@@ -661,7 +661,7 @@ class Utils {
     DateFormat formatter = DateFormat('-yyMMdd-hhmm-');
     String formattedDate = formatter.format(dateTime);
 
-    displayName = displayName + formattedDate + "-" + number;
+    displayName = displayName + formattedDate + number;
     return displayName;
   }
 

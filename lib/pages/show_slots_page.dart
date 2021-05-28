@@ -271,16 +271,13 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                               ),
                               if (entitySupportsVideo && !entitySupportsOffline)
                                 Text(
-                                  '* ' +
-                                      INFORMATION_ONLY_ONLINE_CONSULTATION +
-                                      '\n',
+                                  INFORMATION_ONLY_ONLINE_CONSULTATION + '\n',
                                   style: TextStyle(
                                       fontSize: 11, color: Colors.indigo),
                                 ),
                               if (entitySupportsVideo && entitySupportsOffline)
                                 Text(
-                                  '* ' +
-                                      INFORMATION_RECOMMEND_ONLINE_CONSULTATION +
+                                  INFORMATION_RECOMMEND_ONLINE_CONSULTATION +
                                       '\n',
                                   style: TextStyle(
                                       fontSize: 11, color: Colors.deepPurple),
