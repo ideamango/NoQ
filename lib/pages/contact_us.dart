@@ -399,7 +399,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                             "") {
                                       try {
                                         launchWhatsApp(
-                                            message: whatsappContactUsMsg,
+                                            message:
+                                                'Hello, This is ${_nameController.text}. \nIt\'s a $_reasonType regarding LESSs app.\nIt is \"${_msgController.text}\".',
                                             phone: _state
                                                 .getConfigurations()
                                                 .whatsappPhone);

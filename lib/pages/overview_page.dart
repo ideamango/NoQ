@@ -83,13 +83,12 @@ class _OverviewPageState extends State<OverviewPage> {
       } else
         initCompleted = true;
     });
-
-    Future.delayed(Duration(seconds: 1)).then((value) {
+    if (mounted) {
       setState(() {
         _completedCount = _bookingApplicationsOverview.numberOfCompleted;
         _totalReceivedCount = _bookingApplicationsOverview.totalApplications;
       });
-    });
+    }
   }
 
   Future<void> getGlobalState() async {
