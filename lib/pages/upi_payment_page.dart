@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:upi_pay/upi_pay.dart';
 import '../constants.dart';
@@ -131,6 +132,9 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
       setState(() {
         _amountError = err;
       });
+
+      Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6), err,
+          "Please enter correct amount and try again.", Colors.red);
       return;
     }
     setState(() {
@@ -157,7 +161,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
           Icons.error,
           Duration(seconds: 6),
           "Could not process UPI payment at this time.",
-          "Try again with correct UPI Id.",
+          "The UPI Id or Amount is incorrect.",
           Colors.red);
     }
   }
@@ -378,6 +382,17 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                               ],
                             ),
                           ),
+                          Container(
+                              height: MediaQuery.of(context).size.height * .075,
+                              width: MediaQuery.of(context).size.width * .9,
+                              margin: EdgeInsets.only(top: 8, bottom: 5),
+                              padding: EdgeInsets.zero,
+                              child: AutoSizeText(
+                                directUpiPayMsg,
+                                minFontSize: 12,
+                                maxFontSize: 15,
+                                style: TextStyle(color: Colors.cyan[800]),
+                              )),
                           Container(
                             height: MediaQuery.of(context).size.height * .53,
                             margin: EdgeInsets.only(top: 20, bottom: 10),
@@ -638,10 +653,17 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
 
 String _validateAmount(String value) {
   if (value.isEmpty) {
-    return 'Amount is required.';
+    return 'Amount is required for payment.';
   }
   if (double.tryParse(value) == null) {
     return 'Amount is not a valid number.';
   }
+  if (double.tryParse(value) < 1) {
+    return 'Amount must be greater than 1.';
+  }
+  if (double.tryParse(value) > 100000) {
+    return 'Amount must be less then 1,00,000 since that is the upper limit per UPI transaction.';
+  }
+
   return null;
 }

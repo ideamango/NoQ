@@ -21,14 +21,14 @@ class OverviewPage extends StatefulWidget {
   final String bookingFormId;
   final String bookingFormName;
   final MetaEntity metaEntity;
-  final bool isExec;
+  final bool isReadOnly;
 
   OverviewPage(
       {Key key,
       @required this.bookingFormId,
       @required this.bookingFormName,
       @required this.metaEntity,
-      @required this.isExec})
+      @required this.isReadOnly})
       : super(key: key);
   @override
   _OverviewPageState createState() => _OverviewPageState();
@@ -83,13 +83,12 @@ class _OverviewPageState extends State<OverviewPage> {
       } else
         initCompleted = true;
     });
-
-    Future.delayed(Duration(seconds: 1)).then((value) {
+    if (mounted) {
       setState(() {
         _completedCount = _bookingApplicationsOverview.numberOfCompleted;
         _totalReceivedCount = _bookingApplicationsOverview.totalApplications;
       });
-    });
+    }
   }
 
   Future<void> getGlobalState() async {
@@ -118,7 +117,9 @@ class _OverviewPageState extends State<OverviewPage> {
               entityId: widget.metaEntity.entityId,
               entity: null,
               preferredSlotTime: null,
-              isAdmin: true,
+              isFullAccess: !widget.isReadOnly,
+              forUser: false,
+              isOnlineToken: false,
               backRoute: ManageEntityListPage(),
             ),
             titleTxt: pageTitle,
@@ -192,11 +193,11 @@ class _OverviewPageState extends State<OverviewPage> {
 
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(ApplicationsList(
-                              metaEntity: widget.metaEntity,
-                              bookingFormId: widget.bookingFormId,
-                              status: ApplicationStatus.NEW,
-                              titleText: "New Applications",
-                            )));
+                                    metaEntity: widget.metaEntity,
+                                    bookingFormId: widget.bookingFormId,
+                                    status: ApplicationStatus.NEW,
+                                    titleText: "New Applications",
+                                    isReadOnly: widget.isReadOnly)));
                           },
                           child: Card(
                             elevation: 20,
@@ -261,11 +262,11 @@ class _OverviewPageState extends State<OverviewPage> {
                             print("Showing how to book time-slot");
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(ApplicationsList(
-                              metaEntity: widget.metaEntity,
-                              bookingFormId: widget.bookingFormId,
-                              status: ApplicationStatus.INPROCESS,
-                              titleText: "In-Process Applications",
-                            )));
+                                    metaEntity: widget.metaEntity,
+                                    bookingFormId: widget.bookingFormId,
+                                    status: ApplicationStatus.INPROCESS,
+                                    titleText: "In-Process Applications",
+                                    isReadOnly: widget.isReadOnly)));
                           },
                           child: Card(
                             elevation: 20,
@@ -335,11 +336,11 @@ class _OverviewPageState extends State<OverviewPage> {
                             print("Showing how to book time-slot");
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(ApplicationsList(
-                              metaEntity: widget.metaEntity,
-                              bookingFormId: widget.bookingFormId,
-                              status: ApplicationStatus.REJECTED,
-                              titleText: "Rejected Applications",
-                            )));
+                                    metaEntity: widget.metaEntity,
+                                    bookingFormId: widget.bookingFormId,
+                                    status: ApplicationStatus.REJECTED,
+                                    titleText: "Rejected Applications",
+                                    isReadOnly: widget.isReadOnly)));
                           },
                           child: Card(
                             elevation: 20,
@@ -408,11 +409,11 @@ class _OverviewPageState extends State<OverviewPage> {
                             print("Showing how to book time-slot");
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(ApplicationsList(
-                              metaEntity: widget.metaEntity,
-                              bookingFormId: widget.bookingFormId,
-                              status: ApplicationStatus.CANCELLED,
-                              titleText: "Cancelled Applications",
-                            )));
+                                    metaEntity: widget.metaEntity,
+                                    bookingFormId: widget.bookingFormId,
+                                    status: ApplicationStatus.CANCELLED,
+                                    titleText: "Cancelled Applications",
+                                    isReadOnly: widget.isReadOnly)));
                           },
                           child: Card(
                             elevation: 20,
@@ -484,11 +485,11 @@ class _OverviewPageState extends State<OverviewPage> {
                             print("Showing how to book time-slot");
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(ApplicationsList(
-                              metaEntity: widget.metaEntity,
-                              bookingFormId: widget.bookingFormId,
-                              status: ApplicationStatus.ONHOLD,
-                              titleText: "On-Hold Applications",
-                            )));
+                                    metaEntity: widget.metaEntity,
+                                    bookingFormId: widget.bookingFormId,
+                                    status: ApplicationStatus.ONHOLD,
+                                    titleText: "On-Hold Applications",
+                                    isReadOnly: widget.isReadOnly)));
                           },
                           child: Card(
                             elevation: 20,
@@ -554,11 +555,11 @@ class _OverviewPageState extends State<OverviewPage> {
                             print("Showing how to book time-slot");
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(ApplicationsList(
-                              metaEntity: widget.metaEntity,
-                              bookingFormId: widget.bookingFormId,
-                              status: ApplicationStatus.APPROVED,
-                              titleText: "Approved Applications",
-                            )));
+                                    metaEntity: widget.metaEntity,
+                                    bookingFormId: widget.bookingFormId,
+                                    status: ApplicationStatus.APPROVED,
+                                    titleText: "Approved Applications",
+                                    isReadOnly: widget.isReadOnly)));
                           },
                           child: Card(
                             elevation: 20,
@@ -628,13 +629,13 @@ class _OverviewPageState extends State<OverviewPage> {
                         onTap: () {
                           //User clicked on show how, lets show them.
                           print("Showing how to book time-slot");
-                          Navigator.of(context)
-                              .push(PageAnimation.createRoute(ApplicationsList(
-                            metaEntity: widget.metaEntity,
-                            bookingFormId: widget.bookingFormId,
-                            status: ApplicationStatus.COMPLETED,
-                            titleText: "Completed Applications",
-                          )));
+                          Navigator.of(context).push(PageAnimation.createRoute(
+                              ApplicationsList(
+                                  metaEntity: widget.metaEntity,
+                                  bookingFormId: widget.bookingFormId,
+                                  status: ApplicationStatus.COMPLETED,
+                                  titleText: "Completed Applications",
+                                  isReadOnly: widget.isReadOnly)));
                         },
                         child: Container(
                             width: MediaQuery.of(context).size.width * .9,

@@ -99,6 +99,8 @@ String donationMsg1 =
 String yourTurnUserMessage =
     "It's not your time yet!\n\nYour turn will come in 5 hours and 34 mins";
 
+String directUpiPayMsg =
+    'If the payment doesn\'t go through, you can directly pay using the above UPI Id.';
 String whatsappMessageToPlaceOwner = "Hey there! My LESSs Token number is ";
 String whatsappVideoToPlaceOwner_1 = "Hey there! My LESSs Token number is ";
 String whatsappVideoToUser_1 = "Hey there! Your LESSs Token number is ";

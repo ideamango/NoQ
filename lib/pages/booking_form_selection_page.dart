@@ -22,7 +22,8 @@ class BookingFormSelection extends StatefulWidget {
   final String entityId;
   final Entity entity;
   final DateTime preferredSlotTime;
-  final dynamic isAdmin;
+  final dynamic isFullAccess;
+  final bool forUser;
   final bool isOnlineToken;
   final dynamic backRoute;
   BookingFormSelection(
@@ -30,7 +31,8 @@ class BookingFormSelection extends StatefulWidget {
       @required this.entityId,
       @required this.entity,
       @required this.preferredSlotTime,
-      @required this.isAdmin,
+      @required this.isFullAccess,
+      @required this.forUser,
       @required this.isOnlineToken,
       @required this.backRoute})
       : super(key: key);
@@ -81,7 +83,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
   void _handleRadioValueChange1(int value) {
     setState(() {
       _selectedValue = value;
-      if (!widget.isAdmin) {
+      if (widget.forUser) {
         dashBoardRoute = CreateFormFields(
           bookingFormId: forms[_selectedValue].id,
           metaEntity: entity.getMetaEntity(),
@@ -89,26 +91,19 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
           isOnlineToken: widget.isOnlineToken,
           backRoute: SearchEntityPage(),
         );
-
-        // fwdRoute = BookingApplicationFormPage(
-        //   bookingFormId: forms[_selectedValue].id,
-        //   metaEntity: widget.metaEntity,
-        //   //TODO: getting null check this - SMITA
-        //   preferredSlotTime: widget.preferredSlotTime,
-        //   backRoute: SearchEntityPage(),
-        // );
       } else {
         reportsRoute = EntityApplicationListPage(
           bookingFormId: forms[_selectedValue].id,
           metaEntity: entity.getMetaEntity(),
           bookingFormName: forms[_selectedValue].name,
+          isReadOnly: !widget.isFullAccess,
         );
         //If admin then show overview page as per selected form id
         dashBoardRoute = OverviewPage(
           bookingFormId: forms[_selectedValue].id,
           metaEntity: entity.getMetaEntity(),
           bookingFormName: forms[_selectedValue].name,
-          isExec: !widget.isAdmin,
+          isReadOnly: !widget.isFullAccess,
         );
       }
     });
@@ -248,32 +243,32 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        if (widget.isAdmin)
-                          MaterialButton(
-                              minWidth: MediaQuery.of(context).size.width * .4,
-                              child: Text("Reports"),
-                              color: Colors.white,
-                              splashColor: highlightColor.withOpacity(.8),
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[500]),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0))),
-                              onPressed: () {
-                                if (_selectedValue == -1) {
-                                  print("Nothing selected");
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 5),
-                                      "No Form Selected!!",
-                                      "Please select something..");
-                                } else {
-                                  if (reportsRoute != null)
-                                    Navigator.of(context).push(
-                                        PageAnimation.createRoute(
-                                            reportsRoute));
-                                }
-                              }),
+                        // if (!widget.forUser)
+                        //   MaterialButton(
+                        //       minWidth: MediaQuery.of(context).size.width * .4,
+                        //       child: Text("Reports"),
+                        //       color: Colors.white,
+                        //       splashColor: highlightColor.withOpacity(.8),
+                        //       shape: RoundedRectangleBorder(
+                        //           side: BorderSide(color: Colors.blueGrey[500]),
+                        //           borderRadius:
+                        //               BorderRadius.all(Radius.circular(5.0))),
+                        //       onPressed: () {
+                        //         if (_selectedValue == -1) {
+                        //           print("Nothing selected");
+                        //           Utils.showMyFlushbar(
+                        //               context,
+                        //               Icons.error,
+                        //               Duration(seconds: 5),
+                        //               "No Form Selected!!",
+                        //               "Please select something..");
+                        //         } else {
+                        //           if (reportsRoute != null)
+                        //             Navigator.of(context).push(
+                        //                 PageAnimation.createRoute(
+                        //                     reportsRoute));
+                        //         }
+                        //       }),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * .11,
                         ),
@@ -284,9 +279,8 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                 side: BorderSide(color: btnDisabledolor),
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(5.0))),
-                            child: (widget.isAdmin)
-                                ? Text("Dashboard")
-                                : Row(
+                            child: (widget.forUser)
+                                ? Row(
                                     children: [
                                       horizontalSpacer,
                                       Text("Next ",
@@ -338,7 +332,8 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                       //         ? Colors.white
                                       //         : btnColor),
                                     ],
-                                  ),
+                                  )
+                                : Text("Dashboard"),
                             color:
                                 _selectedValue != -1 ? btnColor : Colors.white,
                             splashColor: _selectedValue != -1

@@ -409,7 +409,8 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 entityId: entity.entityId,
                                 entity: entity,
                                 preferredSlotTime: null,
-                                isAdmin: isAdmin,
+                                isFullAccess: isAdmin || isManager,
+                                forUser: false,
                                 backRoute: ManageChildEntityListPage(
                                   entity: parentEntity,
                                 ),

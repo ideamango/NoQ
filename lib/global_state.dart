@@ -329,11 +329,11 @@ class GlobalState {
   }
 
   UserService getUserService() {
-    return _gs._userService;
+    return _gs == null ? null : _gs._userService;
   }
 
   NotificationService getNotificationService() {
-    return _gs._notificationService;
+    return _gs == null ? null : _gs._notificationService;
   }
 
   EntityService getEntityService() {
@@ -341,11 +341,11 @@ class GlobalState {
   }
 
   BookingApplicationService getApplicationService() {
-    return _gs._applicationService;
+    return _gs == null ? null : _gs._applicationService;
   }
 
   TokenService getTokenService() {
-    return _gs._tokenService;
+    return _gs == null ? null : _gs._tokenService;
   }
 
   AppUser getCurrentUser() {
@@ -357,7 +357,7 @@ class GlobalState {
   }
 
   static Future<String> getCountry() async {
-    return _gs._locData.country;
+    return _gs == null ? null : _gs._locData.country;
   }
 
   Future<Tuple<Entity, bool>> getEntity(String id,
