@@ -805,76 +805,148 @@ class _ApplicationsListState extends State<ApplicationsList> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Container(
-                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                  margin: EdgeInsets.zero,
-                  child: Row(
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AutoSizeText(
-                        "Submission Date - ",
-                        group: labelGroup,
-                        minFontSize: 9,
-                        maxFontSize: 11,
-                        maxLines: 1,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                            color: Colors.black, fontFamily: 'RalewayRegular'),
-                      ),
-                      AutoSizeText(
-                        DateFormat('yyyy-MM-dd – kk:mm')
-                            .format(ba.timeOfSubmission),
-                        group: responseGroup,
-                        minFontSize: 12,
-                        maxFontSize: 14,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.indigo[900],
-                            fontFamily: 'Roboto'),
-                      ),
+                      Container(
+                          padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                          margin: EdgeInsets.zero,
+                          child: Row(
+                            children: [
+                              AutoSizeText(
+                                "Submission Date - ",
+                                group: labelGroup,
+                                minFontSize: 9,
+                                maxFontSize: 11,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'RalewayRegular'),
+                              ),
+                              AutoSizeText(
+                                DateFormat('yyyy-MM-dd – kk:mm')
+                                    .format(ba.timeOfSubmission),
+                                group: responseGroup,
+                                minFontSize: 12,
+                                maxFontSize: 14,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.indigo[900],
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ],
+                          )),
+                      Container(
+                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          margin: EdgeInsets.zero,
+                          child: Row(
+                            children: [
+                              AutoSizeText(
+                                "Submitted By - ",
+                                group: labelGroup,
+                                minFontSize: 9,
+                                maxFontSize: 11,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'RalewayRegular'),
+                              ),
+                              AutoSizeText(
+                                ba.userId != null ? ba.userId : '-',
+                                group: responseGroup,
+                                minFontSize: 12,
+                                maxFontSize: 14,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.indigo[900],
+                                    fontFamily: 'Roboto'),
+                              ),
+                              IconButton(
+                                  padding: EdgeInsets.all(0),
+                                  alignment: Alignment.center,
+                                  highlightColor: Colors.orange[300],
+                                  icon: Icon(
+                                    Icons.phone_in_talk,
+                                    color: primaryDarkColor,
+                                    size: 16,
+                                  ),
+                                  onPressed: () {
+                                    if (ba.userId != null) {
+                                      try {
+                                        callPhone(ba.userId);
+                                      } catch (error) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.error,
+                                            Duration(seconds: 5),
+                                            "Could not connect call to the number ${ba.userId} !!",
+                                            "Try again later.");
+                                      }
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "Contact information not found!!",
+                                          "");
+                                    }
+                                  })
+                            ],
+                          )),
                     ],
-                  )),
-              Container(
-                padding: EdgeInsets.all(2),
-                margin: EdgeInsets.all(0),
-                decoration: BoxDecoration(
-                    color: (ba.status == ApplicationStatus.NEW)
-                        ? Colors.blue
-                        : (ba.status == ApplicationStatus.ONHOLD
-                            ? Colors.yellow[700]
-                            : (ba.status == ApplicationStatus.REJECTED
-                                ? Colors.red
-                                : (ba.status == ApplicationStatus.APPROVED
-                                    ? Colors.green[400]
-                                    : (ba.status == ApplicationStatus.COMPLETED
-                                        ? Colors.purple
-                                        : Colors.blueGrey)))),
-                    shape: BoxShape.rectangle,
-                    borderRadius:
-                        BorderRadius.only(bottomLeft: Radius.circular(5.0))),
-                child: SizedBox(
-                  width: cardWidth * .2,
-                  height: cardHeight * .1,
-                  child: Center(
-                    child: AutoSizeText(EnumToString.convertToString(ba.status),
-                        textAlign: TextAlign.center,
-                        minFontSize: 7,
-                        maxFontSize: 9,
-                        style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
-                            color: Colors.white,
-                            fontFamily: 'RalewayRegular')),
                   ),
-                ),
-              ),
-            ]),
+                  Container(
+                    padding: EdgeInsets.all(2),
+                    margin: EdgeInsets.all(0),
+                    alignment: Alignment.topCenter,
+                    decoration: BoxDecoration(
+                        color: (ba.status == ApplicationStatus.NEW)
+                            ? Colors.blue
+                            : (ba.status == ApplicationStatus.ONHOLD
+                                ? Colors.yellow[700]
+                                : (ba.status == ApplicationStatus.REJECTED
+                                    ? Colors.red
+                                    : (ba.status == ApplicationStatus.APPROVED
+                                        ? Colors.green[400]
+                                        : (ba.status ==
+                                                ApplicationStatus.COMPLETED
+                                            ? Colors.purple
+                                            : Colors.blueGrey)))),
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(5.0))),
+                    child: SizedBox(
+                      width: cardWidth * .2,
+                      height: cardHeight * .1,
+                      child: Center(
+                        child: AutoSizeText(
+                            EnumToString.convertToString(ba.status),
+                            textAlign: TextAlign.center,
+                            minFontSize: 7,
+                            maxFontSize: 9,
+                            style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                                color: Colors.white,
+                                fontFamily: 'RalewayRegular')),
+                      ),
+                    ),
+                  ),
+                ]),
             if (Utils.isNotNullOrEmpty(ba.tokenId))
               Container(
-                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
                   padding: EdgeInsets.all(5),
                   width: MediaQuery.of(context).size.width * .9,
                   // color: Colors.cyan[100],
@@ -979,7 +1051,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   )),
             if (Utils.isStrNullOrEmpty(ba.tokenId))
               Container(
-                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
                 padding: EdgeInsets.all(5),
                 width: MediaQuery.of(context).size.width * .9,
                 // color: Colors.cyan[100],

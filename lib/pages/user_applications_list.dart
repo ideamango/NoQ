@@ -1549,6 +1549,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
     double cardWidth = MediaQuery.of(context).size.width * .95;
     var medCondGroup = AutoSizeGroup();
     var labelGroup = AutoSizeGroup();
+    DateTime tokenDateTime = tokens[0].parent.dateTime;
 
     // String medConds =
     //    Utils.isNotNullOrEmpty(mbImg1)? mbImg1 + (Utils.isNotNullOrEmpty(mbImg2) ? " & $mbImg2" : "");
@@ -1949,29 +1950,35 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                           ? GestureDetector(
                               onTap: () {
                                 //Whatsapp launch
-                                String phoneNo = ba.userId;
-                                if (phoneNo != null && phoneNo != "") {
-                                  try {
-                                    launchWhatsApp(
-                                        message: whatsappMessageToPlaceOwner +
-                                            '${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}' +
-                                            "\n\n<Type your message here..>",
-                                        phone: phoneNo);
-                                  } catch (error) {
+                                Duration timeDiff =
+                                    DateTime.now().difference(tokenDateTime);
+                                if (timeDiff.inMinutes >= 5) {
+                                  print("Diff more");
+                                } else {
+                                  String phoneNo = ba.userId;
+                                  if (phoneNo != null && phoneNo != "") {
+                                    try {
+                                      launchWhatsApp(
+                                          message: whatsappMessageToPlaceOwner +
+                                              '${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}' +
+                                              "\n\n<Type your message here..>",
+                                          phone: phoneNo);
+                                    } catch (error) {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.error,
+                                          Duration(seconds: 5),
+                                          "Could not connect to the Whatsapp number $phoneNo !!",
+                                          "Try again later");
+                                    }
+                                  } else {
                                     Utils.showMyFlushbar(
                                         context,
-                                        Icons.error,
+                                        Icons.info,
                                         Duration(seconds: 5),
-                                        "Could not connect to the Whatsapp number $phoneNo !!",
-                                        "Try again later");
+                                        "Whatsapp contact information not found!!",
+                                        "");
                                   }
-                                } else {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.info,
-                                      Duration(seconds: 5),
-                                      "Whatsapp contact information not found!!",
-                                      "");
                                 }
                               },
                               child: Container(
