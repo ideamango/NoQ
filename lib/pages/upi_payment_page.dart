@@ -296,8 +296,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                                                             FontWeight.w800,
                                                       )),
                                                   TextSpan(
-                                                    text:
-                                                        'Everything counts, So donate any amount as per your wish.',
+                                                    text: donationMsg1,
                                                   ),
                                                 ])),
                                       ]),
@@ -427,7 +426,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                                           child: Column(
                                             children: [
                                               Text(
-                                                'Scan this QR code to make the donation.',
+                                                donationMessage,
                                                 style: TextStyle(fontSize: 20),
                                               ),
                                               Container(

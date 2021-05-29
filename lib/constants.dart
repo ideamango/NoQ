@@ -93,6 +93,12 @@ String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
 String whatsappContactUsMsg = "Hey!!";
 String bookNowMsg = "Book now to save time later!";
+String donationMessage = "Scan this QR code with any UPI app to donate.";
+String donationMsg1 =
+    "Every contribution matters, no amount is small for us. /nDonate as per your comfort.";
+String yourTurnUserMessage =
+    "It's not your time yet!\n\nYour turn will come in 5 hours and 34 mins";
+
 String directUpiPayMsg =
     'If the payment doesn\'t go through, you can directly pay using the above UPI Id.';
 String whatsappMessageToPlaceOwner = "Hey there! My LESSs Token number is ";
@@ -137,10 +143,10 @@ String contactUsPageHeadline =
     'We would be happy to help you. Just drop a message to us and we will try our best to address that at the earliest.';
 
 String contactUsLine1 =
-    "Did you like what we did?  What else can we do?  How can we improve?";
+    "Do you like our work?  What else can we do?  How can we improve?";
 String contactUsLine2 = "  We would love to hear from you!";
-String contactUsLine3 = "\nA simple";
-String contactUsLine4 = " kudos, clap";
+String contactUsLine3 = "\n\nEven a simple";
+String contactUsLine4 = " Clap";
 String contactUsLine5 = " or just a";
 String contactUsLine6 = " Hello";
 String contactUsLine7 = " from you would be a great motivation for our team :)";
@@ -317,11 +323,11 @@ String tokenAlreadyExistsAdmin =
 String onlineOfflineMsg =
     'Either Online or Offline mode of Bookings should be enabled.';
 String maxTokenLimitReached =
-    "You have already booked allowed maximum number of token for a day.";
+    "You have already booked maximum allowed token(s) for a day.";
 String maxTokenLimitReachedSub =
     "Please try a different date OR contact the Business";
 String maxTokenForTimeReached =
-    "You have already booked allowed maximum number of tokens in a Time-Slot.";
+    "You have already booked maximum allowed token(s) in a Time-Slot.";
 
 String couldNotSubmitApplication =
     "Oops! Couldn't submit the application request.";
