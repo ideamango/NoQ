@@ -986,7 +986,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     color: Colors.white,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                child: Text('No Token Issues yet'),
+                child: Text('No Token issued yet'),
               ),
             ListView.builder(
               itemCount: listOfMeta.length,
