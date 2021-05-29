@@ -1313,6 +1313,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               ? GestureDetector(
                                   onTap: () {
                                     //Whatsapp launch
+                                    // Duration timeDiff = DateTime.now()
+                                    //     .difference(ba.tokenId);
+
+                                    // if (timeDiff.inMinutes >= 5) {
+
+                                    //   print("Diff more");
+                                    // } else {
                                     String phoneNo = ba.userId;
                                     if (phoneNo != null && phoneNo != "") {
                                       try {
@@ -1337,6 +1344,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           "Whatsapp contact information not found!!",
                                           "");
                                     }
+//                                    }
                                   },
                                   child: Container(
                                       padding: EdgeInsets.zero,
