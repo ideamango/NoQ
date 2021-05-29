@@ -472,14 +472,14 @@ class EntityRowState extends State<EntityRow> {
                         _state.getEntity(_metaEntity.entityId).then((value) {
                           if (value.item1 != null) {
                             if (!Utils.isNullOrEmpty(value.item1.forms)) {
-                              // if (_metaEntity.forms.length > 1) {
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(
                                       BookingFormSelection(
                                 entityId: _metaEntity.entityId,
                                 entity: value.item1,
                                 preferredSlotTime: null,
-                                isAdmin: isAdmin,
+                                isFullAccess: isAdmin || isManager,
+                                forUser: false,
                                 backRoute: ManageEntityListPage(),
                                 isOnlineToken: null,
                               )));
@@ -494,11 +494,6 @@ class EntityRowState extends State<EntityRow> {
                           }
                         });
                       }
-
-                      // Navigator.of(context)
-                      //     .push(PageAnimation.createRoute(ManageBookings(
-                      //   metaEntity: _metaEntity,
-                      // )));
                     },
                     child: Container(
                       margin: EdgeInsets.all(0),

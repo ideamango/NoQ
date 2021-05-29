@@ -27,11 +27,13 @@ class EntityApplicationListPage extends StatefulWidget {
   final String bookingFormId;
   final String bookingFormName;
   final MetaEntity metaEntity;
+  final bool isReadOnly;
   EntityApplicationListPage(
       {Key key,
       @required this.bookingFormId,
       @required this.bookingFormName,
-      @required this.metaEntity})
+      @required this.metaEntity,
+      @required this.isReadOnly})
       : super(key: key);
   @override
   _EntityApplicationListPageState createState() =>

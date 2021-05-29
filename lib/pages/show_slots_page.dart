@@ -734,7 +734,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                 entityId: metaEntity.entityId,
                 entity: null,
                 preferredSlotTime: selectedSlot.dateTime,
-                isAdmin: false,
+                isFullAccess: false,
+                forUser: true,
                 backRoute: SearchEntityPage(),
                 isOnlineToken: enableVideoChat)));
       }

@@ -1,16 +1,13 @@
 //import 'package:barcode_scan/barcode_scan.dart';
 import 'package:LESSs/db/exceptions/no_token_found_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
-import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
 import 'package:LESSs/events/event_bus.dart';
 import 'package:LESSs/events/events.dart';
 import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../constants.dart';
 import '../db/db_model/booking_application.dart';

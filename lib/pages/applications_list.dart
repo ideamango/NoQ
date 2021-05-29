@@ -34,12 +34,14 @@ class ApplicationsList extends StatefulWidget {
   final String bookingFormId;
   final ApplicationStatus status;
   final String titleText;
+  final bool isReadOnly;
   ApplicationsList(
       {Key key,
       @required this.metaEntity,
       @required this.bookingFormId,
       @required this.status,
-      @required this.titleText})
+      @required this.titleText,
+      @required this.isReadOnly})
       : super(key: key);
   @override
   _ApplicationsListState createState() => _ApplicationsListState();
@@ -1129,6 +1131,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                         : disabledColor,
                                   ),
                                   onPressed: () async {
+                                    if (widget.isReadOnly) {
+                                      return;
+                                    }
                                     if (ba.status !=
                                             ApplicationStatus.COMPLETED &&
                                         ba.status !=
@@ -1313,18 +1318,28 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    width: cardWidth * .2,
+                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    width: cardWidth * .22,
+                    height: cardWidth * .15,
                     child: IconButton(
                         alignment: Alignment.center,
                         //    visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 8),
+                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
                         color: (ba.status != ApplicationStatus.COMPLETED &&
                                 ba.status != ApplicationStatus.CANCELLED)
                             ? Colors.purple[400]
                             : disabledColor,
                         onPressed: () {
+                          if (widget.isReadOnly) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info,
+                                Duration(seconds: 3),
+                                "$noEditPermission the Application",
+                                "Please contact Admin of this place.");
+                            return;
+                          }
                           if (ba.status != ApplicationStatus.COMPLETED &&
                               ba.status != ApplicationStatus.CANCELLED) {
                             setState(() {
@@ -1389,14 +1404,20 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           }
                         },
                         icon: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.thumb_up,
-                              size: 21,
+                            SizedBox(
+                              width: cardWidth * .07,
+                              height: cardWidth * .07,
+                              child: Icon(
+                                Icons.thumb_up,
+                                size: 20,
+                              ),
                             ),
                             Container(
-                              width: cardWidth * .2,
+                              width: cardWidth * .18,
+                              height: cardHeight * .045,
                               alignment: Alignment.center,
                               margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -1420,19 +1441,29 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     color: Colors.blueGrey[400],
                   ),
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    width: cardWidth * .2,
+                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    width: cardWidth * .22,
+                    height: cardWidth * .15,
                     child: IconButton(
                         alignment: Alignment.center,
                         //    visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                         color: (ba.status != ApplicationStatus.COMPLETED &&
                                 ba.status != ApplicationStatus.CANCELLED &&
                                 ba.status != ApplicationStatus.APPROVED)
                             ? Colors.green[400]
                             : disabledColor,
                         onPressed: () {
+                          if (widget.isReadOnly) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info,
+                                Duration(seconds: 3),
+                                "$noEditPermission the Application",
+                                "Please contact Admin of this place.");
+                            return;
+                          }
                           if (ba.status != ApplicationStatus.COMPLETED &&
                               ba.status != ApplicationStatus.CANCELLED &&
                               ba.status != ApplicationStatus.APPROVED) {
@@ -1502,14 +1533,20 @@ class _ApplicationsListState extends State<ApplicationsList> {
 //Update application status change on server.
                         },
                         icon: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.check_circle,
-                              size: 22,
+                            SizedBox(
+                              width: cardWidth * .07,
+                              height: cardWidth * .07,
+                              child: Icon(
+                                Icons.check_circle,
+                                size: 20,
+                              ),
                             ),
                             Container(
-                              width: cardWidth * .2,
+                              width: cardWidth * .18,
+                              height: cardHeight * .045,
                               alignment: Alignment.center,
                               margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -1533,13 +1570,14 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     color: Colors.blueGrey[400],
                   ),
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                     padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    width: cardWidth * .2,
+                    width: cardWidth * .22,
+                    height: cardWidth * .15,
                     child: IconButton(
                       alignment: Alignment.center,
                       //    visualDensity: VisualDensity.compact,
-                      padding: const EdgeInsets.all(0),
+                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
                       visualDensity: VisualDensity.compact,
 
                       color: (ba.status != ApplicationStatus.COMPLETED &&
@@ -1548,6 +1586,15 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           ? Colors.yellow[700]
                           : disabledColor,
                       onPressed: () {
+                        if (widget.isReadOnly) {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info,
+                              Duration(seconds: 3),
+                              "$noEditPermission the Application",
+                              "Please contact Admin of this place.");
+                          return;
+                        }
                         if (ba.status != ApplicationStatus.COMPLETED &&
                             ba.status != ApplicationStatus.CANCELLED &&
                             ba.status != ApplicationStatus.ONHOLD) {
@@ -1620,14 +1667,20 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         }
                       },
                       icon: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.pan_tool_rounded,
-                            size: 19,
+                          SizedBox(
+                            width: cardWidth * .07,
+                            height: cardWidth * .07,
+                            child: Icon(
+                              Icons.pan_tool_rounded,
+                              size: 19,
+                            ),
                           ),
                           Container(
-                            width: cardWidth * .2,
+                            width: cardWidth * .18,
+                            height: cardHeight * .045,
                             alignment: Alignment.center,
                             margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -1652,9 +1705,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     color: Colors.blueGrey[400],
                   ),
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    width: cardWidth * .2,
+                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    width: cardWidth * .22,
+                    height: cardWidth * .15,
                     child: IconButton(
                       // visualDensity: VisualDensity.compact,
                       alignment: Alignment.center,
@@ -1666,6 +1720,15 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           ? Colors.red
                           : disabledColor,
                       onPressed: () {
+                        if (widget.isReadOnly) {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info,
+                              Duration(seconds: 3),
+                              "$noEditPermission the Application",
+                              "Please contact Admin of this place.");
+                          return;
+                        }
                         if (ba.status != ApplicationStatus.COMPLETED &&
                             ba.status != ApplicationStatus.CANCELLED &&
                             ba.status != ApplicationStatus.REJECTED) {
@@ -1732,14 +1795,20 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         }
                       },
                       icon: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.cancel,
-                            size: 23,
+                          SizedBox(
+                            width: cardWidth * .07,
+                            height: cardWidth * .07,
+                            child: Icon(
+                              Icons.cancel,
+                              size: 21,
+                            ),
                           ),
                           Container(
-                            width: cardWidth * .2,
+                            width: cardWidth * .18,
+                            height: cardHeight * .045,
                             alignment: Alignment.center,
                             margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),

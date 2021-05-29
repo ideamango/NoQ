@@ -4,6 +4,7 @@ import 'package:LESSs/events/event_bus.dart';
 import 'package:LESSs/events/events.dart';
 import 'package:LESSs/pages/token_alert.dart';
 import 'package:LESSs/services/circular_progress.dart';
+import 'package:LESSs/services/url_services.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
@@ -1855,46 +1856,137 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
             Container(
               padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
               //   margin: EdgeInsets.only(bottom: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                      // width: cardWidth * .45,
+                      child: AutoSizeText(
+                    "Preferred Time-Slot",
+                    group: labelGroup,
+                    minFontSize: 10,
+                    maxFontSize: 11,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  )),
+                  Container(
+                    padding: EdgeInsets.all(0),
+                    child: AutoSizeText(
+                      ((ba.preferredSlotTiming != null)
+                          ? DateFormat('yyyy-MM-dd – kk:mm')
+                              .format(ba.preferredSlotTiming)
+                          : "None"),
+                      // group: medCondGroup,
+                      minFontSize: 12,
+                      maxFontSize: 14,
+                      maxLines: 1,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.indigo[900],
+                          //  fontWeight: FontWeight.bold,
+                          fontFamily: 'Roboto'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
+              //   margin: EdgeInsets.only(bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      SizedBox(
-                          // width: cardWidth * .45,
-                          child: AutoSizeText(
-                        "Preferred Time-Slot",
-                        group: labelGroup,
-                        minFontSize: 10,
-                        maxFontSize: 11,
-                        maxLines: 1,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      )),
-                      Container(
-                        padding: EdgeInsets.all(0),
-                        child: AutoSizeText(
-                          ((ba.preferredSlotTiming != null)
-                              ? DateFormat('yyyy-MM-dd – kk:mm')
-                                  .format(ba.preferredSlotTiming)
-                              : "None"),
-                          // group: medCondGroup,
-                          minFontSize: 12,
-                          maxFontSize: 14,
-                          maxLines: 1,
-                          overflow: TextOverflow.clip,
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.indigo[900],
-                              //  fontWeight: FontWeight.bold,
-                              fontFamily: 'Roboto'),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.zero,
+                              padding: EdgeInsets.zero,
+                              child: AutoSizeText(
+                                'Mode',
+                                group: labelGroup,
+                                minFontSize: 9,
+                                maxFontSize: 11,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'RalewayRegular'),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.zero,
+                              padding: EdgeInsets.zero,
+                              child: AutoSizeText(
+                                (ba.isOnlineModeOfInteraction)
+                                    ? 'Online'
+                                    : 'Walk-in',
+                                minFontSize: 12,
+                                maxFontSize: 14,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.indigo[900],
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      (ba.isOnlineModeOfInteraction)
+                          ? GestureDetector(
+                              onTap: () {
+                                //Whatsapp launch
+                                String phoneNo = ba.userId;
+                                if (phoneNo != null && phoneNo != "") {
+                                  try {
+                                    launchWhatsApp(
+                                        message: whatsappMessageToPlaceOwner +
+                                            '${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}' +
+                                            "\n\n<Type your message here..>",
+                                        phone: phoneNo);
+                                  } catch (error) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.error,
+                                        Duration(seconds: 5),
+                                        "Could not connect to the Whatsapp number $phoneNo !!",
+                                        "Try again later");
+                                  }
+                                } else {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.info,
+                                      Duration(seconds: 5),
+                                      "Whatsapp contact information not found!!",
+                                      "");
+                                }
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.zero,
+                                  margin: EdgeInsets.symmetric(horizontal: 8),
+                                  child: Icon(
+                                    Icons.videocam,
+                                    size: 25,
+                                    color: highlightColor,
+                                  )),
+                            )
+                          : SizedBox(
+                              width: 0,
+                              height: 0,
+                            ),
                     ],
                   ),
                   GestureDetector(
@@ -1908,7 +2000,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     child: Container(
                       padding: EdgeInsets.all(5),
                       alignment: Alignment.bottomCenter,
-                      child: Text("View All Details..",
+                      child: Text("..show all details",
                           style: TextStyle(
                               color: Colors.blueAccent[400], fontSize: 12)),
                     ),
@@ -1916,7 +2008,6 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                 ],
               ),
             ),
-
             if (widget.ba.status != ApplicationStatus.CANCELLED &&
                 widget.ba.status != ApplicationStatus.REJECTED &&
                 widget.ba.status != ApplicationStatus.COMPLETED)

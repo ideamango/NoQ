@@ -93,7 +93,8 @@ String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
 String whatsappContactUsMsg = "Hey!!";
 String bookNowMsg = "Book now to save time later!";
-
+String directUpiPayMsg =
+    'If the payment doesn\'t go through, you can directly pay using the above UPI Id.';
 String whatsappMessageToPlaceOwner = "Hey there! My LESSs Token number is ";
 String whatsappVideoToPlaceOwner_1 = "Hey there! My LESSs Token number is ";
 String whatsappVideoToUser_1 = "Hey there! Your LESSs Token number is ";

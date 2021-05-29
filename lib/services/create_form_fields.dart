@@ -92,7 +92,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         //bookingFormId
         bookingApplication.bookingFormId = widget.bookingFormId;
         bookingApplication.entityId = widget.metaEntity.entityId;
-        bookingApplication.userId = _gs.getCurrentUser().id;
+        // bookingApplication.userId = _gs.getCurrentUser().ph;
         bookingApplication.status = ApplicationStatus.NEW;
         bookingApplication.responseForm = dummyForm;
         print("Booking application set");

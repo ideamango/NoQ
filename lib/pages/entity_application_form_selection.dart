@@ -85,7 +85,7 @@ class _ApplicationFormSelectionState extends State<ApplicationFormSelection> {
           bookingFormId: forms[_selectedValue].id,
           metaEntity: widget.metaEntity,
           bookingFormName: forms[_selectedValue].name,
-          isExec: !widget.isAdmin,
+          isReadOnly: !widget.isAdmin,
         );
       }
     });
