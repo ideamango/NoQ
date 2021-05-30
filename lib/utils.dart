@@ -31,6 +31,7 @@ import 'db/db_model/entity_slots.dart';
 import 'db/db_model/slot.dart';
 import 'db/db_model/user_token.dart';
 import 'db/exceptions/MaxTokenReachedByUserPerDayException.dart';
+import 'enum/application_status.dart';
 import 'pages/qr_code_user_token.dart';
 
 class Utils {
@@ -663,6 +664,29 @@ class Utils {
 
     displayName = displayName + formattedDate + number;
     return displayName;
+  }
+
+  static Tuple<String, bool> getDefaultApplicationSortOrder(
+      ApplicationStatus status) {
+    if (status == ApplicationStatus.NEW) {
+      return new Tuple<String, bool>(item1: "timeOfSubmission", item2: false);
+    } else if (status == ApplicationStatus.APPROVED) {
+      return new Tuple<String, bool>(item1: "timeOfApproval", item2: true);
+    } else if (status == ApplicationStatus.COMPLETED) {
+      return new Tuple<String, bool>(item1: "timeOfCompletion", item2: true);
+    } else if (status == ApplicationStatus.REJECTED) {
+      return new Tuple<String, bool>(item1: "timeOfRejection", item2: true);
+    } else if (status == ApplicationStatus.ONHOLD) {
+      return new Tuple<String, bool>(item1: "timeOfPuttingOnHold", item2: true);
+    } else if (status == ApplicationStatus.CANCELLED) {
+      return new Tuple<String, bool>(item1: "timeOfCancellation", item2: true);
+    } else if (status == ApplicationStatus.COMPLETED) {
+      return new Tuple<String, bool>(item1: "timeOfCompletion", item2: true);
+    } else if (status == ApplicationStatus.INPROCESS) {
+      return new Tuple<String, bool>(item1: "timeOfInProcess", item2: true);
+    }
+
+    return null;
   }
 
   static DateTime getTokenDate(String tokenId) {

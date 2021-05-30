@@ -154,6 +154,7 @@ class BookingApplicationService {
             Tuple<BookingApplication, QueryDocumentSnapshot>(
                 item1: BookingApplication.fromJson(doc.data()), item2: doc);
         applications.add(tup);
+        print(tup.item1.id);
       }
     }
 

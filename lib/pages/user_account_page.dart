@@ -95,7 +95,7 @@ class _UserAccountPageState extends State<UserAccountPage>
         _gs
             .getApplicationService()
             .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
-                null, null, "timeOfSubmission", false, null, null, 20)
+                null, null, "timeOfSubmission", true, null, null, 20)
             .then((value) {
           _listOfApplications = value;
           setState(() {
@@ -117,7 +117,7 @@ class _UserAccountPageState extends State<UserAccountPage>
         _gs
             .getApplicationService()
             .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
-                null, null, "timeOfSubmission", false, null, null, 20)
+                null, null, "timeOfSubmission", true, null, null, 20)
             .then((value) {
           _listOfApplications = value;
           setState(() {
@@ -1093,7 +1093,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               .026),
                                       scrollDirection: Axis.vertical,
                                       physics: ClampingScrollPhysics(),
-                                      reverse: true,
+                                      reverse: false,
                                       shrinkWrap: true,
                                       //itemExtent: itemSize,
                                       itemBuilder:
