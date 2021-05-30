@@ -97,9 +97,10 @@ String donationMessage = "Scan this QR code with any UPI app to donate.";
 String donationMsg1 =
     "Every contribution matters, no amount is small for us. \nDonate as per your comfort.";
 String yourTurnUserMessage1 = "It's not your time yet!";
-String yourTurnUserMessage2 = "Your turn will come in 5 hours and 34 mins";
+String yourTurnUserMessage2 =
+    "Start the call 1 minute before your allotted time slot.";
 String yourTurnUserMessageWhenTokenIsNotAlloted =
-    "Slot Token is not issued yet, you can start ";
+    "Token is not issued yet. \nYou should start the call only when a time slot is allotted.";
 
 String directUpiPayMsg =
     'If the payment doesn\'t go through, you can directly pay using the above UPI Id.';
