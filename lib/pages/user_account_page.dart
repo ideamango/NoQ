@@ -495,13 +495,13 @@ class _UserAccountPageState extends State<UserAccountPage>
                                   padding: EdgeInsets.all(0),
                                   alignment: Alignment.center,
                                   highlightColor: Colors.orange[300],
-                                  icon: Icon(
-                                    Icons.attach_money_outlined,
+                                  icon: ImageIcon(
+                                    AssetImage('assets/rupee_icon.png'),
+                                    size: 18,
                                     color: (Utils.isNotNullOrEmpty(
                                             booking.parent.upiId)
                                         ? lightIcon
                                         : Colors.blueGrey[400]),
-                                    size: 22,
                                   ),
                                   onPressed: () {
                                     if (Utils.isNotNullOrEmpty(
