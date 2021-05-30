@@ -497,7 +497,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                   highlightColor: Colors.orange[300],
                                   icon: ImageIcon(
                                     AssetImage('assets/rupee_icon.png'),
-                                    size: 18,
+                                    size: 16,
                                     color: (Utils.isNotNullOrEmpty(
                                             booking.parent.upiId)
                                         ? lightIcon
@@ -511,7 +511,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               UPIPaymentPage(
                                                   upiId: booking.parent.upiId,
                                                   upiQrCodeImgPath: null,
-                                                  backRoute: UserHomePage(),
+                                                  backRoute: UserAccountPage(),
                                                   isDonation: false)));
                                     } else {
                                       Utils.showMyFlushbar(

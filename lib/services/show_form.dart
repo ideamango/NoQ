@@ -1637,7 +1637,7 @@ class _EntityFormState extends State<EntityForm> {
                       //                                             .preferredSlotTiming !=
                       //                                         null)
                       //                                     ? DateFormat(
-                      //                                             'yyyy-MM-dd – kk:mm')
+                      //                                             'yyyy-MM-dd – HH:mm')
                       //                                         .format(bookingApplication
                       //                                             .preferredSlotTiming)
                       //                                     : "None"),

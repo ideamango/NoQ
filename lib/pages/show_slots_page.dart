@@ -305,12 +305,15 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                           decoration: darkContainer,
                           child: Row(
                             children: <Widget>[
-                              Icon(
-                                Icons.check_circle,
-                                size: 35,
-                                color: Colors.white,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .1,
+                                child: Icon(
+                                  Icons.check_circle,
+                                  size: 35,
+                                  color: Colors.white,
+                                ),
                               ),
-                              SizedBox(width: 12),
+                              //  SizedBox(width: 12),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * .8,
                                 height: MediaQuery.of(context).size.width * .11,

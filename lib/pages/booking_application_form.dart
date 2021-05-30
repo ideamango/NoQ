@@ -1531,7 +1531,7 @@
 //                                                         ((preferredSlotTime !=
 //                                                                 null)
 //                                                             ? DateFormat(
-//                                                                     'yyyy-MM-dd – kk:mm')
+//                                                                     'yyyy-MM-dd – HH:mm')
 //                                                                 .format(
 //                                                                     preferredSlotTime)
 //                                                             : "None"),

@@ -829,7 +829,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     fontFamily: 'RalewayRegular'),
                               ),
                               AutoSizeText(
-                                DateFormat('yyyy-MM-dd – kk:mm')
+                                DateFormat('yyyy-MM-dd – HH:mm')
                                     .format(ba.timeOfSubmission),
                                 group: responseGroup,
                                 minFontSize: 12,
