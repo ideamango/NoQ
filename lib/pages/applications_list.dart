@@ -1333,7 +1333,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                             context,
                                             Icons.error,
                                             Duration(seconds: 5),
-                                            "Could not connect to the Whatsapp number $phoneNo !!",
+                                            "Could not connect to the WhatsApp number $phoneNo !!",
                                             "Try again later");
                                       }
                                     } else {
