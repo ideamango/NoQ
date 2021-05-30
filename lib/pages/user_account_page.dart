@@ -890,8 +890,9 @@ class _UserAccountPageState extends State<UserAccountPage>
 
   @override
   void dispose() {
-    super.dispose();
+    _animationController.dispose();
     _pageController.dispose();
+    super.dispose();
   }
 
   @override
