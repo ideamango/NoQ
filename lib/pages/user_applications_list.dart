@@ -1600,7 +1600,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                   padding: EdgeInsets.all(0),
                                   child: AutoSizeText(
                                     ((ba.preferredSlotTiming != null)
-                                        ? DateFormat('yyyy-MM-dd – kk:mm')
+                                        ? DateFormat('yyyy-MM-dd – HH:mm')
                                             .format(ba.timeOfSubmission)
                                         : "None"),
                                     // group: medCondGroup,
@@ -1778,7 +1778,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                 ),
                                 horizontalSpacer,
                                 AutoSizeText(
-                                  ('${DateFormat('yyyy-MM-dd – kk:mm').format(tokens[index].parent.dateTime)}'),
+                                  ('${DateFormat('yyyy-MM-dd – HH:mm').format(tokens[index].parent.dateTime)}'),
                                   // group: medCondGroup,
                                   minFontSize: 9,
                                   maxFontSize: 15,
@@ -1878,7 +1878,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     padding: EdgeInsets.all(0),
                     child: AutoSizeText(
                       ((ba.preferredSlotTiming != null)
-                          ? DateFormat('yyyy-MM-dd – kk:mm')
+                          ? DateFormat('yyyy-MM-dd – HH:mm')
                               .format(ba.preferredSlotTiming)
                           : "None"),
                       // group: medCondGroup,
@@ -1962,6 +1962,14 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                         Duration(seconds: 5),
                                         yourTurnUserMessage1,
                                         yourTurnUserMessage2);
+                                  } else if (tokenDateTime
+                                      .isBefore(DateTime.now())) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.error,
+                                        Duration(seconds: 6),
+                                        "Could not start Whatsapp call as this Booking has already expired.",
+                                        "Please contact Owner/Manager of this Place");
                                   } else {
                                     String phoneNo = ba.userId;
                                     if (phoneNo != null && phoneNo != "") {

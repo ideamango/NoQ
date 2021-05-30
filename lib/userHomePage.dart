@@ -921,13 +921,13 @@ class _UserHomePageState extends State<UserHomePage>
                                   padding: EdgeInsets.all(0),
                                   alignment: Alignment.center,
                                   highlightColor: Colors.orange[300],
-                                  icon: Icon(
-                                    Icons.attach_money_outlined,
+                                  icon: ImageIcon(
+                                    AssetImage('assets/rupee_icon.png'),
+                                    size: 16,
                                     color: (Utils.isNotNullOrEmpty(
                                             token.parent.upiId)
                                         ? lightIcon
                                         : Colors.blueGrey[400]),
-                                    size: 22,
                                   ),
                                   onPressed: () {
                                     if (Utils.isNotNullOrEmpty(
@@ -978,39 +978,58 @@ class _UserHomePageState extends State<UserHomePage>
                         opacity: animation,
                         child: GestureDetector(
                           onTap: () {
-                            if (token.parent.dateTime
-                                .isBefore(DateTime.now())) {
-                              Utils.showMyFlushbar(
-                                  context,
-                                  Icons.error,
-                                  Duration(seconds: 6),
-                                  "Could not start Whatsapp call as this Booking has expired.",
-                                  "Please contact Owner/Manager of this Place");
-                            } else {
-                              String phoneNo = token.parent.entityWhatsApp;
-                              if (phoneNo != null && phoneNo != "") {
-                                try {
-                                  launchWhatsApp(
-                                      message: whatsappVideoToPlaceOwner_1 +
-                                          token.getDisplayName() +
-                                          whatsappVideoToPlaceOwner_2,
-                                      phone: phoneNo);
-                                } catch (error) {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 5),
-                                      "Could not connect to the Whatsapp number $phoneNo !!",
-                                      "Try again later");
-                                }
-                              } else {
+                            if (token.parent.dateTime != null) {
+                              Duration timeDiff = DateTime.now()
+                                  .difference(token.parent.dateTime);
+                              if (timeDiff.inMinutes <= -1) {
+                                print("Diff more");
                                 Utils.showMyFlushbar(
                                     context,
                                     Icons.info,
                                     Duration(seconds: 5),
-                                    "Whatsapp contact information not found!!",
-                                    "");
+                                    yourTurnUserMessage1,
+                                    yourTurnUserMessage2);
+                              } else if (token.parent.dateTime
+                                  .isBefore(DateTime.now())) {
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.error,
+                                    Duration(seconds: 6),
+                                    "Could not start Whatsapp call as this Booking has expired.",
+                                    "Please contact Owner/Manager of this Place");
+                              } else {
+                                String phoneNo = token.parent.entityWhatsApp;
+                                if (phoneNo != null && phoneNo != "") {
+                                  try {
+                                    launchWhatsApp(
+                                        message: whatsappVideoToPlaceOwner_1 +
+                                            token.getDisplayName() +
+                                            whatsappVideoToPlaceOwner_2,
+                                        phone: phoneNo);
+                                  } catch (error) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.error,
+                                        Duration(seconds: 5),
+                                        "Could not connect to the Whatsapp number $phoneNo !!",
+                                        "Try again later");
+                                  }
+                                } else {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.info,
+                                      Duration(seconds: 5),
+                                      "Whatsapp contact information not found!!",
+                                      "");
+                                }
                               }
+                            } else {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.info,
+                                  Duration(seconds: 5),
+                                  yourTurnUserMessageWhenTokenIsNotAlloted,
+                                  '');
                             }
                           },
                           child: Container(

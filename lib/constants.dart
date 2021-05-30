@@ -100,7 +100,7 @@ String yourTurnUserMessage1 = "It's not your time yet!";
 String yourTurnUserMessage2 =
     "Start the call 1 minute before your allotted time slot.";
 String yourTurnUserMessageWhenTokenIsNotAlloted =
-    "Token is not issued yet. \nYou should start the call only when a time slot is allotted.";
+    "Token is not issued yet. \nYou should start the call only when a time-slot is allotted.";
 
 String directUpiPayMsg =
     'If the payment doesn\'t go through, you can directly pay using the above UPI Id.';

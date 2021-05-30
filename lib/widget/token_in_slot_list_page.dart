@@ -615,39 +615,58 @@ class _TokensInSlotState extends State<TokensInSlot>
                         opacity: animation,
                         child: GestureDetector(
                           onTap: () {
-                            if (booking.parent.dateTime
-                                .isBefore(DateTime.now())) {
-                              Utils.showMyFlushbar(
-                                  context,
-                                  Icons.error,
-                                  Duration(seconds: 6),
-                                  "Could not start Whatsapp call as this Booking has expired.",
-                                  "Please contact Owner/Manager of this Place");
-                            } else {
-                              String phoneNo = booking.parent.userId;
-                              if (phoneNo != null && phoneNo != "") {
-                                try {
-                                  launchWhatsApp(
-                                      message: whatsappVideoToUser_1 +
-                                          booking.getDisplayName() +
-                                          whatsappVideoToUser_2,
-                                      phone: phoneNo);
-                                } catch (error) {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 5),
-                                      "Could not connect to the Whatsapp number $phoneNo !!",
-                                      "Try again later");
-                                }
-                              } else {
+                            if (booking.parent.dateTime != null) {
+                              Duration timeDiff = DateTime.now()
+                                  .difference(booking.parent.dateTime);
+                              if (timeDiff.inMinutes <= -1) {
+                                print("Diff more");
                                 Utils.showMyFlushbar(
                                     context,
                                     Icons.info,
                                     Duration(seconds: 5),
-                                    "Whatsapp contact information not found!!",
-                                    "");
+                                    yourTurnUserMessage1,
+                                    yourTurnUserMessage2);
+                              } else if (booking.parent.dateTime
+                                  .isBefore(DateTime.now())) {
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.error,
+                                    Duration(seconds: 6),
+                                    "Could not start Whatsapp call as this Booking has already expired.",
+                                    "Please contact Owner/Manager of this Place");
+                              } else {
+                                String phoneNo = booking.parent.userId;
+                                if (phoneNo != null && phoneNo != "") {
+                                  try {
+                                    launchWhatsApp(
+                                        message: whatsappVideoToUser_1 +
+                                            booking.getDisplayName() +
+                                            whatsappVideoToUser_2,
+                                        phone: phoneNo);
+                                  } catch (error) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.error,
+                                        Duration(seconds: 5),
+                                        "Could not connect to the Whatsapp number $phoneNo !!",
+                                        "Try again later");
+                                  }
+                                } else {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.info,
+                                      Duration(seconds: 5),
+                                      "Whatsapp contact information not found!!",
+                                      "");
+                                }
                               }
+                            } else {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.info,
+                                  Duration(seconds: 5),
+                                  yourTurnUserMessageWhenTokenIsNotAlloted,
+                                  '');
                             }
                           },
                           child: Container(
