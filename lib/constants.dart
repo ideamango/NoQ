@@ -95,9 +95,11 @@ String whatsappContactUsMsg = "Hey!!";
 String bookNowMsg = "Book now to save time later!";
 String donationMessage = "Scan this QR code with any UPI app to donate.";
 String donationMsg1 =
-    "Every contribution matters, no amount is small for us. /nDonate as per your comfort.";
-String yourTurnUserMessage =
-    "It's not your time yet!\n\nYour turn will come in 5 hours and 34 mins";
+    "Every contribution matters, no amount is small for us. \nDonate as per your comfort.";
+String yourTurnUserMessage1 = "It's not your time yet!";
+String yourTurnUserMessage2 = "Your turn will come in 5 hours and 34 mins";
+String yourTurnUserMessageWhenTokenIsNotAlloted =
+    "Slot Token is not issued yet, you can start ";
 
 String directUpiPayMsg =
     'If the payment doesn\'t go through, you can directly pay using the above UPI Id.';
