@@ -654,7 +654,8 @@ class GlobalState {
 
   //Throws => TokenAlreadyCancelledException, NoTokenFoundException
   Future<bool> cancelBooking(String tokenId, [int number]) async {
-    UserTokens uts = await _tokenService.cancelToken(tokenId, number);
+    UserToken ut = await _tokenService.cancelToken(tokenId, number);
+    UserTokens uts = ut.parent;
     if (uts != null) {
       //update the bookings in the collection
       int index = -1;

@@ -1,3 +1,5 @@
+import 'package:LESSs/db/exceptions/no_token_found_exception.dart';
+import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
 import 'package:LESSs/pages/shopping_list.dart';
 import 'package:LESSs/repository/slotRepository.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -197,6 +199,34 @@ class _TokensInSlotState extends State<TokensInSlot>
     );
   }
 
+  void handleErrorsForTokenCancellation(dynamic error) {
+    switch (error.runtimeType) {
+      case TokenAlreadyCancelledException:
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 6),
+            "Could not Cancel the Token.",
+            "Token number is Already Cancelled.",
+            Colors.red);
+        break;
+      case NoTokenFoundException:
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 6),
+            "Could not Cancel the Token.",
+            "The Token number is either Incorrect or Cancelled",
+            Colors.red);
+        break;
+
+      default:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+            "Could not Cancel the Token.", error.toString(), Colors.red);
+        break;
+    }
+  }
+
   void showCancelBooking(UserToken booking, int index) {
     showDialog(
         barrierDismissible: false,
@@ -240,41 +270,73 @@ class _TokensInSlotState extends State<TokensInSlot>
                         side: BorderSide(color: Colors.orange)),
                     child: Text('Yes'),
                     onPressed: () {
-                      print("Cancel booking");
+                      if (Utils.isNotNullOrEmpty(booking.applicationId)) {
+                        _gs
+                            .getApplicationService()
+                            .withDrawApplication(booking.applicationId, "")
+                            .then((value) {
+                          if (value != null) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.check,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Token & Application are Cancelled Successfully.",
+                                "");
+                            setState(() {
+                              booking = value;
+                            });
+                          } else {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.check,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Token & Application could not be Cancelled.",
+                                "Please try again later.");
+                          }
+                        }).catchError((error) {
+                          handleErrorsForTokenCancellation(error);
+                        });
+                      } else {
+                        print("Cancel booking");
 
-                      Navigator.of(context, rootNavigator: true).pop();
-                      Utils.showMyFlushbar(
-                          context,
-                          Icons.cancel,
-                          Duration(
-                            seconds: 3,
-                          ),
-                          "Cancelling Token ${booking.getDisplayName()}",
-                          "Please wait..");
+                        Navigator.of(context, rootNavigator: true).pop();
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.cancel,
+                            Duration(
+                              seconds: 3,
+                            ),
+                            "Cancelling Token ${booking.getDisplayName()}",
+                            "Please wait..");
 
-                      _gs
-                          .getTokenService()
-                          .cancelToken(
-                              booking.parent.getTokenId(), booking.number)
-                          .then((value) {
-                        if (value == null) {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info_outline,
-                              Duration(
-                                seconds: 5,
-                              ),
-                              "Couldn't cancel your booking for some reason. ",
-                              "Please try again later.");
-                        } else {
-                          setState(() {
-                            //TODO Smita - return value UserToken should be assigned.
-                            listOfTokens[index] = value.tokens[0];
-                          });
-                        }
-                      }).catchError((e) {
-                        print(e);
-                      });
+                        _gs
+                            .getTokenService()
+                            .cancelToken(
+                                booking.parent.getTokenId(), booking.number)
+                            .then((value) {
+                          if (value == null) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Couldn't cancel your booking for some reason. ",
+                                "Please try again later.");
+                          } else {
+                            setState(() {
+                              //TODO Smita - return value UserToken should be assigned.
+                              listOfTokens[index] = value;
+                            });
+                          }
+                        }).catchError((e) {
+                          print(e);
+                        });
+                      }
                     },
                   ),
                 ),

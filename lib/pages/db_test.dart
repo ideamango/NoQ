@@ -582,7 +582,7 @@ class DBTest {
           "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
     }
 
-    UserTokens cancelledToken = await _gs
+    UserToken cancelledToken = await _gs
         .getTokenService()
         .cancelToken("Child101-1#2020~7~7#10~30#+919999999999");
 
@@ -2347,9 +2347,11 @@ class DBTest {
 
   Future<void> testApplicationCancellation(
       BookingApplication approvedBA) async {
-    bool isCancelled = await _gs.getApplicationService().withDrawApplication(
+    bool isCancelled = false;
+    UserToken token = await _gs.getApplicationService().withDrawApplication(
         approvedBA.id,
         "Cancelled the application and as a result the token should also get cancelled");
+    if (token != null) isCancelled = true;
 
     // //now get the ApplicationOver object to check the count
     // BookingApplicationCounter globalOverView = await _gs

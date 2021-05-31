@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:LESSs/db/exceptions/no_token_found_exception.dart';
+import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
 import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:LESSs/pages/help_page.dart';
 import 'package:LESSs/services/qr_code_user_application.dart';
@@ -58,7 +60,7 @@ class _UserHomePageState extends State<UserHomePage>
   bool isPastSet = false;
 //Qr code scan result
   //ScanResult scanResult;
-  GlobalState _state;
+  GlobalState _gs;
   bool _initCompleted = false;
   String forceUpdateMsg;
   String versionUpdateMsg;
@@ -102,22 +104,22 @@ class _UserHomePageState extends State<UserHomePage>
     getGlobalState().whenComplete(() {
       _loadBookings();
 //Start Code for UPI pay -donation
-      upiId = _state.getConfigurations().upi;
+      upiId = _gs.getConfigurations().upi;
       upiQrImgPath = "assets/bigpiq_gpay.jpg";
       upiId = upiId;
 //End Code for UPI pay -donation
 //Start Code for version update dialog
       if (widget.dontShowUpdate != null) {
-        if (_state.isEligibleForUpdate()) {
-          if (_state.getConfigurations().isForceUpdateRequired()) {
+        if (_gs.isEligibleForUpdate()) {
+          if (_gs.getConfigurations().isForceUpdateRequired()) {
             isForceUpdateRequired = true;
-            forceUpdateMsg = _state.getConfigurations().getForceUpdateMessage();
+            forceUpdateMsg = _gs.getConfigurations().getForceUpdateMessage();
           } else {
             versionUpdateMsg =
-                _state.getConfigurations().getVersionUpdateMessage();
+                _gs.getConfigurations().getVersionUpdateMessage();
           }
-          versionFactors = _state.getConfigurations().getVersionUpdateFactors();
-          msg = (_state.getConfigurations().isForceUpdateRequired())
+          versionFactors = _gs.getConfigurations().getVersionUpdateFactors();
+          msg = (_gs.getConfigurations().isForceUpdateRequired())
               ? forceUpdateMsg
               : (versionUpdateMsg);
         }
@@ -127,7 +129,7 @@ class _UserHomePageState extends State<UserHomePage>
 //
 //_state.getConfigurations().isDonationEnabled()
 //
-      isDonationEnabled = _state.getConfigurations().isDonationEnabled();
+      isDonationEnabled = _gs.getConfigurations().isDonationEnabled();
       if (this.mounted) {
         setState(() {
           _initCompleted = true;
@@ -140,20 +142,20 @@ class _UserHomePageState extends State<UserHomePage>
   @override
   void dispose() {
     _animationController.dispose();
-    _state = null;
+    _gs = null;
     super.dispose();
   }
 
   Future<void> getGlobalState() async {
-    _state = await GlobalState.getGlobalState();
+    _gs = await GlobalState.getGlobalState();
   }
 
   void fetchDataFromGlobalState() {
-    if (!Utils.isNullOrEmpty(_state.bookings)) {
-      if (_state.bookings.length != 0) {
-        _pastBookingsList = _state.getPastBookings();
+    if (!Utils.isNullOrEmpty(_gs.bookings)) {
+      if (_gs.bookings.length != 0) {
+        _pastBookingsList = _gs.getPastBookings();
 
-        _newBookingsList = _state.getUpcomingBookings();
+        _newBookingsList = _gs.getUpcomingBookings();
 
         if (_pastBookingsList.length != 0) {
           _pastBkgStatus = 'Success';
@@ -480,11 +482,10 @@ class _UserHomePageState extends State<UserHomePage>
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       return Container(
-                                        child: new Column(
-                                            children: _newBookingsList
-                                                .map(_buildItem)
-                                                .toList()),
-                                      );
+                                          child: _buildItem(
+                                              _newBookingsList[index],
+                                              _newBookingsList,
+                                              index));
                                     },
                                     itemCount: 1,
                                   ),
@@ -545,7 +546,7 @@ class _UserHomePageState extends State<UserHomePage>
                             ),
                           ],
                         ),
-                        if (_state?.getCurrentUser()?.ph == '+919999999999')
+                        if (_gs?.getCurrentUser()?.ph == '+919999999999')
                           Container(
                             height: 30,
                             width: 60,
@@ -601,8 +602,8 @@ class _UserHomePageState extends State<UserHomePage>
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.centerDocked,
                 drawer: CustomDrawer(
-                    phone: _state.getCurrentUser() != null
-                        ? _state.getCurrentUser().ph
+                    phone: _gs.getCurrentUser() != null
+                        ? _gs.getCurrentUser().ph
                         : ""),
                 bottomNavigationBar: CustomBottomBar(
                   barIndex: 0,
@@ -678,7 +679,7 @@ class _UserHomePageState extends State<UserHomePage>
     ]));
   }
 
-  Widget _buildItem(UserToken token) {
+  Widget _buildItem(UserToken token, List<UserToken> list, int index) {
     // String address = Utils.getFormattedAddress(booking.address);
     double ticketwidth = MediaQuery.of(context).size.width * .95;
     double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.7;
@@ -821,7 +822,7 @@ class _UserHomePageState extends State<UserHomePage>
                                     if (token.number == -1)
                                       return null;
                                     else
-                                      showCancelBooking(token);
+                                      showCancelBooking(token, list, index);
                                   },
                                 ),
                               ),
@@ -1132,7 +1133,35 @@ class _UserHomePageState extends State<UserHomePage>
         ));
   }
 
-  void showCancelBooking(UserToken booking) {
+  void handleErrorsForTokenCancellation(dynamic error) {
+    switch (error.runtimeType) {
+      case TokenAlreadyCancelledException:
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 6),
+            "Could not Cancel the Token.",
+            "Token number is Already Cancelled.",
+            Colors.red);
+        break;
+      case NoTokenFoundException:
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 6),
+            "Could not Cancel the Token.",
+            "The Token number is either Incorrect or Cancelled",
+            Colors.red);
+        break;
+
+      default:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+            "Could not Cancel the Token.", error.toString(), Colors.red);
+        break;
+    }
+  }
+
+  void showCancelBooking(UserToken booking, List<UserToken> list, int index) {
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -1176,8 +1205,37 @@ class _UserHomePageState extends State<UserHomePage>
                     child: Text('Yes'),
                     onPressed: () {
                       print("Cancel booking");
-
-                      cancelToken(booking).then((value) {
+                      if (Utils.isNotNullOrEmpty(booking.applicationId)) {
+                        _gs
+                            .getApplicationService()
+                            .withDrawApplication(booking.applicationId, "")
+                            .then((value) {
+                          if (value != null) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.check,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Token & Application are Cancelled Successfully.",
+                                "");
+                            setState(() {
+                              booking = value;
+                            });
+                          } else {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.check,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Token & Application could not be Cancelled.",
+                                "Please try again later.");
+                          }
+                        }).catchError((error) {
+                          handleErrorsForTokenCancellation(error);
+                        });
+                      } else {
                         Navigator.of(context, rootNavigator: true).pop();
                         Utils.showMyFlushbar(
                             context,
@@ -1188,23 +1246,31 @@ class _UserHomePageState extends State<UserHomePage>
                             "Cancelling Token ${booking.getDisplayName()}",
                             "Please wait..");
 
-                        if (!value) {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info_outline,
-                              Duration(
-                                seconds: 5,
-                              ),
-                              "Couldn't cancel your booking for some reason. ",
-                              "Please try again later.");
-                        } else {
-                          setState(() {
-                            booking.number = -1;
-                          });
-                        }
-                      }).catchError((e) {
-                        print(e);
-                      });
+                        _gs
+                            .getTokenService()
+                            .cancelToken(
+                                booking.parent.getTokenId(), booking.number)
+                            .then((value) {
+                          if (value == null) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Couldn't cancel your booking for some reason. ",
+                                "Please try again later.");
+                          } else {
+                            setState(() {
+                              //TODO Smita - return value UserToken should be assigned.
+                              list[index] = value;
+                            });
+                          }
+                        }).catchError((e) {
+                          print(e);
+                          handleErrorsForTokenCancellation(e);
+                        });
+                      }
                     },
                   ),
                 ),
