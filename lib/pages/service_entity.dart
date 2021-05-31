@@ -490,6 +490,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                   entity: parentEntity,
                                 ),
                                 defaultDate: null,
+                                isReadOnly: isExec,
                               )));
                             } else
                               Utils.showMyFlushbar(

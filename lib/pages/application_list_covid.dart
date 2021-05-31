@@ -559,6 +559,7 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
         Navigator.of(context)
             .push(PageAnimation.createRoute(ShowApplicationDetails(
           bookingApplication: ba,
+          showCancel: false,
         )));
       },
       child: Card(

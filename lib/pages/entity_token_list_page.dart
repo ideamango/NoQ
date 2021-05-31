@@ -28,11 +28,13 @@ enum DateDisplayFormat { date, month, year }
 class EntityTokenListPage extends StatefulWidget {
   final MetaEntity metaEntity;
   final DateTime defaultDate;
+  final bool isReadOnly;
   final dynamic backRoute;
   EntityTokenListPage(
       {Key key,
       @required this.metaEntity,
       @required this.defaultDate,
+      @required this.isReadOnly,
       @required this.backRoute})
       : super(key: key);
   @override
@@ -286,10 +288,12 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                         date: selectedDate,
                         format: DateDisplayFormat.date,
                         metaEntity: widget.metaEntity,
+                        isReadOnly: widget.isReadOnly,
                         backRoute: EntityTokenListPage(
                           metaEntity: widget.metaEntity,
                           backRoute: widget.backRoute,
                           defaultDate: selectedDate,
+                          isReadOnly: widget.isReadOnly,
                         ))));
                 // getTokenList(key, date, format).then((value) {
                 print("DONEJHCFGJHSDCSDCH");
@@ -746,10 +750,12 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                   date: date,
                   format: DateDisplayFormat.date,
                   metaEntity: widget.metaEntity,
+                  isReadOnly: widget.isReadOnly,
                   backRoute: EntityTokenListPage(
                     metaEntity: widget.metaEntity,
                     backRoute: widget.backRoute,
                     defaultDate: selectedDate,
+                    isReadOnly: widget.isReadOnly,
                   ))));
               // getTokenList(key, date, format).then((value) {
               print("DONEJHCFGJHSDCSDCH");

@@ -549,6 +549,7 @@ class EntityRowState extends State<EntityRow> {
                             metaEntity: _metaEntity,
                             backRoute: ManageEntityListPage(),
                             defaultDate: null,
+                            isReadOnly: isExec,
                           )));
                         } else
                           Utils.showMyFlushbar(

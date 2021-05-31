@@ -22,10 +22,14 @@ import '../widget/widgets.dart';
 
 class ShowApplicationDetails extends StatefulWidget {
   final BookingApplication bookingApplication;
+  final bool showCancel;
+  final dynamic backRoute;
 
   ShowApplicationDetails({
     Key key,
     @required this.bookingApplication,
+    @required this.showCancel,
+    @required this.backRoute,
   }) : super(key: key);
   @override
   _ShowApplicationDetailsState createState() => _ShowApplicationDetailsState();
@@ -98,136 +102,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   FormInputFieldText addressCountry;
   FormInputFieldText notesInput;
   FormInputFieldText addressPin;
-
-  initBookingForm() {
-    fields = List<Field>();
-    idProofTypesStrList.add(Value('Passport'));
-    idProofTypesStrList.add(Value('Driving License'));
-    idProofTypesStrList.add(Value('Aadhar'));
-    idProofTypesStrList.add(Value('PAN'));
-    idProofTypesStrList.forEach((element) {
-      idProofTypes.add(Item(element, false));
-    });
-    medConditionsStrList.add(Value('Chronic Kidney Disease'));
-    medConditionsStrList.add(Value('Liver Disease'));
-    medConditionsStrList.add(Value('Overweight and Severe Obesity'));
-    medConditionsStrList
-        .add(Value('Other Cardiovascular and Cerebrovascular Diseases'));
-    medConditionsStrList.add(Value('Haemoglobin Disorders'));
-    medConditionsStrList.add(Value('Pregnancy'));
-    medConditionsStrList.add(Value('Heart Conditions'));
-    medConditionsStrList.add(Value('Chronic Lung Disease'));
-    medConditionsStrList.add(Value('HIV or Weakened Immune System'));
-
-    medConditionsStrList.add(Value('Neurologic Conditions such as Dementia'));
-
-    medConditionsStrList.add(Value('Diabetes'));
-
-    medConditionsStrList.add(Value('Others (Specify below)'));
-
-    medConditionsStrList.forEach((element) {
-      medConditions.add(Item(element, false));
-    });
-    nameInput = FormInputFieldText("Name of Person", true,
-        "Please enter your name as per Government ID proof", 50);
-    nameInput.response = "SMITA Agarwal";
-
-    dobInput = FormInputFieldDateTime(
-      "Date of Birth",
-      true,
-      "Please select your Date of Birth",
-    );
-    dobInput.responseDateTime =
-        DateTime.now().subtract(Duration(days: 365 * 30));
-
-    primaryPhone = FormInputFieldText(
-        "Primary Contact Number", true, "Primary Contact Number", 10);
-    primaryPhone.response = "9611009823";
-
-    alternatePhone = FormInputFieldText(
-        "Alternate Contact Number", false, "Alternate Contact Number", 10);
-    alternatePhone.response = "9611005523";
-
-    idProofField = FormInputFieldOptionsWithAttachments("Id Proof", true,
-        "Please upload Government Id proof", idProofTypesStrList, false);
-    idProofField.responseFilePaths = List<String>();
-    idProofField.responseValues = new List<Value>();
-    idProofField.responseValues.add(Value("DL"));
-
-    healthDetailsInput = FormInputFieldOptions(
-        "Medical Conditions",
-        true,
-        "Please select all known medical conditions you have",
-        medConditionsStrList,
-        true);
-    healthDetailsInput.responseValues = new List<Value>();
-    healthDetailsInput.responseValues.add(Value("liver"));
-    healthDetailsInput.responseValues.add(Value("heart"));
-
-    healthDetailsDesc = FormInputFieldText(
-        "Decription of medical conditions (optional)",
-        false,
-        "Decription of medical conditions (optional)",
-        200);
-    healthDetailsDesc.response = "Migraine";
-
-    latInput = FormInputFieldText(
-        "Current Location Latitude", false, "Current Location Latitude", 20);
-    latInput.response = "HOMe0023";
-
-    lonInput = FormInputFieldText(
-        "Current Location Longitude", false, "Current Location Longitude", 20);
-    lonInput.response = "Lon";
-
-    fields.add(nameInput);
-    fields.add(dobInput);
-    fields.add(primaryPhone);
-    fields.add(alternatePhone);
-    fields.add(idProofField);
-    fields.add(healthDetailsInput);
-    fields.add(healthDetailsDesc);
-    fields.add(latInput);
-    fields.add(lonInput);
-
-    addressInput = FormInputFieldText(
-        "Apartment/ House No./ Lane", false, "Apartment/ House No./ Lane", 60);
-    fields.add(addressInput);
-    addresslandmark = FormInputFieldText("Landmark", false, "Landmark", 40);
-    fields.add(addresslandmark);
-    addressLocality = FormInputFieldText("Locality", false, "Locality", 40);
-    fields.add(addressLocality);
-    addressCity = FormInputFieldText("City", false, "City", 30);
-    fields.add(addressCity);
-    addressState = FormInputFieldText("State", false, "State", 30);
-    fields.add(addressState);
-    addressCountry = FormInputFieldText("Country", false, "Country", 30);
-    fields.add(addressCountry);
-    addressPin = FormInputFieldText("Pin Code", false, "Pin Code", 30);
-    fields.add(addressPin);
-    notesInput =
-        FormInputFieldText("Notes (optional)", false, "Notes (optional)", 100);
-    fields.add(notesInput);
-
-    bookingForm = new BookingForm(
-        formName: "Covid-19 Vacination Applicant Details",
-        headerMsg:
-            "Your request will be approved based on the information provided by you.",
-        footerMsg:
-            "Please carry same ID proof (uploaded here) to the Vaccination center for verification purpose.",
-        autoApproved: false);
-
-    // bookingApplication = new BookingApplication();
-    // //slot
-
-    // bookingApplication.preferredSlotTiming = DateTime.now();
-    // bookingApplication.status = ApplicationStatus.CANCELLED;
-    // //bookingFormId
-    // // bookingApplication.bookingFormId = widget.bookingFormId;
-    // bookingApplication.entityId = "SELENium Id";
-    // bookingApplication.userId = _gs.getCurrentUser().id;
-    // bookingApplication.status = ApplicationStatus.NEW;
-    // bookingApplication.responseForm = bookingForm;
-  }
 
   Widget _emptyPage() {
     return Center(
@@ -810,24 +684,34 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                "Applicant Details",
-                style: drawerdefaultTextStyle,
-              ),
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                  padding: EdgeInsets.all(0),
-                  alignment: Alignment.center,
-                  highlightColor: Colors.orange[300],
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.white,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  }),
+            appBar: CustomAppBarWithBackButton(
+              backRoute: (widget.backRoute != null)
+                  ? widget.backRoute
+                  : UserHomePage(),
+              titleTxt: "Application Details",
             ),
+            // appBar: AppBar(
+            //   title: Text(
+            //     "Applicant Details",
+            //     style: drawerdefaultTextStyle,
+            //   ),
+            //   flexibleSpace: Container(
+            //     decoration: gradientBackground,
+            //   ),
+            //   leading: IconButton(
+            //       padding: EdgeInsets.all(0),
+            //       alignment: Alignment.center,
+            //       highlightColor: Colors.orange[300],
+            //       icon: Icon(Icons.arrow_back),
+            //       color: Colors.white,
+            //       onPressed: () {
+            //         Navigator.of(context).pop();
+            //         if(widget.backRoute!=null)
+            //         {
+
+            //         }
+            //       }),
+            // ),
             body: SingleChildScrollView(
               physics: ScrollPhysics(),
               child: Card(
@@ -838,44 +722,80 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 child: Column(children: [
-                  Container(
-                    padding: EdgeInsets.all(15),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                                color: (widget.bookingApplication.status ==
-                                        ApplicationStatus.NEW)
-                                    ? Colors.blue
-                                    : (widget.bookingApplication.status ==
-                                            ApplicationStatus.ONHOLD
-                                        ? Colors.yellow[700]
-                                        : (widget.bookingApplication.status ==
-                                                ApplicationStatus.REJECTED
-                                            ? Colors.red
-                                            : (widget.bookingApplication
-                                                        .status ==
-                                                    ApplicationStatus.APPROVED
-                                                ? Colors.green[400]
-                                                : Colors.blueGrey))),
-                                shape: BoxShape.rectangle,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            child: Text(
+                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.all(0),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          color: (widget.bookingApplication.status ==
+                                  ApplicationStatus.NEW)
+                              ? Colors.blue
+                              : (widget.bookingApplication.status ==
+                                      ApplicationStatus.ONHOLD
+                                  ? Colors.yellow[700]
+                                  : (widget.bookingApplication.status ==
+                                          ApplicationStatus.REJECTED
+                                      ? Colors.red
+                                      : (widget.bookingApplication.status ==
+                                              ApplicationStatus.APPROVED
+                                          ? Colors.greenAccent[700]
+                                          : (widget.bookingApplication.status ==
+                                                  ApplicationStatus.COMPLETED
+                                              ? Colors.purple
+                                              : Colors.blueGrey[400])))),
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(5.0))),
+                      child: SizedBox(
+                        //height: cardHeight * .11,
+                        child: Center(
+                          child: AutoSizeText(
                               EnumToString.convertToString(
                                   widget.bookingApplication.status),
+                              textAlign: TextAlign.center,
+                              minFontSize: 8,
+                              maxFontSize: 10,
                               style: TextStyle(
-                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
                                   letterSpacing: 1,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'RalewayRegular'),
-                            ),
-                          ),
-                        ]),
-                  ),
+                                  fontFamily: 'RalewayRegular')),
+                        ),
+                      ),
+                    ),
+
+                    // Container(
+                    //   height: MediaQuery.of(context).size.height * .03,
+                    //   padding: EdgeInsets.all(0),
+                    //   margin: EdgeInsets.all(0),
+                    //   decoration: BoxDecoration(
+                    //       color: (widget.bookingApplication.status ==
+                    //               ApplicationStatus.NEW)
+                    //           ? Colors.blue
+                    //           : (widget.bookingApplication.status ==
+                    //                   ApplicationStatus.ONHOLD
+                    //               ? Colors.yellow[700]
+                    //               : (widget.bookingApplication.status ==
+                    //                       ApplicationStatus.REJECTED
+                    //                   ? Colors.red
+                    //                   : (widget.bookingApplication.status ==
+                    //                           ApplicationStatus.APPROVED
+                    //                       ? Colors.green[400]
+                    //                       : Colors.blueGrey))),
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    //   child: Text(
+                    //     EnumToString.convertToString(
+                    //         widget.bookingApplication.status),
+                    //     style: TextStyle(
+                    //         fontSize: 10,
+                    //         letterSpacing: 1,
+                    //         color: Colors.white,
+                    //         fontWeight: FontWeight.bold,
+                    //         fontFamily: 'RalewayRegular'),
+                    //   ),
+                    // ),
+                  ]),
                   ListView.builder(
                     padding: EdgeInsets.fromLTRB(15, 0, 15, 8),
                     shrinkWrap: true,
@@ -894,6 +814,70 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                         .getFormFields()
                         .length,
                   ),
+                  if (widget.showCancel)
+                    Container(
+                      // width: MediaQuery.of(context).size.width * .8,
+                      margin: EdgeInsets.all(9),
+                      child: MaterialButton(
+                          elevation: 8,
+                          color: Colors.yellow[800],
+                          onPressed: () {
+                            showApplicationStatusDialog(
+                                    context,
+                                    "Cancel Application",
+                                    'Do you want to Cancel this Application?',
+                                    cancelDialogMsg,
+                                    'Cancel Application')
+                                .then((remarks) {
+                              //Update application status change on server.
+                              // if (Utils.isNotNullOrEmpty(remarks)) {
+                              if ((remarks[1])) {
+                                widget.bookingApplication.notesOnCancellation =
+                                    (remarks[0]);
+                                _gs
+                                    .getApplicationService()
+                                    .withDrawApplication(
+                                        widget.bookingApplication.id,
+                                        remarks[0])
+                                    .then((value) {
+                                  widget.bookingApplication
+                                      .notesOnCancellation = remarks[0];
+                                  setState(() {
+                                    widget.bookingApplication.status =
+                                        ApplicationStatus.CANCELLED;
+                                  });
+
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 4),
+                                      "Application Cancelled!!",
+                                      "",
+                                      successGreenSnackBar);
+                                });
+                              }
+                              //   }
+                            });
+                          },
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Cancel Application",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                                Icon(
+                                  Icons.block,
+                                  color: Colors.white,
+                                )
+                              ])),
+                    ),
                 ]),
 //                   Container(
 //                     width: MediaQuery.of(context).size.width * .97,

@@ -1,6 +1,7 @@
 import 'package:LESSs/db/exceptions/no_token_found_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
 import 'package:LESSs/pages/shopping_list.dart';
+import 'package:LESSs/pages/show_application_details.dart';
 import 'package:LESSs/repository/slotRepository.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class TokensInSlot extends StatefulWidget {
   final DateTime date;
   final DateDisplayFormat format;
   final MetaEntity metaEntity;
+  final bool isReadOnly;
   final dynamic backRoute;
   TokensInSlot(
       {Key key,
@@ -35,6 +37,7 @@ class TokensInSlot extends StatefulWidget {
       @required this.date,
       @required this.format,
       @required this.metaEntity,
+      @required this.isReadOnly,
       @required this.backRoute})
       : super(key: key);
   @override
@@ -240,7 +243,9 @@ class _TokensInSlotState extends State<TokensInSlot>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Are you sure you want to cancel this Booking?',
+                    Utils.isNotNullOrEmpty(booking.applicationId)
+                        ? 'There is an Application Request for this Token, You will have to cancel the Application first. Proceed with cancelling the Application?'
+                        : 'Are you sure you want to cancel this Token?',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],
@@ -261,32 +266,38 @@ class _TokensInSlotState extends State<TokensInSlot>
               actions: <Widget>[
                 SizedBox(
                   height: 24,
-                  child: RaisedButton(
+                  child: MaterialButton(
                     elevation: 0,
                     color: Colors.transparent,
-                    splashColor: highlightColor.withOpacity(.8),
-                    textColor: Colors.orange,
+                    splashColor: highlightColor,
+                    textColor: btnColor,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.orange)),
                     child: Text('Yes'),
                     onPressed: () {
+//Fetch application associated with the token
                       if (Utils.isNotNullOrEmpty(booking.applicationId)) {
                         _gs
                             .getApplicationService()
-                            .withDrawApplication(booking.applicationId, "")
-                            .then((value) {
-                          if (value != null) {
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.check,
-                                Duration(
-                                  seconds: 5,
-                                ),
-                                "Token & Application are Cancelled Successfully.",
-                                "");
-                            setState(() {
-                              booking = value;
-                            });
+                            .getApplication(booking.applicationId)
+                            .then((bookingApplication) {
+                          if (bookingApplication != null) {
+                            Navigator.of(_).pop();
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(
+                                    ShowApplicationDetails(
+                              bookingApplication: bookingApplication,
+                              showCancel: true,
+                              backRoute: TokensInSlot(
+                                slotKey: widget.slotKey,
+                                stats: widget.stats,
+                                date: widget.date,
+                                format: widget.format,
+                                metaEntity: widget.metaEntity,
+                                backRoute: widget.backRoute,
+                                isReadOnly: widget.isReadOnly,
+                              ),
+                            )));
                           } else {
                             Utils.showMyFlushbar(
                                 context,
@@ -300,6 +311,37 @@ class _TokensInSlotState extends State<TokensInSlot>
                         }).catchError((error) {
                           handleErrorsForTokenCancellation(error);
                         });
+
+                        // _gs
+                        //     .getApplicationService()
+                        //     .withDrawApplication(booking.applicationId, "")
+                        //     .then((value) {
+                        //   if (value != null) {
+                        //     Utils.showMyFlushbar(
+                        //         context,
+                        //         Icons.check,
+                        //         Duration(
+                        //           seconds: 5,
+                        //         ),
+                        //         "Token & Application are Cancelled Successfully.",
+                        //         "");
+                        //     setState(() {
+                        //       booking = value;
+                        //     });
+                        //   } else {
+                        //     Utils.showMyFlushbar(
+                        //         context,
+                        //         Icons.check,
+                        //         Duration(
+                        //           seconds: 5,
+                        //         ),
+                        //         "Token & Application could not be Cancelled.",
+                        //         "Please try again later.");
+                        //   }
+                        // }).catchError((error) {
+                        //   handleErrorsForTokenCancellation(error);
+                        // });
+
                       } else {
                         print("Cancel booking");
 
@@ -537,20 +579,39 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     size: 22,
                                   ),
                                   onPressed: () {
-                                    //If booking is past booking then no sense of cancelling , show msg to user
-                                    if (booking.parent.dateTime
-                                        .isBefore(DateTime.now()))
+                                    if (!widget.isReadOnly) {
+                                      //If booking is past booking then no sense of cancelling , show msg to user
+                                      if (booking.parent.dateTime
+                                          .isBefore(DateTime.now())) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            "The Booking token has already expired!",
+                                            "");
+                                      }
+                                      //booking number is -1 means its already been cancelled, Do Nothing
+
+                                      if (booking.number == -1) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            "The Booking Token is already Cancelled!",
+                                            "");
+                                        return null;
+                                      } else {
+                                        showCancelBooking(booking, index);
+                                      }
+                                    } else {
                                       Utils.showMyFlushbar(
                                           context,
                                           Icons.info,
-                                          Duration(seconds: 5),
-                                          "This booking token has already expired!!",
-                                          "");
-                                    //booking number is -1 means its already been cancelled, Do Nothing
-                                    if (booking.number == -1)
-                                      return null;
-                                    else
-                                      showCancelBooking(booking, index);
+                                          Duration(seconds: 3),
+                                          "$noEditPermission the Booking Tokens.",
+                                          "Please contact Admin of this place.");
+                                      return;
+                                    }
                                   },
                                 ),
                               ),

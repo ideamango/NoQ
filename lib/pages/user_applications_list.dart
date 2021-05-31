@@ -2059,7 +2059,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                         //Update application status change on server.
                         // if (Utils.isNotNullOrEmpty(remarks)) {
                         if ((remarks[1])) {
-                          ba.notesOnPuttingOnHold = (remarks[0]);
+                          ba.notesOnCancellation = (remarks[0]);
                           _gs
                               .getApplicationService()
                               .withDrawApplication(widget.ba.id, remarks[0])

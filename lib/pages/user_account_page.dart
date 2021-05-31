@@ -367,37 +367,36 @@ class _UserAccountPageState extends State<UserAccountPage>
                                 height: MediaQuery.of(context).size.width * .07,
                                 // width: 20.0,
                                 child: IconButton(
-                                  padding: EdgeInsets.all(0),
-                                  alignment: Alignment.center,
-                                  highlightColor: Colors.orange[300],
-                                  icon: Icon(
-                                    Icons.cancel,
-                                    color: lightIcon,
-                                    size: 22,
-                                  ),
-                                  onPressed: () {
-                                    //If booking is past booking then no sense of cancelling , show msg to user
-                                    if (booking.parent.dateTime
-                                        .isBefore(DateTime.now())) {
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.info,
-                                          Duration(seconds: 5),
-                                          bookingExpired,
-                                          "");
-                                    }
-                                    //booking number is -1 means its already been cancelled, Do Nothing
-                                    else if (booking.number == -1)
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.info,
-                                          Duration(seconds: 5),
-                                          "This Token is already Cancelled.",
-                                          "");
-                                    else
-                                      showCancelBooking(booking, list, index);
-                                  },
-                                ),
+                                    padding: EdgeInsets.all(0),
+                                    alignment: Alignment.center,
+                                    highlightColor: Colors.orange[300],
+                                    icon: Icon(
+                                      Icons.cancel,
+                                      color: lightIcon,
+                                      size: 22,
+                                    ),
+                                    onPressed: () {
+                                      //If booking is past booking then no sense of cancelling , show msg to user
+                                      if (booking.parent.dateTime
+                                          .isBefore(DateTime.now())) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            bookingExpired,
+                                            "");
+                                      }
+                                      //booking number is -1 means its already been cancelled, Do Nothing
+                                      else if (booking.number == -1)
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            "This Token is already Cancelled.",
+                                            "");
+                                      else
+                                        showCancelBooking(booking, list, index);
+                                    }),
                               ),
                               Container(
                                 width: MediaQuery.of(context).size.width * .08,
@@ -728,7 +727,9 @@ class _UserAccountPageState extends State<UserAccountPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Are you sure you want to cancel this booking?',
+                    Utils.isNotNullOrEmpty(booking.applicationId)
+                        ? 'There is an Application Request for this Token, You will have to cancel the Application first. Proceed with cancelling the Application?'
+                        : 'Are you sure you want to cancel this booking?',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],
@@ -758,23 +759,15 @@ class _UserAccountPageState extends State<UserAccountPage>
                         side: BorderSide(color: Colors.orange)),
                     child: Text('Yes'),
                     onPressed: () {
+                      Navigator.of(_).pop();
                       if (Utils.isNotNullOrEmpty(booking.applicationId)) {
                         _gs
                             .getApplicationService()
-                            .withDrawApplication(booking.applicationId, "")
-                            .then((value) {
-                          if (value != null) {
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.check,
-                                Duration(
-                                  seconds: 5,
-                                ),
-                                "Token & Application are Cancelled Successfully.",
-                                "");
-                            setState(() {
-                              booking = value;
-                            });
+                            .getApplication(booking.applicationId)
+                            .then((bookingApplication) {
+                          if (bookingApplication != null) {
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(UserAccountPage()));
                           } else {
                             Utils.showMyFlushbar(
                                 context,
@@ -789,7 +782,6 @@ class _UserAccountPageState extends State<UserAccountPage>
                           handleErrorsForTokenCancellation(error);
                         });
                       } else {
-                        Navigator.of(_).pop();
                         Utils.showMyFlushbar(
                             context,
                             Icons.cancel,

@@ -1412,6 +1412,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           Navigator.of(context).push(
                               PageAnimation.createRoute(ShowApplicationDetails(
                             bookingApplication: ba,
+                            showCancel: false,
+                            backRoute: ApplicationsList(
+                                metaEntity: widget.metaEntity,
+                                bookingFormId: widget.bookingFormId,
+                                isReadOnly: widget.isReadOnly,
+                                status: widget.status,
+                                titleText: widget.titleText),
                           )));
                         },
                         child: Container(
