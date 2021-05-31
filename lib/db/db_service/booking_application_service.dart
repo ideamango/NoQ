@@ -154,6 +154,7 @@ class BookingApplicationService {
             Tuple<BookingApplication, QueryDocumentSnapshot>(
                 item1: BookingApplication.fromJson(doc.data()), item2: doc);
         applications.add(tup);
+        print(tup.item1.id);
       }
     }
 
@@ -378,7 +379,7 @@ class BookingApplicationService {
 
   //to be done by the Applicant
   //Throws => TokenAlreadyCancelledException, NoTokenFoundException
-  Future<bool> withDrawApplication(
+  Future<UserToken> withDrawApplication(
       String applicationId, String notesOnCancellation) async {
     //set the BookingApplication status as cancelled
     //If the token is approved, cancel the token also
@@ -393,7 +394,7 @@ class BookingApplicationService {
     FirebaseFirestore fStore = getFirestore();
     String userPhone = user.phoneNumber;
     Exception e;
-    UserTokens cancelledToken;
+    UserTokens cancelledTokens;
     UserToken cancelledTok;
 
     BookingApplication ba;
@@ -502,8 +503,9 @@ class BookingApplicationService {
           String tokenIdWithoutNumber = tokenIdSplitted.item1;
           int tokenNumber = tokenIdSplitted.item2;
           //cancel the token
-          cancelledToken = await _gs.getTokenService().cancelTokenInTransaction(
+          cancelledTok = await _gs.getTokenService().cancelTokenInTransaction(
               tx, userPhone, tokenIdWithoutNumber, tokenNumber);
+          cancelledTokens = cancelledTok.parent;
 
           //update the GlobalState bookings collection with the cancelled token
           int index = -1;
@@ -511,7 +513,7 @@ class BookingApplicationService {
 
           for (UserToken ut in _gs.bookings) {
             index++;
-            for (UserToken cut in cancelledToken.tokens) {
+            for (UserToken cut in cancelledTokens.tokens) {
               if (ut.getID() == cut.getID() &&
                   tokenNumber == cut.numberBeforeCancellation) {
                 matched = true;
@@ -592,10 +594,10 @@ class BookingApplicationService {
       throw e;
     }
 
-    if (isSuccess && cancelledToken != null && cancelledTok != null) {
+    if (isSuccess && cancelledTokens != null && cancelledTok != null) {
       _gs.getNotificationService().unRegisterTokenNotification(cancelledTok);
     }
-    return isSuccess;
+    return cancelledTok;
   }
 
   //To be called by Manager of the Entity who has restricted rights or by the Admin
@@ -637,7 +639,8 @@ class BookingApplicationService {
     BookingApplicationCounter localCounter;
     //BookingApplicationCounter globalCounter;
     ApplicationStatus existingStatus;
-    UserTokens cancelledToken;
+    UserTokens cancelledTokens;
+    UserToken cancelledToken;
 
     String localCounterId;
     //String globalCounterId;
@@ -827,6 +830,7 @@ class BookingApplicationService {
                 .getTokenService()
                 .cancelTokenInTransaction(
                     tx, userPhone, tokenIdWithoutNumber, tokenNumber);
+            cancelledTokens = cancelledToken.parent;
           }
 
           if (localCounter != null) {
@@ -864,6 +868,7 @@ class BookingApplicationService {
                 .getTokenService()
                 .cancelTokenInTransaction(
                     tx, userPhone, tokenIdWithoutNumber, tokenNumber);
+            cancelledTokens = cancelledToken.parent;
           }
 
           if (localCounter != null) {

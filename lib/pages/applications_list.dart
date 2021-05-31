@@ -77,6 +77,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
         tokenCounterForEntity = tokenCounter;
       });
 
+      Tuple<String, bool> defaultSortOrder =
+          Utils.getDefaultApplicationSortOrder(widget.status);
+
       _gs
           .getApplicationService()
           .getApplications(
@@ -87,8 +90,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
               null,
               null,
               null,
-              "timeOfSubmission",
-              false,
+              defaultSortOrder.item1,
+              defaultSortOrder.item2,
               null,
               lastDocOfPage,
               20)
@@ -1081,7 +1084,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
               itemCount: listOfMeta.length,
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              // reverse: true,
+              //reverse: false,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -1998,7 +2001,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           ? Expanded(
                               child: ListView.builder(
                                 itemCount: listOfBa.length,
-                                // reverse: true,
+                                reverse: false,
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
                                     margin: EdgeInsets.fromLTRB(10, 8, 10, 8),

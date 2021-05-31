@@ -570,7 +570,7 @@ class TokenService {
     return tokens;
   }
 
-  Future<UserTokens> cancelTokenInTransaction(
+  Future<UserToken> cancelTokenInTransaction(
       Transaction tx, String userId, String tokenId,
       [int number]) async {
     FirebaseFirestore fStore = getFirestore();
@@ -580,6 +580,8 @@ class TokenService {
     bool isCancelled = false;
 
     TokenCounter tokenCounter;
+
+    UserToken tokenCancelled;
 
     final DocumentReference tokRef = fStore.doc('tokens/' + tokenId);
     try {
@@ -607,12 +609,15 @@ class TokenService {
             tok.numberBeforeCancellation = tok.number;
             tok.number = -1;
             numberMatched = true;
+            tokenCancelled = tok;
             break;
           } else {
             if (tok.number == number) {
               tok.numberBeforeCancellation = tok.number;
               tok.number = -1;
               numberMatched = true;
+              tokenCancelled = tok;
+              break;
             }
           }
         }
@@ -705,7 +710,7 @@ class TokenService {
         //change the max allowed by 1, if a token is cancelled
         tx.set(entitySlotsRef, es.toJson());
 
-        return tokens;
+        return tokenCancelled;
       } else {
         throw new NoTokenFoundException("Token does not exists");
       }
@@ -719,7 +724,7 @@ class TokenService {
     return null;
   }
 
-  Future<UserTokens> cancelToken(String tokenId, [int number]) async {
+  Future<UserToken> cancelToken(String tokenId, [int number]) async {
     //number param is optional, only required when multiple tokens are booked by the user for the same slot
     //get the token, mark it cancelled
     //get the slot from the token
@@ -729,7 +734,7 @@ class TokenService {
     String userPhone = user.phoneNumber;
     FirebaseFirestore fStore = getFirestore();
 
-    UserTokens cancelledToken;
+    UserToken cancelledToken;
 
     await fStore.runTransaction((Transaction tx) async {
       cancelledToken =
