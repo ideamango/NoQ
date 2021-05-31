@@ -247,7 +247,7 @@ class _UserAccountPageState extends State<UserAccountPage>
     ]));
   }
 
-  Widget _buildItem(UserToken booking) {
+  Widget _buildItem(UserToken booking, List<UserToken> list, int index) {
     double ticketwidth = MediaQuery.of(context).size.width * .95;
     double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.7;
     return Container(
@@ -395,7 +395,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                           "This Token is already Cancelled.",
                                           "");
                                     else
-                                      showCancelBooking(booking);
+                                      showCancelBooking(booking, list, index);
                                   },
                                 ),
                               ),
@@ -715,7 +715,7 @@ class _UserAccountPageState extends State<UserAccountPage>
     }
   }
 
-  void showCancelBooking(UserToken booking) {
+  void showCancelBooking(UserToken booking, List<UserToken> list, int index) {
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -763,7 +763,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                             .getApplicationService()
                             .withDrawApplication(booking.applicationId, "")
                             .then((value) {
-                          if (value) {
+                          if (value != null) {
                             Utils.showMyFlushbar(
                                 context,
                                 Icons.check,
@@ -773,7 +773,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                 "Token & Application are Cancelled Successfully.",
                                 "");
                             setState(() {
-                              booking.number = -1;
+                              booking = value;
                             });
                           } else {
                             Utils.showMyFlushbar(
@@ -789,16 +789,25 @@ class _UserAccountPageState extends State<UserAccountPage>
                           handleErrorsForTokenCancellation(error);
                         });
                       } else {
+                        Navigator.of(_).pop();
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.cancel,
+                            Duration(
+                              seconds: 3,
+                            ),
+                            "Cancelling your booking",
+                            "Please wait..");
                         _gs
                             .getTokenService()
                             .cancelToken(
                                 booking.parent.getTokenId(), booking.number)
                             .then((value) {
-                          setState(() {
-                            booking.number = -1;
-                          });
-
-                          if (!cancelDone) {
+                          if (value != null) {
+                            setState(() {
+                              list[index] = value;
+                            });
+                          } else {
                             Utils.showMyFlushbar(
                                 context,
                                 Icons.info_outline,
@@ -812,16 +821,6 @@ class _UserAccountPageState extends State<UserAccountPage>
                           handleErrorsForTokenCancellation(error);
                         });
                       }
-
-                      Navigator.of(_).pop();
-                      Utils.showMyFlushbar(
-                          context,
-                          Icons.cancel,
-                          Duration(
-                            seconds: 3,
-                          ),
-                          "Cancelling your booking",
-                          "Please wait..");
                     },
                   ),
                 ),
@@ -1150,12 +1149,13 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         itemBuilder:
                                             (BuildContext context, int index) {
                                           return Container(
-                                            child: new Column(
-                                                children: _newBookingsList
-                                                    .map(_buildItem)
-                                                    .toList()),
-                                            //children: <Widget>[firstRow, secondRow],
-                                          );
+                                              child: _buildItem(
+                                                  _newBookingsList[index],
+                                                  _newBookingsList,
+                                                  index)
+
+                                              //children: <Widget>[firstRow, secondRow],
+                                              );
                                         },
                                         itemCount: 1,
                                       ),
@@ -1204,12 +1204,10 @@ class _UserAccountPageState extends State<UserAccountPage>
                                           itemBuilder: (BuildContext context,
                                               int index) {
                                             return Container(
-                                              child: new Column(
-                                                  children: _pastBookingsList
-                                                      .map(_buildItem)
-                                                      .toList()),
-                                              //children: <Widget>[firstRow, secondRow],
-                                            );
+                                                child: _buildItem(
+                                                    _pastBookingsList[index],
+                                                    _pastBookingsList,
+                                                    index));
                                           },
                                           itemCount: 1,
                                         ),
