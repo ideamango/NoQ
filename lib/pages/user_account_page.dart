@@ -758,8 +758,6 @@ class _UserAccountPageState extends State<UserAccountPage>
                         side: BorderSide(color: Colors.orange)),
                     child: Text('Yes'),
                     onPressed: () {
-                      print("Cancel booking");
-                      bool cancelDone = false;
                       if (Utils.isNotNullOrEmpty(booking.applicationId)) {
                         _gs
                             .getApplicationService()
@@ -774,7 +772,6 @@ class _UserAccountPageState extends State<UserAccountPage>
                                 ),
                                 "Token & Application are Cancelled Successfully.",
                                 "");
-                            cancelDone = value;
                             setState(() {
                               booking.number = -1;
                             });
@@ -792,12 +789,15 @@ class _UserAccountPageState extends State<UserAccountPage>
                           handleErrorsForTokenCancellation(error);
                         });
                       } else {
-                        cancelToken(booking).then((value) {
+                        _gs
+                            .getTokenService()
+                            .cancelToken(
+                                booking.parent.getTokenId(), booking.number)
+                            .then((value) {
                           setState(() {
                             booking.number = -1;
                           });
 
-                          cancelDone = value;
                           if (!cancelDone) {
                             Utils.showMyFlushbar(
                                 context,

@@ -197,7 +197,7 @@ class _TokensInSlotState extends State<TokensInSlot>
     );
   }
 
-  void showCancelBooking(UserToken booking) {
+  void showCancelBooking(UserToken booking, int index) {
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -210,7 +210,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Are you sure you want to cancel this booking?',
+                    'Are you sure you want to cancel this Booking?',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],
@@ -241,7 +241,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                     child: Text('Yes'),
                     onPressed: () {
                       print("Cancel booking");
-                      bool cancelDone = false;
+
                       Navigator.of(context, rootNavigator: true).pop();
                       Utils.showMyFlushbar(
                           context,
@@ -251,9 +251,13 @@ class _TokensInSlotState extends State<TokensInSlot>
                           ),
                           "Cancelling Token ${booking.getDisplayName()}",
                           "Please wait..");
-                      cancelToken(booking).then((value) {
-                        cancelDone = value;
-                        if (!cancelDone) {
+
+                      _gs
+                          .getTokenService()
+                          .cancelToken(
+                              booking.parent.getTokenId(), booking.number)
+                          .then((value) {
+                        if (value == null) {
                           Utils.showMyFlushbar(
                               context,
                               Icons.info_outline,
@@ -264,7 +268,8 @@ class _TokensInSlotState extends State<TokensInSlot>
                               "Please try again later.");
                         } else {
                           setState(() {
-                            booking.number = -1;
+                            //TODO Smita - return value UserToken should be assigned.
+                            listOfTokens[index] = value.tokens[0];
                           });
                         }
                       }).catchError((e) {
@@ -296,7 +301,7 @@ class _TokensInSlotState extends State<TokensInSlot>
             ));
   }
 
-  Widget _buildItem(UserToken booking) {
+  Widget _buildItem(UserToken booking, int index) {
     double ticketwidth = MediaQuery.of(context).size.width * .95;
     double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.7;
     return Container(
@@ -483,7 +488,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     if (booking.number == -1)
                                       return null;
                                     else
-                                      showCancelBooking(booking);
+                                      showCancelBooking(booking, index);
                                   },
                                 ),
                               ),
@@ -783,15 +788,12 @@ class _TokensInSlotState extends State<TokensInSlot>
                                       return Container(
                                         padding: EdgeInsets.all(10),
                                         child: Card(
-                                          child: new Column(
-                                              children: listOfTokens
-                                                  .map(_buildItem)
-                                                  .toList()),
-                                          //children: <Widget>[firstRow, secondRow],
-                                        ),
+                                            child: _buildItem(
+                                                listOfTokens[index], index)),
+                                        //children: <Widget>[firstRow, secondRow],
                                       );
                                     },
-                                    itemCount: 1,
+                                    itemCount: listOfTokens.length,
                                   )
                                 : _emptyPage(),
 

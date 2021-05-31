@@ -438,7 +438,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     maxLines: 1,
                     overflow: TextOverflow.clip,
                     style: TextStyle(
-                        color: Colors.black, fontFamily: 'RalewayRegular'),
+                        color: Colors.blueGrey[700],
+                        fontFamily: 'RalewayRegular'),
                   ),
                 ),
                 horizontalSpacer,
@@ -564,7 +565,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     maxLines: 1,
                     overflow: TextOverflow.clip,
                     style: TextStyle(
-                        color: Colors.black, fontFamily: 'RalewayRegular'),
+                        color: Colors.blueGrey[700],
+                        fontFamily: 'RalewayRegular'),
                   ),
                 ),
                 // horizontalSpacer,
@@ -680,7 +682,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         maxLines: 1,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
-                            color: Colors.black, fontFamily: 'RalewayRegular'),
+                            color: Colors.blueGrey[700],
+                            fontFamily: 'RalewayRegular'),
                       ),
                     ),
                     Row(
@@ -813,33 +816,40 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
+                          width: cardWidth * .75,
                           padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
                           margin: EdgeInsets.zero,
                           child: Row(
                             children: [
-                              AutoSizeText(
-                                "Submission Date - ",
-                                group: labelGroup,
-                                minFontSize: 9,
-                                maxFontSize: 11,
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'RalewayRegular'),
+                              SizedBox(
+                                width: cardWidth * .3,
+                                child: AutoSizeText(
+                                  "Submission Date - ",
+                                  group: labelGroup,
+                                  minFontSize: 9,
+                                  maxFontSize: 11,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                      color: Colors.blueGrey[700],
+                                      fontFamily: 'RalewayRegular'),
+                                ),
                               ),
-                              AutoSizeText(
-                                DateFormat('yyyy-MM-dd – HH:mm')
-                                    .format(ba.timeOfSubmission),
-                                group: responseGroup,
-                                minFontSize: 12,
-                                maxFontSize: 14,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.indigo[900],
-                                    fontFamily: 'Roboto'),
+                              SizedBox(
+                                width: cardWidth * .35,
+                                child: AutoSizeText(
+                                  DateFormat('yyyy-MM-dd – HH:mm')
+                                      .format(ba.timeOfSubmission),
+                                  group: responseGroup,
+                                  minFontSize: 10,
+                                  maxFontSize: 14,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.indigo[900],
+                                      fontFamily: 'Roboto'),
+                                ),
                               ),
                             ],
                           )),
@@ -856,7 +866,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                                 style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.blueGrey[700],
                                     fontFamily: 'RalewayRegular'),
                               ),
                               AutoSizeText(
@@ -971,8 +981,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                                 style: TextStyle(
-                                  color: Colors.black,
-                                ),
+                                    color: Colors.blueGrey[700],
+                                    fontFamily: 'RalewayRegular'),
                               ),
                               AutoSizeText(
                                 ('${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}'),
@@ -1014,12 +1024,12 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                                 style: TextStyle(
-                                  color: Colors.black,
-                                ),
+                                    color: Colors.blueGrey[700],
+                                    fontFamily: 'RalewayRegular'),
                               ),
                               horizontalSpacer,
                               AutoSizeText(
-                                ('${DateFormat('yyyy-MM-dd – kk:mm').format(Utils.getTokenDate(ba.tokenId))}'),
+                                ('${DateFormat('yyyy-MM-dd – HH:mm').format(Utils.getTokenDate(ba.tokenId))}'),
                                 // group: medCondGroup,
                                 minFontSize: 9,
                                 maxFontSize: 15,
@@ -1060,7 +1070,12 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     color: Colors.white,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                child: Text('No Token issued yet'),
+                child: Text(
+                  'No Token issued yet',
+                  style: TextStyle(
+                      color: Colors.blueGrey[700],
+                      fontFamily: 'RalewayRegular'),
+                ),
               ),
             ListView.builder(
               itemCount: listOfMeta.length,
@@ -1107,7 +1122,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                                 style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.blueGrey[700],
                                     fontFamily: 'RalewayRegular'),
                               ),
                             ],
@@ -1120,12 +1135,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   children: [
                                     AutoSizeText(
                                       ((ba.preferredSlotTiming != null)
-                                          ? DateFormat('yyyy-MM-dd – kk:mm')
+                                          ? DateFormat('yyyy-MM-dd – HH:mm')
                                               .format(ba.preferredSlotTiming)
                                           : "None"),
                                       minFontSize: 12,
                                       maxFontSize: 14,
                                       maxLines: 1,
+                                      group: responseGroup,
                                       overflow: TextOverflow.clip,
                                       style: TextStyle(
                                           fontSize: 14,
@@ -1178,7 +1194,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             children: [
                               AutoSizeText(
                                 "Click to choose another Time-Slot",
-                                // group: labelGroup,
+                                //group: labelGroup,
                                 minFontSize: 12,
                                 maxFontSize: 13,
                                 maxLines: 1,
@@ -1248,7 +1264,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           ),
                           if (applicationNewSlotMap.containsKey(ba.id))
                             AutoSizeText(
-                              DateFormat('yyyy-MM-dd – kk:mm')
+                              DateFormat('yyyy-MM-dd – HH:mm')
                                   .format(applicationNewSlotMap[ba.id]),
                               minFontSize: 12,
                               maxFontSize: 14,
@@ -1285,7 +1301,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     maxLines: 1,
                                     overflow: TextOverflow.clip,
                                     style: TextStyle(
-                                        color: Colors.black,
+                                        color: Colors.blueGrey[700],
                                         fontFamily: 'RalewayRegular'),
                                   ),
                                 ),
@@ -1299,6 +1315,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     minFontSize: 12,
                                     maxFontSize: 14,
                                     maxLines: 1,
+                                    group: responseGroup,
                                     overflow: TextOverflow.clip,
                                     style: TextStyle(
                                         fontSize: 14,
@@ -1312,39 +1329,64 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           (ba.isOnlineModeOfInteraction)
                               ? GestureDetector(
                                   onTap: () {
-                                    //Whatsapp launch
-                                    // Duration timeDiff = DateTime.now()
-                                    //     .difference(ba.tokenId);
-
-                                    // if (timeDiff.inMinutes >= 5) {
-
-                                    //   print("Diff more");
-                                    // } else {
-                                    String phoneNo = ba.userId;
-                                    if (phoneNo != null && phoneNo != "") {
-                                      try {
-                                        launchWhatsApp(
-                                            message: whatsappMessageToPlaceOwner +
-                                                '${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}' +
-                                                "\n\n<Type your message here..>",
-                                            phone: phoneNo);
-                                      } catch (error) {
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.error,
-                                            Duration(seconds: 5),
-                                            "Could not connect to the WhatsApp number $phoneNo !!",
-                                            "Try again later");
+                                    if ((ba.tokenId) != null) {
+                                      DateTime tokenDateTime =
+                                          Utils.getTokenDate(ba.tokenId);
+                                      if (tokenDateTime != null) {
+                                        Duration timeDiff = DateTime.now()
+                                            .difference(tokenDateTime);
+                                        if (timeDiff.inMinutes <= -1) {
+                                          print("Diff more");
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.info,
+                                              Duration(seconds: 5),
+                                              yourTurnUserMessage1,
+                                              yourTurnUserMessage2);
+                                        } else if (tokenDateTime
+                                            .isBefore(DateTime.now())) {
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.error,
+                                              Duration(seconds: 6),
+                                              "Could not start Whatsapp call as this Booking has already expired.",
+                                              "Please contact Owner/Manager of this Place");
+                                        } else {
+                                          String phoneNo = ba.userId;
+                                          if (phoneNo != null &&
+                                              phoneNo != "") {
+                                            try {
+                                              launchWhatsApp(
+                                                  message: whatsappMessageToPlaceOwner +
+                                                      '${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}' +
+                                                      "\n\n<Type your message here..>",
+                                                  phone: phoneNo);
+                                            } catch (error) {
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.error,
+                                                  Duration(seconds: 5),
+                                                  "Could not connect to the WhatsApp number $phoneNo !!",
+                                                  "Try again later");
+                                            }
+                                          } else {
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.info,
+                                                Duration(seconds: 5),
+                                                "Whatsapp contact information not found!!",
+                                                "");
+                                          }
+                                        }
                                       }
                                     } else {
                                       Utils.showMyFlushbar(
                                           context,
                                           Icons.info,
                                           Duration(seconds: 5),
-                                          "Whatsapp contact information not found!!",
-                                          "");
+                                          yourTurnUserMessageWhenTokenIsNotAlloted,
+                                          '');
                                     }
-//                                    }
                                   },
                                   child: Container(
                                       padding: EdgeInsets.zero,
@@ -1372,8 +1414,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         child: Container(
                           padding: EdgeInsets.zero,
                           child: Text("..show all details",
-                              style:
-                                  TextStyle(color: Colors.blue, fontSize: 14)),
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 12,
+                                  fontFamily: 'RalewayRegular')),
                         ),
                       ),
                     ],
