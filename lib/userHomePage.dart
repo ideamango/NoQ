@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:LESSs/db/exceptions/no_token_found_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
+import 'package:LESSs/pages/show_user_application_details.dart';
 import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:LESSs/pages/help_page.dart';
 import 'package:LESSs/services/qr_code_user_application.dart';
@@ -956,6 +957,41 @@ class _UserHomePageState extends State<UserHomePage>
                             ],
                           ),
                         ),
+                        if (Utils.isNotNullOrEmpty(token.applicationId))
+                          GestureDetector(
+                            onTap: () {
+                              _gs
+                                  .getApplicationService()
+                                  .getApplication(token.applicationId)
+                                  .then((bookingApplication) {
+                                if (bookingApplication != null) {
+                                  Navigator.of(context).push(
+                                      PageAnimation.createRoute(
+                                          ShowUserApplicationDetails(
+                                    bookingApplication: bookingApplication,
+                                    backRoute: UserHomePage(),
+                                  )));
+                                } else {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.info,
+                                      Duration(
+                                        seconds: 5,
+                                      ),
+                                      "Could not fetch Application details at the moment.",
+                                      "Please try again later.");
+                                }
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(top: 4),
+                              width: MediaQuery.of(context).size.width * .68,
+                              alignment: Alignment.centerRight,
+                              child: Text("..view details",
+                                  style: TextStyle(
+                                      color: highlightColor, fontSize: 12)),
+                            ),
+                          ),
                       ],
                     ),
                   ],
@@ -1174,7 +1210,9 @@ class _UserHomePageState extends State<UserHomePage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Are you sure you want to cancel this booking?',
+                    Utils.isNotNullOrEmpty(booking.applicationId)
+                        ? applicationExistsForToken
+                        : 'Are you sure you want to Cancel this Booking?',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],
@@ -1205,23 +1243,19 @@ class _UserHomePageState extends State<UserHomePage>
                     child: Text('Yes'),
                     onPressed: () {
                       print("Cancel booking");
+                      Navigator.of(_).pop();
                       if (Utils.isNotNullOrEmpty(booking.applicationId)) {
                         _gs
                             .getApplicationService()
-                            .withDrawApplication(booking.applicationId, "")
-                            .then((value) {
-                          if (value != null) {
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.check,
-                                Duration(
-                                  seconds: 5,
-                                ),
-                                "Token & Application are Cancelled Successfully.",
-                                "");
-                            setState(() {
-                              booking = value;
-                            });
+                            .getApplication(booking.applicationId)
+                            .then((bookingApplication) {
+                          if (bookingApplication != null) {
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(
+                              ShowUserApplicationDetails(
+                                  bookingApplication: bookingApplication,
+                                  backRoute: UserHomePage()),
+                            ));
                           } else {
                             Utils.showMyFlushbar(
                                 context,
@@ -1236,7 +1270,6 @@ class _UserHomePageState extends State<UserHomePage>
                           handleErrorsForTokenCancellation(error);
                         });
                       } else {
-                        Navigator.of(context, rootNavigator: true).pop();
                         Utils.showMyFlushbar(
                             context,
                             Icons.cancel,
