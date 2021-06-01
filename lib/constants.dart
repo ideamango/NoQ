@@ -82,10 +82,13 @@ const SEARCH_TYPE_OF_PLACE = "Search by Type of Place";
 const SELECT_ROLE_OF_PERSON = "Select the Role of Employee";
 
 String QRMessageInToken =
-    "Show this QR code once you reach the place. Manager of the place will scan to view details of your request.";
+    "Show this QR code once you reach the place. The manager of the place will scan to view the details of your request.";
 
 String QRMessageInPlaceOwner =
-    "Ask your customers to scan this QR code with LESSs app to add this Place to their favourite.";
+    "Ask your customers to scan this QR code with the LESSs app to add this Place to their favorites.";
+
+String QRMessageInApplicationOnUser =
+    "Show this QR code once you reach the place. The manager of the place will scan to view the details of your request.";
 
 String adminLegend = "Admin";
 String managerLegend = "Manager";
@@ -96,7 +99,7 @@ var loginSubTxt = "Peace of Mind";
 var loginMainTxt = "";
 String dateDisplayFormat = 'EEE, MMM d';
 String applicationExistsForToken =
-    'There is an Application Request for this Token, You will have to cancel the Application first. Proceed with cancelling the Application?';
+    'This will cancel your Token and respective Application. \nAre you sure you want to cancel?';
 String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
 String whatsappContactUsMsg = "Hey!!";
