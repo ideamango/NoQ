@@ -765,7 +765,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                 children: <Widget>[
                   Text(
                     Utils.isNotNullOrEmpty(booking.applicationId)
-                        ? 'There is an Application Request for this Token, You will have to cancel the Application first. Proceed with cancelling the Application?'
+                        ? applicationExistsForToken
                         : 'Are you sure you want to cancel this booking?',
                     style: TextStyle(
                       fontSize: 15,

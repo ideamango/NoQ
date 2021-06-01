@@ -95,6 +95,8 @@ String appName = 'LESSs';
 var loginSubTxt = "Peace of Mind";
 var loginMainTxt = "";
 String dateDisplayFormat = 'EEE, MMM d';
+String applicationExistsForToken =
+    'There is an Application Request for this Token, You will have to cancel the Application first. Proceed with cancelling the Application?';
 String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
 String whatsappContactUsMsg = "Hey!!";
