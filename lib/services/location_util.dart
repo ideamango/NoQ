@@ -1,22 +1,26 @@
+import 'package:LESSs/db/db_model/configurations.dart';
+
 import '../location.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
+import '../utils.dart';
+
 class LocationUtil {
-  static Future<Location> getLocation() async {
+  static Future<Location> getLocation(Configurations conf) async {
     Location locData;
 
     try {
       //first call ip-api.com
-      IPAPILocation ipAPILocation = await _callIPAPI();
+      IPAPILocation ipAPILocation = await _callIPAPI(conf);
       if (ipAPILocation != null) {
         locData = _convertFromIPAPI(ipAPILocation);
       }
 
       if (locData == null) {
         //fallback to ipstack.com
-        IPStackLocation ipStackLocation = await _getLocationFromIPStack();
+        IPStackLocation ipStackLocation = await _getLocationFromIPStack(conf);
         locData = _convertFromIPStack(ipStackLocation);
       }
 
@@ -26,14 +30,27 @@ class LocationUtil {
         locData.callingCode = locData.allCallingCodes[locData.countryCode];
       }
     } catch (e) {
-      //do nothing
+      print(e.toString());
+    }
+
+    if (locData == null) {
+      //return default location
+      locData = new Location();
+      locData.country = "India";
+      locData.countryCode = "IN";
+      locData.callingCode = "91";
     }
 
     return locData;
   }
 
-  static Future<IPAPILocation> _callIPAPI() async {
-    String ipAPIURL = "http://ip-api.com/json";
+  static Future<IPAPILocation> _callIPAPI(Configurations conf) async {
+    String ipAPIURL = conf.ipURL;
+    //String ipAPIURL = "http://ip-api.com/json";
+    if (!Utils.isNotNullOrEmpty(ipAPIURL)) {
+      return null;
+    }
+
     try {
       Uri uri = Uri.parse(ipAPIURL);
 
@@ -45,15 +62,37 @@ class LocationUtil {
         return IPAPILocation.fromJson(jsonDecode(response.body));
       }
     } catch (e) {
-      return null;
+      //again try with the default key
+      ipAPIURL = "https://pro.ip-api.com/json/?key=xBYD3J4Ru0LhPRO";
+      try {
+        Uri uri = Uri.parse(ipAPIURL);
+
+        final response = await http.get(uri);
+
+        if (response.statusCode == 200) {
+          // If the server did return a 200 OK response,
+          // then parse the JSON.
+          IPAPILocation ipapiLocation =
+              IPAPILocation.fromJson(jsonDecode(response.body));
+          return ipapiLocation;
+        }
+      } catch (e) {
+        //do nothing
+      }
     }
 
     return null;
   }
 
-  static Future<IPStackLocation> _getLocationFromIPStack() async {
-    String ipstackURL =
-        "http://api.ipstack.com/183.83.146.130?access_key=7dfc143d00f07856308ebcdd836dda8e";
+  static Future<IPStackLocation> _getLocationFromIPStack(
+      Configurations conf) async {
+    String ipstackURL = conf.ipstackURL;
+    if (!Utils.isNotNullOrEmpty(ipstackURL)) {
+      return null;
+    }
+
+    // String ipstackURL =
+    //     "http://api.ipstack.com/183.83.146.130?access_key=7dfc143d00f07856308ebcdd836dda8e";
 
     try {
       Uri uri = Uri.parse(ipstackURL);
@@ -79,8 +118,8 @@ class LocationUtil {
     loc.country = ipstackLoc.country_name;
     loc.countryCode = ipstackLoc.country_code;
     loc.isEU = ipstackLoc.continent_code == "EU" ? true : false;
-    loc.region = ipstackLoc.region_name;
-    loc.regionCode = ipstackLoc.region_code;
+    loc.state = ipstackLoc.region_name;
+    loc.stateCode = ipstackLoc.region_code;
     loc.timezone = null;
     loc.zip = ipstackLoc.zip;
     loc.lat = ipstackLoc.latitude;
@@ -99,14 +138,16 @@ class LocationUtil {
     loc.countryCode = ipAPILocation.countryCode;
     loc.isEU =
         (ipAPILocation.timezone.substring(0, 6) == "Europe") ? true : false;
-    loc.region = ipAPILocation.regionName;
-    loc.regionCode = ipAPILocation.region;
+    loc.state = ipAPILocation.regionName;
+    loc.stateCode = ipAPILocation.region;
     loc.timezone = ipAPILocation.timezone; //e.g. "Europe/London"
     loc.zip = ipAPILocation.zip;
     loc.lat = ipAPILocation.lat;
     loc.lon = ipAPILocation.lon;
     loc.continent = null;
     loc.continentCode = null;
+
+    return loc;
   }
 }
 
