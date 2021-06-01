@@ -26,7 +26,9 @@ class Configurations {
       this.typeToChildType,
       this.androidAppVersionToEntityTypes,
       this.iosAppVersionToEntityTypes,
-      this.upi});
+      this.upi,
+      this.ipURL,
+      this.ipstackURL});
 
   List<String> entityTypes;
   List<String> messages;
@@ -48,6 +50,8 @@ class Configurations {
   Map<String, List<String>> androidAppVersionToEntityTypes;
   Map<String, List<String>> iosAppVersionToEntityTypes;
   String upi;
+  String ipURL;
+  String ipstackURL;
 
   Map<String, dynamic> toJson() => {
         'entityTypes': entityTypes,
@@ -70,7 +74,9 @@ class Configurations {
             convertFromMapOfList(androidAppVersionToEntityTypes),
         'iosAppVersionToEntityTypes':
             convertFromMapOfList(iosAppVersionToEntityTypes),
-        'upi': upi
+        'upi': upi,
+        'ipURL': ipURL,
+        'ipstackURL': ipstackURL
       };
 
   Map<String, dynamic> convertFromMap(Map<String, String> dailyStats) {
@@ -144,7 +150,9 @@ class Configurations {
             convertToMapOfList(json['androidAppVersionToEntityTypes']),
         iosAppVersionToEntityTypes:
             convertToMapOfList(json['iosAppVersionToEntityTypes']),
-        upi: json['upi']);
+        upi: json['upi'],
+        ipURL: json['ipURL'],
+        ipstackURL: json['ipstackURL']);
   }
 
   static List<MetaForm> convertToFormMetaData(List<dynamic> json) {

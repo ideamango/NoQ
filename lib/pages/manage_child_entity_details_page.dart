@@ -415,7 +415,7 @@ class _ManageChildEntityDetailsPageState
       Location lc = _gs.getLocation();
       Address defaultAdrs = new Address();
       if (lc != null) {
-        defaultAdrs.state = lc.region;
+        defaultAdrs.state = lc.state;
         defaultAdrs.zipcode = lc.zip;
         defaultAdrs.city = lc.city;
         defaultAdrs.country = lc.country;

@@ -81,6 +81,12 @@ const SELECT_TYPE_OF_PLACE = "Select Type of Place";
 const SEARCH_TYPE_OF_PLACE = "Search by Type of Place";
 const SELECT_ROLE_OF_PERSON = "Select the Role of Employee";
 
+String QRMessageInToken =
+    "Show this QR code once you reach the place. Manager of the place will scan to view details of your request.";
+
+String QRMessageInPlaceOwner =
+    "Ask your customers to scan this QR code with LESSs app to add this Place to their favourite.";
+
 String adminLegend = "Admin";
 String managerLegend = "Manager";
 String executiveLegend = "Executive";

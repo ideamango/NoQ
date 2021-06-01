@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:LESSs/pages/favs_list_page.dart';
+import 'package:LESSs/services/location_util.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -237,8 +237,6 @@ class GlobalState {
       _gs = new GlobalState._();
     }
 
-    _gs._locData = location;
-
     if (_gs._secondaryFirebaseApp == null) {
       await _gs.initSecondaryFirebaseApp();
     }
@@ -280,6 +278,19 @@ class GlobalState {
       } catch (e) {
         print(
             "Error initializing GlobalState, Configuration could not be fetched from server..");
+      }
+    }
+
+    if (_gs._locData == null && _gs._conf != null) {
+      if (location != null) {
+        _gs._locData = location;
+      } else {
+        //automatically detect country
+        try {
+          _gs._locData = await LocationUtil.getLocation(_gs._conf);
+        } catch (e) {
+          print("Error getting location from the IP: " + e.toString());
+        }
       }
     }
 

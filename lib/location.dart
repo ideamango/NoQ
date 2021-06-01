@@ -1,8 +1,8 @@
 class Location {
   String country;
   String countryCode;
-  String region;
-  String regionCode;
+  String state;
+  String stateCode;
   String city;
   String zip;
   String timezone;
