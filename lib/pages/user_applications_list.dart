@@ -3,6 +3,7 @@ import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/events/event_bus.dart';
 import 'package:LESSs/events/events.dart';
 import 'package:LESSs/pages/token_alert.dart';
+import 'package:LESSs/pages/user_account_page.dart';
 import 'package:LESSs/services/circular_progress.dart';
 import 'package:LESSs/services/url_services.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -2025,7 +2026,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                       Navigator.of(context).push(
                           PageAnimation.createRoute(ShowUserApplicationDetails(
                         bookingApplication: ba,
-                        isAdmin: false,
+                        backRoute: UserAccountPage(),
                       )));
                     },
                     child: Container(

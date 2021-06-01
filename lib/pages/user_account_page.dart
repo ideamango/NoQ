@@ -3,6 +3,8 @@ import 'package:LESSs/db/exceptions/no_token_found_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
 import 'package:LESSs/events/event_bus.dart';
 import 'package:LESSs/events/events.dart';
+import 'package:LESSs/pages/show_application_details.dart';
+import 'package:LESSs/pages/show_user_application_details.dart';
 import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -249,7 +251,7 @@ class _UserAccountPageState extends State<UserAccountPage>
 
   Widget _buildItem(UserToken booking, List<UserToken> list, int index) {
     double ticketwidth = MediaQuery.of(context).size.width * .95;
-    double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.7;
+    double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.65;
     return Container(
         width: ticketwidth,
         height: ticketHeight,
@@ -528,6 +530,41 @@ class _UserAccountPageState extends State<UserAccountPage>
                             ],
                           ),
                         ),
+                        if (Utils.isNotNullOrEmpty(booking.applicationId))
+                          GestureDetector(
+                            onTap: () {
+                              _gs
+                                  .getApplicationService()
+                                  .getApplication(booking.applicationId)
+                                  .then((bookingApplication) {
+                                if (bookingApplication != null) {
+                                  Navigator.of(context).push(
+                                      PageAnimation.createRoute(
+                                          ShowUserApplicationDetails(
+                                    bookingApplication: bookingApplication,
+                                    backRoute: UserAccountPage(),
+                                  )));
+                                } else {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.info,
+                                      Duration(
+                                        seconds: 5,
+                                      ),
+                                      "Could not fetch Application details at the moment.",
+                                      "Please try again later.");
+                                }
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(top: 4),
+                              width: MediaQuery.of(context).size.width * .68,
+                              alignment: Alignment.centerRight,
+                              child: Text("..view details",
+                                  style: TextStyle(
+                                      color: highlightColor, fontSize: 12)),
+                            ),
+                          ),
                       ],
                     ),
                   ],
@@ -766,8 +803,12 @@ class _UserAccountPageState extends State<UserAccountPage>
                             .getApplication(booking.applicationId)
                             .then((bookingApplication) {
                           if (bookingApplication != null) {
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(UserAccountPage()));
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(
+                              ShowUserApplicationDetails(
+                                  bookingApplication: bookingApplication,
+                                  backRoute: UserAccountPage()),
+                            ));
                           } else {
                             Utils.showMyFlushbar(
                                 context,
@@ -1149,7 +1190,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               //children: <Widget>[firstRow, secondRow],
                                               );
                                         },
-                                        itemCount: 1,
+                                        itemCount: _newBookingsList.length,
                                       ),
                                     ),
                                   if (_upcomingBkgStatus == 'NoBookings')
@@ -1201,7 +1242,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                                     _pastBookingsList,
                                                     index));
                                           },
-                                          itemCount: 1,
+                                          itemCount: _pastBookingsList.length,
                                         ),
                                       if (_pastBkgStatus == 'NoBookings')
                                         _emptyStorePage("No bookings in past..",

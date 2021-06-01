@@ -487,7 +487,7 @@ class _UserHomePageState extends State<UserHomePage>
                                               _newBookingsList,
                                               index));
                                     },
-                                    itemCount: 1,
+                                    itemCount: _newBookingsList.length,
                                   ),
                                 if (_upcomingBkgStatus == 'NoBookings')
                                   _emptyStorePage(

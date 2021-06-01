@@ -301,7 +301,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                           } else {
                             Utils.showMyFlushbar(
                                 context,
-                                Icons.check,
+                                Icons.info,
                                 Duration(
                                   seconds: 5,
                                 ),
@@ -311,37 +311,6 @@ class _TokensInSlotState extends State<TokensInSlot>
                         }).catchError((error) {
                           handleErrorsForTokenCancellation(error);
                         });
-
-                        // _gs
-                        //     .getApplicationService()
-                        //     .withDrawApplication(booking.applicationId, "")
-                        //     .then((value) {
-                        //   if (value != null) {
-                        //     Utils.showMyFlushbar(
-                        //         context,
-                        //         Icons.check,
-                        //         Duration(
-                        //           seconds: 5,
-                        //         ),
-                        //         "Token & Application are Cancelled Successfully.",
-                        //         "");
-                        //     setState(() {
-                        //       booking = value;
-                        //     });
-                        //   } else {
-                        //     Utils.showMyFlushbar(
-                        //         context,
-                        //         Icons.check,
-                        //         Duration(
-                        //           seconds: 5,
-                        //         ),
-                        //         "Token & Application could not be Cancelled.",
-                        //         "Please try again later.");
-                        //   }
-                        // }).catchError((error) {
-                        //   handleErrorsForTokenCancellation(error);
-                        // });
-
                       } else {
                         print("Cancel booking");
 
