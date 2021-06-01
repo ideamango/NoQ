@@ -472,7 +472,7 @@ class _ShowUserApplicationDetailsState
               }
               for (int i = 0; i < newfield.responseValues.length; i++) {
                 if (conds != "")
-                  conds = conds + "  &  " + newfield.responseValues[i].value;
+                  conds = conds + "  |  " + newfield.responseValues[i].value;
                 else
                   conds = conds + newfield.responseValues[i].value.toString();
               }
