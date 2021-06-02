@@ -184,7 +184,8 @@ class _UserHomePageState extends State<UserHomePage>
 
     launchPlayStore(
         packageName: _gs.getConfigurations().packageName,
-        iOSAppId: _gs.getConfigurations().iOSAppId);
+        iOSAppId: _gs.getConfigurations().iOSAppId,
+        forReview: false);
   }
 
   @override

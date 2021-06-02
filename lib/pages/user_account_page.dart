@@ -917,7 +917,8 @@ class _UserAccountPageState extends State<UserAccountPage>
     //  openRateReviewForIos();
     launchPlayStore(
         packageName: _gs.getConfigurations().packageName,
-        iOSAppId: _gs.getConfigurations().iOSAppId);
+        iOSAppId: _gs.getConfigurations().iOSAppId,
+        forReview: true);
 
     // launch("https://play.google.com/store/apps/details?id=" + packageName);
   }

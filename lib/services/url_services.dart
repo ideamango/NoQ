@@ -153,8 +153,13 @@ void launchWhatsApp({
 
 //     return appId ?? '';
 //   }
-Future<String> openRateReviewForIos(String appId) async {
-  final reviewUrl = 'itunes.apple.com/app/id$appId?mt=8&action=write-review';
+Future<String> openRateReviewForIos(String appId, bool forReview) async {
+  String reviewUrl;
+  if (forReview)
+    reviewUrl = 'itunes.apple.com/app/id$appId?mt=8&action=write-review';
+  else {
+    reviewUrl = 'itunes.apple.com/app/id$appId';
+  }
 
   if (await canLaunch('itms-apps://$reviewUrl')) {
     print('launching store page');
@@ -232,7 +237,8 @@ Future<String> openGooglePlay(String bundle) async {
   return 'Launched Google Play: $bundle';
 }
 
-void launchPlayStore({String packageName, String iOSAppId}) async {
+void launchPlayStore(
+    {String packageName, String iOSAppId, bool forReview}) async {
   //TODO change bundle /app id
   //packageName = "com.bigbasket.mobileapp";
   //app id for google photos
@@ -240,7 +246,7 @@ void launchPlayStore({String packageName, String iOSAppId}) async {
   //TODO  End
   // final appId =  getIosAppId() ?? '';
   if (Platform.isIOS) {
-    openRateReviewForIos(iOSAppId);
+    openRateReviewForIos(iOSAppId, forReview);
   } else if (Platform.isAndroid) {
     openGooglePlay(packageName);
     // return "https://play.google.com/store/apps/details?id=" + packageName;
