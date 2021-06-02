@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import '../../tuple.dart';
 import '../db_model/entity_slots.dart';
 import '../db_model/meta_entity.dart';
 
@@ -214,7 +215,7 @@ class TokenService {
   }
 
   //this method is used to generate the Token by the user passed here, e.g. EntityAdmin can also generate ToKen for other users
-  Future<UserTokens> generateTokenInTransaction(
+  Future<Tuple<UserTokens, TokenCounter>> generateTokenInTransaction(
       Transaction tx,
       String userId,
       MetaEntity metaEntity,
@@ -517,7 +518,7 @@ class TokenService {
       throw ex;
     }
 
-    return tokens;
+    return new Tuple(item1: tokens, item2: tokenCounter);
   }
 
   Future<UserToken> autoGenerateTokenForNextAvailableSlot(
@@ -525,7 +526,8 @@ class TokenService {
 
   //this method is used to generate the Token by the current user for himself
   //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
-  Future<UserTokens> generateToken(MetaEntity metaEntity, DateTime dateTime,
+  Future<Tuple<UserTokens, TokenCounter>> generateToken(
+      MetaEntity metaEntity, DateTime dateTime,
       [bool enableVideoChat = false]) async {
     User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
@@ -536,11 +538,11 @@ class TokenService {
 
     //TODO: To run the validation on DateTime for holidays, break, advnanceDays and during closing hours
 
-    UserTokens tokens;
+    Tuple<UserTokens, TokenCounter> tuple;
 
     await fStore.runTransaction((Transaction tx) async {
       try {
-        tokens = await generateTokenInTransaction(tx, userPhone, metaEntity,
+        tuple = await generateTokenInTransaction(tx, userPhone, metaEntity,
             dateTime, null, null, null, enableVideoChat);
       } catch (e) {
         print("Error while generting token -> Transaction Error: " +
@@ -567,10 +569,10 @@ class TokenService {
       throw exception;
     }
 
-    return tokens;
+    return tuple;
   }
 
-  Future<UserToken> cancelTokenInTransaction(
+  Future<Tuple<UserToken, TokenCounter>> cancelTokenInTransaction(
       Transaction tx, String userId, String tokenId,
       [int number]) async {
     FirebaseFirestore fStore = getFirestore();
@@ -710,7 +712,7 @@ class TokenService {
         //change the max allowed by 1, if a token is cancelled
         tx.set(entitySlotsRef, es.toJson());
 
-        return tokenCancelled;
+        return new Tuple(item1: tokenCancelled, item2: tokenCounter);
       } else {
         throw new NoTokenFoundException("Token does not exists");
       }
@@ -724,7 +726,8 @@ class TokenService {
     return null;
   }
 
-  Future<UserToken> cancelToken(String tokenId, [int number]) async {
+  Future<Tuple<UserToken, TokenCounter>> cancelToken(String tokenId,
+      [int number]) async {
     //number param is optional, only required when multiple tokens are booked by the user for the same slot
     //get the token, mark it cancelled
     //get the slot from the token
@@ -734,14 +737,13 @@ class TokenService {
     String userPhone = user.phoneNumber;
     FirebaseFirestore fStore = getFirestore();
 
-    UserToken cancelledToken;
+    Tuple<UserToken, TokenCounter> tuple;
 
     await fStore.runTransaction((Transaction tx) async {
-      cancelledToken =
-          await cancelTokenInTransaction(tx, userPhone, tokenId, number);
+      tuple = await cancelTokenInTransaction(tx, userPhone, tokenId, number);
     });
 
-    return cancelledToken;
+    return tuple;
   }
 
   Future<List<UserToken>> getAllTokensForSlot(String slotId) async {
