@@ -560,7 +560,7 @@ To provide effective Services;
 To debug customer support related issues;
 To operate and improve the Website or Application;
 TO PERFORM ACADEMIC/STUDIES, CLINICAL OR OTHER RESEARCH AND ANALYSIS FOR OUR UNDERSTANDING, INFORMATION, ANALYSIS, SERVICES AND TECHNOLOGIES IN ORDER TO PROVIDE ALL USERS IMPROVED QUALITY OF CARE; AND ENSURING THAT THE CONTENT AND ADVERTISING DISPLAYED ARE CUSTOMIZED TO YOUR INTERESTS AND PREFERENCES;
-To contact You via phone, SMS, email or third-party communication services such as Whatsapp, etc. for appointments, technical issues, payment reminders, obtaining feedback and other security announcements;
+To contact You via phone, SMS, email or third-party communication services such as WhatsApp, etc. for appointments, technical issues, payment reminders, obtaining feedback and other security announcements;
 To send promotional and marketing emails from Us or any of Our channel partners via SMS, email, snail mail or third-party communication services such as WhatsApp, Facebook etc.;
 To advertise products and Services of NTHS and third parties;
 To transfer information about You, if We are acquired by or merged with another company;

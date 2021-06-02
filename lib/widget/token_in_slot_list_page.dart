@@ -520,7 +520,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                             context,
                                             Icons.error,
                                             Duration(seconds: 5),
-                                            "Could not connect to the Whatsapp number $phoneNo !!",
+                                            "Could not connect to the WhatsApp number $phoneNo !!",
                                             "Try again later");
                                       }
                                     } else {
@@ -528,7 +528,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                           context,
                                           Icons.info,
                                           Duration(seconds: 5),
-                                          "Whatsapp contact information not found!!",
+                                          "WhatsApp contact information not found!!",
                                           "");
                                     }
                                   },
@@ -729,7 +729,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     context,
                                     Icons.error,
                                     Duration(seconds: 6),
-                                    "Could not start Whatsapp call as this Booking has already expired.",
+                                    "Could not start WhatsApp call as this Booking has already expired.",
                                     "Please contact Owner/Manager of this Place");
                               } else {
                                 String phoneNo = booking.parent.userId;
@@ -745,7 +745,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                         context,
                                         Icons.error,
                                         Duration(seconds: 5),
-                                        "Could not connect to the Whatsapp number $phoneNo !!",
+                                        "Could not connect to the WhatsApp number $phoneNo !!",
                                         "Try again later");
                                   }
                                 } else {
@@ -753,7 +753,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                       context,
                                       Icons.info,
                                       Duration(seconds: 5),
-                                      "Whatsapp contact information not found!!",
+                                      "WhatsApp contact information not found!!",
                                       "");
                                 }
                               }

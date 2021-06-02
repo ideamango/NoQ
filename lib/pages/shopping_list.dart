@@ -296,7 +296,7 @@ class _ShoppingListState extends State<ShoppingList> {
                                 context,
                                 Icons.error,
                                 Duration(seconds: 5),
-                                "Could not connect to the Whatsapp number $phoneNo !!",
+                                "Could not connect to the WhatsApp number $phoneNo !!",
                                 "Try again later");
                           }
                         } else {
@@ -304,7 +304,7 @@ class _ShoppingListState extends State<ShoppingList> {
                               context,
                               Icons.info,
                               Duration(seconds: 5),
-                              "Whatsapp contact information not found!!",
+                              "WhatsApp contact information not found!!",
                               "");
                         }
                       } else {

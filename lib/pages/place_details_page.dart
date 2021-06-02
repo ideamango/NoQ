@@ -219,7 +219,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                                     context,
                                     Icons.error,
                                     Duration(seconds: 5),
-                                    "Could not connect to the Whatsapp number ${entity.whatsapp} !!",
+                                    "Could not connect to the WhatsApp number ${entity.whatsapp} !!",
                                     "Try again later");
                               }
                             } else {
@@ -227,7 +227,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                                   context,
                                   Icons.info,
                                   Duration(seconds: 5),
-                                  "Whatsapp contact information not found!!",
+                                  "WhatsApp contact information not found!!",
                                   "");
                             }
                           },
