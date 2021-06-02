@@ -179,9 +179,12 @@ class _UserHomePageState extends State<UserHomePage>
   }
 
   openPlayStore() async {
-    PackageInfo info = await PackageInfo.fromPlatform();
-    String packageName = info.packageName;
-    launchPlayStore(packageName: packageName);
+    // PackageInfo info = await PackageInfo.fromPlatform();
+    // String packageName = info.packageName;
+
+    launchPlayStore(
+        packageName: _gs.getConfigurations().packageName,
+        iOSAppId: _gs.getConfigurations().iOSAppId);
   }
 
   @override

@@ -1379,7 +1379,7 @@ class _EntityFormState extends State<EntityForm> {
                 seconds: 5,
               ),
               "Request submitted successfully!",
-              'We will contact you as soon as slot opens up. Stay Safe!',
+              'Your request is successfuly submitted for the review. Stay Safe!',
               successGreenSnackBar);
         } else {
           print("Error in generating SLot for user");

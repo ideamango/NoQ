@@ -28,7 +28,9 @@ class Configurations {
       this.iosAppVersionToEntityTypes,
       this.upi,
       this.ipURL,
-      this.ipstackURL});
+      this.ipstackURL,
+      this.iOSAppId,
+      this.packageName});
 
   List<String> entityTypes;
   List<String> messages;
@@ -52,6 +54,8 @@ class Configurations {
   String upi;
   String ipURL;
   String ipstackURL;
+  String iOSAppId;
+  String packageName;
 
   Map<String, dynamic> toJson() => {
         'entityTypes': entityTypes,
@@ -76,7 +80,9 @@ class Configurations {
             convertFromMapOfList(iosAppVersionToEntityTypes),
         'upi': upi,
         'ipURL': ipURL,
-        'ipstackURL': ipstackURL
+        'ipstackURL': ipstackURL,
+        'iOSAppId': iOSAppId,
+        'packageName': packageName
       };
 
   Map<String, dynamic> convertFromMap(Map<String, String> dailyStats) {
@@ -152,7 +158,9 @@ class Configurations {
             convertToMapOfList(json['iosAppVersionToEntityTypes']),
         upi: json['upi'],
         ipURL: json['ipURL'],
-        ipstackURL: json['ipstackURL']);
+        ipstackURL: json['ipstackURL'],
+        iOSAppId: json['iOSAppId'],
+        packageName: json['packageName']);
   }
 
   static List<MetaForm> convertToFormMetaData(List<dynamic> json) {

@@ -232,18 +232,16 @@ Future<String> openGooglePlay(String bundle) async {
   return 'Launched Google Play: $bundle';
 }
 
-void launchPlayStore({
-  @required String packageName,
-}) async {
+void launchPlayStore({String packageName, String iOSAppId}) async {
   //TODO change bundle /app id
-  packageName = "com.bigbasket.mobileapp";
+  //packageName = "com.bigbasket.mobileapp";
   //app id for google photos
-  final appId = '962194608';
+  //final appId = '962194608';
   //TODO  End
   // final appId =  getIosAppId() ?? '';
   if (Platform.isIOS) {
-    openRateReviewForIos(appId);
-  } else {
+    openRateReviewForIos(iOSAppId);
+  } else if (Platform.isAndroid) {
     openGooglePlay(packageName);
     // return "https://play.google.com/store/apps/details?id=" + packageName;
   }

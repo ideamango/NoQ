@@ -904,8 +904,8 @@ class _UserAccountPageState extends State<UserAccountPage>
   }
 
   openPlayStoreAndRate() async {
-    PackageInfo info = await PackageInfo.fromPlatform();
-    String packageName = info.packageName;
+    // PackageInfo info = await PackageInfo.fromPlatform();
+    // String packageName = info.packageName;
 
     // AppReview.writeReview.then((onValue) {
     //   setState(() {
@@ -915,7 +915,9 @@ class _UserAccountPageState extends State<UserAccountPage>
     // });
 
     //  openRateReviewForIos();
-    launchPlayStore(packageName: packageName);
+    launchPlayStore(
+        packageName: _gs.getConfigurations().packageName,
+        iOSAppId: _gs.getConfigurations().iOSAppId);
 
     // launch("https://play.google.com/store/apps/details?id=" + packageName);
   }

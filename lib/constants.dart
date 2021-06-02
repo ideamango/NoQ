@@ -361,7 +361,7 @@ String tryAgainLater = "Please try again later.";
 String appShareHeading =
     "Are you worried about your Safety while stepping out or fed up with waiting in long queues?";
 String appShareMessage =
-    "Fix your appointment well in advance and visit places when the crowd is less.\n\nDownload the LESSs app today and save lives!";
+    "Fix your appointment well in advance and visit places when the crowd is less.\n\nDownload the LESSs app today and stay safe!";
 
 String appShareWithOwnerHeading =
     "Protect your Customers to Protect your Business!\nProvide Safety and Convenience to regain the confidence of your customers.";
