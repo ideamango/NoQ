@@ -818,9 +818,14 @@ class BookingApplicationService {
           //     globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
           //   }
           // }
-          if (application.tokenId != null) {
+          if (application.tokenId != null &&
+              existingStatus == ApplicationStatus.APPROVED) {
             //this means that the application was approved earlier (auto or by admin),
             //but now has been put on hold, resulting into the cancellation of the token
+
+            //If the Status was OnHold or Rejected or Cancelled, the token would not be present or it will already be cancelled
+            //If the status is Completed, there is no point of cancelling the Token
+            //if the Application is new, the Token hasn't been generated yet
             Tuple<String, int> tokenIdSplitted =
                 Utils.getTokenIdWithoutNumber(application.tokenId);
             String tokenIdWithoutNumber = tokenIdSplitted.item1;
@@ -858,7 +863,8 @@ class BookingApplicationService {
           //   }
           // }
 
-          if (application.tokenId != null) {
+          if (application.tokenId != null &&
+              existingStatus == ApplicationStatus.APPROVED) {
             Tuple<String, int> tokenIdSplitted =
                 Utils.getTokenIdWithoutNumber(application.tokenId);
             String tokenIdWithoutNumber = tokenIdSplitted.item1;
