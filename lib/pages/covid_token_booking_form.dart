@@ -1204,7 +1204,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     seconds: 5,
                   ),
                   "Request submitted successfully!",
-                  'Your request is successfuly submitted for the review.',
+                  'Your Application is submitted successfully for review. \n ',
                   successGreenSnackBar);
             }
           });

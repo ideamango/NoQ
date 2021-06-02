@@ -1379,7 +1379,7 @@ class _EntityFormState extends State<EntityForm> {
                 seconds: 5,
               ),
               "Request submitted successfully!",
-              'Your request is successfuly submitted for the review. Stay Safe!',
+              'Your request is submitted successfully for review. \n ',
               successGreenSnackBar);
         } else {
           print("Error in generating SLot for user");
@@ -1618,7 +1618,7 @@ class _EntityFormState extends State<EntityForm> {
                       //                             child: Wrap(
                       //                           children: [
                       //                             AutoSizeText(
-                      //                               "Current time-slot :",
+                      //                               "Requested time-slot :",
                       //                               //group: labelGroup,
                       //                               minFontSize: 15,
                       //                               maxFontSize: 15,

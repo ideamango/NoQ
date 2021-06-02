@@ -1849,7 +1849,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             showMessageDialog(
                     context,
                     "Request submitted successfully!",
-                    'We will contact you as soon as slot opens up. Stay Safe!',
+                    'Your Application is submitted successfully for the review.\n ',
                     'Ok')
                 .then((value) => Navigator.pushReplacement(
                     context,
@@ -2112,7 +2112,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                                 SizedBox(
                                                     // width: cardWidth * .45,
                                                     child: AutoSizeText(
-                                                  "Current time-slot :",
+                                                  "Requested time-slot :",
                                                   //group: labelGroup,
                                                   minFontSize: 15,
                                                   maxFontSize: 15,
