@@ -1300,7 +1300,7 @@ class _UserHomePageState extends State<UserHomePage>
                           } else {
                             setState(() {
                               //TODO Smita - return value UserToken should be assigned.
-                              list[index] = value;
+                              list[index] = value.item1;
                             });
                           }
                         }).catchError((e) {

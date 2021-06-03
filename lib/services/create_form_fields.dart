@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/pages/search_entity_page.dart';
@@ -1819,7 +1820,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             .getApplicationService()
             .submitApplication(
                 bookingApplication, widget.metaEntity, widget.isOnlineToken)
-            .then((token) {
+            .then((value) {
+          UserToken token = value.item1;
           if (token != null) {
             final dtFormat = new DateFormat(dateDisplayFormat);
             String _dateFormatted =

@@ -607,11 +607,15 @@ class GlobalState {
   }
 
   //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
-  Future<UserTokens> addBooking(
+  Future<Tuple<UserTokens, TokenCounter>> addBooking(
       MetaEntity meta, Slot slot, bool enableVideoChat) async {
     UserTokens tokens;
-    tokens =
+    Tuple<UserTokens, TokenCounter> tuple;
+    tuple =
         await _tokenService.generateToken(meta, slot.dateTime, enableVideoChat);
+
+    tokens = tuple.item1;
+
     UserToken newToken;
     bool matched;
     if (tokens != null) {
@@ -633,7 +637,7 @@ class GlobalState {
         bookings.add(newToken);
       }
     }
-    return tokens;
+    return tuple;
   }
 
   static clearGlobalState() {
@@ -665,7 +669,9 @@ class GlobalState {
 
   //Throws => TokenAlreadyCancelledException, NoTokenFoundException
   Future<bool> cancelBooking(String tokenId, [int number]) async {
-    UserToken ut = await _tokenService.cancelToken(tokenId, number);
+    Tuple<UserToken, TokenCounter> tuple;
+    tuple = await _tokenService.cancelToken(tokenId, number);
+    UserToken ut = tuple.item1;
     UserTokens uts = ut.parent;
     if (uts != null) {
       //update the bookings in the collection

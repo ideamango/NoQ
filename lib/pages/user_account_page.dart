@@ -838,7 +838,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                             .then((value) {
                           if (value != null) {
                             setState(() {
-                              list[index] = value;
+                              list[index] = value.item1;
                             });
                           } else {
                             Utils.showMyFlushbar(

@@ -906,6 +906,11 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
                                 if (value != null) {
                                   setState(() {
                                     ba.status = ApplicationStatus.COMPLETED;
+                                    ba.timeOfCompletion =
+                                        value.item1.timeOfCompletion;
+                                    ba.notesOnCompletion =
+                                        value.item1.notesOnCompletion;
+                                    ba.completedBy = value.item1.completedBy;
                                   });
                                 } else {
                                   print("Could not update application");
@@ -943,6 +948,12 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
                                 if (value != null) {
                                   setState(() {
                                     ba.status = ApplicationStatus.APPROVED;
+                                    ba.timeOfApproval =
+                                        value.item1.timeOfApproval;
+                                    ba.approvedBy = value.item1.approvedBy;
+                                    ba.notesOnApproval =
+                                        value.item1.notesOnApproval;
+                                    ba.tokenId = value.item1.tokenId;
                                   });
                                 } else {
                                   print("Could not update application status");
@@ -983,6 +994,13 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
                               if (value != null) {
                                 setState(() {
                                   ba.status = ApplicationStatus.ONHOLD;
+                                  ba.tokenId = value.item1.tokenId;
+                                  ba.putOnHoldBy = value.item1.putOnHoldBy;
+                                  ba.notesOnPuttingOnHold =
+                                      value.item1.notesOnPuttingOnHold;
+
+                                  ba.timeOfPuttingOnHold =
+                                      value.item1.timeOfPuttingOnHold;
                                 });
                               } else {
                                 print("Could not update application status");
@@ -1020,6 +1038,12 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
                               if (value != null) {
                                 setState(() {
                                   ba.status = ApplicationStatus.REJECTED;
+                                  ba.tokenId = value.item1.tokenId;
+                                  ba.notesOnRejection =
+                                      value.item1.notesOnRejection;
+                                  ba.rejectedBy = value.item1.rejectedBy;
+                                  ba.timeOfRejection =
+                                      value.item1.timeOfRejection;
                                 });
                               } else {
                                 print("Could not update application status");

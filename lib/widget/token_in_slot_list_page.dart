@@ -341,7 +341,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                           } else {
                             setState(() {
                               //TODO Smita - return value UserToken should be assigned.
-                              listOfTokens[index] = value;
+                              listOfTokens[index] = value.item1;
                             });
                           }
                         }).catchError((e) {
