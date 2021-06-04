@@ -1125,7 +1125,7 @@ class Utils {
             ));
   }
 
-  static void handleUpdateApplicationStatus(
+  static void handleErrorsInUpdateApplicationStatus(
       dynamic error, BuildContext context) {
     switch (error.runtimeType) {
       case MaxTokenReachedByUserPerDayException:

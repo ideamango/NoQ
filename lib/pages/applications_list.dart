@@ -1,6 +1,7 @@
 import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/pages/token_alert.dart';
 import 'package:LESSs/services/url_services.dart';
+import 'package:LESSs/slot_selection_admin.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -107,6 +108,18 @@ class _ApplicationsListState extends State<ApplicationsList> {
           initCompleted = true;
       });
     });
+  }
+
+  Future<bool> refreshTokenCounter() async {
+    _gs
+        .getTokenService()
+        .getTokenCounterForEntity(
+            widget.metaEntity.entityId, DateTime.now().year.toString())
+        .then((tokenCounter) {
+      tokenCounterForEntity = tokenCounter;
+      return true;
+    });
+    return false;
   }
 
   Future<void> getGlobalState() async {
@@ -421,7 +434,6 @@ class _ApplicationsListState extends State<ApplicationsList> {
   Widget buildChildItem(Field field, BookingApplication ba) {
     Widget fieldWidget = SizedBox();
     print(field.label);
-    //Widget fieldsContainer = Container();
     if (field != null) {
       switch (field.type) {
         case FieldType.TEXT:
@@ -1157,27 +1169,40 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               horizontalSpacer,
                               if ((ba.status == ApplicationStatus.NEW) ||
                                   (ba.status == ApplicationStatus.ONHOLD))
-                                isAvailable(ba.preferredSlotTiming)
+                                DateTime.now().isAfter(ba.preferredSlotTiming)
                                     ? Row(
-                                        children: [
-                                          Icon(Icons.event_available,
-                                              color: Colors.greenAccent[700]),
-                                          Text('Available',
-                                              style: TextStyle(
-                                                  color:
-                                                      Colors.greenAccent[700])),
-                                        ],
-                                      )
-                                    : Row(
                                         children: [
                                           Icon(Icons.event_busy,
                                               color: Colors.orangeAccent[700]),
-                                          Text('Not Available',
+                                          Text('Expired',
                                               style: TextStyle(
                                                   color:
                                                       Colors.orangeAccent[700]))
                                         ],
-                                      ),
+                                      )
+                                    : (isAvailable(ba.preferredSlotTiming)
+                                        ? Row(
+                                            children: [
+                                              Icon(Icons.event_available,
+                                                  color:
+                                                      Colors.greenAccent[700]),
+                                              Text('Available',
+                                                  style: TextStyle(
+                                                      color: Colors
+                                                          .greenAccent[700])),
+                                            ],
+                                          )
+                                        : Row(
+                                            children: [
+                                              Icon(Icons.event_busy,
+                                                  color:
+                                                      Colors.orangeAccent[700]),
+                                              Text('Not Available',
+                                                  style: TextStyle(
+                                                      color: Colors
+                                                          .orangeAccent[700]))
+                                            ],
+                                          )),
                             ],
                           ),
                         ],
@@ -1244,12 +1269,12 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  SlotSelectionPage(
+                                                  SlotSelectionAdmin(
                                                     metaEntity:
                                                         widget.metaEntity,
                                                     dateTime:
                                                         ba.preferredSlotTiming,
-                                                    forPage: "ApplicationList",
+                                                    forAdmin: "ApplicationList",
                                                     tokenCounter:
                                                         tokenCounterForEntity,
                                                   )));
@@ -1409,17 +1434,32 @@ class _ApplicationsListState extends State<ApplicationsList> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.of(context).push(
-                              PageAnimation.createRoute(ShowApplicationDetails(
+                          Navigator.of(context)
+                              .push(PageAnimation.createRoute(
+                                  ShowApplicationDetails(
                             bookingApplication: ba,
                             showCancel: false,
+                            metaEntity: widget.metaEntity,
+                            newBookingDate:
+                                (applicationNewSlotMap.containsKey(ba.id)
+                                    ? applicationNewSlotMap[ba.id]
+                                    : ba.preferredSlotTiming),
+                            isReadOnly: widget.isReadOnly,
+                            isAvailable: isAvailable(ba.preferredSlotTiming),
+                            tokenCounter: tokenCounterForEntity,
                             backRoute: ApplicationsList(
                                 metaEntity: widget.metaEntity,
                                 bookingFormId: widget.bookingFormId,
                                 isReadOnly: widget.isReadOnly,
                                 status: widget.status,
                                 titleText: widget.titleText),
-                          )));
+                          )))
+                              .then((value) {
+                            refreshTokenCounter();
+                            setState(() {
+                              print(value);
+                            });
+                          });
                         },
                         child: Container(
                           padding: EdgeInsets.zero,
@@ -1474,6 +1514,18 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 "Please contact Admin of this place.");
                             return;
                           }
+                          if (DateTime.now().isAfter(
+                              (applicationNewSlotMap.containsKey(ba.id)
+                                  ? applicationNewSlotMap[ba.id]
+                                  : ba.preferredSlotTiming))) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info,
+                                Duration(seconds: 3),
+                                timeSlotExpired,
+                                "Select a different Date or Time and try again.");
+                            return;
+                          }
                           if (ba.status != ApplicationStatus.COMPLETED &&
                               ba.status != ApplicationStatus.CANCELLED) {
                             setState(() {
@@ -1516,6 +1568,11 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           "",
                                           Colors.purple[400],
                                           Colors.white);
+                                      refreshTokenCounter().then((value) {
+                                        setState(() {
+                                          showLoading = false;
+                                        });
+                                      });
                                     } else {
                                       print("Could not update application");
                                       Utils.showMyFlushbar(
@@ -1524,15 +1581,22 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           Duration(seconds: 4),
                                           "Oops! Application could not be marked Completed!!",
                                           "Try again later.");
+                                      setState(() {
+                                        showLoading = false;
+                                      });
                                     }
                                   }).catchError((error) {
-                                    Utils.handleUpdateApplicationStatus(
+                                    Utils.handleErrorsInUpdateApplicationStatus(
                                         error, context);
+                                    setState(() {
+                                      showLoading = false;
+                                    });
+                                  });
+                                } else {
+                                  setState(() {
+                                    showLoading = false;
                                   });
                                 }
-                                setState(() {
-                                  showLoading = false;
-                                });
                               });
                             });
                           }
@@ -1598,6 +1662,18 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 "Please contact Admin of this place.");
                             return;
                           }
+                          if (DateTime.now().isAfter(
+                              (applicationNewSlotMap.containsKey(ba.id)
+                                  ? applicationNewSlotMap[ba.id]
+                                  : ba.preferredSlotTiming))) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info,
+                                Duration(seconds: 3),
+                                timeSlotExpired,
+                                "Select a different Date or Time and try again.");
+                            return;
+                          }
                           if (ba.status != ApplicationStatus.COMPLETED &&
                               ba.status != ApplicationStatus.CANCELLED &&
                               ba.status != ApplicationStatus.APPROVED) {
@@ -1643,6 +1719,11 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           "",
                                           successGreenSnackBar,
                                           Colors.white);
+                                      refreshTokenCounter().then((value) {
+                                        setState(() {
+                                          showLoading = false;
+                                        });
+                                      });
                                     } else {
                                       print(
                                           "Could not update application status");
@@ -1652,15 +1733,21 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           Duration(seconds: 4),
                                           "Oops! Application could not be Approved!!",
                                           tryAgainToBook);
+                                      setState(() {
+                                        showLoading = false;
+                                      });
                                     }
                                   }).catchError((error) {
-                                    Utils.handleUpdateApplicationStatus(
+                                    Utils.handleErrorsInUpdateApplicationStatus(
                                         error, context);
+                                    setState(() {
+                                      showLoading = false;
+                                    });
                                   });
-                                }
-                                setState(() {
-                                  showLoading = false;
-                                });
+                                } else
+                                  setState(() {
+                                    showLoading = false;
+                                  });
                               });
                             });
                           }
@@ -1729,6 +1816,19 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               "Please contact Admin of this place.");
                           return;
                         }
+
+                        // if (DateTime.now().isAfter(
+                        //     (applicationNewSlotMap.containsKey(ba.id)
+                        //         ? applicationNewSlotMap[ba.id]
+                        //         : ba.preferredSlotTiming))) {
+                        //   Utils.showMyFlushbar(
+                        //       context,
+                        //       Icons.info,
+                        //       Duration(seconds: 3),
+                        //       timeSlotExpired,
+                        //       "Select a different Date or Time and try again.");
+                        //   return;
+                        // }
                         if (ba.status != ApplicationStatus.COMPLETED &&
                             ba.status != ApplicationStatus.CANCELLED &&
                             ba.status != ApplicationStatus.ONHOLD) {
@@ -1775,6 +1875,11 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                         "",
                                         Colors.yellow[700],
                                         Colors.white);
+                                    refreshTokenCounter().then((value) {
+                                      setState(() {
+                                        showLoading = false;
+                                      });
+                                    });
                                   } else {
                                     print(
                                         "Could not update application status");
@@ -1784,18 +1889,22 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                         Duration(seconds: 4),
                                         "Oops! Application could not be put On-Hold!!",
                                         tryAgainLater);
+                                    setState(() {
+                                      showLoading = false;
+                                    });
                                   }
                                 }).catchError((error) {
                                   setState(() {
                                     showLoading = false;
                                   });
-                                  Utils.handleUpdateApplicationStatus(
+                                  Utils.handleErrorsInUpdateApplicationStatus(
                                       error, context);
                                 });
+                              } else {
+                                setState(() {
+                                  showLoading = false;
+                                });
                               }
-                              setState(() {
-                                showLoading = false;
-                              });
                             });
                           });
                         }
@@ -1863,6 +1972,18 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               "Please contact Admin of this place.");
                           return;
                         }
+                        // if (DateTime.now().isAfter(
+                        //     (applicationNewSlotMap.containsKey(ba.id)
+                        //         ? applicationNewSlotMap[ba.id]
+                        //         : ba.preferredSlotTiming))) {
+                        //   Utils.showMyFlushbar(
+                        //       context,
+                        //       Icons.info,
+                        //       Duration(seconds: 3),
+                        //       timeSlotExpired,
+                        //       "Select a different Date or Time and try again.");
+                        //   return;
+                        // }
                         if (ba.status != ApplicationStatus.COMPLETED &&
                             ba.status != ApplicationStatus.CANCELLED &&
                             ba.status != ApplicationStatus.REJECTED) {
@@ -1902,10 +2023,15 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                         context,
                                         Icons.check,
                                         Duration(seconds: 2),
-                                        "Application is rejected!!",
+                                        "Application is Rejected!!",
                                         "",
                                         Colors.red,
                                         Colors.white);
+                                    refreshTokenCounter().then((value) {
+                                      setState(() {
+                                        showLoading = false;
+                                      });
+                                    });
                                   } else {
                                     print(
                                         "Could not update application status");
@@ -1915,15 +2041,22 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                         Duration(seconds: 4),
                                         "Oops! Application could not be rejected!!",
                                         "");
+                                    setState(() {
+                                      showLoading = false;
+                                    });
                                   }
                                 }).catchError((error) {
-                                  Utils.handleUpdateApplicationStatus(
+                                  Utils.handleErrorsInUpdateApplicationStatus(
                                       error, context);
+                                  setState(() {
+                                    showLoading = false;
+                                  });
+                                });
+                              } else {
+                                setState(() {
+                                  showLoading = false;
                                 });
                               }
-                              setState(() {
-                                showLoading = false;
-                              });
                             });
                           });
                         }

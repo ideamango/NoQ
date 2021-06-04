@@ -2,30 +2,30 @@ import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import './db/db_model/entity.dart';
-import './db/db_model/meta_entity.dart';
-import './db/db_model/slot.dart';
-import './db/exceptions/slot_full_exception.dart';
-import './db/exceptions/token_already_exists_exception.dart';
-import './global_state.dart';
-import './pages/token_alert.dart';
-import './repository/slotRepository.dart';
-import './style.dart';
-import './utils.dart';
-import './widget/appbar.dart';
-import './widget/header.dart';
-import './widget/widgets.dart';
+import 'db/db_model/entity.dart';
+import 'db/db_model/meta_entity.dart';
+import 'db/db_model/slot.dart';
+import 'db/exceptions/slot_full_exception.dart';
+import 'db/exceptions/token_already_exists_exception.dart';
+import 'global_state.dart';
+import 'pages/token_alert.dart';
+import 'repository/slotRepository.dart';
+import 'style.dart';
+import 'utils.dart';
+import 'widget/appbar.dart';
+import 'widget/header.dart';
+import 'widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-import './constants.dart';
+import 'constants.dart';
 
-class SlotSelectionPage extends StatefulWidget {
+class SlotSelectionAdmin extends StatefulWidget {
   final MetaEntity metaEntity;
   final DateTime dateTime;
   final String forAdmin;
   final TokenCounter tokenCounter;
 
-  SlotSelectionPage(
+  SlotSelectionAdmin(
       {Key key,
       @required this.metaEntity,
       @required this.dateTime,
@@ -34,10 +34,10 @@ class SlotSelectionPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _SlotSelectionPageState createState() => _SlotSelectionPageState();
+  _SlotSelectionAdminState createState() => _SlotSelectionAdminState();
 }
 
-class _SlotSelectionPageState extends State<SlotSelectionPage> {
+class _SlotSelectionAdminState extends State<SlotSelectionAdmin> {
   bool _initCompleted = false;
   String errMsg;
   String _storeId;
@@ -305,23 +305,25 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                               color: Colors.white,
                                               fontSize: 13),
                                         )
-                                      : (isBooked(selectedSlot.dateTime,
-                                              entity.entityId))
-                                          ? AutoSizeText(
-                                              'You already have a booking at $bookingTime on $bookingDate',
-                                              minFontSize: 8,
-                                              style: TextStyle(
-                                                  color: primaryAccentColor,
-                                                  fontSize: 13),
-                                            )
-                                          : AutoSizeText(
-                                              'You selected a slot at $bookingTime on $bookingDate',
-                                              minFontSize: 8,
-                                              maxFontSize: 13,
-                                              style: TextStyle(
-                                                color: highlightColor,
-                                              ),
-                                            ),
+                                      :
+                                      // (isBooked(selectedSlot.dateTime,
+                                      //         entity.entityId))
+                                      //     ? AutoSizeText(
+                                      //         'You already have a booking at $bookingTime on $bookingDate',
+                                      //         minFontSize: 8,
+                                      //         style: TextStyle(
+                                      //             color: primaryAccentColor,
+                                      //             fontSize: 13),
+                                      //       )
+                                      //     :
+                                      AutoSizeText(
+                                          'Selected Time-Slot at $bookingTime on $bookingDate',
+                                          minFontSize: 8,
+                                          maxFontSize: 15,
+                                          style: TextStyle(
+                                            color: highlightColor,
+                                          ),
+                                        ),
                                 ),
                               ],
                             ),
@@ -722,11 +724,11 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
             autofocus: false,
             color: (isDisabled(sl.dateTime))
                 ? disabledColor
-                : ((sl.isFull != true && isSelected(sl.dateTime) == true)
-                    ? highlightColor
-                    : (sl.isFull == false)
-                        ? Colors.cyan[50]
-                        : btnDisabledolor),
+                : ((sl.isFull == true)
+                    ? btnDisabledolor
+                    : ((isSelected(sl.dateTime) == true
+                        ? highlightColor
+                        : Colors.cyan[50]))),
 
             disabledColor: Colors.grey[200],
             //textTheme: ButtonTextTheme.normal,
@@ -744,40 +746,15 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                   ),
             onPressed: () {
               if (!isDisabled(sl.dateTime)) {
-//Check if booking form is required then take request else show form.
-                // if (Utils.isNotNullOrEmpty(entity.forms)) {
-                //   //Show Booking request form
-                //   Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //           builder: (context) => CovidTokenBookingFormPage(
-                //                 metaEntity: entity,
-                //                 bookingFormId: entity.bookingFormId,
-                //                 preferredSlotTime: sl.dateTime,
-                //               )));
-                // } else
-                {
-                  if (isBooked(sl.dateTime, entity.entityId)) {
-                    Utils.showMyFlushbar(
-                        context,
-                        Icons.info_outline,
-                        Duration(seconds: 6),
-                        alreadyHaveBooking,
-                        wantToBookAnotherSlot);
-                    return null;
-                  }
-                  if (sl.isFull == false) {
-                    setState(() {
-                      //unselect previously selected slot
-                      //TODO Smita: Update preferred selected slot also.
-                      selectedSlot = sl;
-                      slotSelectionDate = selectedSlot.dateTime;
-                      print(slotSelectionDate);
-                      // = new DateTime()
-                    });
-                  } else
-                    return null;
-                }
+                if (sl.isFull == false) {
+                  setState(() {
+                    selectedSlot = sl;
+                    slotSelectionDate = selectedSlot.dateTime;
+                    print(slotSelectionDate);
+                    // = new DateTime()
+                  });
+                } else
+                  return null;
               } else
                 return null;
             },
@@ -916,7 +893,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
             fontFamily: "ShadowsIntoLightTwo"),
       ),
       messageText: Text(
-        tokenAlreadyExists,
+        "No Slots available - To change",
         style: TextStyle(
             fontSize: 12.0,
             color: Colors.blueGrey[50],

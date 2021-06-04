@@ -316,7 +316,7 @@ String slotBooking = "Hold tight! We are Booking a slot for you..";
 String takingMoment = "This would take a moment.";
 
 String alreadyHaveBooking = "You already have an active booking for same time.";
-
+String timeSlotExpired = "Time-Slot has already expired.";
 String wantToBookAnotherSlot =
     "If you wish to book for another time, cancel this one from your bookings in Home Page";
 

@@ -287,7 +287,12 @@ class _TokensInSlotState extends State<TokensInSlot>
                                 PageAnimation.createRoute(
                                     ShowApplicationDetails(
                               bookingApplication: bookingApplication,
-                              showCancel: true,
+                              showCancel: false,
+                              metaEntity: widget.metaEntity,
+                              newBookingDate: null,
+                              isReadOnly: widget.isReadOnly,
+                              isAvailable: null,
+                              tokenCounter: null,
                               backRoute: TokensInSlot(
                                 slotKey: widget.slotKey,
                                 stats: widget.stats,
