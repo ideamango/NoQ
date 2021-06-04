@@ -1377,7 +1377,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                               context,
                                               Icons.error,
                                               Duration(seconds: 6),
-                                              "Could not start Whatsapp call as this Booking has already expired.",
+                                              "Could not start WhatsApp call as this Booking has already expired.",
                                               "Please contact Owner/Manager of this Place");
                                         } else {
                                           String phoneNo = ba.userId;
@@ -1402,7 +1402,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                                 context,
                                                 Icons.info,
                                                 Duration(seconds: 5),
-                                                "Whatsapp contact information not found!!",
+                                                "WhatsApp contact information not found!!",
                                                 "");
                                           }
                                         }
@@ -1559,6 +1559,12 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     if (value != null) {
                                       setState(() {
                                         ba.status = ApplicationStatus.COMPLETED;
+                                        ba.timeOfCompletion =
+                                            value.item1.timeOfCompletion;
+                                        ba.notesOnCompletion =
+                                            value.item1.notesOnCompletion;
+                                        ba.completedBy =
+                                            value.item1.completedBy;
                                       });
                                       Utils.showMyFlushbar(
                                           context,
@@ -1709,7 +1715,12 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                       setState(() {
                                         ba.status = ApplicationStatus.APPROVED;
                                         //set tokenId with new values from Server.
-                                        ba.tokenId = newBa.tokenId;
+                                        ba.timeOfApproval =
+                                            value.item1.timeOfApproval;
+                                        ba.approvedBy = value.item1.approvedBy;
+                                        ba.notesOnApproval =
+                                            value.item1.notesOnApproval;
+                                        ba.tokenId = value.item1.tokenId;
                                       });
                                       Utils.showMyFlushbar(
                                           context,
@@ -1866,6 +1877,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   if (value != null) {
                                     setState(() {
                                       ba.status = ApplicationStatus.ONHOLD;
+                                      ba.tokenId = value.item1.tokenId;
+                                      ba.putOnHoldBy = value.item1.putOnHoldBy;
+                                      ba.notesOnPuttingOnHold =
+                                          value.item1.notesOnPuttingOnHold;
+
+                                      ba.timeOfPuttingOnHold =
+                                          value.item1.timeOfPuttingOnHold;
                                     });
                                     Utils.showMyFlushbar(
                                         context,
@@ -2018,6 +2036,12 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   if (value != null) {
                                     setState(() {
                                       ba.status = ApplicationStatus.REJECTED;
+                                      ba.tokenId = value.item1.tokenId;
+                                      ba.rejectedBy = value.item1.rejectedBy;
+                                      ba.notesOnRejection =
+                                          value.item1.notesOnRejection;
+                                      ba.timeOfRejection =
+                                          value.item1.timeOfRejection;
                                     });
                                     Utils.showMyFlushbar(
                                         context,

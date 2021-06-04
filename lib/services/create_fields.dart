@@ -401,7 +401,7 @@ class _CreateFieldsState extends State<CreateFields> {
                                           context,
                                           Icons.error,
                                           Duration(seconds: 5),
-                                          "Could not connect to the Whatsapp number ${_state.getConfigurations().whatsappPhone} !!",
+                                          "Could not connect to the WhatsApp number ${_state.getConfigurations().whatsappPhone} !!",
                                           "Try again later");
                                     }
                                   } else {
@@ -409,7 +409,7 @@ class _CreateFieldsState extends State<CreateFields> {
                                         context,
                                         Icons.info,
                                         Duration(seconds: 5),
-                                        "Whatsapp contact information not found!!",
+                                        "WhatsApp contact information not found!!",
                                         "");
                                   }
 

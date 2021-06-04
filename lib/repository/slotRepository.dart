@@ -6,11 +6,10 @@ import '../db/db_model/entity_slots.dart';
 import '../db/db_model/meta_entity.dart';
 import '../db/db_model/slot.dart';
 import '../db/db_model/user_token.dart';
-import '../events/event_bus.dart';
-import '../events/events.dart';
-import '../events/local_notification_data.dart';
+
 import '../global_state.dart';
 
+import '../tuple.dart';
 import '../utils.dart';
 
 Future<List<Slot>> getSlotsListForEntity(
@@ -29,7 +28,10 @@ Future<UserToken> bookSlotForStore(
 //TODO: Have Entity object here, either pass entity object to generateToken() or create metaEntity and pass to this method.
 
   GlobalState gs = await GlobalState.getGlobalState();
-  UserTokens tokens = await gs.addBooking(meta, slot, enableVideoChat);
+  UserTokens tokens;
+  Tuple<UserTokens, TokenCounter> tuple =
+      await gs.addBooking(meta, slot, enableVideoChat);
+  tokens = tuple.item1;
 
   gs.getNotificationService().registerTokenNotification(tokens);
 

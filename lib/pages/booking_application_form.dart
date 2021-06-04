@@ -1511,7 +1511,7 @@
 //                                                     child: Wrap(
 //                                                   children: [
 //                                                     AutoSizeText(
-//                                                       "Current time-slot :",
+//                                                       "Requested time-slot :",
 //                                                       //group: labelGroup,
 //                                                       minFontSize: 15,
 //                                                       maxFontSize: 15,

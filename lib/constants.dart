@@ -82,10 +82,13 @@ const SEARCH_TYPE_OF_PLACE = "Search by Type of Place";
 const SELECT_ROLE_OF_PERSON = "Select the Role of Employee";
 
 String QRMessageInToken =
-    "Show this QR code once you reach the place. Manager of the place will scan to view details of your request.";
+    "Show this QR code once you reach the place. The manager of the place will scan to view the details of your request.";
 
 String QRMessageInPlaceOwner =
-    "Ask your customers to scan this QR code with LESSs app to add this Place to their favourite.";
+    "Ask your customers to scan this QR code with the LESSs app to add this Place to their favorites.";
+
+String QRMessageInApplicationOnUser =
+    "Show this QR code once you reach the place. The manager of the place will scan to view the details of your request.";
 
 String adminLegend = "Admin";
 String managerLegend = "Manager";
@@ -96,7 +99,7 @@ var loginSubTxt = "Peace of Mind";
 var loginMainTxt = "";
 String dateDisplayFormat = 'EEE, MMM d';
 String applicationExistsForToken =
-    'There is an Application Request for this Token, You will have to cancel the Application first. Proceed with cancelling the Application?';
+    'This will cancel your Token and respective Application. \nAre you sure you want to cancel?';
 String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
 String whatsappContactUsMsg = "Hey!!";
@@ -358,7 +361,7 @@ String tryAgainLater = "Please try again later.";
 String appShareHeading =
     "Are you worried about your Safety while stepping out or fed up with waiting in long queues?";
 String appShareMessage =
-    "Fix your appointment well in advance and visit places when the crowd is less.\n\nDownload the LESSs app today and save lives!";
+    "Fix your appointment well in advance and visit places when the crowd is less.\n\nDownload the LESSs app today and stay safe!";
 
 String appShareWithOwnerHeading =
     "Protect your Customers to Protect your Business!\nProvide Safety and Convenience to regain the confidence of your customers.";
@@ -557,7 +560,7 @@ To provide effective Services;
 To debug customer support related issues;
 To operate and improve the Website or Application;
 TO PERFORM ACADEMIC/STUDIES, CLINICAL OR OTHER RESEARCH AND ANALYSIS FOR OUR UNDERSTANDING, INFORMATION, ANALYSIS, SERVICES AND TECHNOLOGIES IN ORDER TO PROVIDE ALL USERS IMPROVED QUALITY OF CARE; AND ENSURING THAT THE CONTENT AND ADVERTISING DISPLAYED ARE CUSTOMIZED TO YOUR INTERESTS AND PREFERENCES;
-To contact You via phone, SMS, email or third-party communication services such as Whatsapp, etc. for appointments, technical issues, payment reminders, obtaining feedback and other security announcements;
+To contact You via phone, SMS, email or third-party communication services such as WhatsApp, etc. for appointments, technical issues, payment reminders, obtaining feedback and other security announcements;
 To send promotional and marketing emails from Us or any of Our channel partners via SMS, email, snail mail or third-party communication services such as WhatsApp, Facebook etc.;
 To advertise products and Services of NTHS and third parties;
 To transfer information about You, if We are acquired by or merged with another company;

@@ -450,7 +450,7 @@ class DBTest {
     print("Token generation started..");
 
     try {
-      UserTokens tok1 = await _gs.getTokenService().generateToken(
+      await _gs.getTokenService().generateToken(
           child1.getMetaEntity(), new DateTime(2020, 7, 6, 10, 30, 0, 0));
     } catch (e) {
       print("generate token threw Slotful exception");
@@ -458,15 +458,15 @@ class DBTest {
 
     print("Tok1 generated");
 
-    UserTokens tok21 = await _gs.getTokenService().generateToken(
+    await _gs.getTokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 7, 12, 30, 0, 0));
     print("Tok21 generated");
 
-    UserTokens tok22 = await _gs.getTokenService().generateToken(
+    await _gs.getTokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 7, 10, 30, 0, 0));
     print("Tok22 generated");
 
-    UserTokens tok3 = await _gs.getTokenService().generateToken(
+    await _gs.getTokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 8, 10, 30, 0, 0));
     print("Tok3 generated");
 
@@ -582,9 +582,12 @@ class DBTest {
           "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
     }
 
-    UserToken cancelledToken = await _gs
+    Tuple<UserToken, TokenCounter> cancelledTup;
+    cancelledTup = await _gs
         .getTokenService()
         .cancelToken("Child101-1#2020~7~7#10~30#+919999999999");
+
+    UserToken cancelledToken = cancelledTup.item1;
 
     if (cancelledToken == null) {
       print("TokenService.cancelToken ------> FAILURE");
@@ -1218,9 +1221,11 @@ class DBTest {
         .getTokenService()
         .generateToken(me, new DateTime(2021, 4, 13, 10, 30));
 
-    UserTokens ut1 = await _gs
+    Tuple<UserTokens, TokenCounter> tup1 = await _gs
         .getTokenService()
         .generateToken(me, new DateTime(2021, 4, 13, 11, 30));
+    UserTokens ut1 = tup1.item1;
+
     await _gs
         .getTokenService()
         .generateToken(me, new DateTime(2021, 4, 13, 11, 30));
@@ -1246,9 +1251,10 @@ class DBTest {
         .generateToken(me, new DateTime(2021, 4, 14, 11, 30));
 
     //book tokens for May 1st (10:30 - 2, 11:30 - 1, 12:30 - 1) = Total: 4
-    UserTokens ut2 = await _gs
+    Tuple<UserTokens, TokenCounter> tup2 = await _gs
         .getTokenService()
         .generateToken(me, new DateTime(2021, 5, 1, 10, 30));
+    UserTokens ut2 = tup2.item1;
     await _gs
         .getTokenService()
         .generateToken(me, new DateTime(2021, 5, 1, 10, 30));
@@ -2348,9 +2354,14 @@ class DBTest {
   Future<void> testApplicationCancellation(
       BookingApplication approvedBA) async {
     bool isCancelled = false;
-    UserToken token = await _gs.getApplicationService().withDrawApplication(
-        approvedBA.id,
-        "Cancelled the application and as a result the token should also get cancelled");
+    UserToken token;
+
+    Tuple<UserToken, TokenCounter> tuple = await _gs
+        .getApplicationService()
+        .withDrawApplication(approvedBA.id,
+            "Cancelled the application and as a result the token should also get cancelled");
+    token = tuple.item1;
+
     if (token != null) isCancelled = true;
 
     // //now get the ApplicationOver object to check the count

@@ -1159,7 +1159,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                                 context,
                                                 Icons.info,
                                                 Duration(seconds: 5),
-                                                "This place provides Online Consultation on Whatsapp number ${str.whatsapp} !!",
+                                                "This place provides Online Consultation on WhatsApp number ${str.whatsapp} !!",
                                                 "Help in reducing crowd at places.");
                                           },
                                           child: Container(
@@ -1536,7 +1536,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                               context,
                               Icons.error,
                               Duration(seconds: 5),
-                              "Could not connect to the Whatsapp number ${str.whatsapp} !!",
+                              "Could not connect to the WhatsApp number ${str.whatsapp} !!",
                               "Try again later");
                         }
                       } else {
@@ -1544,7 +1544,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                             context,
                             Icons.info,
                             Duration(seconds: 5),
-                            "Whatsapp contact information not found!!",
+                            "WhatsApp contact information not found!!",
                             "");
                       }
                       // callPhone('+919611009823');

@@ -171,7 +171,7 @@ class BookingApplicationService {
 
   //To be done by the Applicant
   //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
-  Future<UserToken> submitApplication(
+  Future<Tuple<UserToken, TokenCounter>> submitApplication(
       BookingApplication ba, MetaEntity metaEntity,
       [bool enableVideoChat = false]) async {
     //Security: BookingApplication (Application Status by the applicant can be only Null, New, Cancelled), other statuses are reserved for the Manager/Admin
@@ -199,6 +199,7 @@ class BookingApplicationService {
     BookingForm bf;
     BookingApplication baDraft;
     BookingApplicationCounter localCounter;
+    TokenCounter tokenCounter;
     //BookingApplicationCounter globalCounter;
 
     String bookingApplicationId = ba.id;
@@ -327,9 +328,10 @@ class BookingApplicationService {
             bf.autoApproved &&
             bf.generateTokenOnApproval) {
           //generate the token
+          Tuple<UserTokens, TokenCounter> tuple;
           UserTokens toks;
           try {
-            toks = await _gs.getTokenService().generateTokenInTransaction(
+            tuple = await _gs.getTokenService().generateTokenInTransaction(
                 tx,
                 userPhone,
                 metaEntity,
@@ -338,6 +340,8 @@ class BookingApplicationService {
                 ba.bookingFormId,
                 ba.responseForm.formName,
                 enableVideoChat);
+            toks = tuple.item1;
+            tokenCounter = tuple.item2;
           } catch (e) {
             throw e;
           }
@@ -374,12 +378,12 @@ class BookingApplicationService {
       //auto generated Token is issued, create a notification
       _gs.getNotificationService().registerTokenNotification(tok.parent);
     }
-    return tok;
+    return new Tuple(item1: tok, item2: tokenCounter);
   }
 
   //to be done by the Applicant
   //Throws => TokenAlreadyCancelledException, NoTokenFoundException
-  Future<UserToken> withDrawApplication(
+  Future<Tuple<UserToken, TokenCounter>> withDrawApplication(
       String applicationId, String notesOnCancellation) async {
     //set the BookingApplication status as cancelled
     //If the token is approved, cancel the token also
@@ -396,6 +400,7 @@ class BookingApplicationService {
     Exception e;
     UserTokens cancelledTokens;
     UserToken cancelledTok;
+    TokenCounter tokenCounter;
 
     BookingApplication ba;
 
@@ -502,9 +507,13 @@ class BookingApplicationService {
               Utils.getTokenIdWithoutNumber(ba.tokenId);
           String tokenIdWithoutNumber = tokenIdSplitted.item1;
           int tokenNumber = tokenIdSplitted.item2;
+
+          Tuple<UserToken, TokenCounter> tuple;
           //cancel the token
-          cancelledTok = await _gs.getTokenService().cancelTokenInTransaction(
+          tuple = await _gs.getTokenService().cancelTokenInTransaction(
               tx, userPhone, tokenIdWithoutNumber, tokenNumber);
+          cancelledTok = tuple.item1;
+          tokenCounter = tuple.item2;
           cancelledTokens = cancelledTok.parent;
 
           //update the GlobalState bookings collection with the cancelled token
@@ -597,13 +606,13 @@ class BookingApplicationService {
     if (isSuccess && cancelledTokens != null && cancelledTok != null) {
       _gs.getNotificationService().unRegisterTokenNotification(cancelledTok);
     }
-    return cancelledTok;
+    return new Tuple(item1: cancelledTok, item2: tokenCounter);
   }
 
   //To be called by Manager of the Entity who has restricted rights or by the Admin
   //Throws: SlotTimeNotDefinedCantApproveException, ApplicationStatusNotAllowed, TokenAlreadyExistsException
   //MaxTokenReachedByUserPerSlotException, SlotFullException, MaxTokenReachedByUserPerDayException,
-  Future<BookingApplication> updateApplicationStatus(
+  Future<Tuple<BookingApplication, TokenCounter>> updateApplicationStatus(
       String applicationId,
       ApplicationStatus status,
       String note,
@@ -645,6 +654,7 @@ class BookingApplicationService {
     String localCounterId;
     //String globalCounterId;
     bool requestProcessed = false;
+    TokenCounter tokenCounter;
 
     String dailyStatsKey = now.year.toString() +
         "~" +
@@ -735,9 +745,10 @@ class BookingApplicationService {
           //generate the token
           //send notification
           UserTokens toks;
+          Tuple<UserTokens, TokenCounter> tuple;
           if (bf.generateTokenOnApproval && bf.appointmentRequired) {
             try {
-              toks = await _gs.getTokenService().generateTokenInTransaction(
+              tuple = await _gs.getTokenService().generateTokenInTransaction(
                   tx,
                   requestingUser,
                   metaEntity,
@@ -746,6 +757,8 @@ class BookingApplicationService {
                   application.bookingFormId,
                   application.responseForm.formName,
                   enableVideoChat);
+              toks = tuple.item1;
+              tokenCounter = tuple.item2;
             } catch (e) {
               throw e;
             }
@@ -818,18 +831,23 @@ class BookingApplicationService {
           //     globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
           //   }
           // }
-          if (application.tokenId != null) {
+          if (application.tokenId != null &&
+              existingStatus == ApplicationStatus.APPROVED) {
             //this means that the application was approved earlier (auto or by admin),
             //but now has been put on hold, resulting into the cancellation of the token
+
+            //If the Status was OnHold or Rejected or Cancelled, the token would not be present or it will already be cancelled
+            //If the status is Completed, there is no point of cancelling the Token
+            //if the Application is new, the Token hasn't been generated yet
             Tuple<String, int> tokenIdSplitted =
                 Utils.getTokenIdWithoutNumber(application.tokenId);
             String tokenIdWithoutNumber = tokenIdSplitted.item1;
             int tokenNumber = tokenIdSplitted.item2;
-
-            cancelledToken = await _gs
-                .getTokenService()
-                .cancelTokenInTransaction(
-                    tx, userPhone, tokenIdWithoutNumber, tokenNumber);
+            Tuple<UserToken, TokenCounter> tuple;
+            tuple = await _gs.getTokenService().cancelTokenInTransaction(
+                tx, userPhone, tokenIdWithoutNumber, tokenNumber);
+            cancelledToken = tuple.item1;
+            tokenCounter = tuple.item2;
             cancelledTokens = cancelledToken.parent;
           }
 
@@ -858,16 +876,17 @@ class BookingApplicationService {
           //   }
           // }
 
-          if (application.tokenId != null) {
+          if (application.tokenId != null &&
+              existingStatus == ApplicationStatus.APPROVED) {
             Tuple<String, int> tokenIdSplitted =
                 Utils.getTokenIdWithoutNumber(application.tokenId);
             String tokenIdWithoutNumber = tokenIdSplitted.item1;
             int tokenNumber = tokenIdSplitted.item2;
-
-            cancelledToken = await _gs
-                .getTokenService()
-                .cancelTokenInTransaction(
-                    tx, userPhone, tokenIdWithoutNumber, tokenNumber);
+            Tuple<UserToken, TokenCounter> tuple;
+            tuple = await _gs.getTokenService().cancelTokenInTransaction(
+                tx, userPhone, tokenIdWithoutNumber, tokenNumber);
+            cancelledToken = tuple.item1;
+            tokenCounter = tuple.item2;
             cancelledTokens = cancelledToken.parent;
           }
 
@@ -947,7 +966,7 @@ class BookingApplicationService {
       throw e;
     }
 
-    return application;
+    return new Tuple(item1: application, item2: tokenCounter);
   }
 
   Future<BookingApplicationCounter> getApplicationsOverview(
