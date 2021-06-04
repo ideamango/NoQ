@@ -1627,6 +1627,21 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             setState(() {
                                               widget.bookingApplication.status =
                                                   ApplicationStatus.COMPLETED;
+                                              widget.bookingApplication
+                                                      .tokenId =
+                                                  value.item1.tokenId;
+                                              widget.bookingApplication
+                                                      .putOnHoldBy =
+                                                  value.item1.putOnHoldBy;
+                                              widget.bookingApplication
+                                                      .notesOnPuttingOnHold =
+                                                  value.item1
+                                                      .notesOnPuttingOnHold;
+
+                                              widget.bookingApplication
+                                                      .timeOfPuttingOnHold =
+                                                  value.item1
+                                                      .timeOfPuttingOnHold;
                                             });
                                             Utils.showMyFlushbar(
                                                 context,
@@ -1784,7 +1799,20 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                   ApplicationStatus.APPROVED;
                                               //set tokenId with new values from Server.
                                               widget.bookingApplication
-                                                  .tokenId = newBa.tokenId;
+                                                      .tokenId =
+                                                  newBa.item1.tokenId;
+                                              widget.bookingApplication
+                                                      .putOnHoldBy =
+                                                  value.item1.putOnHoldBy;
+                                              widget.bookingApplication
+                                                      .notesOnPuttingOnHold =
+                                                  value.item1
+                                                      .notesOnPuttingOnHold;
+
+                                              widget.bookingApplication
+                                                      .timeOfPuttingOnHold =
+                                                  value.item1
+                                                      .timeOfPuttingOnHold;
                                             });
                                             Utils.showMyFlushbar(
                                                 context,
@@ -1943,6 +1971,19 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           setState(() {
                                             widget.bookingApplication.status =
                                                 ApplicationStatus.ONHOLD;
+                                            widget.bookingApplication.tokenId =
+                                                value.item1.tokenId;
+                                            widget.bookingApplication
+                                                    .putOnHoldBy =
+                                                value.item1.putOnHoldBy;
+                                            widget.bookingApplication
+                                                    .notesOnPuttingOnHold =
+                                                value
+                                                    .item1.notesOnPuttingOnHold;
+
+                                            widget.bookingApplication
+                                                    .timeOfPuttingOnHold =
+                                                value.item1.timeOfPuttingOnHold;
                                           });
                                           Utils.showMyFlushbar(
                                               context,
@@ -2101,6 +2142,19 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           setState(() {
                                             widget.bookingApplication.status =
                                                 ApplicationStatus.REJECTED;
+                                            widget.bookingApplication.tokenId =
+                                                value.item1.tokenId;
+                                            widget.bookingApplication
+                                                    .putOnHoldBy =
+                                                value.item1.putOnHoldBy;
+                                            widget.bookingApplication
+                                                    .notesOnPuttingOnHold =
+                                                value
+                                                    .item1.notesOnPuttingOnHold;
+
+                                            widget.bookingApplication
+                                                    .timeOfPuttingOnHold =
+                                                value.item1.timeOfPuttingOnHold;
                                           });
                                           Utils.showMyFlushbar(
                                               context,
