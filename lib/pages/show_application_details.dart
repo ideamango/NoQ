@@ -27,7 +27,8 @@ import '../widget/widgets.dart';
 
 class ShowApplicationDetails extends StatefulWidget {
   final BookingApplication bookingApplication;
-  final bool showCancel;
+  final bool showReject;
+  final bool forInfo;
   final dynamic backRoute;
   final bool isReadOnly;
   final MetaEntity metaEntity;
@@ -38,7 +39,8 @@ class ShowApplicationDetails extends StatefulWidget {
   ShowApplicationDetails({
     Key key,
     @required this.bookingApplication,
-    @required this.showCancel,
+    @required this.showReject,
+    @required this.forInfo,
     @required this.backRoute,
     @required this.isReadOnly,
     @required this.metaEntity,
@@ -58,6 +60,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   MetaEntity metaEntity;
   bool showLoading = false;
   DateTime newBookingDate;
+  bool applicationUpdated = false;
   @override
   void initState() {
     super.initState();
@@ -65,12 +68,12 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     getGlobalState().whenComplete(() {
       //getListOfData();
       if (this.mounted) {
-        _gs.getEntity(widget.bookingApplication.entityId).then((value) {
-          if (value != null) metaEntity = value.item1.getMetaEntity();
-          setState(() {
-            initCompleted = true;
-          });
+        // _gs.getEntity(widget.bookingApplication.entityId).then((value) {
+        //   if (value != null) metaEntity = value.item1.getMetaEntity();
+        setState(() {
+          initCompleted = true;
         });
+        // });
       } else
         initCompleted = true;
     });
@@ -749,7 +752,10 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   icon: Icon(Icons.arrow_back),
                   color: Colors.white,
                   onPressed: () {
-                    Navigator.of(context).pop("Smita");
+                    if (applicationUpdated)
+                      Navigator.of(context).pop(widget.bookingApplication);
+                    else
+                      Navigator.of(context).pop();
                   }),
             ),
             body: SingleChildScrollView(
@@ -1470,56 +1476,118 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                         .getFormFields()
                         .length,
                   ),
-                  if (widget.showCancel)
+                  if (widget.showReject)
                     Container(
                       // width: MediaQuery.of(context).size.width * .8,
                       margin: EdgeInsets.all(9),
                       child: MaterialButton(
                           elevation: 8,
-                          color: Colors.yellow[800],
+                          color: (widget.bookingApplication.status !=
+                                      ApplicationStatus.COMPLETED &&
+                                  widget.bookingApplication.status !=
+                                      ApplicationStatus.CANCELLED &&
+                                  widget.bookingApplication.status !=
+                                      ApplicationStatus.REJECTED)
+                              ? Colors.yellow[800]
+                              : disabledColor,
                           onPressed: () {
-                            showApplicationStatusDialog(
-                                    context,
-                                    "Cancel Application",
-                                    'Do you want to Cancel this Application?',
-                                    cancelDialogMsg,
-                                    'Cancel Application')
-                                .then((remarks) {
-                              //Update application status change on server.
-                              // if (Utils.isNotNullOrEmpty(remarks)) {
-                              if ((remarks[1])) {
-                                widget.bookingApplication.notesOnCancellation =
-                                    (remarks[0]);
-                                _gs
-                                    .getApplicationService()
-                                    .withDrawApplication(
-                                        widget.bookingApplication.id,
-                                        remarks[0])
-                                    .then((value) {
-                                  widget.bookingApplication
-                                      .notesOnCancellation = remarks[0];
-                                  setState(() {
-                                    widget.bookingApplication.status =
-                                        ApplicationStatus.CANCELLED;
-                                  });
+                            if (widget.isReadOnly) {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.info,
+                                  Duration(seconds: 3),
+                                  "$noEditPermission the Application",
+                                  "Please contact Admin of this place.");
+                              return;
+                            }
 
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.check,
-                                      Duration(seconds: 4),
-                                      "Application Cancelled!!",
-                                      "",
-                                      successGreenSnackBar);
+                            if (widget.bookingApplication.status !=
+                                    ApplicationStatus.COMPLETED &&
+                                widget.bookingApplication.status !=
+                                    ApplicationStatus.CANCELLED &&
+                                widget.bookingApplication.status !=
+                                    ApplicationStatus.REJECTED) {
+                              setState(() {
+                                showLoading = true;
+                              });
+                              Future.delayed(Duration(seconds: 1))
+                                  .then((value) {
+                                showApplicationStatusDialog(
+                                        context,
+                                        "Confirm Rejection",
+                                        'Are you sure you want to Reject this Application?',
+                                        rejectDialogMsg,
+                                        'Reject')
+                                    .then((remarks) {
+                                  //Update application status change on server.
+                                  if ((remarks[1])) {
+                                    widget.bookingApplication.notesOnRejection =
+                                        remarks[0];
+
+                                    _gs
+                                        .getApplicationService()
+                                        .updateApplicationStatus(
+                                            widget.bookingApplication.id,
+                                            ApplicationStatus.REJECTED,
+                                            remarks[0],
+                                            widget.metaEntity,
+                                            (newBookingDate != null
+                                                ? newBookingDate
+                                                : widget.newBookingDate))
+                                        .then((value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          widget.bookingApplication.status =
+                                              ApplicationStatus.REJECTED;
+                                          widget.bookingApplication.tokenId =
+                                              value.item1.tokenId;
+                                          widget.bookingApplication.rejectedBy =
+                                              value.item1.rejectedBy;
+                                          widget.bookingApplication
+                                                  .notesOnRejection =
+                                              value.item1.notesOnRejection;
+                                          widget.bookingApplication
+                                                  .timeOfRejection =
+                                              value.item1.timeOfRejection;
+                                        });
+                                        applicationUpdated = true;
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.check,
+                                            Duration(seconds: 2),
+                                            "Application is rejected!!",
+                                            "",
+                                            Colors.red,
+                                            Colors.white);
+                                      } else {
+                                        print(
+                                            "Could not update application status");
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.error,
+                                            Duration(seconds: 4),
+                                            "Oops! Application could not be rejected!!",
+                                            "");
+                                      }
+                                    }).catchError((error) {
+                                      Utils
+                                          .handleErrorsInUpdateApplicationStatus(
+                                              error, context);
+                                    });
+                                  }
+                                  setState(() {
+                                    showLoading = false;
+                                  });
                                 });
-                              }
-                              //   }
-                            });
+                              });
+                            } else
+                              return;
                           },
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Cancel Application",
+                                  "Reject Application",
                                   style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.white,
@@ -1534,31 +1602,377 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                 )
                               ])),
                     ),
-                  Divider(
-                    indent: 0,
-                    endIndent: 0,
-                    thickness: 0.5,
-                    height: 5,
-                    color: Colors.blueGrey[400],
-                  ),
-                  IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          width: cardWidth * .22,
-                          height: cardWidth * .15,
-                          child: IconButton(
+                  if (!widget.forInfo)
+                    Divider(
+                      indent: 0,
+                      endIndent: 0,
+                      thickness: 0.5,
+                      height: 5,
+                      color: Colors.blueGrey[400],
+                    ),
+                  if (!widget.forInfo)
+                    IntrinsicHeight(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            width: cardWidth * .22,
+                            height: cardWidth * .15,
+                            child: IconButton(
+                                alignment: Alignment.center,
+                                //    visualDensity: VisualDensity.compact,
+                                padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+                                color: (widget.bookingApplication.status !=
+                                            ApplicationStatus.COMPLETED &&
+                                        widget.bookingApplication.status !=
+                                            ApplicationStatus.CANCELLED)
+                                    ? Colors.purple[400]
+                                    : disabledColor,
+                                onPressed: () {
+                                  if (widget.isReadOnly) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 3),
+                                        "$noEditPermission the Application",
+                                        "Please contact Admin of this place.");
+                                    return;
+                                  }
+                                  if (DateTime.now().isAfter(
+                                      (newBookingDate != null
+                                          ? newBookingDate
+                                          : widget.newBookingDate))) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 3),
+                                        timeSlotExpired,
+                                        "Select a different Date or Time and try again.");
+                                    return;
+                                  }
+                                  if (widget.bookingApplication.status !=
+                                          ApplicationStatus.COMPLETED &&
+                                      widget.bookingApplication.status !=
+                                          ApplicationStatus.CANCELLED) {
+                                    setState(() {
+                                      showLoading = true;
+                                    });
+                                    Future.delayed(Duration(seconds: 2))
+                                        .then((value) {
+                                      showApplicationStatusDialog(
+                                              context,
+                                              "Complete Application",
+                                              'Are you sure you want to mark this Application as Completed?',
+                                              completeDialogMsg,
+                                              'Completed')
+                                          .then((remarks) {
+                                        //Update application status change on server.
+                                        if ((remarks[1])) {
+                                          widget.bookingApplication
+                                                  .notesOnPuttingOnHold =
+                                              (remarks[0]);
+                                          widget.bookingApplication
+                                              .notesOnCompletion = remarks[0];
+                                          // DateTime bookingDate = newBookingDate;
+                                          // applicationNewSlotMap.containsKey(
+                                          //         widget.bookingApplication.id)
+                                          //     ? applicationNewSlotMap[
+                                          //         widget.bookingApplication.id]
+                                          //     : widget.bookingApplication
+                                          //         .preferredSlotTiming;
+                                          _gs
+                                              .getApplicationService()
+                                              .updateApplicationStatus(
+                                                  widget.bookingApplication.id,
+                                                  ApplicationStatus.COMPLETED,
+                                                  remarks[0],
+                                                  widget.metaEntity,
+                                                  (newBookingDate != null
+                                                      ? newBookingDate
+                                                      : widget.newBookingDate))
+                                              .then((value) {
+                                            if (value != null) {
+                                              setState(() {
+                                                widget.bookingApplication
+                                                        .status =
+                                                    ApplicationStatus.COMPLETED;
+                                                widget.bookingApplication
+                                                        .tokenId =
+                                                    value.item1.tokenId;
+                                                widget.bookingApplication
+                                                        .putOnHoldBy =
+                                                    value.item1.putOnHoldBy;
+                                                widget.bookingApplication
+                                                        .notesOnPuttingOnHold =
+                                                    value.item1
+                                                        .notesOnPuttingOnHold;
+
+                                                widget.bookingApplication
+                                                        .timeOfPuttingOnHold =
+                                                    value.item1
+                                                        .timeOfPuttingOnHold;
+                                              });
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.check,
+                                                  Duration(seconds: 2),
+                                                  "Application is marked completed!!",
+                                                  "",
+                                                  Colors.purple[400],
+                                                  Colors.white);
+                                            } else {
+                                              print(
+                                                  "Could not update application");
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.error,
+                                                  Duration(seconds: 4),
+                                                  "Oops! Application could not be marked Completed!!",
+                                                  "Try again later.");
+                                            }
+                                          }).catchError((error) {
+                                            Utils
+                                                .handleErrorsInUpdateApplicationStatus(
+                                                    error, context);
+                                          });
+                                        }
+                                        setState(() {
+                                          showLoading = false;
+                                        });
+                                      });
+                                    });
+                                  }
+                                },
+                                icon: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: cardWidth * .07,
+                                      height: cardWidth * .07,
+                                      child: Icon(
+                                        Icons.thumb_up,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: cardWidth * .18,
+                                      height: cardHeight * .045,
+                                      alignment: Alignment.center,
+                                      margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      child: AutoSizeText('COMPLETE',
+                                          group: btnLabelGroup,
+                                          minFontSize: 8,
+                                          maxFontSize: 13,
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              color: Colors.blueGrey[900],
+                                              fontFamily: 'Roboto')),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                          VerticalDivider(
+                            indent: 0,
+                            endIndent: 0,
+                            // thickness: 1,
+                            width: 5,
+                            color: Colors.blueGrey[400],
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            width: cardWidth * .22,
+                            height: cardWidth * .15,
+                            child: IconButton(
+                                alignment: Alignment.center,
+                                //    visualDensity: VisualDensity.compact,
+                                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                color: (widget.bookingApplication.status !=
+                                            ApplicationStatus.COMPLETED &&
+                                        widget.bookingApplication.status !=
+                                            ApplicationStatus.CANCELLED &&
+                                        widget.bookingApplication.status !=
+                                            ApplicationStatus.APPROVED)
+                                    ? Colors.green[400]
+                                    : disabledColor,
+                                onPressed: () {
+                                  if (widget.isReadOnly) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 3),
+                                        "$noEditPermission the Application",
+                                        "Please contact Admin of this place.");
+                                    return;
+                                  }
+                                  if (DateTime.now().isAfter(
+                                      (newBookingDate != null
+                                          ? newBookingDate
+                                          : widget.newBookingDate))) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 3),
+                                        timeSlotExpired,
+                                        "Select a different Date or Time and try again.");
+                                    return;
+                                  }
+                                  if (widget.bookingApplication.status !=
+                                          ApplicationStatus.COMPLETED &&
+                                      widget.bookingApplication.status !=
+                                          ApplicationStatus.CANCELLED &&
+                                      widget.bookingApplication.status !=
+                                          ApplicationStatus.APPROVED) {
+                                    setState(() {
+                                      showLoading = true;
+                                    });
+                                    Future.delayed(Duration(seconds: 2))
+                                        .then((value) {
+                                      showApplicationStatusDialog(
+                                              context,
+                                              "Confirm Approval",
+                                              'Do you want to proceed?',
+                                              approveDialogMsg,
+                                              'Approve')
+                                          .then((remarks) {
+                                        //Update application status change on server.
+                                        if ((remarks[1])) {
+                                          widget.bookingApplication
+                                                  .notesOnPuttingOnHold =
+                                              (remarks[0]);
+                                          widget.bookingApplication
+                                              .notesOnApproval = remarks[0];
+                                          // DateTime bookingDate = newBookingDate;
+                                          // applicationNewSlotMap.containsKey(
+                                          //         widget.bookingApplication.id)
+                                          //     ? applicationNewSlotMap[
+                                          //         widget.bookingApplication.id]
+                                          //     : widget.bookingApplication
+                                          //         .preferredSlotTiming;
+                                          _gs
+                                              .getApplicationService()
+                                              .updateApplicationStatus(
+                                                  widget.bookingApplication.id,
+                                                  ApplicationStatus.APPROVED,
+                                                  remarks[0],
+                                                  widget.metaEntity,
+                                                  (newBookingDate != null
+                                                      ? newBookingDate
+                                                      : widget.newBookingDate))
+                                              .then((newBa) {
+                                            if (newBa != null) {
+                                              setState(() {
+                                                widget.bookingApplication
+                                                        .status =
+                                                    ApplicationStatus.APPROVED;
+                                                //set tokenId with new values from Server.
+                                                widget.bookingApplication
+                                                        .tokenId =
+                                                    newBa.item1.tokenId;
+                                                widget.bookingApplication
+                                                        .putOnHoldBy =
+                                                    value.item1.putOnHoldBy;
+                                                widget.bookingApplication
+                                                        .notesOnPuttingOnHold =
+                                                    value.item1
+                                                        .notesOnPuttingOnHold;
+
+                                                widget.bookingApplication
+                                                        .timeOfPuttingOnHold =
+                                                    value.item1
+                                                        .timeOfPuttingOnHold;
+                                              });
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.check,
+                                                  Duration(seconds: 2),
+                                                  "Application is Approved!!",
+                                                  "",
+                                                  successGreenSnackBar,
+                                                  Colors.white);
+                                            } else {
+                                              print(
+                                                  "Could not update application status");
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.error,
+                                                  Duration(seconds: 4),
+                                                  "Oops! Application could not be Approved!!",
+                                                  tryAgainToBook);
+                                            }
+                                          }).catchError((error) {
+                                            Utils
+                                                .handleErrorsInUpdateApplicationStatus(
+                                                    error, context);
+                                          });
+                                        }
+                                        setState(() {
+                                          showLoading = false;
+                                        });
+                                      });
+                                    });
+                                  }
+//Update application status change on server.
+                                },
+                                icon: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: cardWidth * .07,
+                                      height: cardWidth * .07,
+                                      child: Icon(
+                                        Icons.check_circle,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: cardWidth * .18,
+                                      height: cardHeight * .045,
+                                      alignment: Alignment.center,
+                                      margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      child: AutoSizeText('APPROVE',
+                                          group: btnLabelGroup,
+                                          minFontSize: 8,
+                                          maxFontSize: 13,
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              color: Colors.blueGrey[900],
+                                              fontFamily: 'Roboto')),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                          VerticalDivider(
+                            indent: 0,
+                            endIndent: 0,
+                            // thickness: 1,
+                            width: 5,
+                            color: Colors.blueGrey[400],
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            width: cardWidth * .22,
+                            height: cardWidth * .15,
+                            child: IconButton(
                               alignment: Alignment.center,
                               //    visualDensity: VisualDensity.compact,
                               padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+                              visualDensity: VisualDensity.compact,
+
                               color: (widget.bookingApplication.status !=
                                           ApplicationStatus.COMPLETED &&
                                       widget.bookingApplication.status !=
-                                          ApplicationStatus.CANCELLED)
-                                  ? Colors.purple[400]
+                                          ApplicationStatus.CANCELLED &&
+                                      widget.bookingApplication.status !=
+                                          ApplicationStatus.ONHOLD)
+                                  ? Colors.yellow[700]
                                   : disabledColor,
                               onPressed: () {
                                 if (widget.isReadOnly) {
@@ -1570,22 +1984,23 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                       "Please contact Admin of this place.");
                                   return;
                                 }
-                                if (DateTime.now().isAfter(
-                                    (newBookingDate != null
-                                        ? newBookingDate
-                                        : widget.newBookingDate))) {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.info,
-                                      Duration(seconds: 3),
-                                      timeSlotExpired,
-                                      "Select a different Date or Time and try again.");
-                                  return;
-                                }
+                                // if (DateTime.now().isAfter((newBookingDate != null
+                                //     ? newBookingDate
+                                //     : widget.newBookingDate))) {
+                                //   Utils.showMyFlushbar(
+                                //       context,
+                                //       Icons.info,
+                                //       Duration(seconds: 3),
+                                //       timeSlotExpired,
+                                //       "Select a different Date or Time and try again.");
+                                //   return;
+                                // }
                                 if (widget.bookingApplication.status !=
                                         ApplicationStatus.COMPLETED &&
                                     widget.bookingApplication.status !=
-                                        ApplicationStatus.CANCELLED) {
+                                        ApplicationStatus.CANCELLED &&
+                                    widget.bookingApplication.status !=
+                                        ApplicationStatus.ONHOLD) {
                                   setState(() {
                                     showLoading = true;
                                   });
@@ -1593,18 +2008,17 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                       .then((value) {
                                     showApplicationStatusDialog(
                                             context,
-                                            "Complete Application",
-                                            'Are you sure you want to mark this Application as Completed?',
-                                            completeDialogMsg,
-                                            'Completed')
+                                            "On-Hold Confirmation",
+                                            'Are you sure you want to put this application On-Hold?',
+                                            onHoldDialogMsg,
+                                            'On-Hold')
                                         .then((remarks) {
                                       //Update application status change on server.
+
                                       if ((remarks[1])) {
                                         widget.bookingApplication
                                                 .notesOnPuttingOnHold =
                                             (remarks[0]);
-                                        widget.bookingApplication
-                                            .notesOnCompletion = remarks[0];
                                         // DateTime bookingDate = newBookingDate;
                                         // applicationNewSlotMap.containsKey(
                                         //         widget.bookingApplication.id)
@@ -1616,17 +2030,20 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             .getApplicationService()
                                             .updateApplicationStatus(
                                                 widget.bookingApplication.id,
-                                                ApplicationStatus.COMPLETED,
+                                                ApplicationStatus.ONHOLD,
                                                 remarks[0],
                                                 widget.metaEntity,
                                                 (newBookingDate != null
                                                     ? newBookingDate
                                                     : widget.newBookingDate))
                                             .then((value) {
+                                          setState(() {
+                                            showLoading = false;
+                                          });
                                           if (value != null) {
                                             setState(() {
                                               widget.bookingApplication.status =
-                                                  ApplicationStatus.COMPLETED;
+                                                  ApplicationStatus.ONHOLD;
                                               widget.bookingApplication
                                                       .tokenId =
                                                   value.item1.tokenId;
@@ -1647,21 +2064,24 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                 context,
                                                 Icons.check,
                                                 Duration(seconds: 2),
-                                                "Application is marked completed!!",
+                                                "Application is put on-hold!!",
                                                 "",
-                                                Colors.purple[400],
+                                                Colors.yellow[700],
                                                 Colors.white);
                                           } else {
                                             print(
-                                                "Could not update application");
+                                                "Could not update application status");
                                             Utils.showMyFlushbar(
                                                 context,
                                                 Icons.error,
                                                 Duration(seconds: 4),
-                                                "Oops! Application could not be marked Completed!!",
-                                                "Try again later.");
+                                                "Oops! Application could not be put On-Hold!!",
+                                                tryAgainLater);
                                           }
                                         }).catchError((error) {
+                                          setState(() {
+                                            showLoading = false;
+                                          });
                                           Utils
                                               .handleErrorsInUpdateApplicationStatus(
                                                   error, context);
@@ -1682,8 +2102,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     width: cardWidth * .07,
                                     height: cardWidth * .07,
                                     child: Icon(
-                                      Icons.thumb_up,
-                                      size: 20,
+                                      Icons.pan_tool_rounded,
+                                      size: 19,
                                     ),
                                   ),
                                   Container(
@@ -1692,7 +2112,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     alignment: Alignment.center,
                                     margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
                                     padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    child: AutoSizeText('COMPLETE',
+                                    child: AutoSizeText('ON-HOLD',
                                         group: btnLabelGroup,
                                         minFontSize: 8,
                                         maxFontSize: 13,
@@ -1702,31 +2122,33 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             fontFamily: 'Roboto')),
                                   ),
                                 ],
-                              )),
-                        ),
-                        VerticalDivider(
-                          indent: 0,
-                          endIndent: 0,
-                          // thickness: 1,
-                          width: 5,
-                          color: Colors.blueGrey[400],
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          width: cardWidth * .22,
-                          height: cardWidth * .15,
-                          child: IconButton(
+                              ),
+                            ),
+                          ),
+                          VerticalDivider(
+                            indent: 0,
+                            endIndent: 0,
+                            // thickness: 1,
+                            width: 5,
+                            color: Colors.blueGrey[400],
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            width: cardWidth * .22,
+                            height: cardWidth * .15,
+                            child: IconButton(
+                              // visualDensity: VisualDensity.compact,
                               alignment: Alignment.center,
                               //    visualDensity: VisualDensity.compact,
-                              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                              padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
                               color: (widget.bookingApplication.status !=
                                           ApplicationStatus.COMPLETED &&
                                       widget.bookingApplication.status !=
                                           ApplicationStatus.CANCELLED &&
                                       widget.bookingApplication.status !=
-                                          ApplicationStatus.APPROVED)
-                                  ? Colors.green[400]
+                                          ApplicationStatus.REJECTED)
+                                  ? Colors.red
                                   : disabledColor,
                               onPressed: () {
                                 if (widget.isReadOnly) {
@@ -1738,35 +2160,34 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                       "Please contact Admin of this place.");
                                   return;
                                 }
-                                if (DateTime.now().isAfter(
-                                    (newBookingDate != null
-                                        ? newBookingDate
-                                        : widget.newBookingDate))) {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.info,
-                                      Duration(seconds: 3),
-                                      timeSlotExpired,
-                                      "Select a different Date or Time and try again.");
-                                  return;
-                                }
+                                // if (DateTime.now().isAfter((newBookingDate != null
+                                //     ? newBookingDate
+                                //     : widget.newBookingDate))) {
+                                //   Utils.showMyFlushbar(
+                                //       context,
+                                //       Icons.info,
+                                //       Duration(seconds: 3),
+                                //       timeSlotExpired,
+                                //       "Select a different Date or Time and try again.");
+                                //   return;
+                                // }
                                 if (widget.bookingApplication.status !=
                                         ApplicationStatus.COMPLETED &&
                                     widget.bookingApplication.status !=
                                         ApplicationStatus.CANCELLED &&
                                     widget.bookingApplication.status !=
-                                        ApplicationStatus.APPROVED) {
+                                        ApplicationStatus.REJECTED) {
                                   setState(() {
                                     showLoading = true;
                                   });
-                                  Future.delayed(Duration(seconds: 2))
+                                  Future.delayed(Duration(seconds: 1))
                                       .then((value) {
                                     showApplicationStatusDialog(
                                             context,
-                                            "Confirm Approval",
-                                            'Do you want to proceed?',
-                                            approveDialogMsg,
-                                            'Approve')
+                                            "Confirm Rejection",
+                                            'Are you sure you want to Reject this Application?',
+                                            rejectDialogMsg,
+                                            'Reject')
                                         .then((remarks) {
                                       //Update application status change on server.
                                       if ((remarks[1])) {
@@ -1774,7 +2195,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                 .notesOnPuttingOnHold =
                                             (remarks[0]);
                                         widget.bookingApplication
-                                            .notesOnApproval = remarks[0];
+                                            .notesOnRejection = remarks[0];
                                         // DateTime bookingDate = newBookingDate;
                                         // applicationNewSlotMap.containsKey(
                                         //         widget.bookingApplication.id)
@@ -1786,21 +2207,20 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             .getApplicationService()
                                             .updateApplicationStatus(
                                                 widget.bookingApplication.id,
-                                                ApplicationStatus.APPROVED,
+                                                ApplicationStatus.REJECTED,
                                                 remarks[0],
                                                 widget.metaEntity,
                                                 (newBookingDate != null
                                                     ? newBookingDate
                                                     : widget.newBookingDate))
-                                            .then((newBa) {
-                                          if (newBa != null) {
+                                            .then((value) {
+                                          if (value != null) {
                                             setState(() {
                                               widget.bookingApplication.status =
-                                                  ApplicationStatus.APPROVED;
-                                              //set tokenId with new values from Server.
+                                                  ApplicationStatus.REJECTED;
                                               widget.bookingApplication
                                                       .tokenId =
-                                                  newBa.item1.tokenId;
+                                                  value.item1.tokenId;
                                               widget.bookingApplication
                                                       .putOnHoldBy =
                                                   value.item1.putOnHoldBy;
@@ -1818,9 +2238,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                 context,
                                                 Icons.check,
                                                 Duration(seconds: 2),
-                                                "Application is Approved!!",
+                                                "Application is rejected!!",
                                                 "",
-                                                successGreenSnackBar,
+                                                Colors.red,
                                                 Colors.white);
                                           } else {
                                             print(
@@ -1829,8 +2249,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                 context,
                                                 Icons.error,
                                                 Duration(seconds: 4),
-                                                "Oops! Application could not be Approved!!",
-                                                tryAgainToBook);
+                                                "Oops! Application could not be rejected!!",
+                                                "");
                                           }
                                         }).catchError((error) {
                                           Utils
@@ -1844,7 +2264,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     });
                                   });
                                 }
-//Update application status change on server.
                               },
                               icon: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -1854,8 +2273,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     width: cardWidth * .07,
                                     height: cardWidth * .07,
                                     child: Icon(
-                                      Icons.check_circle,
-                                      size: 20,
+                                      Icons.cancel,
+                                      size: 21,
                                     ),
                                   ),
                                   Container(
@@ -1864,7 +2283,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     alignment: Alignment.center,
                                     margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
                                     padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    child: AutoSizeText('APPROVE',
+                                    child: AutoSizeText('REJECT',
                                         group: btnLabelGroup,
                                         minFontSize: 8,
                                         maxFontSize: 13,
@@ -1874,353 +2293,12 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             fontFamily: 'Roboto')),
                                   ),
                                 ],
-                              )),
-                        ),
-                        VerticalDivider(
-                          indent: 0,
-                          endIndent: 0,
-                          // thickness: 1,
-                          width: 5,
-                          color: Colors.blueGrey[400],
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          width: cardWidth * .22,
-                          height: cardWidth * .15,
-                          child: IconButton(
-                            alignment: Alignment.center,
-                            //    visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                            visualDensity: VisualDensity.compact,
-
-                            color: (widget.bookingApplication.status !=
-                                        ApplicationStatus.COMPLETED &&
-                                    widget.bookingApplication.status !=
-                                        ApplicationStatus.CANCELLED &&
-                                    widget.bookingApplication.status !=
-                                        ApplicationStatus.ONHOLD)
-                                ? Colors.yellow[700]
-                                : disabledColor,
-                            onPressed: () {
-                              if (widget.isReadOnly) {
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.info,
-                                    Duration(seconds: 3),
-                                    "$noEditPermission the Application",
-                                    "Please contact Admin of this place.");
-                                return;
-                              }
-                              // if (DateTime.now().isAfter((newBookingDate != null
-                              //     ? newBookingDate
-                              //     : widget.newBookingDate))) {
-                              //   Utils.showMyFlushbar(
-                              //       context,
-                              //       Icons.info,
-                              //       Duration(seconds: 3),
-                              //       timeSlotExpired,
-                              //       "Select a different Date or Time and try again.");
-                              //   return;
-                              // }
-                              if (widget.bookingApplication.status !=
-                                      ApplicationStatus.COMPLETED &&
-                                  widget.bookingApplication.status !=
-                                      ApplicationStatus.CANCELLED &&
-                                  widget.bookingApplication.status !=
-                                      ApplicationStatus.ONHOLD) {
-                                setState(() {
-                                  showLoading = true;
-                                });
-                                Future.delayed(Duration(seconds: 2))
-                                    .then((value) {
-                                  showApplicationStatusDialog(
-                                          context,
-                                          "On-Hold Confirmation",
-                                          'Are you sure you want to put this application On-Hold?',
-                                          onHoldDialogMsg,
-                                          'On-Hold')
-                                      .then((remarks) {
-                                    //Update application status change on server.
-
-                                    if ((remarks[1])) {
-                                      widget.bookingApplication
-                                          .notesOnPuttingOnHold = (remarks[0]);
-                                      // DateTime bookingDate = newBookingDate;
-                                      // applicationNewSlotMap.containsKey(
-                                      //         widget.bookingApplication.id)
-                                      //     ? applicationNewSlotMap[
-                                      //         widget.bookingApplication.id]
-                                      //     : widget.bookingApplication
-                                      //         .preferredSlotTiming;
-                                      _gs
-                                          .getApplicationService()
-                                          .updateApplicationStatus(
-                                              widget.bookingApplication.id,
-                                              ApplicationStatus.ONHOLD,
-                                              remarks[0],
-                                              widget.metaEntity,
-                                              (newBookingDate != null
-                                                  ? newBookingDate
-                                                  : widget.newBookingDate))
-                                          .then((value) {
-                                        setState(() {
-                                          showLoading = false;
-                                        });
-                                        if (value != null) {
-                                          setState(() {
-                                            widget.bookingApplication.status =
-                                                ApplicationStatus.ONHOLD;
-                                            widget.bookingApplication.tokenId =
-                                                value.item1.tokenId;
-                                            widget.bookingApplication
-                                                    .putOnHoldBy =
-                                                value.item1.putOnHoldBy;
-                                            widget.bookingApplication
-                                                    .notesOnPuttingOnHold =
-                                                value
-                                                    .item1.notesOnPuttingOnHold;
-
-                                            widget.bookingApplication
-                                                    .timeOfPuttingOnHold =
-                                                value.item1.timeOfPuttingOnHold;
-                                          });
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.check,
-                                              Duration(seconds: 2),
-                                              "Application is put on-hold!!",
-                                              "",
-                                              Colors.yellow[700],
-                                              Colors.white);
-                                        } else {
-                                          print(
-                                              "Could not update application status");
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.error,
-                                              Duration(seconds: 4),
-                                              "Oops! Application could not be put On-Hold!!",
-                                              tryAgainLater);
-                                        }
-                                      }).catchError((error) {
-                                        setState(() {
-                                          showLoading = false;
-                                        });
-                                        Utils
-                                            .handleErrorsInUpdateApplicationStatus(
-                                                error, context);
-                                      });
-                                    }
-                                    setState(() {
-                                      showLoading = false;
-                                    });
-                                  });
-                                });
-                              }
-                            },
-                            icon: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: cardWidth * .07,
-                                  height: cardWidth * .07,
-                                  child: Icon(
-                                    Icons.pan_tool_rounded,
-                                    size: 19,
-                                  ),
-                                ),
-                                Container(
-                                  width: cardWidth * .18,
-                                  height: cardHeight * .045,
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  child: AutoSizeText('ON-HOLD',
-                                      group: btnLabelGroup,
-                                      minFontSize: 8,
-                                      maxFontSize: 13,
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                          color: Colors.blueGrey[900],
-                                          fontFamily: 'Roboto')),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                        VerticalDivider(
-                          indent: 0,
-                          endIndent: 0,
-                          // thickness: 1,
-                          width: 5,
-                          color: Colors.blueGrey[400],
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          width: cardWidth * .22,
-                          height: cardWidth * .15,
-                          child: IconButton(
-                            // visualDensity: VisualDensity.compact,
-                            alignment: Alignment.center,
-                            //    visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                            color: (widget.bookingApplication.status !=
-                                        ApplicationStatus.COMPLETED &&
-                                    widget.bookingApplication.status !=
-                                        ApplicationStatus.CANCELLED &&
-                                    widget.bookingApplication.status !=
-                                        ApplicationStatus.REJECTED)
-                                ? Colors.red
-                                : disabledColor,
-                            onPressed: () {
-                              if (widget.isReadOnly) {
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.info,
-                                    Duration(seconds: 3),
-                                    "$noEditPermission the Application",
-                                    "Please contact Admin of this place.");
-                                return;
-                              }
-                              // if (DateTime.now().isAfter((newBookingDate != null
-                              //     ? newBookingDate
-                              //     : widget.newBookingDate))) {
-                              //   Utils.showMyFlushbar(
-                              //       context,
-                              //       Icons.info,
-                              //       Duration(seconds: 3),
-                              //       timeSlotExpired,
-                              //       "Select a different Date or Time and try again.");
-                              //   return;
-                              // }
-                              if (widget.bookingApplication.status !=
-                                      ApplicationStatus.COMPLETED &&
-                                  widget.bookingApplication.status !=
-                                      ApplicationStatus.CANCELLED &&
-                                  widget.bookingApplication.status !=
-                                      ApplicationStatus.REJECTED) {
-                                setState(() {
-                                  showLoading = true;
-                                });
-                                Future.delayed(Duration(seconds: 1))
-                                    .then((value) {
-                                  showApplicationStatusDialog(
-                                          context,
-                                          "Confirm Rejection",
-                                          'Are you sure you want to Reject this Application?',
-                                          rejectDialogMsg,
-                                          'Reject')
-                                      .then((remarks) {
-                                    //Update application status change on server.
-                                    if ((remarks[1])) {
-                                      widget.bookingApplication
-                                          .notesOnPuttingOnHold = (remarks[0]);
-                                      widget.bookingApplication
-                                          .notesOnRejection = remarks[0];
-                                      // DateTime bookingDate = newBookingDate;
-                                      // applicationNewSlotMap.containsKey(
-                                      //         widget.bookingApplication.id)
-                                      //     ? applicationNewSlotMap[
-                                      //         widget.bookingApplication.id]
-                                      //     : widget.bookingApplication
-                                      //         .preferredSlotTiming;
-                                      _gs
-                                          .getApplicationService()
-                                          .updateApplicationStatus(
-                                              widget.bookingApplication.id,
-                                              ApplicationStatus.REJECTED,
-                                              remarks[0],
-                                              widget.metaEntity,
-                                              (newBookingDate != null
-                                                  ? newBookingDate
-                                                  : widget.newBookingDate))
-                                          .then((value) {
-                                        if (value != null) {
-                                          setState(() {
-                                            widget.bookingApplication.status =
-                                                ApplicationStatus.REJECTED;
-                                            widget.bookingApplication.tokenId =
-                                                value.item1.tokenId;
-                                            widget.bookingApplication
-                                                    .putOnHoldBy =
-                                                value.item1.putOnHoldBy;
-                                            widget.bookingApplication
-                                                    .notesOnPuttingOnHold =
-                                                value
-                                                    .item1.notesOnPuttingOnHold;
-
-                                            widget.bookingApplication
-                                                    .timeOfPuttingOnHold =
-                                                value.item1.timeOfPuttingOnHold;
-                                          });
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.check,
-                                              Duration(seconds: 2),
-                                              "Application is rejected!!",
-                                              "",
-                                              Colors.red,
-                                              Colors.white);
-                                        } else {
-                                          print(
-                                              "Could not update application status");
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.error,
-                                              Duration(seconds: 4),
-                                              "Oops! Application could not be rejected!!",
-                                              "");
-                                        }
-                                      }).catchError((error) {
-                                        Utils
-                                            .handleErrorsInUpdateApplicationStatus(
-                                                error, context);
-                                      });
-                                    }
-                                    setState(() {
-                                      showLoading = false;
-                                    });
-                                  });
-                                });
-                              }
-                            },
-                            icon: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: cardWidth * .07,
-                                  height: cardWidth * .07,
-                                  child: Icon(
-                                    Icons.cancel,
-                                    size: 21,
-                                  ),
-                                ),
-                                Container(
-                                  width: cardWidth * .18,
-                                  height: cardHeight * .045,
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  child: AutoSizeText('REJECT',
-                                      group: btnLabelGroup,
-                                      minFontSize: 8,
-                                      maxFontSize: 13,
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                          color: Colors.blueGrey[900],
-                                          fontFamily: 'Roboto')),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                 ]),
 //                   Container(
 //                     width: MediaQuery.of(context).size.width * .97,

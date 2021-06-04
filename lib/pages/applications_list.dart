@@ -1438,7 +1438,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               .push(PageAnimation.createRoute(
                                   ShowApplicationDetails(
                             bookingApplication: ba,
-                            showCancel: false,
+                            showReject: false,
                             metaEntity: widget.metaEntity,
                             newBookingDate:
                                 (applicationNewSlotMap.containsKey(ba.id)
@@ -1453,6 +1453,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 isReadOnly: widget.isReadOnly,
                                 status: widget.status,
                                 titleText: widget.titleText),
+                            forInfo: false,
                           )))
                               .then((value) {
                             refreshTokenCounter();
@@ -1711,7 +1712,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           widget.metaEntity,
                                           bookingDate)
                                       .then((newBa) {
-                                    if (newBa != null) {
+                                    if (value != null) {
                                       setState(() {
                                         ba.status = ApplicationStatus.APPROVED;
                                         //set tokenId with new values from Server.

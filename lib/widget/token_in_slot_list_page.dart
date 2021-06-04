@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:LESSs/db/exceptions/no_token_found_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
+import 'package:LESSs/enum/application_status.dart';
 import 'package:LESSs/pages/shopping_list.dart';
 import 'package:LESSs/pages/show_application_details.dart';
 import 'package:LESSs/repository/slotRepository.dart';
@@ -265,14 +268,14 @@ class _TokensInSlotState extends State<TokensInSlot>
               //content: Text('This is my content'),
               actions: <Widget>[
                 SizedBox(
-                  height: 24,
+                  height: 26,
                   child: MaterialButton(
                     elevation: 0,
                     color: Colors.transparent,
                     splashColor: highlightColor,
                     textColor: btnColor,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.orange)),
+                        side: BorderSide(color: btnColor)),
                     child: Text('Yes'),
                     onPressed: () {
 //Fetch application associated with the token
@@ -283,11 +286,11 @@ class _TokensInSlotState extends State<TokensInSlot>
                             .then((bookingApplication) {
                           if (bookingApplication != null) {
                             Navigator.of(_).pop();
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(
                                     ShowApplicationDetails(
                               bookingApplication: bookingApplication,
-                              showCancel: false,
+                              showReject: true,
                               metaEntity: widget.metaEntity,
                               newBookingDate: null,
                               isReadOnly: widget.isReadOnly,
@@ -302,7 +305,33 @@ class _TokensInSlotState extends State<TokensInSlot>
                                 backRoute: widget.backRoute,
                                 isReadOnly: widget.isReadOnly,
                               ),
-                            )));
+                              forInfo: true,
+                            )))
+                                .then((value) {
+                              print(
+                                  "Rejecting the application, Now refresh this page.");
+                              if (value != null) {
+                                bookingApplication.status =
+                                    ApplicationStatus.REJECTED;
+                                bookingApplication.tokenId = value.tokenId;
+                                bookingApplication.rejectedBy =
+                                    value.rejectedBy;
+                                bookingApplication.notesOnRejection =
+                                    value.notesOnRejection;
+                                bookingApplication.timeOfRejection =
+                                    value.timeOfRejection;
+                                for (int i = 0; i < listOfTokens.length; i++) {
+                                  if (listOfTokens[i].applicationId ==
+                                      value.id) {
+                                    listOfTokens[i].numberBeforeCancellation =
+                                        listOfTokens[i].number;
+                                    listOfTokens[i].number = -1;
+                                  }
+                                }
+                                // booking.number = -1;
+                                setState(() {});
+                              }
+                            });
                           } else {
                             Utils.showMyFlushbar(
                                 context,
@@ -357,17 +386,17 @@ class _TokensInSlotState extends State<TokensInSlot>
                   ),
                 ),
                 SizedBox(
-                  height: 24,
-                  child: RaisedButton(
+                  height: 26,
+                  child: MaterialButton(
                     elevation: 20,
                     autofocus: true,
                     focusColor: highlightColor,
                     splashColor: highlightColor,
-                    color: Colors.white,
-                    textColor: Colors.orange,
+                    color: btnColor,
+                    textColor: btnColor,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.orange)),
-                    child: Text('No'),
+                        side: BorderSide(color: btnColor)),
+                    child: Text('No', style: TextStyle(color: Colors.white)),
                     onPressed: () {
                       print("Do nothing");
                       Navigator.of(context, rootNavigator: true).pop();
@@ -555,15 +584,15 @@ class _TokensInSlotState extends State<TokensInSlot>
                                   onPressed: () {
                                     if (!widget.isReadOnly) {
                                       //If booking is past booking then no sense of cancelling , show msg to user
-                                      if (booking.parent.dateTime
-                                          .isBefore(DateTime.now())) {
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.info,
-                                            Duration(seconds: 5),
-                                            "The Booking token has already expired!",
-                                            "");
-                                      }
+                                      // if (booking.parent.dateTime
+                                      //     .isBefore(DateTime.now())) {
+                                      //   Utils.showMyFlushbar(
+                                      //       context,
+                                      //       Icons.info,
+                                      //       Duration(seconds: 5),
+                                      //       "The Booking token has already expired!",
+                                      //       "");
+                                      // }
                                       //booking number is -1 means its already been cancelled, Do Nothing
 
                                       if (booking.number == -1) {
@@ -573,7 +602,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                             Duration(seconds: 5),
                                             "The Booking Token is already Cancelled!",
                                             "");
-                                        return null;
+                                        return;
                                       } else {
                                         showCancelBooking(booking, index);
                                       }
@@ -651,6 +680,48 @@ class _TokensInSlotState extends State<TokensInSlot>
                             ],
                           ),
                         ),
+                        if (Utils.isNotNullOrEmpty(booking.applicationId))
+                          GestureDetector(
+                            onTap: () {
+                              _gs
+                                  .getApplicationService()
+                                  .getApplication(booking.applicationId)
+                                  .then((bookingApplication) {
+                                if (bookingApplication != null) {
+                                  Navigator.of(context).push(
+                                      PageAnimation.createRoute(
+                                          ShowApplicationDetails(
+                                    bookingApplication: bookingApplication,
+                                    showReject: false,
+                                    metaEntity: widget.metaEntity,
+                                    newBookingDate: null,
+                                    isReadOnly: widget.isReadOnly,
+                                    isAvailable: null,
+                                    tokenCounter: null,
+                                    backRoute: null,
+                                    forInfo: true,
+                                  )));
+                                } else {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.info,
+                                      Duration(
+                                        seconds: 5,
+                                      ),
+                                      "Could not fetch Application details at the moment.",
+                                      "Please try again later.");
+                                }
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(top: 4),
+                              width: MediaQuery.of(context).size.width * .68,
+                              alignment: Alignment.centerRight,
+                              child: Text("..view details",
+                                  style: TextStyle(
+                                      color: highlightColor, fontSize: 12)),
+                            ),
+                          ),
                       ],
                     ),
                   ],

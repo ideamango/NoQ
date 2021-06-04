@@ -894,12 +894,14 @@ class _ShowUserApplicationDetailsState
                 margin: EdgeInsets.all(9),
                 child: MaterialButton(
                     elevation: 8,
-                    color: (ba.status == ApplicationStatus.CANCELLED)
+                    color: (ba.status == ApplicationStatus.CANCELLED ||
+                            ba.status == ApplicationStatus.REJECTED)
                         ? disabledColor
                         : Colors.yellow[800],
                     onPressed: () {
                       if (widget.bookingApplication.status ==
-                          ApplicationStatus.CANCELLED) {
+                              ApplicationStatus.CANCELLED ||
+                          ba.status == ApplicationStatus.REJECTED) {
                         return;
                       }
                       setState(() {
