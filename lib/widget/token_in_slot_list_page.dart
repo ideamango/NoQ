@@ -313,16 +313,17 @@ class _TokensInSlotState extends State<TokensInSlot>
                               if (value != null) {
                                 bookingApplication.status =
                                     ApplicationStatus.REJECTED;
-                                bookingApplication.tokenId = value.tokenId;
+                                bookingApplication.tokenId =
+                                    value.item1.tokenId;
                                 bookingApplication.rejectedBy =
-                                    value.rejectedBy;
+                                    value.item1.rejectedBy;
                                 bookingApplication.notesOnRejection =
-                                    value.notesOnRejection;
+                                    value.item1.notesOnRejection;
                                 bookingApplication.timeOfRejection =
-                                    value.timeOfRejection;
+                                    value.item1.timeOfRejection;
                                 for (int i = 0; i < listOfTokens.length; i++) {
                                   if (listOfTokens[i].applicationId ==
-                                      value.id) {
+                                      value.item1.id) {
                                     listOfTokens[i].numberBeforeCancellation =
                                         listOfTokens[i].number;
                                     listOfTokens[i].number = -1;
@@ -701,17 +702,32 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     backRoute: null,
                                     forInfo: true,
                                   )))
-                                      .then((updatedBa) {
-                                    if (updatedBa.status ==
-                                            ApplicationStatus.ONHOLD ||
-                                        updatedBa.status ==
-                                            ApplicationStatus.REJECTED) {
-                                      booking.number = -1;
+                                      .then((value) {
+                                    if (value != null) {
+                                      bookingApplication.status =
+                                          ApplicationStatus.REJECTED;
+                                      bookingApplication.tokenId =
+                                          value.item1.tokenId;
+                                      bookingApplication.rejectedBy =
+                                          value.item1.rejectedBy;
+                                      bookingApplication.notesOnRejection =
+                                          value.item1.notesOnRejection;
+                                      bookingApplication.timeOfRejection =
+                                          value.item1.timeOfRejection;
+                                      for (int i = 0;
+                                          i < listOfTokens.length;
+                                          i++) {
+                                        if (listOfTokens[i].applicationId ==
+                                            value.item1.id) {
+                                          listOfTokens[i]
+                                                  .numberBeforeCancellation =
+                                              listOfTokens[i].number;
+                                          listOfTokens[i].number = -1;
+                                        }
+                                      }
+                                      // booking.number = -1;
+                                      setState(() {});
                                     }
-                                    setState(() {
-                                      print(
-                                          'Updated returned TokenCounter and BA from details page');
-                                    });
                                   });
                                 } else {
                                   Utils.showMyFlushbar(
