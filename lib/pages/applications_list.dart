@@ -1711,7 +1711,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           remarks[0],
                                           widget.metaEntity,
                                           bookingDate)
-                                      .then((newBa) {
+                                      .then((value) {
                                     if (value != null) {
                                       setState(() {
                                         ba.status = ApplicationStatus.APPROVED;

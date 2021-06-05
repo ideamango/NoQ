@@ -1875,15 +1875,15 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                     newBa.item1.tokenId;
                                                 widget.bookingApplication
                                                         .putOnHoldBy =
-                                                    value.item1.putOnHoldBy;
+                                                    newBa.item1.putOnHoldBy;
                                                 widget.bookingApplication
                                                         .notesOnPuttingOnHold =
-                                                    value.item1
+                                                    newBa.item1
                                                         .notesOnPuttingOnHold;
 
                                                 widget.bookingApplication
                                                         .timeOfPuttingOnHold =
-                                                    value.item1
+                                                    newBa.item1
                                                         .timeOfPuttingOnHold;
                                               });
                                               Utils.showMyFlushbar(
