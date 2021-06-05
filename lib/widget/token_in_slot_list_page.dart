@@ -688,8 +688,8 @@ class _TokensInSlotState extends State<TokensInSlot>
                                   .getApplication(booking.applicationId)
                                   .then((bookingApplication) {
                                 if (bookingApplication != null) {
-                                  Navigator.of(context).push(
-                                      PageAnimation.createRoute(
+                                  Navigator.of(context)
+                                      .push(PageAnimation.createRoute(
                                           ShowApplicationDetails(
                                     bookingApplication: bookingApplication,
                                     showReject: false,
@@ -700,7 +700,19 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     tokenCounter: null,
                                     backRoute: null,
                                     forInfo: true,
-                                  )));
+                                  )))
+                                      .then((updatedBa) {
+                                    if (updatedBa.status ==
+                                            ApplicationStatus.ONHOLD ||
+                                        updatedBa.status ==
+                                            ApplicationStatus.REJECTED) {
+                                      booking.number = -1;
+                                    }
+                                    setState(() {
+                                      print(
+                                          'Updated returned TokenCounter and BA from details page');
+                                    });
+                                  });
                                 } else {
                                   Utils.showMyFlushbar(
                                       context,

@@ -1,3 +1,6 @@
+import 'package:LESSs/enum/application_status.dart';
+import 'package:LESSs/pages/show_application_details.dart';
+import 'package:LESSs/widget/page_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../constants.dart';
@@ -263,21 +266,63 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
         //       ),
         //TODO Phase2 Uncomment it
         nameValueText('Token', bookingToken.getDisplayName()),
-
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   crossAxisAlignment: CrossAxisAlignment.end,
-        //   children: [
-        //     Text(
-        //       statusText,
-        //       style: TextStyle(
-        //           fontSize: 28,
-        //           fontFamily: 'RalewayRegular',
-        //           color: textColor,
-        //           fontWeight: FontWeight.bold),
-        //     ),
-        //   ],
-        // )
+        if (Utils.isNotNullOrEmpty(bookingToken.applicationId))
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  print('tapped');
+                  _gs
+                      .getApplicationService()
+                      .getApplication(bookingToken.applicationId)
+                      .then((bookingApplication) {
+                    if (bookingApplication != null) {
+                      _gs
+                          .getEntityService()
+                          .getEntity(bookingToken.parent.entityId)
+                          .then((entity) {
+                        Navigator.of(context)
+                            .push(PageAnimation.createRoute(
+                                ShowApplicationDetails(
+                          bookingApplication: bookingApplication,
+                          showReject: false,
+                          metaEntity: entity.getMetaEntity(),
+                          newBookingDate: null,
+                          isReadOnly: false,
+                          isAvailable: true,
+                          tokenCounter: null,
+                          backRoute: null,
+                          forInfo: false,
+                        )))
+                            .then((updatedBa) {
+                          if (updatedBa.status == ApplicationStatus.ONHOLD ||
+                              updatedBa.status == ApplicationStatus.REJECTED) {
+                            bookingToken.number = -1;
+                          }
+                          setState(() {
+                            print(
+                                'Updated returned TokenCounter and BA from details page');
+                          });
+                        });
+                      });
+                    } else {}
+                  });
+                },
+                child: Container(
+                  child: Text(
+                    '..view application details',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'RalewayRegular',
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          )
       ],
     );
   }
@@ -297,7 +342,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
             ),
             body: Center(
               child: Card(
-                margin: EdgeInsets.all(12),
+                margin: EdgeInsets.all(2),
                 elevation: 30,
                 child: Container(
                   decoration: BoxDecoration(
@@ -321,7 +366,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                               shrinkWrap: true,
                               itemBuilder: (BuildContext context, int index) {
                                 return Container(
-                                    margin: EdgeInsets.only(bottom: 5),
+                                    margin: EdgeInsets.all(0),
                                     child: Column(
                                       children: [
                                         buildTokenCard(listOfTokens[index]),

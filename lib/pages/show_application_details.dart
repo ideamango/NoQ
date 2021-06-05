@@ -4,6 +4,7 @@ import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/pages/token_alert.dart';
 import 'package:LESSs/services/url_services.dart';
 import 'package:LESSs/slot_selection_admin.dart';
+import 'package:LESSs/tuple.dart';
 import 'package:LESSs/widget/page_animation.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -61,6 +62,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   bool showLoading = false;
   DateTime newBookingDate;
   bool applicationUpdated = false;
+  Tuple<BookingApplication, TokenCounter> returnTupleNewBa;
   @override
   void initState() {
     super.initState();
@@ -753,7 +755,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   color: Colors.white,
                   onPressed: () {
                     if (applicationUpdated)
-                      Navigator.of(context).pop(widget.bookingApplication);
+                      Navigator.of(context).pop(returnTupleNewBa);
                     else
                       Navigator.of(context).pop();
                   }),
@@ -1551,6 +1553,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                               value.item1.timeOfRejection;
                                         });
                                         applicationUpdated = true;
+                                        returnTupleNewBa = value;
                                         Utils.showMyFlushbar(
                                             context,
                                             Icons.check,
