@@ -373,6 +373,7 @@ class GlobalState {
 
   Future<Tuple<Entity, bool>> getEntity(String id,
       [bool fetchFromServer = false]) async {
+    if (_entityService == null) return null;
     if (fetchFromServer || !_entities.containsKey(id)) {
       Entity ent = await _entityService.getEntity(id);
       if (ent == null) {
@@ -389,6 +390,7 @@ class GlobalState {
   }
 
   Future<bool> removeEmployee(String entityId, String phone) async {
+    if (_gs == null) return false;
     Entity updatedEntity =
         await _gs.getEntityService().removeEmployee(entityId, phone);
     if (updatedEntity != null) {
@@ -466,6 +468,7 @@ class GlobalState {
   }
 
   void setPastSearch(List<Entity> entityList, String name, EntityType type) {
+    if (_gs == null) return;
     _gs.lastSearchResults = entityList;
     _gs.lastSearchName = name;
     _gs.lastSearchType = type;
@@ -504,6 +507,7 @@ class GlobalState {
 
   List<EntityType> getActiveEntityTypes() {
     List<EntityType> types = [];
+    if (_conf == null) return types;
     List<String> stringTypes;
 
     if (isAndroid) {
@@ -525,6 +529,7 @@ class GlobalState {
 
   List<EntityType> getActiveChildEntityTypes(EntityType parentType) {
     List<EntityType> types = [];
+    if (_conf == null) return types;
 
     if (!_conf.typeToChildType
         .containsKey(EnumToString.convertToString(parentType))) {
@@ -670,6 +675,8 @@ class GlobalState {
   //Throws => TokenAlreadyCancelledException, NoTokenFoundException
   Future<bool> cancelBooking(String tokenId, [int number]) async {
     Tuple<UserToken, TokenCounter> tuple;
+    if (_gs == null || _tokenService == null) return false;
+
     tuple = await _tokenService.cancelToken(tokenId, number);
     UserToken ut = tuple.item1;
     UserTokens uts = ut.parent;

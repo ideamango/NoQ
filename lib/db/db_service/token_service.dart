@@ -1,10 +1,12 @@
 import 'dart:math';
 
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
+import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 
 import '../../tuple.dart';
 import '../db_model/entity_slots.dart';
@@ -152,14 +154,21 @@ class TokenService {
 
     UserTokens userToks;
 
-    final DocumentReference tokenCounterRef = fStore.doc('tokens/' + tokenId);
+    try {
+      final DocumentReference tokenCounterRef = fStore.doc('tokens/' + tokenId);
 
-    DocumentSnapshot doc = await tokenCounterRef.get();
+      DocumentSnapshot doc = await tokenCounterRef.get();
 
-    if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
+      if (doc.exists) {
+        Map<String, dynamic> map = doc.data();
 
-      userToks = UserTokens.fromJson(map);
+        userToks = UserTokens.fromJson(map);
+      }
+    } catch (e) {
+      if (e.code == "permission-denied") {
+        throw new AccessDeniedException(
+            "You do not have permission to view the Token.");
+      }
     }
 
     return userToks;
