@@ -1456,9 +1456,11 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             forInfo: false,
                           )))
                               .then((value) {
-                            refreshTokenCounter();
+                            tokenCounterForEntity = value;
+                            //refreshTokenCounter();
                             setState(() {
-                              print(value);
+                              print(
+                                  'Updated returned Token counter from details page');
                             });
                           });
                         },

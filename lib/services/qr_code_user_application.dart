@@ -56,7 +56,7 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
 
   void generateQrCode() {
     //dataString needs to be set, using this the Qr code is generated.
-    Utils.createQrScreenForUserApplications(
+    Utils.createQrScreenForBookingTokens(
             widget.uniqueTokenIdentifier, widget.entityName)
         .then((value) {
       uriLink = value;
@@ -170,56 +170,70 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
           appBar:
               CustomAppBarWithBackButton(titleTxt: "QR Code", backRoute: route),
           body: Center(
-            child: Container(
-              color: Colors.white,
-              width: MediaQuery.of(context).size.width * .8,
-              height: MediaQuery.of(context).size.width * .9,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: Center(
-                      child: RepaintBoundary(
-                        key: globalKey,
-                        child: Container(
-                          alignment: Alignment.center,
-                          color: Colors.white,
-                          child: QrImage(
-                            data: _dataString,
-                            size: MediaQuery.of(context).size.width * .9,
-                            errorStateBuilder: (cxt, err) {
-                              return Container(
-                                child: Center(
-                                  child: Text(
-                                    "Uh oh! Something went wrong!! May be the text is too long. Try again.",
-                                    textAlign: TextAlign.center,
+            child: Card(
+              child: Container(
+                color: Colors.white,
+                width: MediaQuery.of(context).size.width * .8,
+                height: MediaQuery.of(context).size.height * .8,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.all(10),
+                      height: MediaQuery.of(context).size.height * .2,
+                      child: Text(
+                        QRMessageInToken,
+                        style: TextStyle(
+                            color: btnColor,
+                            fontSize: 18,
+                            height: 1.5,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'RalewayRegular'),
+                      ),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: RepaintBoundary(
+                          key: globalKey,
+                          child: Container(
+                            alignment: Alignment.center,
+                            color: Colors.white,
+                            child: QrImage(
+                              data: _dataString,
+                              size: MediaQuery.of(context).size.width * .9,
+                              errorStateBuilder: (cxt, err) {
+                                return Container(
+                                  child: Center(
+                                    child: Text(
+                                      "Uh oh! Something went wrong!! May be the text is too long. Try again.",
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.orange)),
-                          color: Colors.transparent,
-                          child: Text("Share QR Code"),
-                          onPressed: () {
-                            _shareContent();
-                          },
+                    Container(
+                      margin: EdgeInsets.all(10),
+                      child: MaterialButton(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.blueGrey[400]),
+                          borderRadius: BorderRadius.circular(5),
                         ),
+                        color: btnColor,
+                        child: Container(
+                            margin: EdgeInsets.all(10),
+                            child: Text("Share QR Code")),
+                        onPressed: () {
+                          _shareContent();
+                        },
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

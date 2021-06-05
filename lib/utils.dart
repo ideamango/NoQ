@@ -772,6 +772,38 @@ class Utils {
   }
 
   static Future<Uri> createQrScreenForUserApplications(
+      String applicationID, String entityName) async {
+    String msgTitle = entityShareByUserHeading + entityName;
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      // This should match firebase but without the username query param
+      uriPrefix: shareURLPrefix,
+      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
+      link: Uri.parse(shareURLPrefix + '/?applicationID=$applicationID'),
+      androidParameters: AndroidParameters(
+          packageName: bundleId,
+          minimumVersion: 1,
+          fallbackUrl: Uri.parse('https://bigpiq.com/#product')),
+      iosParameters: IosParameters(
+        bundleId: bundleId,
+        minimumVersion: '1',
+        appStoreId: appStoreId,
+      ),
+      socialMetaTagParameters: SocialMetaTagParameters(
+        title: msgTitle,
+        description: entityShareMessage,
+        imageUrl: Uri.parse(
+            'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
+      ),
+    );
+    final link = await parameters.buildUrl();
+    // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+    // print("short url");
+    // print(shortenedLink);
+    //return shortenedLink.shortUrl;
+    return link;
+  }
+
+  static Future<Uri> createQrScreenForBookingTokens(
       String tokenID, String entityName) async {
     String msgTitle = entityShareByUserHeading + entityName;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
