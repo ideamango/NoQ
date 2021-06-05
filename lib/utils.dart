@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
+import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/db/exceptions/slot_full_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
 import 'package:LESSs/tuple.dart';
@@ -489,6 +490,11 @@ class Utils {
                       userTokens: userTokenId,
                       isAdmin: true,
                     )));
+      }
+    }).onError((error, stackTrace) {
+      if (error is AccessDeniedException) {
+        Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+            tokenAccessNotAuthorised, contactAdminIfIssue);
       }
     });
   }

@@ -133,7 +133,10 @@ String applicationShareMessage =
 
 String qrCodeShareMessage =
     "For your next visit, book an appointment when the crowd is less.\n\nScan the QR to Download the LESSs app and start booking your peace of mind!";
-
+String tokenAccessNotAuthorised =
+    "You are not authorised to access the Bookings for this Place.";
+String contactAdminIfIssue =
+    "If you this is a mistake, Please contact Admin of this place.";
 String locationPermissionMsg =
     'To find nearby places we need access to your current location. Open Settings and give permission to "LESSs" to access your location.';
 String locationAccessDeniedStr =
