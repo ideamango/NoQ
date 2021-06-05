@@ -765,9 +765,6 @@ class BookingApplicationService {
 
             UserToken lastTok = toks.tokens[toks.tokens.length - 1];
             application.tokenId = lastTok.getID();
-
-            //HACK: by accessing bookings of GS to add this new Token, so that it apears immediately in users list
-            _gs.bookings.add(lastTok);
           }
         } else if (status == ApplicationStatus.COMPLETED) {
           application.timeOfCompletion = now;
