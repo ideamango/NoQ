@@ -1,6 +1,8 @@
 import 'package:LESSs/enum/application_status.dart';
 import 'package:LESSs/pages/show_application_details.dart';
 import 'package:LESSs/widget/page_animation.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../constants.dart';
@@ -49,8 +51,11 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
   String dateTime;
   String time;
   List<UserToken> listOfTokens = new List<UserToken>();
+  Map<String, BookingApplication> mapOfBa =
+      new Map<String, BookingApplication>();
   AnimationController _animationController;
   Animation animation;
+
   @override
   void initState() {
     _animationController = new AnimationController(
@@ -67,13 +72,14 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
         token.dateTime.minute.toString();
 
     getGlobalState().whenComplete(() {
-      fetchTokens();
-      if (this.mounted) {
-        setState(() {
+      fetchTokens().then((value) {
+        if (this.mounted) {
+          setState(() {
+            initCompleted = true;
+          });
+        } else
           initCompleted = true;
-        });
-      } else
-        initCompleted = true;
+      });
     });
   }
 
@@ -111,11 +117,10 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
   @override
   void dispose() {
     _animationController.dispose();
-
     super.dispose();
   }
 
-  void fetchTokens() {
+  Future<void> fetchTokens() async {
     if (token.tokens.length != 0) {
       for (int i = 0; i < token.tokens.length; i++) {
         listOfTokens.add(token.tokens[i]);
@@ -156,13 +161,14 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
   }
 
   Widget buildTokenCard(UserToken bookingToken) {
-    //BookingApplication application;
-
     DateTime currentTime = DateTime.now();
     String statusText;
     Color textColor;
-    //  DateTime slotTime = new DateTime(slot.dateTime.year,slot.dateTime.month, slot.dateTime.day, );
+    //BookingApplication ba;
 
+    // if (mapOfBa.containsKey(bookingToken.getID())) {
+    //   ba = mapOfBa[bookingToken.getID()];
+    // }
     if (currentTime.isAfter(token.dateTime) &&
         currentTime.isBefore(
             token.dateTime.add(Duration(minutes: token.slotDuration)))) {
@@ -185,6 +191,36 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              padding: EdgeInsets.all(2),
+              margin: EdgeInsets.all(0),
+              alignment: Alignment.topCenter,
+              decoration: BoxDecoration(
+                  color: (bookingToken.number == -1 ? Colors.red : Colors.blue),
+                  shape: BoxShape.rectangle,
+                  borderRadius:
+                      BorderRadius.only(bottomLeft: Radius.circular(5.0))),
+              child: SizedBox(
+                child: Center(
+                  child: AutoSizeText(
+                      bookingToken.number == -1 ? 'Cancelled' : 'Approved',
+                      textAlign: TextAlign.center,
+                      minFontSize: 7,
+                      maxFontSize: 9,
+                      style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                          color: Colors.white,
+                          fontFamily: 'RalewayRegular')),
+                ),
+              ),
+            ),
+          ],
+        ),
         nameValueText('User', bookingToken.parent.userId),
         nameValueText('Place', Utils.stringToPascalCase(entityName)),
         nameValueText('Date', dateTime),
@@ -231,40 +267,6 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
             ),
           ],
         ),
-        //TODO Phase2 Uncomment it
-        // Utils.isNotNullOrEmpty(token.applicationId)
-        //     ? FlatButton(
-        //         color: Colors.transparent,
-        //         textColor: btnColor,
-        //         shape: RoundedRectangleBorder(
-        //             side: BorderSide(color: btnColor),
-        //             borderRadius: BorderRadius.all(Radius.circular(3.0))),
-        //         onPressed: () {
-        //           //TODO view Applications
-        //           _gs
-        //               .getApplicationService()
-        //               .getApplication(token.applicationId)
-        //               .then((applicationVal) {
-        //             application = applicationVal;
-        //           });
-        //           setState(() {});
-        //         },
-        //         child: Text(
-        //           'View Application Details',
-        //         ))
-        //     : Container(
-        //         height: 0,
-        //         width: 0,
-        //       ),
-        // (application != null)
-        //     ? Container(
-        //         child: Text("Got application"),
-        //       )
-        //     : Container(
-        //         height: 0,
-        //         width: 0,
-        //       ),
-        //TODO Phase2 Uncomment it
         nameValueText('Token', bookingToken.getDisplayName()),
         if (Utils.isNotNullOrEmpty(bookingToken.applicationId))
           Row(
@@ -274,11 +276,13 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
               GestureDetector(
                 onTap: () {
                   print('tapped');
+
                   _gs
                       .getApplicationService()
-                      .getApplication(bookingToken.applicationId)
-                      .then((bookingApplication) {
-                    if (bookingApplication != null) {
+                      .getApplication(token.tokens[0].applicationId)
+                      .then((newBaFromGS) {
+                    if (newBaFromGS != null) {
+                      mapOfBa[token.tokens[0].getID()] = newBaFromGS;
                       _gs
                           .getEntityService()
                           .getEntity(bookingToken.parent.entityId)
@@ -286,7 +290,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                         Navigator.of(context)
                             .push(PageAnimation.createRoute(
                                 ShowApplicationDetails(
-                          bookingApplication: bookingApplication,
+                          bookingApplication: newBaFromGS,
                           showReject: false,
                           metaEntity: entity.getMetaEntity(),
                           newBookingDate: null,
@@ -307,7 +311,14 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                           });
                         });
                       });
-                    } else {}
+                    } else {
+                      Utils.showMyFlushbar(
+                          context,
+                          Icons.info,
+                          Duration(seconds: 5),
+                          'Oho! Could not fetch the Application details.',
+                          'Please try again later.');
+                    }
                   });
                 },
                 child: Container(
@@ -342,7 +353,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
             ),
             body: Center(
               child: Card(
-                margin: EdgeInsets.all(2),
+                margin: EdgeInsets.all(8),
                 elevation: 30,
                 child: Container(
                   decoration: BoxDecoration(
@@ -365,13 +376,11 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                               reverse: true,
                               shrinkWrap: true,
                               itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                    margin: EdgeInsets.all(0),
-                                    child: Column(
-                                      children: [
-                                        buildTokenCard(listOfTokens[index]),
-                                      ],
-                                    ));
+                                return Column(
+                                  children: [
+                                    buildTokenCard(listOfTokens[index]),
+                                  ],
+                                );
                               },
                               itemCount: listOfTokens.length,
                             )

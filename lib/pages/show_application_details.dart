@@ -1536,24 +1536,24 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             (newBookingDate != null
                                                 ? newBookingDate
                                                 : widget.newBookingDate))
-                                        .then((value) {
-                                      if (value != null) {
+                                        .then((newBa) {
+                                      if (newBa != null) {
                                         setState(() {
                                           widget.bookingApplication.status =
                                               ApplicationStatus.REJECTED;
                                           widget.bookingApplication.tokenId =
-                                              value.item1.tokenId;
+                                              newBa.item1.tokenId;
                                           widget.bookingApplication.rejectedBy =
-                                              value.item1.rejectedBy;
+                                              newBa.item1.rejectedBy;
                                           widget.bookingApplication
                                                   .notesOnRejection =
-                                              value.item1.notesOnRejection;
+                                              newBa.item1.notesOnRejection;
                                           widget.bookingApplication
                                                   .timeOfRejection =
-                                              value.item1.timeOfRejection;
+                                              newBa.item1.timeOfRejection;
                                         });
                                         applicationUpdated = true;
-                                        returnTupleNewBa = value;
+                                        returnTupleNewBa = newBa;
                                         Utils.showMyFlushbar(
                                             context,
                                             Icons.check,
@@ -1695,28 +1695,30 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                   (newBookingDate != null
                                                       ? newBookingDate
                                                       : widget.newBookingDate))
-                                              .then((value) {
-                                            if (value != null) {
+                                              .then((newBa) {
+                                            if (newBa != null) {
                                               setState(() {
                                                 widget.bookingApplication
                                                         .status =
                                                     ApplicationStatus.COMPLETED;
                                                 widget.bookingApplication
                                                         .tokenId =
-                                                    value.item1.tokenId;
+                                                    newBa.item1.tokenId;
                                                 widget.bookingApplication
                                                         .putOnHoldBy =
-                                                    value.item1.putOnHoldBy;
+                                                    newBa.item1.putOnHoldBy;
                                                 widget.bookingApplication
                                                         .notesOnPuttingOnHold =
-                                                    value.item1
+                                                    newBa.item1
                                                         .notesOnPuttingOnHold;
 
                                                 widget.bookingApplication
                                                         .timeOfPuttingOnHold =
-                                                    value.item1
+                                                    newBa.item1
                                                         .timeOfPuttingOnHold;
                                               });
+                                              applicationUpdated = true;
+                                              returnTupleNewBa = newBa;
                                               Utils.showMyFlushbar(
                                                   context,
                                                   Icons.check,
@@ -1872,23 +1874,24 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                 widget.bookingApplication
                                                         .status =
                                                     ApplicationStatus.APPROVED;
-                                                //set tokenId with new values from Server.
+                                                //set tokenId with new newBas from Server.
                                                 widget.bookingApplication
                                                         .tokenId =
                                                     newBa.item1.tokenId;
                                                 widget.bookingApplication
                                                         .putOnHoldBy =
-                                                    value.item1.putOnHoldBy;
+                                                    newBa.item1.putOnHoldBy;
                                                 widget.bookingApplication
                                                         .notesOnPuttingOnHold =
-                                                    value.item1
+                                                    newBa.item1
                                                         .notesOnPuttingOnHold;
-
                                                 widget.bookingApplication
                                                         .timeOfPuttingOnHold =
-                                                    value.item1
+                                                    newBa.item1
                                                         .timeOfPuttingOnHold;
                                               });
+                                              applicationUpdated = true;
+                                              returnTupleNewBa = newBa;
                                               Utils.showMyFlushbar(
                                                   context,
                                                   Icons.check,
@@ -2039,30 +2042,32 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                 (newBookingDate != null
                                                     ? newBookingDate
                                                     : widget.newBookingDate))
-                                            .then((value) {
+                                            .then((newBa) {
                                           setState(() {
                                             showLoading = false;
                                           });
-                                          if (value != null) {
+                                          if (newBa != null) {
                                             setState(() {
                                               widget.bookingApplication.status =
                                                   ApplicationStatus.ONHOLD;
                                               widget.bookingApplication
                                                       .tokenId =
-                                                  value.item1.tokenId;
+                                                  newBa.item1.tokenId;
                                               widget.bookingApplication
                                                       .putOnHoldBy =
-                                                  value.item1.putOnHoldBy;
+                                                  newBa.item1.putOnHoldBy;
                                               widget.bookingApplication
                                                       .notesOnPuttingOnHold =
-                                                  value.item1
+                                                  newBa.item1
                                                       .notesOnPuttingOnHold;
 
                                               widget.bookingApplication
                                                       .timeOfPuttingOnHold =
-                                                  value.item1
+                                                  newBa.item1
                                                       .timeOfPuttingOnHold;
                                             });
+                                            applicationUpdated = true;
+                                            returnTupleNewBa = newBa;
                                             Utils.showMyFlushbar(
                                                 context,
                                                 Icons.check,
@@ -2216,27 +2221,29 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                 (newBookingDate != null
                                                     ? newBookingDate
                                                     : widget.newBookingDate))
-                                            .then((value) {
-                                          if (value != null) {
+                                            .then((newBa) {
+                                          if (newBa != null) {
                                             setState(() {
                                               widget.bookingApplication.status =
                                                   ApplicationStatus.REJECTED;
                                               widget.bookingApplication
                                                       .tokenId =
-                                                  value.item1.tokenId;
+                                                  newBa.item1.tokenId;
                                               widget.bookingApplication
                                                       .putOnHoldBy =
-                                                  value.item1.putOnHoldBy;
+                                                  newBa.item1.putOnHoldBy;
                                               widget.bookingApplication
                                                       .notesOnPuttingOnHold =
-                                                  value.item1
+                                                  newBa.item1
                                                       .notesOnPuttingOnHold;
 
                                               widget.bookingApplication
                                                       .timeOfPuttingOnHold =
-                                                  value.item1
+                                                  newBa.item1
                                                       .timeOfPuttingOnHold;
                                             });
+                                            applicationUpdated = true;
+                                            returnTupleNewBa = newBa;
                                             Utils.showMyFlushbar(
                                                 context,
                                                 Icons.check,

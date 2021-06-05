@@ -29,16 +29,16 @@ class QrCodeScanner {
         Utils.addEntityToFavs(context, entityId);
       } else if (scanResult.contains('tokenIdentifier')) {
         List<String> url = scanResult.split('tokenIdentifier');
-        String applicationID;
-        String afterapplicationID = url[1];
+        String tokenID;
+        String afterTokenID = url[1];
         //  List<String> url = afterapplicationID.split('%3A');
-        afterapplicationID = afterapplicationID.replaceAll('%3A', '#');
-        afterapplicationID = afterapplicationID.replaceAll('%2B', '+');
+        afterTokenID = afterTokenID.replaceAll('%3A', '#');
+        afterTokenID = afterTokenID.replaceAll('%2B', '+');
 
         //         //this condition is for the QR code link generated from the Android
-        applicationID = afterapplicationID.substring(3);
+        tokenID = afterTokenID.substring(3);
 
-        Utils.showApplicationDetails(context, applicationID);
+        Utils.showApplicationDetails(context, tokenID);
       } else {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             invalidQRCode, correctQRCode);
