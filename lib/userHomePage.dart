@@ -1100,6 +1100,7 @@ class _UserHomePageState extends State<UserHomePage>
                                       GenerateQrUserApplication(
                                 entityName: "Application QR code",
                                 backRoute: "UserAppsList",
+                                baId: null,
                                 uniqueTokenIdentifier: id,
                               )));
                             }),
