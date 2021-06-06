@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import '../../constants.dart';
 import '../db_model/booking_application.dart';
 import '../db_model/booking_form.dart';
@@ -371,9 +372,17 @@ class BookingApplicationService {
         // }
 
         isSuccess = true;
+      } on PlatformException catch (pe) {
+        if (pe.code == "permission-denied") {
+          e = new AccessDeniedException(
+              "You do not have permission to create the Application.");
+        } else {
+          e = pe;
+        }
       } catch (ex) {
         print("Exception in Application submission $bookingApplicationId " +
             e.toString());
+
         e = ex;
         isSuccess = false;
       }
@@ -600,6 +609,13 @@ class BookingApplicationService {
         // }
 
         isSuccess = true;
+      } on PlatformException catch (pe) {
+        if (pe.code == "permission-denied") {
+          e = new AccessDeniedException(
+              "You do not have permission to cancel the Application.");
+        } else {
+          e = pe;
+        }
       } catch (ex) {
         print("Exception in Application submission $bookingApplicationId " +
             ex.toString());
@@ -961,6 +977,13 @@ class BookingApplicationService {
         // }
 
         requestProcessed = true;
+      } on PlatformException catch (pe) {
+        if (pe.code == "permission-denied") {
+          e = new AccessDeniedException(
+              "You do not have permission to update the Application.");
+        } else {
+          e = pe;
+        }
       } catch (ex) {
         requestProcessed = false;
         print(ex.toString());
