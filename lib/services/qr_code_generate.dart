@@ -206,7 +206,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                             color: Colors.white,
                             child: QrImage(
                               data: _dataString,
-                              size: MediaQuery.of(context).size.width * .9,
+                              size: MediaQuery.of(context).size.width * .5,
                               errorStateBuilder: (cxt, err) {
                                 return Container(
                                   child: Center(
