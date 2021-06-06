@@ -555,7 +555,7 @@ class _UserHomePageState extends State<UserHomePage>
                           Container(
                             height: 30,
                             width: 60,
-                            child: RaisedButton(
+                            child: MaterialButton(
                               color: btnColor,
                               onPressed: () {
                                 print("testing");
@@ -582,26 +582,6 @@ class _UserHomePageState extends State<UserHomePage>
                       backgroundColor: primaryAccentColor,
                       onPressed: () {
                         QrCodeScanner.scan(context);
-
-//Test Dummy code
-//TODO Dummy code for testing
-                        // GlobalState.getGlobalState().then((value) {
-                        //   value
-                        //       .getTokenService()
-                        //       .getUserToken(
-                        //           "5f0817c0-a263-11eb-98fd-5551d2a7a020#2021~4~24#20~53#+919876543210")
-                        //       .then((tokenValue) {
-                        //     UserTokens userTokenId = tokenValue;
-
-                        //     Navigator.pushReplacement(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //             builder: (context) => ShowQrBookingToken(
-                        //                   userTokens: userTokenId,
-                        //                   isAdmin: true,
-                        //                 )));
-                        //   });
-                        // });
                       }),
                 ),
                 floatingActionButtonLocation:
