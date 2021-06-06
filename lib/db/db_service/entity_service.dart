@@ -738,6 +738,9 @@ class EntityService {
     AppUser u;
     bool isSuccess = true;
     Entity entity;
+    if (phone == null) {
+      return null;
+    }
 
     AccessDeniedException accessDeniedException;
     EntityDoesNotExistsException entityDoesNotExistsException;

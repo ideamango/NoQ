@@ -53,10 +53,11 @@ class EntityRowState extends State<EntityRow> {
       _metaEntity = widget.entity;
       //
       //Check if logged in user is Admin or not
-      if (_state
-          .getCurrentUser()
-          .entityVsRole
-          .containsKey(_metaEntity.entityId)) {
+      if (_state.getCurrentUser() != null &&
+          _state
+              .getCurrentUser()
+              .entityVsRole
+              .containsKey(_metaEntity.entityId)) {
         if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
             EntityRole.Executive) isExec = true;
 
