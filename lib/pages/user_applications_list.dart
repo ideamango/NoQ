@@ -1574,6 +1574,32 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.all(0),
+                        // height: MediaQuery.of(context).size.width * .3,
+                        // width: MediaQuery.of(context).size.width * .3,
+                        child: IconButton(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            alignment: Alignment.topLeft,
+                            highlightColor: Colors.orange[300],
+                            icon: ImageIcon(
+                              AssetImage('assets/qrcode.png'),
+                              size: 30,
+                              color: primaryIcon,
+                            ),
+                            onPressed: () {
+                              print(ba.entityId);
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      GenerateQrUserApplication(
+                                baId: ba.id,
+                                entityName: "Application QR code",
+                                backRoute: "UserAppsList",
+                                uniqueTokenIdentifier: null,
+                              )));
+                            }),
+                      ),
+                      Container(
                         padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
                         //   margin: EdgeInsets.only(bottom: 10),
                         child: Row(
