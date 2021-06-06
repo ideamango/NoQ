@@ -832,7 +832,6 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                   ),
                                 ),
                               ),
-
                               Card(
                                 elevation: 3,
                                 margin: EdgeInsets.all(
@@ -876,14 +875,18 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                   ),
                                 ),
                               ),
-                              // (_msg != null)
-                              //     ? Text(
-                              //         _msg,
-                              //         style: errorTextStyle,
-                              //       )
-                              //     : Container(),
                               if (!Utils.isNullOrEmpty(managersList))
-                                Column(children: contactRowWidgets),
+                                ListView.builder(
+                                  reverse: true,
+                                  padding: EdgeInsets.all(0),
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return contactRowWidgets[index];
+                                  },
+                                  itemCount: managersList.length,
+                                ),
                             ]),
                           ]),
                     ),
@@ -909,7 +912,6 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                     accentColor: Colors.grey[50],
                                   ),
                                   child: CustomExpansionTile(
-                                    //key: PageStorageKey(this.widget.headerTitle),
                                     initiallyExpanded: false,
                                     title: Row(
                                       children: <Widget>[
@@ -922,13 +924,6 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                         SizedBox(width: 5),
                                       ],
                                     ),
-                                    // trailing: IconButton(
-                                    //   icon: Icon(Icons.add_circle,
-                                    //       color: highlightColor, size: 40),
-                                    //   onPressed: () {
-                                    //     addNewAdminRow();
-                                    //   },
-                                    // ),
                                     backgroundColor: Colors.blueGrey[500],
                                     children: <Widget>[
                                       new Container(
@@ -950,7 +945,6 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                   ),
                                 ),
                               ),
-
                               Card(
                                 elevation: 3,
                                 margin: EdgeInsets.all(
@@ -989,19 +983,22 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                         print("Tappped");
                                         _addNewExecutiveRow();
                                       }
-                                      //showCategorySheet();
                                     },
                                   ),
                                 ),
                               ),
-                              // (_msg != null)
-                              //     ? Text(
-                              //         _msg,
-                              //         style: errorTextStyle,
-                              //       )
-                              //     : Container(),
                               if (!Utils.isNullOrEmpty(executiveList))
-                                Column(children: execRowWidgets),
+                                ListView.builder(
+                                  reverse: true,
+                                  padding: EdgeInsets.all(0),
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return execRowWidgets[index];
+                                  },
+                                  itemCount: executiveList.length,
+                                ),
                             ]),
                           ]),
                     ),

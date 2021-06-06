@@ -389,7 +389,7 @@ class ContactRowState extends State<ContactRow> {
           //key: PageStorageKey(this.widget.headerTitle),
           initiallyExpanded: true,
           title: Text(
-            (contact.name != null && contact.name != "")
+            Utils.isNotNullOrEmpty(contact.name)
                 ? contact.name
                 : EnumToString.convertToString(widget.empType),
             style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
