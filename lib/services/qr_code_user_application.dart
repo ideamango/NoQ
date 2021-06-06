@@ -21,11 +21,13 @@ import 'package:share/share.dart';
 
 class GenerateQrUserApplication extends StatefulWidget {
   final String uniqueTokenIdentifier;
+  final String baId;
   final String entityName;
   final String backRoute;
   GenerateQrUserApplication(
       {Key key,
       @required this.uniqueTokenIdentifier,
+      @required this.baId,
       @required this.entityName,
       @required this.backRoute})
       : super(key: key);
@@ -56,17 +58,30 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
 
   void generateQrCode() {
     //dataString needs to be set, using this the Qr code is generated.
-    Utils.createQrScreenForBookingTokens(
-            widget.uniqueTokenIdentifier, widget.entityName)
-        .then((value) {
-      uriLink = value;
-      // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
-      var _dynamicLink = uriLink;
-      _dataString = _dynamicLink.toString();
-      setState(() {
-        _initCompleted = true;
+    if (Utils.isNotNullOrEmpty(widget.uniqueTokenIdentifier)) {
+      Utils.createQrScreenForBookingTokens(
+              widget.uniqueTokenIdentifier, widget.entityName)
+          .then((value) {
+        uriLink = value;
+        // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
+        var _dynamicLink = uriLink;
+        _dataString = _dynamicLink.toString();
+        setState(() {
+          _initCompleted = true;
+        });
       });
-    });
+    } else if (Utils.isNotNullOrEmpty(widget.baId)) {
+      Utils.createQrScreenForUserApplications(widget.baId, widget.entityName)
+          .then((value) {
+        uriLink = value;
+        // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
+        var _dynamicLink = uriLink;
+        _dataString = _dynamicLink.toString();
+        setState(() {
+          _initCompleted = true;
+        });
+      });
+    }
   }
 
   @override

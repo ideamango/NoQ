@@ -40,7 +40,23 @@ class QrCodeScanner {
 
         tokenID = onlyTokenId.substring(3);
 
-        Utils.showApplicationDetails(context, tokenID);
+        Utils.showBookingDetails(context, tokenID);
+      } else if (scanResult.contains('applicationID')) {
+        print(scanResult);
+
+        List<String> url = scanResult.split('applicationID');
+        String applicationID;
+        String strAfterapplicationID = url[1];
+        //this condition is for the QR code link generated from the IOS
+        // List<String> url2 = afterTokenID.split('&');
+        // String onlyTokenId = url2[0];
+
+        strAfterapplicationID = strAfterapplicationID.replaceAll('%3A', '#');
+        strAfterapplicationID = strAfterapplicationID.replaceAll('%2B', '+');
+
+        applicationID = strAfterapplicationID.substring(3);
+
+        Utils.showApplicationDetails(context, applicationID);
       } else {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             invalidQRCode, correctQRCode);

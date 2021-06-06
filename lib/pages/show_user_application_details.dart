@@ -829,9 +829,10 @@ class _ShowUserApplicationDetailsState
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(
                                       GenerateQrUserApplication(
+                                baId: ba.id,
                                 entityName: "Application QR code",
                                 backRoute: "UserAppsList",
-                                uniqueTokenIdentifier: ba.id,
+                                uniqueTokenIdentifier: null,
                               )));
                             }),
                       ),

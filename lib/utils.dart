@@ -3,7 +3,9 @@ import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/db/exceptions/slot_full_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
+import 'package:LESSs/pages/show_application_details.dart';
 import 'package:LESSs/tuple.dart';
+import 'package:LESSs/widget/page_animation.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -467,8 +469,7 @@ class Utils {
     });
   }
 
-  static void showApplicationDetails(
-      BuildContext context, String tokenId) async {
+  static void showBookingDetails(BuildContext context, String tokenId) async {
     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
         "Loading the Booking details...", "Hold on!");
 
@@ -495,6 +496,56 @@ class Utils {
       if (error is AccessDeniedException) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             tokenAccessNotAuthorised, contactAdminIfIssue);
+      }
+    });
+  }
+
+  static void showApplicationDetails(
+      BuildContext context, String applicationId) async {
+    Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+        "Loading the Application details...", "Hold on!");
+
+    GlobalState gs = await GlobalState.getGlobalState();
+    print(applicationId);
+
+    gs
+        .getApplicationService()
+        .getApplication(applicationId)
+        .then((newBaFromGS) {
+      if (newBaFromGS != null) {
+        gs.getEntityService().getEntity(newBaFromGS.entityId).then((entity) {
+          Navigator.of(context)
+              .push(PageAnimation.createRoute(ShowApplicationDetails(
+            bookingApplication: newBaFromGS,
+            showReject: false,
+            metaEntity: entity.getMetaEntity(),
+            newBookingDate: null,
+            isReadOnly: false,
+            isAvailable: true,
+            tokenCounter: null,
+            backRoute: null,
+            forInfo: false,
+          )));
+        });
+      } else {
+        Utils.showMyFlushbar(
+            context,
+            Icons.info,
+            Duration(seconds: 5),
+            'Oho! Could not fetch the Application details.',
+            'Please try again later.');
+      }
+    }).onError((error, stackTrace) {
+      if (error is AccessDeniedException) {
+        Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+            tokenAccessNotAuthorised, contactAdminIfIssue);
+      } else {
+        Utils.showMyFlushbar(
+            context,
+            Icons.info,
+            Duration(seconds: 5),
+            'Oho! Could not fetch the Application details.',
+            'Please try again later.');
       }
     });
   }
