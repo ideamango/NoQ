@@ -1182,7 +1182,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                         if ((widget.bookingApplication.status ==
                                 ApplicationStatus.NEW) ||
                             (widget.bookingApplication.status ==
-                                ApplicationStatus.ONHOLD))
+                                ApplicationStatus.ONHOLD) ||
+                            (widget.bookingApplication.status ==
+                                ApplicationStatus.REJECTED))
                           Container(
                             padding: EdgeInsets.all(5),
                             color: Colors.cyan[50],

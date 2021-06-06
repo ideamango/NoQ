@@ -5,6 +5,7 @@ import 'package:LESSs/db/exceptions/slot_full_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
 import 'package:LESSs/pages/show_application_details.dart';
 import 'package:LESSs/tuple.dart';
+import 'package:LESSs/userHomePage.dart';
 import 'package:LESSs/widget/page_animation.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -519,11 +520,11 @@ class Utils {
             bookingApplication: newBaFromGS,
             showReject: false,
             metaEntity: entity.getMetaEntity(),
-            newBookingDate: null,
+            newBookingDate: newBaFromGS.preferredSlotTiming,
             isReadOnly: false,
             isAvailable: true,
             tokenCounter: null,
-            backRoute: null,
+            backRoute: UserHomePage(),
             forInfo: false,
           )));
         });
