@@ -31,12 +31,14 @@ class QrCodeScanner {
         List<String> url = scanResult.split('tokenIdentifier');
         String tokenID;
         String afterTokenID = url[1];
+        //this condition is for the QR code link generated from the IOS
+        List<String> url2 = afterTokenID.split('&');
+        String onlyTokenId = url2[0];
         //  List<String> url = afterapplicationID.split('%3A');
-        afterTokenID = afterTokenID.replaceAll('%3A', '#');
-        afterTokenID = afterTokenID.replaceAll('%2B', '+');
+        onlyTokenId = onlyTokenId.replaceAll('%3A', '#');
+        onlyTokenId = onlyTokenId.replaceAll('%2B', '+');
 
-        //         //this condition is for the QR code link generated from the Android
-        tokenID = afterTokenID.substring(3);
+        tokenID = onlyTokenId.substring(3);
 
         Utils.showApplicationDetails(context, tokenID);
       } else {

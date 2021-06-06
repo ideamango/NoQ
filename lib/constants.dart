@@ -128,8 +128,7 @@ String videoCallWhatsappMsg = "LESSs: Video Call ";
 String qrCodeShareHeading = "You Safety and Convenience is our top priority!";
 String applicationShareTitle =
     "View the application details you have submitted";
-String applicationShareMessage =
-    "For your next visit, book an appointment when the crowd is less.\n\nScan the QR to Download the LESSs app and start booking your peace of mind!";
+String applicationShareMessage = "Title For sharing TODO";
 
 String qrCodeShareMessage =
     "For your next visit, book an appointment when the crowd is less.\n\nScan the QR to Download the LESSs app and start booking your peace of mind!";
