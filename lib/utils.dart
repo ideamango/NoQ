@@ -496,7 +496,7 @@ class Utils {
     }).onError((error, stackTrace) {
       if (error is AccessDeniedException) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-            tokenAccessNotAuthorised, contactAdminIfIssue);
+            error.cause, contactAdminIfIssue);
       }
     });
   }
@@ -539,7 +539,7 @@ class Utils {
     }).onError((error, stackTrace) {
       if (error is AccessDeniedException) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-            tokenAccessNotAuthorised, contactAdminIfIssue);
+            error.cause, contactAdminIfIssue);
       } else {
         Utils.showMyFlushbar(
             context,
