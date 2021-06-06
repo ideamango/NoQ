@@ -51,10 +51,10 @@ class QrCodeScanner {
         List<String> url2 = strAfterapplicationID.split('&');
         String applicationID = url2[0];
 
-        applicationID = applicationID.replaceAll('%3A', '#');
-        applicationID = applicationID.replaceAll('%2B', '+');
+        // applicationID = applicationID.replaceAll('%3A', '#');
+        // applicationID = applicationID.replaceAll('%2B', '+');
 
-        applicationID = strAfterapplicationID.substring(3);
+        applicationID = applicationID.substring(3);
         print(applicationID);
         Utils.showApplicationDetails(context, applicationID);
       } else {
