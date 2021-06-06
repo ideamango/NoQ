@@ -104,7 +104,7 @@ class EntityService {
 
         MetaEntity me = entity.getMetaEntity();
 
-        if (currentUser.isEntityAdmin(entity.entityId) == -1) {
+        if (currentUser.getAdminIndex(entity.entityId) == -1) {
           //add the meta-entity to the user, if not already present - will happen when the entity is new
           if (currentUser.entities == null) {
             currentUser.entities = [];
@@ -117,7 +117,7 @@ class EntityService {
           //update the user with the udated meta-entity
           if (existingEntity != null &&
               !me.isEqual(existingEntity.getMetaEntity())) {
-            int index = currentUser.isEntityAdmin(entity.entityId);
+            int index = currentUser.getAdminIndex(entity.entityId);
             currentUser.entities[index] = entity.getMetaEntity();
             currentUser.entityVsRole[entity.entityId] = EntityRole.Admin;
           }

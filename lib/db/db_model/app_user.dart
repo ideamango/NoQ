@@ -89,7 +89,7 @@ class AppUser {
     return metaEntities;
   }
 
-  int isEntityAdmin(String entityId) {
+  int getAdminIndex(String entityId) {
     int count = -1;
     if (entities == null) return count;
 
@@ -100,6 +100,36 @@ class AppUser {
       }
     }
     return -1;
+  }
+
+  bool isEntityAdmin(String entityId) {
+    if (entityVsRole != null &&
+        entityVsRole.containsKey(entityId) &&
+        entityVsRole[entityId] == EntityRole.Admin) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool isEntityManager(String entityId) {
+    if (entityVsRole != null &&
+        entityVsRole.containsKey(entityId) &&
+        entityVsRole[entityId] == EntityRole.Manager) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool isEntityExecutive(String entityId) {
+    if (entityVsRole != null &&
+        entityVsRole.containsKey(entityId) &&
+        entityVsRole[entityId] == EntityRole.Executive) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   MetaUser getMetaUser() {
