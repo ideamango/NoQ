@@ -1,3 +1,4 @@
+import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/db/exceptions/application_status_not_allowed.dart';
 import 'package:LESSs/db/exceptions/slot_time_null_cant_approve_application_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -51,20 +52,28 @@ class BookingApplicationService {
 
   Future<BookingApplication> getApplication(String applicationId) async {
     FirebaseFirestore fStore = getFirestore();
+    if (!Utils.isNotNullOrEmpty(applicationId)) {
+      return null;
+    }
 
     //TODO: Security - only the user who has submitted the Application or the Admin/Manager of the Entity should be able to access the application
-
-    final DocumentReference appRef =
-        fStore.doc('bookingApplications/' + applicationId);
-
     BookingApplication ba;
+    try {
+      final DocumentReference appRef =
+          fStore.doc('bookingApplications/' + applicationId);
 
-    DocumentSnapshot doc = await appRef.get();
+      DocumentSnapshot doc = await appRef.get();
 
-    if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
+      if (doc.exists) {
+        Map<String, dynamic> map = doc.data();
 
-      ba = BookingApplication.fromJson(map);
+        ba = BookingApplication.fromJson(map);
+      }
+    } catch (e) {
+      if (e.code == "permission-denied") {
+        throw new AccessDeniedException(
+            "You do not have permission to view the Application details.");
+      }
     }
 
     return ba;
