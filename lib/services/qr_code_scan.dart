@@ -13,6 +13,8 @@ class QrCodeScanner {
     try {
       scanResult = await BarcodeScanner.scan();
 
+//For application and Token Qr Code Scan
+
       if (scanResult.contains('entityId')) {
         List<String> url = scanResult.split('entityId');
         String entityId;
