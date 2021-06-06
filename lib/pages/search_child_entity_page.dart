@@ -1120,37 +1120,39 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                     ),
                                   ),
                                 ),
-                                (str.allowOnlineAppointment)
-                                    ? FadeTransition(
-                                        opacity: animation,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Utils.showMyFlushbar(
-                                                context,
-                                                Icons.info,
-                                                Duration(seconds: 5),
-                                                "This place provides Online Consultation on WhatsApp number ${str.whatsapp} !!",
-                                                "Help in reducing crowd at places.");
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.zero,
-                                            margin: EdgeInsets.zero,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .08,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .04,
-                                            child: Icon(
-                                              Icons.videocam,
-                                              color: Colors.orange[700],
-                                              size: 30,
+                                (str.allowOnlineAppointment != null)
+                                    ? (str.allowOnlineAppointment
+                                        ? FadeTransition(
+                                            opacity: animation,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.info,
+                                                    Duration(seconds: 5),
+                                                    "This place provides Online Consultation on WhatsApp number ${str.whatsapp} !!",
+                                                    "Help in reducing crowd at places.");
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.zero,
+                                                margin: EdgeInsets.zero,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .08,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    .04,
+                                                child: Icon(
+                                                  Icons.videocam,
+                                                  color: Colors.orange[700],
+                                                  size: 30,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      )
+                                          )
+                                        : Container(width: 0))
                                     : Container(width: 0),
                               ],
                             ),
