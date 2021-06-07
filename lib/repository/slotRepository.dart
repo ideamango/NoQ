@@ -12,15 +12,16 @@ import '../global_state.dart';
 import '../tuple.dart';
 import '../utils.dart';
 
-Future<List<Slot>> getSlotsListForEntity(
+Future<Tuple<EntitySlots, List<Slot>>> getSlotsListForEntity(
     MetaEntity entity, DateTime dateTime) async {
   EntitySlots entitySlots;
 
   GlobalState gs = await GlobalState.getGlobalState();
   entitySlots =
       await gs.getTokenService().getEntitySlots(entity.entityId, dateTime);
+  List<Slot> slots = Utils.getSlots(entitySlots, entity, dateTime);
 
-  return Utils.getSlots(entitySlots, entity, dateTime);
+  return new Tuple(item1: entitySlots, item2: slots);
 }
 
 Future<UserToken> bookSlotForStore(

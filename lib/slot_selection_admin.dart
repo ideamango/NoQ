@@ -100,14 +100,14 @@ class _SlotSelectionAdminState extends State<SlotSelectionAdmin> {
     _dateFormatted = dtFormat.format(datetime);
 
     //Fetch details from server
-    getSlotsListForEntity(entity, datetime).then((slotList) {
-      for (Slot s in slotList) {
+    getSlotsListForEntity(entity, datetime).then((slotListTuple) {
+      for (Slot s in slotListTuple.item2) {
         if (s.dateTime.compareTo(slotSelectionDate) == 0) {
           selectedSlot = s;
         }
       }
       setState(() {
-        _slotList = slotList;
+        _slotList = slotListTuple.item2;
         _initCompleted = true;
       });
     }).catchError((onError) {
@@ -131,8 +131,8 @@ class _SlotSelectionAdminState extends State<SlotSelectionAdmin> {
   }
 
   void numberOfBookingsInSlot(DateTime time) {
-    getSlotsListForEntity(widget.metaEntity, time).then((value) {
-      List<Slot> list = value;
+    getSlotsListForEntity(widget.metaEntity, time).then((slotListTuple) {
+      List<Slot> list = slotListTuple.item2;
       if (widget.tokenCounter != null) {
         for (int i = 0; i <= list.length - 1; i++) {
           List<String> slotIdVals = Utils.isNotNullOrEmpty(list[i].slotId)

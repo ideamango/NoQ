@@ -175,8 +175,8 @@ class _ManageTokensState extends State<ManageTokens> {
 
   Widget loadSlotsForDate(DateTime date) {
     List<Slot> _slotListForDate;
-    getSlotsListForEntity(widget.metaEntity, date).then((slotList) async {
-      _slotListForDate = slotList;
+    getSlotsListForEntity(widget.metaEntity, date).then((slotListTuple) async {
+      _slotListForDate = slotListTuple.item2;
       for (int i = 0; i <= _slotListForDate.length - 1; i++) {
         List<UserToken> tokensForThisSlot = await _gs
             .getTokenService()

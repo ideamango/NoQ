@@ -1,3 +1,5 @@
+import 'package:LESSs/db/db_model/entity_slots.dart';
+import 'package:LESSs/tuple.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -150,7 +152,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
   //   }
 
   Future<void> getListOfDataForMonth(DateTime date) async {
-    list = await getSlotsListForEntity(widget.metaEntity, date);
+    Tuple<EntitySlots, List<Slot>> slotTuple =
+        await getSlotsListForEntity(widget.metaEntity, date);
+    list = slotTuple.item2;
     for (int i = 0; i <= list.length - 1; i++) {
       List<UserToken> tokensForThisSlot =
           await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
@@ -173,7 +177,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
 
     //Dummy data for testing- start
 
-    list = await getSlotsListForEntity(widget.metaEntity, dateForShowingList);
+    Tuple<EntitySlots, List<Slot>> slotTuple =
+        await getSlotsListForEntity(widget.metaEntity, dateForShowingList);
+    list = slotTuple.item2;
     for (int i = 0; i <= list.length - 1; i++) {
       List<UserToken> tokensForThisSlot =
           await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
