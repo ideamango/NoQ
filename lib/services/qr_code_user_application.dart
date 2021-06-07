@@ -215,7 +215,7 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
                             color: Colors.white,
                             child: QrImage(
                               data: _dataString,
-                              size: MediaQuery.of(context).size.width * .5,
+                              size: MediaQuery.of(context).size.width * .7,
                               errorStateBuilder: (cxt, err) {
                                 return Container(
                                   child: Center(

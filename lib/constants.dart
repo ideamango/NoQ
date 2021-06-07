@@ -382,7 +382,7 @@ String entityShareByOwnerMailSubject =
     " is inviting you to use LESSs app to Book your peace of mind!";
 //append place name in start of string
 String entityShareByOwnerHeading =
-    "You Safety and Convenience is our top priority!";
+    "Your Safety and Convenience is our top priority!";
 
 String entityShareMessage =
     "Fix your appointment well in advance & Visit us when the crowd is less.\n\nDownload the LESSs app and start booking your peace of mind!";

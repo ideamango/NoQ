@@ -177,6 +177,12 @@ class DynamicLinkService {
             Utils.addEntityToFavs(context, entityId);
           } else {
             //TODO: Smita: User not logged in, but app is installed
+            Utils.showMyFlushbar(
+                context,
+                Icons.info_outline,
+                Duration(seconds: 6),
+                "You have to login first.",
+                "Instant Login using Mobile number and an OTP.");
           }
         } else if (deepLink.queryParameters.containsKey("tokenIdentifier")) {
           print("there are an user application");
@@ -191,7 +197,38 @@ class DynamicLinkService {
             print(deepLink.query);
 
             tokenID = tokenID.replaceAll(':', '#');
-            Utils.showApplicationDetails(context, tokenID);
+            Utils.showBookingDetails(context, tokenID);
+          } else {
+            //TODO: Smita: User not logged in, but app is installed
+            Utils.showMyFlushbar(
+                context,
+                Icons.info_outline,
+                Duration(seconds: 6),
+                "You have to login first.",
+                "Instant Login using Mobile number and an OTP.");
+          }
+        } else if (deepLink.queryParameters.containsKey("applicationID")) {
+          print("there is an user application");
+          //check if user authenticated
+          if (FirebaseAuth.instance.currentUser != null) {
+            // signed in
+            print("current user already logged in");
+            // Call method to add entity to favs list, if not already present,
+            // else just load favs page.
+            String applicationId = deepLink.queryParameters['applicationID'];
+            print(deepLink.data);
+            print(deepLink.query);
+
+            applicationId = applicationId.replaceAll(':', '#');
+            Utils.showApplicationDetails(context, applicationId);
+          } else {
+            //TODO: Smita: User not logged in, but app is installed
+            Utils.showMyFlushbar(
+                context,
+                Icons.info_outline,
+                Duration(seconds: 6),
+                "You have to login first.",
+                "Instant Login using Mobile number and an OTP.");
           }
         } else {
           //Check if user is logged-in, then redirect to UserHomePage else Login page

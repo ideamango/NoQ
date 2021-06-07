@@ -54,7 +54,7 @@ class QrCodeScanner {
         String applicationID = url2[0];
 
         // applicationID = applicationID.replaceAll('%3A', '#');
-        // applicationID = applicationID.replaceAll('%2B', '+');
+        applicationID = applicationID.replaceAll('%23', '#');
 
         applicationID = applicationID.substring(3);
         print(applicationID);
