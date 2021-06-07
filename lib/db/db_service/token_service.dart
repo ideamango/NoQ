@@ -278,6 +278,9 @@ class TokenService {
         //     throw new TokenAlreadyExistsException(
         //         "Token for this user is already booked");
         // }
+        //atleast one token is issued for the given entity for that day
+        es = EntitySlots.fromJson(entitySlotsSnapshot.data());
+        int maxAllowed = es.maxAllowed;
 
         if (tokenSnapshot.exists &&
             metaEntity.maxTokensPerSlotByUser <= tokens.tokens.length) {
@@ -289,15 +292,11 @@ class TokenService {
           }
 
           if (tokens.tokens.length - numberOfCancelledInSlot ==
-              metaEntity.maxTokensPerSlotByUser) {
+              es.maxTokensPerSlotByUser) {
             throw new MaxTokenReachedByUserPerSlotException(
                 "Can't book more than ${metaEntity.maxTokensPerSlotByUser.toString} tokens per slot");
           }
         }
-
-        //atleast one token is issued for the given entity for that day
-        es = EntitySlots.fromJson(entitySlotsSnapshot.data());
-        int maxAllowed = es.maxAllowed;
 
         int slotCount = -1;
 
@@ -345,7 +344,7 @@ class TokenService {
         }
 
         if (dayCountForUser - numberOfCancelledInDay ==
-            metaEntity.maxTokensByUserInDay) {
+            es.maxTokensByUserInDay) {
           throw new MaxTokenReachedByUserPerDayException(
               "User has reached max token count for the day, which is " +
                   dayCountForUser.toString());
