@@ -915,7 +915,7 @@ class Utils {
       socialMetaTagParameters: SocialMetaTagParameters(
         title: msgTitle,
         imageUrl: Uri.parse(
-            'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/ic_launcher-web.png?alt=media&token=d0bb835d-e569-4f38-ad6e-fa0fed822cc7'),
+            'https://https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
       ),
     );
     final link = await parameters.buildUrl();

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:LESSs/global_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -190,14 +191,14 @@ class DynamicLinkService {
             tokenID = tokenID.replaceAll(':', '#');
             Utils.showApplicationDetails(context, tokenID);
           }
-        } else
+        } else {
+          //Check if user is logged-in, then redirect to UserHomePage else Login page
+
           Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => UserHomePage(
-                        dontShowUpdate: false,
-                      )));
-        // Navigator.pushNamed(context, deepLink.path);
+              context, MaterialPageRoute(builder: (context) => SplashScreen()));
+
+          // Navigator.pushNamed(context, deepLink.path);
+        }
       });
     } catch (e) {
       print(e.toString());
