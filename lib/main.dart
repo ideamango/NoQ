@@ -175,6 +175,8 @@ class DynamicLinkService {
             // else just load favs page.
             String entityId = deepLink.queryParameters['entityId'];
             Utils.addEntityToFavs(context, entityId);
+          } else {
+            //TODO: Smita: User not logged in, but app is installed
           }
         } else if (deepLink.queryParameters.containsKey("tokenIdentifier")) {
           print("there are an user application");
