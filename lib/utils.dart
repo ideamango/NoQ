@@ -630,9 +630,9 @@ class Utils {
         sl = new Slot(
             slotId: "",
             totalBooked: 0,
-            maxAllowed: me.maxAllowed,
+            maxAllowed: maxAllowed,
             dateTime: dt,
-            slotDuration: me.slotDuration,
+            slotDuration: slotDuration,
             isFull: false);
       }
 
@@ -640,7 +640,7 @@ class Utils {
     }
 
     for (int count = 0; count < numberOfSlotsInSecondHalf; count++) {
-      int minutesToAdd = count * me.slotDuration;
+      int minutesToAdd = count * slotDuration;
       DateTime dt = breakEndTime.add(new Duration(minutes: minutesToAdd));
       Slot sl = checkIfSlotExists(entitySlots, dt);
       if (sl == null) {
