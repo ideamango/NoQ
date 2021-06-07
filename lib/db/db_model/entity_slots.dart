@@ -5,6 +5,9 @@ class EntitySlots {
       {this.slots,
       this.entityId,
       this.maxAllowed,
+      this.maxTokensPerSlotByUser,
+      this.maxPeoplePerToken,
+      this.maxTokensByUserInDay,
       this.date,
       this.slotDuration,
       this.closedOn,
@@ -32,6 +35,9 @@ class EntitySlots {
   int startTimeMinute;
   int endTimeHour;
   int endTimeMinute;
+  int maxTokensPerSlotByUser;
+  int maxPeoplePerToken;
+  int maxTokensByUserInDay;
 
   static EntitySlots fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -50,11 +56,14 @@ class EntitySlots {
         startTimeHour: json['startTimeHour'],
         startTimeMinute: json['startTimeMinute'],
         endTimeHour: json['endTimeHour'],
-        endTimeMinute: json['endTimeMinute']);
+        endTimeMinute: json['endTimeMinute'],
+        maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
+        maxPeoplePerToken: json['maxPeoplePerToken'],
+        maxTokensByUserInDay: json['maxTokensByUserInDay']);
   }
 
   static List<Slot> convertToSlotsFromJson(List<dynamic> slotsJson) {
-    List<Slot> slots = new List<Slot>();
+    List<Slot> slots = [];
 
     for (Map<String, dynamic> json in slotsJson) {
       Slot sl = Slot.fromJson(json);
@@ -64,7 +73,7 @@ class EntitySlots {
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
-    List<String> days = new List<String>();
+    List<String> days = [];
 
     for (String day in daysJson) {
       days.add(day);
@@ -86,7 +95,10 @@ class EntitySlots {
         'startTimeHour': startTimeHour,
         'startTimeMinute': startTimeMinute,
         'endTimeHour': endTimeHour,
-        'endTimeMinute': endTimeMinute
+        'endTimeMinute': endTimeMinute,
+        'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
+        'maxPeoplePerToken': maxPeoplePerToken,
+        'maxTokensByUserInDay': maxTokensByUserInDay
       };
 
   List<dynamic> slotsToJson(List<Slot> slots) {

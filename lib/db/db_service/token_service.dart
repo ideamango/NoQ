@@ -431,6 +431,9 @@ class TokenService {
         int startTimeMinute = metaEntity.startTimeMinute;
         int endTimeHour = metaEntity.endTimeHour;
         int endTimeMinute = metaEntity.endTimeMinute;
+        int maxTokensPerSlotByUser = metaEntity.maxTokensPerSlotByUser;
+        int maxPeoplePerToken = metaEntity.maxPeoplePerToken;
+        int maxTokensByUserInDay = metaEntity.maxTokensByUserInDay;
 
         tokens = new UserTokens(
             slotId: slotId,
@@ -474,7 +477,10 @@ class TokenService {
             startTimeHour: startTimeHour,
             startTimeMinute: startTimeMinute,
             endTimeHour: endTimeHour,
-            endTimeMinute: endTimeMinute);
+            endTimeMinute: endTimeMinute,
+            maxTokensPerSlotByUser: maxTokensPerSlotByUser,
+            maxPeoplePerToken: maxPeoplePerToken,
+            maxTokensByUserInDay: maxTokensByUserInDay);
 
         Slot sl = new Slot(
             totalBooked: 1,
