@@ -558,33 +558,72 @@ class Utils {
     DateTime breakEndTime;
     DateTime dayStartTime;
     DateTime dayEndTime;
-    List<Slot> slotList = new List<Slot>();
+    List<Slot> slotList = [];
+
+    int startTimeHour;
+    int startTimeMinute;
+    int endTimeHour;
+    int endTimeMinute;
+
+    int breakStartHour;
+    int breakStartMinute;
+    int breakEndHour;
+    int breakEndMinute;
+
+    int slotDuration;
+    int maxAllowed;
+
+    if (entitySlots != null) {
+      startTimeHour = entitySlots.startTimeHour;
+      startTimeMinute = entitySlots.startTimeMinute;
+      endTimeHour = entitySlots.endTimeHour;
+      endTimeMinute = entitySlots.endTimeMinute;
+      breakStartHour = entitySlots.breakStartHour;
+      breakStartMinute = entitySlots.breakStartMinute;
+      breakEndHour = entitySlots.breakEndHour;
+      breakEndMinute = entitySlots.breakEndMinute;
+      slotDuration = entitySlots.slotDuration;
+      maxAllowed = entitySlots.maxAllowed;
+    } else if (me != null) {
+      startTimeHour = me.startTimeHour;
+      startTimeMinute = me.startTimeMinute;
+      endTimeHour = me.endTimeHour;
+      endTimeMinute = me.endTimeMinute;
+      breakStartHour = me.breakStartHour;
+      breakStartMinute = me.breakStartMinute;
+      breakEndHour = me.breakEndHour;
+      breakEndMinute = me.breakEndMinute;
+      slotDuration = me.slotDuration;
+      maxAllowed = me.maxAllowed;
+    } else {
+      return [];
+    }
 
     dayStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-        me.startTimeHour, me.startTimeMinute);
+        startTimeHour, startTimeMinute);
     dayEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-        me.endTimeHour, me.endTimeMinute);
-    if (me.breakEndHour == null || me.breakStartHour == null) {
+        endTimeHour, endTimeMinute);
+    if (breakEndHour == null || breakStartHour == null) {
       breakStartTime = dayStartTime;
       breakEndTime = dayStartTime;
     } else {
       breakStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-          me.breakStartHour, me.breakStartMinute);
+          breakStartHour, breakStartMinute);
       breakEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-          me.breakEndHour, me.breakEndMinute);
+          breakEndHour, breakEndMinute);
     }
 
     int firstHalfDuration = breakStartTime.difference(dayStartTime).inMinutes;
 
     int secondHalfDuration = dayEndTime.difference(breakEndTime).inMinutes;
 
-    int numberOfSlotsInFirstHalf = firstHalfDuration ~/ me.slotDuration;
+    int numberOfSlotsInFirstHalf = firstHalfDuration ~/ slotDuration;
 
-    int numberOfSlotsInSecondHalf = secondHalfDuration ~/ me.slotDuration;
+    int numberOfSlotsInSecondHalf = secondHalfDuration ~/ slotDuration;
 
     //no slots are booked for this entity yet on this date
     for (int count = 0; count < numberOfSlotsInFirstHalf; count++) {
-      int minutesToAdd = count * me.slotDuration;
+      int minutesToAdd = count * slotDuration;
       DateTime dt = dayStartTime.add(new Duration(minutes: minutesToAdd));
       Slot sl = checkIfSlotExists(entitySlots, dt);
       if (sl == null) {
@@ -608,9 +647,9 @@ class Utils {
         sl = new Slot(
             slotId: "",
             totalBooked: 0,
-            maxAllowed: me.maxAllowed,
+            maxAllowed: maxAllowed,
             dateTime: dt,
-            slotDuration: me.slotDuration,
+            slotDuration: slotDuration,
             isFull: false);
       }
 
