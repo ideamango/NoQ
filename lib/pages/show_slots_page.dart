@@ -1,3 +1,4 @@
+import 'package:LESSs/db/db_model/entity_slots.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:another_flushbar/flushbar.dart';
 
@@ -72,6 +73,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   bool entitySupportsOffline = false;
   int numOfTokensByUser = 0;
   List<String> bookedSlots = [];
+  EntitySlots entitySlot;
 
   @override
   void initState() {
@@ -108,6 +110,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     getSlotsListForEntity(metaEntity, _date).then((slotListTuple) {
       setState(() {
         _slotList = slotListTuple.item2;
+        entitySlot = slotListTuple.item1;
         _initCompleted = true;
       });
     }).catchError((onError) {
@@ -718,9 +721,15 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         ),
         slotBooking,
         takingMoment);
-    print(metaEntity.maxTokensByUserInDay);
 
-    if (metaEntity.maxTokensByUserInDay <= bookedSlots.length) {
+    print(metaEntity.maxTokensByUserInDay);
+    int maxTokenByUser;
+
+    maxTokenByUser = (entitySlot != null)
+        ? entitySlot.maxTokensByUserInDay
+        : metaEntity.maxTokensByUserInDay;
+
+    if (maxTokenByUser <= bookedSlots.length) {
       //Max tokens already booked, then user cant book further slots.
       Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
           maxTokenLimitReached, maxTokenLimitReachedSub);
