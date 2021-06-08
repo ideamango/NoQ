@@ -20,6 +20,10 @@ class AppUser {
   List<MetaEntity> entities;
   List<MetaEntity> favourites;
   Map<String, EntityRole> entityVsRole;
+  String country;
+  String state;
+  String city;
+  String zip;
 
   // factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
@@ -35,7 +39,11 @@ class AppUser {
         'ph': ph,
         'entities': metaEntitiesToJson(entities),
         'favourites': metaEntitiesToJson(favourites),
-        'entityVsRole': convertFromMap(entityVsRole)
+        'entityVsRole': convertFromMap(entityVsRole),
+        'country': country,
+        'state': state,
+        'city': city,
+        'zip': zip
       };
 
   static AppUser fromJson(Map<String, dynamic> json) {
@@ -46,6 +54,11 @@ class AppUser {
     appUser.entities = convertToMetaEntitiesFromJson(json['entities']);
     appUser.favourites = convertToMetaEntitiesFromJson(json['favourites']);
     appUser.entityVsRole = convertToMapFromJSON(json['entityVsRole']);
+    appUser.country = json['country'];
+    appUser.state = json['state'];
+    appUser.city = json["city"];
+    appUser.zip = json["zip"];
+
     return appUser;
   }
 
