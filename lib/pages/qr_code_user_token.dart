@@ -56,6 +56,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
       new Map<String, BookingApplication>();
   AnimationController _animationController;
   Animation animation;
+  String tokenStatus = '';
 
   @override
   void initState() {
@@ -196,23 +197,24 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
-              padding: EdgeInsets.all(2),
+              padding: EdgeInsets.all(6),
               margin: EdgeInsets.all(0),
               alignment: Alignment.topCenter,
               decoration: BoxDecoration(
-                  color: (bookingToken.number == -1 ? Colors.red : Colors.blue),
+                  color:
+                      (bookingToken.number == -1 ? Colors.red : Colors.green),
                   shape: BoxShape.rectangle,
                   borderRadius:
                       BorderRadius.only(bottomLeft: Radius.circular(5.0))),
               child: SizedBox(
                 child: Center(
                   child: AutoSizeText(
-                      bookingToken.number == -1 ? 'Cancelled' : 'Approved',
+                      bookingToken.number == -1 ? 'Invalid' : 'Valid',
                       textAlign: TextAlign.center,
-                      minFontSize: 7,
-                      maxFontSize: 9,
+                      minFontSize: 9,
+                      maxFontSize: 10,
                       style: TextStyle(
-                          fontSize: 9,
+                          //fontSize: 9,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
                           color: Colors.white,
@@ -284,6 +286,8 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                       .getApplication(token.tokens[0].applicationId)
                       .then((newBaFromGS) {
 //Check if the person scanning the token is exec, mgr, or admin
+                    tokenStatus =
+                        EnumToString.convertToString(newBaFromGS.status);
                     if (_gs
                         .getCurrentUser()
                         .entityVsRole
@@ -315,12 +319,16 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                           backRoute: null,
                           forInfo: false,
                         )))
-                            .then((updatedBa) {
-                          if (updatedBa != null) {
-                            if (updatedBa.status == ApplicationStatus.ONHOLD ||
-                                updatedBa.status ==
+                            .then((updatedBaTuple) {
+                          if (updatedBaTuple != null) {
+                            if (updatedBaTuple.item1.status ==
+                                    ApplicationStatus.ONHOLD ||
+                                updatedBaTuple.item1.status ==
                                     ApplicationStatus.REJECTED) {
+                              tokenStatus = EnumToString.convertToString(
+                                  newBaFromGS.status);
                               bookingToken.number = -1;
+                              //bookingToken.numberBeforeCancellation
                             }
                             setState(() {
                               print(
@@ -340,10 +348,11 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                   });
                 },
                 child: Container(
+                  margin: EdgeInsets.only(top: 8, right: 5),
                   child: Text(
                     '..view application details',
                     style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontFamily: 'RalewayRegular',
                         color: Colors.blue,
                         fontWeight: FontWeight.bold),
@@ -371,7 +380,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
             ),
             body: Center(
               child: Card(
-                margin: EdgeInsets.all(8),
+                margin: EdgeInsets.all(10),
                 elevation: 30,
                 child: Container(
                   decoration: BoxDecoration(
@@ -379,16 +388,16 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                       color: Colors.white,
                       shape: BoxShape.rectangle,
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  // margin: EdgeInsets.all(12),
-                  padding: EdgeInsets.all(8),
+                  margin: EdgeInsets.all(0),
+                  padding: EdgeInsets.all(0),
                   //  color: Colors.cyan[100],
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       (listOfTokens.length != 0)
                           ? ListView.builder(
-                              padding: EdgeInsets.all(
-                                  MediaQuery.of(context).size.width * .026),
+                              padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                               scrollDirection: Axis.vertical,
                               physics: ClampingScrollPhysics(),
                               reverse: true,
