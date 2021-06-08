@@ -85,22 +85,28 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
       selectedDate = widget.defaultDate;
     else
       selectedDate = DateTime.now();
-    allSlotsList = Utils.getSlots(null, widget.metaEntity, selectedDate);
+
     getGlobalState().whenComplete(() {
       dateForShowingList = selectedDate;
-      _gs
-          .getTokenService()
-          .getTokenCounterForEntity(
-              widget.metaEntity.entityId, selectedDate.year.toString())
-          .then((value) {
-        tokenCounterForYear = value;
-        prepareData(selectedDate, DateDisplayFormat.date);
-        if (this.mounted) {
-          setState(() {
-            initCompleted = true;
+
+      getSlotsListForEntity(widget.metaEntity, selectedDate).then((value) {
+        Tuple<EntitySlots, List<Slot>> slotTuple = value;
+        allSlotsList = slotTuple.item2;
+        _gs
+            .getTokenService()
+            .getTokenCounterForEntity(
+                widget.metaEntity.entityId, selectedDate.year.toString())
+            .then((value) {
+          tokenCounterForYear = value;
+          prepareData(selectedDate, DateDisplayFormat.date).then((value) {
+            if (this.mounted) {
+              setState(() {
+                initCompleted = true;
+              });
+            } else
+              initCompleted = true;
           });
-        } else
-          initCompleted = true;
+        });
       });
     });
   }
@@ -228,11 +234,6 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     if (dataMap.containsKey(time)) {
       stats = dataMap[time];
       cardColor = Colors.cyan[50];
-      //TODO: compare dates as well
-      //  if (currentTime.isAfter(slotTime)) {
-      // cardColor = Colors.green;
-      // }
-
     } else {
       stats = emptyToken;
     }
@@ -315,14 +316,18 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
         : rowCard;
   }
 
-  void prepareData(DateTime date, DateDisplayFormat format) {
+  Future<void> prepareData(DateTime date, DateDisplayFormat format) async {
     String formattedDate;
     dataMap.clear();
 
     setState(() {
       barChartWidget = _emptyPage();
     });
-    allSlotsList = Utils.getSlots(null, widget.metaEntity, selectedDate);
+
+    Tuple<EntitySlots, List<Slot>> slotTuple =
+        await getSlotsListForEntity(widget.metaEntity, selectedDate);
+
+    allSlotsList = slotTuple.item2;
 
     switch (format) {
       case DateDisplayFormat.date:
@@ -616,6 +621,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
       default:
         break;
     }
+
     if (tokenCounterForYear == null) {
       barChartWidget = _emptyPage();
       listWidget = _emptyPage();
