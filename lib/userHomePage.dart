@@ -1099,7 +1099,7 @@ class _UserHomePageState extends State<UserHomePage>
                                   PageAnimation.createRoute(
                                       GenerateQrUserApplication(
                                 entityName: "Application QR code",
-                                backRoute: "UserAppsList",
+                                backRoute: "UserHome",
                                 baId: null,
                                 uniqueTokenIdentifier: id,
                               )));

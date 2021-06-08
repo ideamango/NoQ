@@ -671,6 +671,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                 entityName: "Application QR code",
                                 backRoute: "UserAppsList",
                                 uniqueTokenIdentifier: id,
+                                baId: null,
                               )));
                             }),
                       ),

@@ -1,3 +1,4 @@
+import 'package:LESSs/userHomePage.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../pages/manage_child_entity_list_page.dart';
@@ -50,6 +51,9 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
     generateQrCode();
     if (widget.backRoute == "UserAppsList") {
       route = UserAccountPage();
+    }
+    if (widget.backRoute == "UserHome") {
+      route = UserHomePage();
     }
     if (widget.backRoute == "EntityList") {
       route = ManageEntityListPage();
