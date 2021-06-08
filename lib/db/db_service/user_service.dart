@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import '../../location.dart';
 import '../db_model/app_user.dart';
 
 class UserService {
@@ -23,7 +24,7 @@ class UserService {
     return FirebaseAuth.instanceFor(app: _fb);
   }
 
-  Future<AppUser> getCurrentUser() async {
+  Future<AppUser> getCurrentUser([Location loc]) async {
     User user = getFirebaseAuth().currentUser;
     if (user == null) return null;
 
@@ -42,6 +43,12 @@ class UserService {
     } else {
       u = new AppUser(
           id: user.uid, ph: user.phoneNumber, name: user.displayName);
+      if (loc != null) {
+        u.country = loc.country;
+        u.state = loc.state;
+        u.city = loc.city;
+        u.zip = loc.zip;
+      }
 
       userRef.set(u.toJson());
     }
