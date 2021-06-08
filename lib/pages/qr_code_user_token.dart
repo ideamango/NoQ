@@ -1,4 +1,5 @@
 import 'package:LESSs/enum/application_status.dart';
+import 'package:LESSs/enum/entity_role.dart';
 import 'package:LESSs/pages/show_application_details.dart';
 import 'package:LESSs/widget/page_animation.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -276,11 +277,25 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
               GestureDetector(
                 onTap: () {
                   print('tapped');
+                  bool isReadOnly = false;
 
                   _gs
                       .getApplicationService()
                       .getApplication(token.tokens[0].applicationId)
                       .then((newBaFromGS) {
+//Check if the person scanning the token is exec, mgr, or admin
+                    if (_gs
+                        .getCurrentUser()
+                        .entityVsRole
+                        .containsKey(bookingToken.parent.entityId)) {
+                      if (_gs
+                              .getCurrentUser()
+                              .entityVsRole[bookingToken.parent.entityId] ==
+                          EntityRole.Executive) {
+                        isReadOnly = true;
+                      }
+                    }
+
                     if (newBaFromGS != null) {
                       mapOfBa[token.tokens[0].getID()] = newBaFromGS;
                       _gs
@@ -294,21 +309,24 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                           showReject: false,
                           metaEntity: entity.getMetaEntity(),
                           newBookingDate: null,
-                          isReadOnly: false,
+                          isReadOnly: isReadOnly,
                           isAvailable: true,
                           tokenCounter: null,
                           backRoute: null,
                           forInfo: false,
                         )))
                             .then((updatedBa) {
-                          if (updatedBa.status == ApplicationStatus.ONHOLD ||
-                              updatedBa.status == ApplicationStatus.REJECTED) {
-                            bookingToken.number = -1;
+                          if (updatedBa != null) {
+                            if (updatedBa.status == ApplicationStatus.ONHOLD ||
+                                updatedBa.status ==
+                                    ApplicationStatus.REJECTED) {
+                              bookingToken.number = -1;
+                            }
+                            setState(() {
+                              print(
+                                  'Updated returned TokenCounter and BA from details page');
+                            });
                           }
-                          setState(() {
-                            print(
-                                'Updated returned TokenCounter and BA from details page');
-                          });
                         });
                       });
                     } else {
