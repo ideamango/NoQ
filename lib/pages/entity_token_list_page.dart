@@ -363,6 +363,15 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
           } else {
             dataForDay = tokenCounterForYear.getTokenStatsSlotWiseForDay(date);
 
+            if (dataForDay.length == 0) {
+              listWidget = _emptyPage();
+              barChartWidget = _emptyPage();
+              setState(() {
+                formattedDateStr = formattedDate;
+                loadingData = false;
+              });
+              return;
+            }
             dataForDay.forEach((k, v) {
               dataMap[k.replaceAll('~', ':')] = v;
             });

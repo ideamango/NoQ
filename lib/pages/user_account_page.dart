@@ -71,6 +71,16 @@ class _UserAccountPageState extends State<UserAccountPage>
   // bool _expansionClick = false;
   AnimationController _animationController;
   Animation animation;
+  String loadMoreMsg;
+  String loadUpcomingTokens;
+  String loadPastTokens;
+  bool keepExpandedAppls = false;
+  ScrollController _childScrollControllerAppls;
+  bool keepExpandedUpcomingTokens = false;
+  ScrollController _childScrollControllerUpcomingTokens;
+  bool keepExpandedPastTokens = false;
+  ScrollController _childScrollControllerPastTokens;
+  bool showLoading = false;
 
   @override
   void initState() {
@@ -79,6 +89,8 @@ class _UserAccountPageState extends State<UserAccountPage>
         vsync: this, duration: Duration(milliseconds: 1500));
     _animationController.repeat(reverse: true);
     animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
+
+    _childScrollControllerAppls = ScrollController();
 
     if (!kIsWeb) _setTargetPlatformForDesktop();
     _pageController = PageController(initialPage: 8);
@@ -97,7 +109,7 @@ class _UserAccountPageState extends State<UserAccountPage>
         _gs
             .getApplicationService()
             .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
-                null, null, "timeOfSubmission", true, null, null, 20)
+                null, null, "timeOfSubmission", true, null, null, 1)
             .then((value) {
           _listOfApplications = value;
           setState(() {
@@ -119,7 +131,7 @@ class _UserAccountPageState extends State<UserAccountPage>
         _gs
             .getApplicationService()
             .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
-                null, null, "timeOfSubmission", true, null, null, 20)
+                null, null, "timeOfSubmission", true, null, null, 1)
             .then((value) {
           _listOfApplications = value;
           setState(() {
@@ -128,6 +140,119 @@ class _UserAccountPageState extends State<UserAccountPage>
         });
       });
     });
+  }
+
+  void loadMore() {
+    _upcomingBkgStatus = 'Loading';
+    _pastBkgStatus = 'Loading';
+    showLoading = true;
+    _gs
+        .getApplicationService()
+        .getApplications(
+            null,
+            null,
+            null,
+            _gs.getCurrentUser().ph,
+            null,
+            null,
+            null,
+            "timeOfSubmission",
+            true,
+            null,
+            _listOfApplications[_listOfApplications.length - 1].item2,
+            1)
+        .then((value) {
+      if (Utils.isNullOrEmpty(value)) {
+        loadMoreMsg = 'Thats all. No more Applications to load.';
+      } else {
+        _listOfApplications.addAll(value);
+        keepExpandedAppls = true;
+        // if (_childScrollController.hasClients) {
+        //   _childScrollController.animateTo(
+        //       _childScrollController.position.maxScrollExtent,
+        //       curve: Curves.easeInToLinear,
+        //       duration: Duration(milliseconds: 200));
+        // }
+      }
+      setState(() {
+        showLoading = false;
+      });
+    });
+  }
+
+  void loadMorePastTokens() {
+    _upcomingBkgStatus = 'Loading';
+    _pastBkgStatus = 'Loading';
+    showLoading = true;
+    // getGlobalState().whenComplete(() {
+    //   _loadBookings().then((value) {
+    //     _gs
+    //         .getApplicationService()
+    //         .getApplications(
+    //             null,
+    //             null,
+    //             null,
+    //             _gs.getCurrentUser().ph,
+    //             null,
+    //             null,
+    //             null,
+    //             "timeOfSubmission",
+    //             true,
+    //             null,
+    //             _listOfApplications[_listOfApplications.length - 1].item2,
+    //             1)
+    //         .then((value) {
+    //       if (Utils.isNullOrEmpty(value)) {
+    //         loadMoreMsg = 'Thats all. No more Applications to load.';
+    //       } else {
+    //         _listOfApplications.addAll(value);
+    //         keepExpandedAppls = true;
+    //         // if (_childScrollController.hasClients) {
+    //         //   _childScrollController.animateTo(
+    //         //       _childScrollController.position.maxScrollExtent,
+    //         //       curve: Curves.easeInToLinear,
+    //         //       duration: Duration(milliseconds: 200));
+    //         // }
+    //       }
+    setState(() {
+      showLoading = false;
+    });
+    //     });
+    //   });
+    // });
+  }
+
+  void loadMoreUpcomingTokens() {
+    _upcomingBkgStatus = 'Loading';
+    _pastBkgStatus = 'Loading';
+    showLoading = true;
+    //Fetch Next Set of Upcoming Tokens SMITA
+
+    // _gs
+    //     .getUpcomingBookings(
+    //         null,
+    //         null,
+    //         null,
+    //         _gs.getCurrentUser().ph,
+    //         null,
+    //         null,
+    //         null,
+    //         "timeOfSubmission",
+    //         true,
+    //         null,
+    //         _listOfApplications[_listOfApplications.length - 1].item2,
+    //         1)
+    //     .then((value) {
+    //   if (Utils.isNullOrEmpty(value)) {
+    //     loadUpcomingTokens = 'Thats all. No more Tokens to load.';
+    //   } else {
+    //     _newBookingsList.addAll(value);
+    //     keepExpandedUpcomingTokens = true;
+    //   }
+    setState(() {
+      showLoading = false;
+    });
+    // });
   }
 
   void refreshToken(event, args) {
@@ -1109,7 +1234,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                               ),
                               child: ExpansionTile(
                                 //key: PageStorageKey(this.widget.headerTitle),
-
+                                initiallyExpanded: keepExpandedAppls,
                                 title: Text(
                                   "My Applications",
                                   style: TextStyle(
@@ -1128,6 +1253,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                           MediaQuery.of(context).size.width *
                                               .026),
                                       scrollDirection: Axis.vertical,
+                                      controller: _childScrollControllerAppls,
                                       physics: ClampingScrollPhysics(),
                                       reverse: false,
                                       shrinkWrap: true,
@@ -1135,7 +1261,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                       itemBuilder:
                                           (BuildContext context, int index) {
                                         return Container(
-                                          margin: EdgeInsets.only(bottom: 5),
+                                          //margin: EdgeInsets.only(bottom: 5),
                                           child: UserApplicationsList(
                                             ba: _listOfApplications[index]
                                                 .item1,
@@ -1144,6 +1270,50 @@ class _UserAccountPageState extends State<UserAccountPage>
                                       },
                                       itemCount: _listOfApplications.length,
                                     ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      if (Utils.isNotNullOrEmpty(loadMoreMsg))
+                                        Row(
+                                          children: [
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(bottom: 10),
+                                                child: Text(
+                                                  loadMoreMsg,
+                                                  style: TextStyle(
+                                                      color:
+                                                          Colors.blueGrey[700],
+                                                      fontSize: 14),
+                                                ))
+                                          ],
+                                        ),
+                                      if (!Utils.isNotNullOrEmpty(loadMoreMsg))
+                                        Container(
+                                          margin: EdgeInsets.all(10),
+                                          child: MaterialButton(
+                                            shape: RoundedRectangleBorder(
+                                                side:
+                                                    BorderSide(color: btnColor),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(3.0))),
+                                            child: Column(
+                                              children: [
+                                                Text('Show more Applications',
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.blue)),
+                                              ],
+                                            ),
+                                            onPressed: () {
+                                              loadMore();
+                                            },
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                                   if (Utils.isNullOrEmpty(_listOfApplications))
                                     _emptyStorePage(
                                         "No Applications yet.. ", bookNowMsg),
@@ -1197,6 +1367,49 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         itemCount: _newBookingsList.length,
                                       ),
                                     ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      if (Utils.isNotNullOrEmpty(
+                                          loadUpcomingTokens))
+                                        Row(
+                                          children: [
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(bottom: 10),
+                                                child: Text(
+                                                  loadUpcomingTokens,
+                                                  style: TextStyle(
+                                                      color:
+                                                          Colors.blueGrey[700],
+                                                      fontSize: 14),
+                                                ))
+                                          ],
+                                        ),
+                                      if (!Utils.isNotNullOrEmpty(
+                                          loadUpcomingTokens))
+                                        MaterialButton(
+                                          child: Column(
+                                            children: [
+                                              Text('Show more Tokens',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.blue)),
+                                              Icon(
+                                                Icons.keyboard_arrow_down,
+                                                size: 50,
+                                                color: Colors.blue,
+                                              )
+                                            ],
+                                          ),
+                                          onPressed: () {
+                                            loadMoreUpcomingTokens();
+                                          },
+                                        ),
+                                    ],
+                                  ),
                                   if (_upcomingBkgStatus == 'NoBookings')
                                     _emptyStorePage(
                                         "No bookings yet.. ", bookNowMsg),
@@ -1248,6 +1461,50 @@ class _UserAccountPageState extends State<UserAccountPage>
                                           },
                                           itemCount: _pastBookingsList.length,
                                         ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          if (Utils.isNotNullOrEmpty(
+                                              loadPastTokens))
+                                            Row(
+                                              children: [
+                                                Container(
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 10),
+                                                    child: Text(
+                                                      loadPastTokens,
+                                                      style: TextStyle(
+                                                          color: Colors
+                                                              .blueGrey[700],
+                                                          fontSize: 14),
+                                                    ))
+                                              ],
+                                            ),
+                                          if (!Utils.isNotNullOrEmpty(
+                                              loadPastTokens))
+                                            MaterialButton(
+                                              child: Column(
+                                                children: [
+                                                  Text('Show more Tokens',
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          color: Colors.blue)),
+                                                  Icon(
+                                                    Icons.keyboard_arrow_down,
+                                                    size: 50,
+                                                    color: Colors.blue,
+                                                  )
+                                                ],
+                                              ),
+                                              onPressed: () {
+                                                loadMorePastTokens();
+                                              },
+                                            ),
+                                        ],
+                                      ),
                                       if (_pastBkgStatus == 'NoBookings')
                                         _emptyStorePage("No bookings in past..",
                                             bookNowMsg),
