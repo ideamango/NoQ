@@ -55,6 +55,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
   DocumentSnapshot lastDocOfPage;
   DateTime selectedTimeSlot;
   bool errorInapplicationApproval = false;
+  ScrollController _childScrollControllerAppls;
+  String loadMoreMsg;
 
   List<Tuple<BookingApplication, QueryDocumentSnapshot>> listOfBa;
   Map<String, TextEditingController> listOfControllers =
@@ -63,9 +65,11 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   Map<String, DateTime> applicationNewSlotMap = Map<String, DateTime>();
   bool showLoading = false;
+  Tuple<String, bool> defaultSortOrder;
   @override
   void initState() {
     super.initState();
+    _childScrollControllerAppls = ScrollController();
     getGlobalState().whenComplete(() {
       //******gettinmg dummy data -remove this afterwards */
       //  getListOfData();
@@ -78,8 +82,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
         tokenCounterForEntity = tokenCounter;
       });
 
-      Tuple<String, bool> defaultSortOrder =
-          Utils.getDefaultApplicationSortOrder(widget.status);
+      defaultSortOrder = Utils.getDefaultApplicationSortOrder(widget.status);
 
       _gs
           .getApplicationService()
@@ -95,7 +98,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
               defaultSortOrder.item2,
               null,
               lastDocOfPage,
-              20)
+              2)
           .then((value) {
         listOfBa = value;
         lastDocOfPage =
@@ -126,7 +129,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
     _gs = await GlobalState.getGlobalState();
   }
 
-  getListOfData() async {
+  void loadMoreApplications() {
+    showLoading = true;
     _gs
         .getApplicationService()
         .getApplications(
@@ -137,16 +141,24 @@ class _ApplicationsListState extends State<ApplicationsList> {
             null,
             null,
             null,
-            "timeOfSubmission",
-            false,
+            defaultSortOrder.item1,
+            defaultSortOrder.item2,
             null,
-            lastDocOfPage,
-            20)
+            listOfBa[listOfBa.length - 1].item2,
+            1)
         .then((value) {
-      if (Utils.isNullOrEmpty(value)) listOfBa = value;
+      if (Utils.isNullOrEmpty(value)) {
+        loadMoreMsg = 'Thats all.';
+      } else {
+        value.forEach((element) {
+          listOfBa.add(element);
+        });
+        //listOfBa.addAll(value);
+      }
+      setState(() {
+        showLoading = false;
+      });
     });
-
-    //listOfBa = initBookingFormDummy();
   }
 
   initBookingFormDummy() {
@@ -1468,9 +1480,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           padding: EdgeInsets.zero,
                           child: Text("..show all details",
                               style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 12,
-                                  fontFamily: 'RalewayRegular')),
+                                color: Colors.blue,
+                                fontSize: 12,
+                              )),
                         ),
                       ),
                     ],
@@ -2162,13 +2174,65 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               child: ListView.builder(
                                 itemCount: listOfBa.length,
                                 reverse: false,
+                                controller: _childScrollControllerAppls,
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
                                     margin: EdgeInsets.fromLTRB(10, 8, 10, 8),
                                     child: new Column(
                                       children: [
-                                        //  Text('dfhgd'),
-                                        _buildItem(listOfBa[index].item1)
+                                        _buildItem(listOfBa[index].item1),
+                                        if (index == listOfBa.length - 1)
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              if (Utils.isNotNullOrEmpty(
+                                                  loadMoreMsg))
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                        margin:
+                                                            EdgeInsets.fromLTRB(
+                                                                10, 10, 10, 18),
+                                                        child: Text(
+                                                          loadMoreMsg,
+                                                          style: TextStyle(
+                                                              color: btnColor,
+                                                              fontSize: 17),
+                                                        ))
+                                                  ],
+                                                ),
+                                              if (!Utils.isNotNullOrEmpty(
+                                                  loadMoreMsg))
+                                                Container(
+                                                  margin: EdgeInsets.all(10),
+                                                  child: MaterialButton(
+                                                    shape: RoundedRectangleBorder(
+                                                        side: BorderSide(
+                                                            color: btnColor),
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    3.0))),
+                                                    child: Column(
+                                                      children: [
+                                                        Text(
+                                                            'Show more Applications',
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                color: Colors
+                                                                    .blue)),
+                                                      ],
+                                                    ),
+                                                    onPressed: () {
+                                                      loadMoreApplications();
+                                                    },
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
                                       ],
                                     ),
                                   );
