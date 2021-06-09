@@ -878,12 +878,14 @@ class TokenService {
   }
 
   Future<void> deleteTokensForEntity(String entityId) async {
+    //https://cloud.google.com/firestore/quotas#security_rules
     CollectionReference slots = FirebaseFirestore.instance.collection('tokens');
 
     WriteBatch batch = FirebaseFirestore.instance.batch();
     QuerySnapshot qs;
     return slots
         .where('entityId', isEqualTo: entityId)
+        .limit(10)
         .get()
         .then((querySnapshot) {
       querySnapshot.docs.forEach((document) {

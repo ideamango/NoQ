@@ -122,14 +122,14 @@ class DBTest {
 
     try {
       await _gs.getEntityService().deleteEntity('SalonMyHomeApartment');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('SalonMyHomeApartment');
       await _gs.getTokenService().deleteSlotsForEntity('SalonMyHomeApartment');
       await _gs.getTokenService().deleteTokensForEntity('SalonMyHomeApartment');
       await _gs
           .getTokenService()
           .deleteTokenCountersForEntity('SalonMyHomeApartment');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('SalonMyHomeApartment');
     } catch (e) {
       print("SalonMyHomeApartment is not cleared");
     }

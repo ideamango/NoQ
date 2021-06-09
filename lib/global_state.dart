@@ -299,9 +299,9 @@ class GlobalState {
       _gs._entityState = new Map<String, bool>();
     }
 
-    if (_gs._currentUser == null) {
+    if (_gs._currentUser == null && _gs._conf != null) {
       try {
-        _gs._currentUser = await _gs._userService.getCurrentUser();
+        _gs._currentUser = await _gs._userService.getCurrentUser(_gs._locData);
         if (_gs._currentUser != null &&
             Utils.isNullOrEmpty(_gs._currentUser.favourites))
           _gs._currentUser.favourites = [];
