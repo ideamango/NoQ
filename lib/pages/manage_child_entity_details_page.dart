@@ -464,6 +464,39 @@ class _ManageChildEntityDetailsPageState
       return null;
   }
 
+  String validateMaxBookingsInTimeSlot(String value) {
+    if (value == null || value == "") {
+      return 'Field is empty';
+    } else if (int.tryParse(value) == null) {
+      return '$value is not a valid number of Days';
+    } else if (int.parse(value) > 1000) {
+      return 'Maximum Bookings should be less than 1000.';
+    } else
+      return null;
+  }
+
+  String validateDurationOfSlot(String value) {
+    if (value == null || value == "") {
+      return 'Field is empty';
+    } else if (int.tryParse(value) == null) {
+      return '$value is not a valid number of Days';
+    } else if (int.parse(value) > 24 * 60) {
+      return 'Duration should be less than Total Mins in a Day, that is ${24 * 60}.';
+    } else
+      return null;
+  }
+
+  String validateUserBookingsInDay(String value) {
+    if (value == null || value == "") {
+      return 'Field is empty';
+    } else if (int.tryParse(value) == null) {
+      return '$value is not a valid number of Days';
+    } else if (int.parse(value) > 500) {
+      return 'Maximum Bookings by User in a day should be less than 500.';
+    } else
+      return null;
+  }
+
   String validateTime(String value) {
     if (value == null || value == "") {
       return 'Field is empty';
@@ -788,7 +821,7 @@ class _ManageChildEntityDetailsPageState
       keyboardType: TextInputType.text,
       autovalidateMode: AutovalidateMode.always,
       decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Name of Establishment", hintTextStr: ""),
+          labelTextStr: "Name of Establishment*", hintTextStr: ""),
       validator: (value) {
         return validateText(value);
       },
@@ -874,7 +907,7 @@ class _ManageChildEntityDetailsPageState
       autovalidateMode: AutovalidateMode.always,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-          labelText: "Opening time",
+          labelText: "Opening time*",
           hintText: "HH:MM 24Hr time format",
           suffixIconConstraints: BoxConstraints(
             maxWidth: 25,
@@ -949,7 +982,7 @@ class _ManageChildEntityDetailsPageState
         }
       },
       decoration: InputDecoration(
-          labelText: "Closing time",
+          labelText: "Closing time*",
           hintText: "HH:MM 24Hr time format",
           suffixIconConstraints: BoxConstraints(
             maxWidth: 25,
@@ -1196,7 +1229,7 @@ class _ManageChildEntityDetailsPageState
       autovalidateMode: AutovalidateMode.always,
       controller: _slotDurationController,
       decoration: InputDecoration(
-        labelText: 'Duration of time slot (in minutes)',
+        labelText: 'Duration of time slot (in minutes)*',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -1204,7 +1237,7 @@ class _ManageChildEntityDetailsPageState
       ),
       validator: (value) {
         if (isBookable) {
-          return validateNumber(value);
+          return validateDurationOfSlot(value);
         }
         return null;
       },
@@ -1226,7 +1259,7 @@ class _ManageChildEntityDetailsPageState
       keyboardType: TextInputType.number,
       controller: _advBookingInDaysController,
       decoration: InputDecoration(
-        labelText: 'Advance Booking Allowed(in days)',
+        labelText: 'Advance Booking Allowed(in days)*',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -1256,7 +1289,7 @@ class _ManageChildEntityDetailsPageState
       keyboardType: TextInputType.number,
       controller: _maxPeopleController,
       decoration: InputDecoration(
-        labelText: 'Maximum bookings allowed in a given Time-Slot',
+        labelText: 'Maximum bookings allowed in a given Time-Slot*',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -1264,7 +1297,7 @@ class _ManageChildEntityDetailsPageState
       ),
       validator: (value) {
         if (isBookable) {
-          return validateNumber(value);
+          return validateMaxBookingsInTimeSlot(value);
         }
         return null;
       },
@@ -1289,7 +1322,7 @@ class _ManageChildEntityDetailsPageState
       keyboardType: TextInputType.number,
       controller: _maxBookingsInDayForUserController,
       decoration: InputDecoration(
-        labelText: 'Max. bookings allowed for a user per day',
+        labelText: 'Max. bookings allowed for a user per day*',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -1297,7 +1330,7 @@ class _ManageChildEntityDetailsPageState
       ),
       validator: (value) {
         if (isBookable) {
-          return validateText(value);
+          return validateUserBookingsInDay(value);
         }
         return null;
       },
@@ -1808,7 +1841,7 @@ class _ManageChildEntityDetailsPageState
       keyboardType: TextInputType.text,
       controller: _adrs1Controller,
       decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
+          labelTextStr: "Apartment/ House No./ Lane*", hintTextStr: ""),
       autovalidateMode: AutovalidateMode.always,
       validator: (value) {
         if (isBookable || isActiveValidation) {
@@ -1860,7 +1893,7 @@ class _ManageChildEntityDetailsPageState
       controller: _localityController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        labelText: 'Locality',
+        labelText: 'Locality*',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -1889,7 +1922,7 @@ class _ManageChildEntityDetailsPageState
       keyboardType: TextInputType.text,
       controller: _cityController,
       decoration: InputDecoration(
-        labelText: 'City',
+        labelText: 'City*',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -1918,7 +1951,7 @@ class _ManageChildEntityDetailsPageState
       keyboardType: TextInputType.text,
       controller: _stateController,
       decoration: InputDecoration(
-        labelText: 'State',
+        labelText: 'State*',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -1948,7 +1981,7 @@ class _ManageChildEntityDetailsPageState
       keyboardType: TextInputType.text,
       controller: _countryController,
       decoration: InputDecoration(
-        labelText: 'Country',
+        labelText: 'Country*',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -1974,7 +2007,7 @@ class _ManageChildEntityDetailsPageState
       keyboardType: TextInputType.number,
       controller: _pinController,
       decoration: InputDecoration(
-        labelText: 'Postal code',
+        labelText: 'Zip Code*',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -2417,6 +2450,14 @@ class _ManageChildEntityDetailsPageState
                   child: ListView(padding: const EdgeInsets.all(8.0),
                       // crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.all(6),
+                          padding: EdgeInsets.all(0),
+                          child: Text('Fields marked with * are Mandatory.',
+                              style: TextStyle(
+                                  color: btnColor,
+                                  fontWeight: FontWeight.bold)),
+                        ),
                         Container(
                           width: MediaQuery.of(context).size.width * .9,
                           margin: EdgeInsets.all(5),
@@ -2993,8 +3034,8 @@ class _ManageChildEntityDetailsPageState
                                       ),
                                     ),
                                     Container(
-                                      padding:
-                                          EdgeInsets.only(left: 5.0, right: 5),
+                                      padding: EdgeInsets.only(
+                                          left: 5.0, right: 5, bottom: 5),
                                       child: Column(
                                         children: <Widget>[
                                           whatsappPhone,
@@ -3265,7 +3306,7 @@ class _ManageChildEntityDetailsPageState
                                         title: Row(
                                           children: <Widget>[
                                             Text(
-                                              "Current Location Details",
+                                              "Current Location Details*",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 15),
