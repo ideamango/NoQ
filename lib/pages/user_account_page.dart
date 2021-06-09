@@ -1135,7 +1135,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                       itemBuilder:
                                           (BuildContext context, int index) {
                                         return Container(
-                                          margin: EdgeInsets.only(bottom: 5),
+                                          //margin: EdgeInsets.only(bottom: 5),
                                           child: UserApplicationsList(
                                             ba: _listOfApplications[index]
                                                 .item1,
@@ -1144,6 +1144,22 @@ class _UserAccountPageState extends State<UserAccountPage>
                                       },
                                       itemCount: _listOfApplications.length,
                                     ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      MaterialButton(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              '..show More Applications',style:TextStyle()
+                                            ),
+                                            Icon(Icons.arrow_drop_down)
+                                          ],
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                    ],
+                                  ),
                                   if (Utils.isNullOrEmpty(_listOfApplications))
                                     _emptyStorePage(
                                         "No Applications yet.. ", bookNowMsg),
