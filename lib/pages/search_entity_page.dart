@@ -1079,8 +1079,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       return false;
     } else {
       Navigator.of(context).pop();
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (context) => UserHomePage()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => UserHomePage()));
       // return false;
     }
   }
