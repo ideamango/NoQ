@@ -28,6 +28,8 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 // ADD THIS AT THE BOTTOM
 apply plugin: 'com.google.gms.google-services'
 
+def enableProguardInReleaseBuilds = true
+def enableSeparateBuildPerCPUArchitecture = false
 
 android {
     compileSdkVersion 28
