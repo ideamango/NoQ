@@ -23,13 +23,6 @@ class _ShareAppPageState extends State<ShareAppPage> {
   @override
   void initState() {
     super.initState();
-    Utils.createDynamicLinkWithParams(null, appShareHeading).then((value) {
-      setState(() {
-        _initCompleted = true;
-        dynamicLink = value;
-        inviteText = appShareMessage + "\n" + dynamicLink.toString();
-      });
-    });
   }
 
   @override
@@ -86,33 +79,34 @@ class _ShareAppPageState extends State<ShareAppPage> {
                                   textColor: Colors.white,
                                   splashColor: highlightColor,
                                   onPressed: () {
-                                    if (_initCompleted) {
-                                      // A builder is used to retrieve the context immediately
-                                      // surrounding the RaisedButton.
-                                      //
-                                      // The context's `findRenderObject` returns the first
-                                      // RenderObject in its descendent tree when it's not
-                                      // a RenderObjectWidget. The RaisedButton's RenderObject
-                                      // has its position and size after it's built.
-                                      final RenderBox box =
-                                          context.findRenderObject();
-                                      try {
-                                        Share.share(inviteText,
-                                            subject: inviteSubject,
-                                            sharePositionOrigin:
-                                                box.localToGlobal(Offset.zero) &
-                                                    box.size);
-                                      } on PlatformException catch (e) {
-                                        print('${e.message}');
-                                      }
-                                    } else {
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.info,
-                                          Duration(seconds: 4),
-                                          "Sharing the details..",
-                                          "");
-                                    }
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 4),
+                                        "Preparing the information..",
+                                        "");
+                                    Utils.createDynamicLinkWithParams(
+                                            null, appShareHeading)
+                                        .then((value) {
+                                      setState(() {
+                                        dynamicLink = value;
+                                        inviteText = appShareMessage +
+                                            "\n" +
+                                            dynamicLink.toString();
+                                        final RenderBox box =
+                                            context.findRenderObject();
+                                        try {
+                                          Share.share(inviteText,
+                                              subject: inviteSubject,
+                                              sharePositionOrigin:
+                                                  box.localToGlobal(
+                                                          Offset.zero) &
+                                                      box.size);
+                                        } on PlatformException catch (e) {
+                                          print('${e.message}');
+                                        }
+                                      });
+                                    });
                                   },
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
