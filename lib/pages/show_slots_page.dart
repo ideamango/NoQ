@@ -288,19 +288,20 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                             ],
                           ),
                         ),
-                      Container(
-                        margin: EdgeInsets.only(top: 5),
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '* ' +
-                              INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_DAY_1 +
-                              metaEntity.maxTokensByUserInDay.toString() +
-                              INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_DAY_2 +
-                              '\n',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14, color: Colors.teal),
+                      if (metaEntity.maxTokensByUserInDay != null)
+                        Container(
+                          margin: EdgeInsets.only(top: 5),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '* ' +
+                                INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_DAY_1 +
+                                metaEntity.maxTokensByUserInDay.toString() +
+                                INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_DAY_2 +
+                                '\n',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14, color: Colors.teal),
+                          ),
                         ),
-                      ),
                       Card(
                         child: Container(
                           height: MediaQuery.of(context).size.width * .11,

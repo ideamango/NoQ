@@ -596,8 +596,15 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   color: Colors.blueGrey[500],
                 ),
                 onPressed: () {
-                  //Clear search text and build new search results
-                  searchClicked();
+                  if (Utils.isStrNullOrEmpty(_searchTextController.text)) {
+                    return;
+                  } else if (_searchTextController.text.length < 4) {
+                    _searchTextController.text = "";
+                  } else if (Utils.isNotNullOrEmpty(
+                      _searchTextController.text)) {
+                    //Clear search text and build new search results
+                    searchClicked();
+                  }
                 }),
             hintText: "Search by Name of Business/Place",
             hintStyle:
@@ -1072,8 +1079,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       return false;
     } else {
       Navigator.of(context).pop();
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (context) => UserHomePage()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => UserHomePage()));
       // return false;
     }
   }

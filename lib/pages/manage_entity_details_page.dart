@@ -2316,6 +2316,86 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         return retVal;
       }
 
+      backPressed() {
+        //Show flush bar to notify user
+        if (flushStatus != "Showing") {
+          flush = Flushbar<bool>(
+            //padding: EdgeInsets.zero,
+            margin: EdgeInsets.zero,
+            flushbarPosition: FlushbarPosition.BOTTOM,
+            flushbarStyle: FlushbarStyle.GROUNDED,
+            reverseAnimationCurve: Curves.decelerate,
+            forwardAnimationCurve: Curves.easeInToLinear,
+            backgroundColor: Colors.cyan[200],
+            boxShadows: [
+              BoxShadow(
+                  color: Colors.cyan, offset: Offset(0.0, 2.0), blurRadius: 3.0)
+            ],
+            isDismissible: true,
+            //duration: Duration(seconds: 4),
+            icon: Icon(
+              Icons.cancel,
+              color: Colors.blueGrey[90],
+            ),
+            showProgressIndicator: true,
+            progressIndicatorBackgroundColor: Colors.blueGrey[900],
+            progressIndicatorValueColor:
+                new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
+            routeBlur: 10.0,
+            titleText: Text(
+              "Are you sure you want to leave this page?",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                  color: Colors.blueGrey[700],
+                  fontFamily: "ShadowsIntoLightTwo"),
+            ),
+            messageText: Text(
+              "The changes you made might be lost, if not saved.",
+              style: TextStyle(
+                  fontSize: 12.0,
+                  color: Colors.blueGrey[800],
+                  fontFamily: "ShadowsIntoLightTwo"),
+            ),
+
+            mainButton: Column(
+              children: <Widget>[
+                FlatButton(
+                  padding: EdgeInsets.all(0),
+                  onPressed: () {
+                    flushStatus = "Empty";
+                    flush.dismiss(false); // result = true
+                  },
+                  child: Text(
+                    "No",
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                FlatButton(
+                  padding: EdgeInsets.all(0),
+                  onPressed: () {
+                    flushStatus = "Empty";
+                    flush.dismiss(true); // result = true
+                  },
+                  child: Text(
+                    "Yes",
+                    style: TextStyle(color: Colors.blueGrey[700]),
+                  ),
+                ),
+              ],
+            ),
+          );
+
+          flush
+            ..show(context).then((result) {
+              _wasButtonClicked = result;
+              flushStatus = "Empty";
+              if (_wasButtonClicked) processGoBackWithTimer();
+            });
+        }
+      }
+
       String _msg;
 
       double rowWidth = MediaQuery.of(context).size.width * .9;
@@ -2339,94 +2419,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 onPressed: () {
                   print("going back");
 
-                  //Show flush bar to notify user
-                  if (flushStatus != "Showing") {
-                    flush = Flushbar<bool>(
-                      //padding: EdgeInsets.zero,
-                      margin: EdgeInsets.zero,
-                      flushbarPosition: FlushbarPosition.BOTTOM,
-                      flushbarStyle: FlushbarStyle.GROUNDED,
-                      reverseAnimationCurve: Curves.decelerate,
-                      forwardAnimationCurve: Curves.easeInToLinear,
-                      backgroundColor: Colors.cyan[200],
-                      boxShadows: [
-                        BoxShadow(
-                            color: Colors.cyan,
-                            offset: Offset(0.0, 2.0),
-                            blurRadius: 3.0)
-                      ],
-                      isDismissible: true,
-                      //duration: Duration(seconds: 4),
-                      icon: Icon(
-                        Icons.cancel,
-                        color: Colors.blueGrey[90],
-                      ),
-                      showProgressIndicator: true,
-                      progressIndicatorBackgroundColor: Colors.blueGrey[900],
-                      progressIndicatorValueColor:
-                          new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
-                      routeBlur: 10.0,
-                      titleText: Text(
-                        "Are you sure you want to leave this page?",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0,
-                            color: Colors.blueGrey[700],
-                            fontFamily: "ShadowsIntoLightTwo"),
-                      ),
-                      messageText: Text(
-                        "The changes you made might be lost, if not saved.",
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: Colors.blueGrey[800],
-                            fontFamily: "ShadowsIntoLightTwo"),
-                      ),
-
-                      mainButton: Column(
-                        children: <Widget>[
-                          FlatButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () {
-                              flushStatus = "Empty";
-                              flush.dismiss(false); // result = true
-                            },
-                            child: Text(
-                              "No",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          FlatButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () {
-                              flushStatus = "Empty";
-                              flush.dismiss(true); // result = true
-                            },
-                            child: Text(
-                              "Yes",
-                              style: TextStyle(color: Colors.blueGrey[700]),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                    // ..onStatusChanged = (FlushbarStatus status) {
-                    //     print("FlushbarStatus-------$status");
-                    //     if (status == FlushbarStatus.IS_APPEARING)
-                    //       flushStatus = "Showing";
-                    //     if (status == FlushbarStatus.DISMISSED)
-                    //       flushStatus = "Empty";
-                    //     print("gfdfgdfg");
-                    //   };
-
-                    flush
-                      ..show(context).then((result) {
-                        _wasButtonClicked = result;
-                        flushStatus = "Empty";
-                        if (_wasButtonClicked) processGoBackWithTimer();
-                      });
-                  }
+                  backPressed();
 
                   print("flush already running");
                 },
@@ -4470,7 +4463,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             // bottomNavigationBar: CustomBottomBar(barIndex: 0),
           ),
           onWillPop: () async {
-            return true;
+            backPressed();
+            return false;
           },
         ),
       );
@@ -4493,6 +4487,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 color: Colors.white,
                 onPressed: () {
                   print("going back");
+                  //    backPressed();
                   Navigator.of(context).pop();
                 },
               ),
@@ -4512,7 +4507,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             //bottomNavigationBar: CustomBottomBar(barIndex: 0),
           ),
           onWillPop: () async {
-            return true;
+            Navigator.of(context).pop();
+            return false;
           },
         ),
       );

@@ -410,8 +410,7 @@ class _ManageChildEntityDetailsPageState
         _stateController.text = serviceEntity.address.state;
         _countryController.text = serviceEntity.address.country;
         _pinController.text = serviceEntity.address.zipcode;
-      } else
-        serviceEntity.address = new Address();
+      }
       Location lc = _gs.getLocation();
       Address defaultAdrs = new Address();
       if (lc != null) {
