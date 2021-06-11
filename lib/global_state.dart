@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:LESSs/services/location_util.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -45,7 +47,7 @@ class GlobalState {
   List<Entity> lastSearchResults;
   Map<String, Entity> _entities;
   FirebaseApp _secondaryFirebaseApp;
-
+  FirebaseAuth _fbAuth;
   FirebaseStorage firebaseStorage;
 
   //true is entity is saved on server and false if it is a new entity
@@ -241,6 +243,10 @@ class GlobalState {
       await _gs.initSecondaryFirebaseApp();
     }
 
+    if (_gs._fbAuth == null) {
+      _gs._fbAuth = FirebaseAuth.instanceFor(app: _gs._secondaryFirebaseApp);
+    }
+
     if (_gs.remoteConfig == null) {
       _gs.remoteConfig = RemoteConfig.instance;
     }
@@ -271,7 +277,7 @@ class GlobalState {
           new BookingApplicationService(_gs._secondaryFirebaseApp, _gs);
     }
 
-    if (_gs._conf == null) {
+    if (_gs._conf == null && _gs._fbAuth.currentUser != null) {
       try {
         _gs._conf = await ConfigurationService(_gs._secondaryFirebaseApp)
             .getConfigurations();
@@ -299,7 +305,9 @@ class GlobalState {
       _gs._entityState = new Map<String, bool>();
     }
 
-    if (_gs._currentUser == null && _gs._conf != null) {
+    if (_gs._currentUser == null &&
+        _gs._conf != null &&
+        _gs._fbAuth.currentUser != null) {
       try {
         _gs._currentUser = await _gs._userService.getCurrentUser(_gs._locData);
         if (_gs._currentUser != null &&
@@ -316,13 +324,14 @@ class GlobalState {
       DateTime toDate = DateTime.now().add(new Duration(days: 30));
 
       try {
-        List<UserTokens> listTokens = await _gs._tokenService
-            .getAllTokensForCurrentUser(fromDate, toDate);
+        List<Tuple<UserTokens, DocumentSnapshot>> listTokens =
+            await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
+                DateTime.now(), false, null, null, 5);
         _gs.bookings = [];
 
         if (listTokens != null && listTokens.length > 0) {
-          for (UserTokens tokens in listTokens) {
-            for (UserToken token in tokens.tokens) {
+          for (Tuple<UserTokens, DocumentSnapshot> tokens in listTokens) {
+            for (UserToken token in tokens.item1.tokens) {
               _gs.bookings.add(token);
             }
           }

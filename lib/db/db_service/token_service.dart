@@ -266,6 +266,8 @@ class TokenService {
     final DocumentReference tokenCounterRef =
         fStore.doc('counter/' + tokenCounterId);
 
+    DateTime createdOn = DateTime.now();
+
     try {
       DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
       EntitySlots es;
@@ -369,7 +371,8 @@ class TokenService {
               rNum: (Random().nextInt(5000) + 100),
               address: metaEntity.address,
               tokens: [],
-              isOnlineAppointment: enableVideoChat);
+              isOnlineAppointment: enableVideoChat,
+              createdOn: createdOn);
         }
 
         UserToken newToken = new UserToken(
@@ -452,7 +455,8 @@ class TokenService {
             rNum: (Random().nextInt(5000) + 100),
             address: metaEntity.address,
             tokens: [],
-            isOnlineAppointment: enableVideoChat);
+            isOnlineAppointment: enableVideoChat,
+            createdOn: createdOn);
 
         UserToken newToken = new UserToken(
             number: 1,
@@ -865,15 +869,19 @@ class TokenService {
 
     WriteBatch batch = FirebaseFirestore.instance.batch();
     QuerySnapshot qs;
+    int count = 0;
     return slots
         .where('entityId', isEqualTo: entityId)
         .get()
         .then((querySnapshot) {
       querySnapshot.docs.forEach((document) {
+        count++;
         batch.delete(document.reference);
       });
 
-      return batch.commit();
+      if (count > 0) {
+        return batch.commit();
+      }
     });
   }
 
@@ -883,16 +891,19 @@ class TokenService {
 
     WriteBatch batch = FirebaseFirestore.instance.batch();
     QuerySnapshot qs;
+    int count = 0;
     return slots
         .where('entityId', isEqualTo: entityId)
-        .limit(10)
         .get()
         .then((querySnapshot) {
       querySnapshot.docs.forEach((document) {
+        count++;
         batch.delete(document.reference);
       });
 
-      return batch.commit();
+      if (count > 0) {
+        return batch.commit();
+      }
     });
   }
 
@@ -902,15 +913,19 @@ class TokenService {
 
     WriteBatch batch = FirebaseFirestore.instance.batch();
     QuerySnapshot qs;
+    int count = 0;
     return slots
         .where('entityId', isEqualTo: entityId)
         .get()
         .then((querySnapshot) {
       querySnapshot.docs.forEach((document) {
+        count++;
         batch.delete(document.reference);
       });
 
-      return batch.commit();
+      if (count > 0) {
+        return batch.commit();
+      }
     });
   }
 
@@ -985,5 +1000,70 @@ class TokenService {
     }
 
     return false;
+  }
+
+  Future<List<Tuple<UserTokens, DocumentSnapshot>>> getTokens(
+      String entityId,
+      String userId,
+      String slotId,
+      DateTime refDateTime,
+      bool isDescending,
+      DocumentSnapshot firstRecord, //for previous page
+      DocumentSnapshot lastRecord, //for next page
+      int takeCount) async {
+    //TODO: Security - only the Admin/Manager of the Entity should be able to access the applications OR Super admin of the Global BookingForm
+
+    FirebaseFirestore fStore = getFirestore();
+    CollectionReference collectionRef = fStore.collection('tokens');
+
+    Query query = collectionRef;
+
+    if (Utils.isNotNullOrEmpty(userId)) {
+      query = query.where("userId", isEqualTo: userId);
+    }
+
+    if (Utils.isNotNullOrEmpty(entityId)) {
+      query = query.where("entityId", isEqualTo: entityId);
+    }
+
+    if (Utils.isNotNullOrEmpty(slotId)) {
+      query = query.where("slotId", isEqualTo: slotId);
+    }
+
+    if (refDateTime != null && !isDescending) {
+      query = query.where("dateTime",
+          isGreaterThanOrEqualTo: refDateTime.millisecondsSinceEpoch);
+    } else if (refDateTime != null && isDescending) {
+      query = query.where("dateTime", isLessThan: refDateTime);
+    }
+
+    if (Utils.isNotNullOrEmpty("dateTime")) {
+      query = query.orderBy("dateTime", descending: isDescending);
+    }
+    //TODO - takeCount coming as null
+    if (takeCount > 0) {
+      query = query.limit(takeCount);
+    }
+
+    if (lastRecord != null) {
+      query = query.startAfterDocument(lastRecord);
+    } else if (firstRecord != null) {
+      query = query.endBeforeDocument(firstRecord);
+    }
+
+    List<Tuple<UserTokens, QueryDocumentSnapshot>> toks = [];
+
+    QuerySnapshot qs = await query.get();
+    List<QueryDocumentSnapshot> qds = qs.docs;
+    for (QueryDocumentSnapshot doc in qds) {
+      if (doc.exists) {
+        Tuple<UserTokens, QueryDocumentSnapshot> tup =
+            Tuple<UserTokens, QueryDocumentSnapshot>(
+                item1: UserTokens.fromJson(doc.data()), item2: doc);
+        toks.add(tup);
+      }
+    }
+
+    return toks;
   }
 }

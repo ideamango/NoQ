@@ -1095,15 +1095,19 @@ class BookingApplicationService {
 
     WriteBatch batch = FirebaseFirestore.instance.batch();
     QuerySnapshot qs;
+    int count = 0;
     return slots
         .where('entityId', isEqualTo: entityId)
         .get()
         .then((querySnapshot) {
       querySnapshot.docs.forEach((document) {
+        count++;
         batch.delete(document.reference);
       });
 
-      return batch.commit();
+      if (count > 0) {
+        return batch.commit();
+      }
     });
   }
 
