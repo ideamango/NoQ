@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:LESSs/services/location_util.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -323,13 +324,14 @@ class GlobalState {
       DateTime toDate = DateTime.now().add(new Duration(days: 30));
 
       try {
-        List<UserTokens> listTokens = await _gs._tokenService
-            .getAllTokensForCurrentUser(fromDate, toDate);
+        List<Tuple<UserTokens, DocumentSnapshot>> listTokens =
+            await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
+                DateTime.now(), false, null, null, 5);
         _gs.bookings = [];
 
         if (listTokens != null && listTokens.length > 0) {
-          for (UserTokens tokens in listTokens) {
-            for (UserToken token in tokens.tokens) {
+          for (Tuple<UserTokens, DocumentSnapshot> tokens in listTokens) {
+            for (UserToken token in tokens.item1.tokens) {
               _gs.bookings.add(token);
             }
           }
