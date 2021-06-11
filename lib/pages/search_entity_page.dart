@@ -1851,6 +1851,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   ? null
                   : highlightColor, // splash color
               onTap: () {
+                print("dfgdfg");
                 if (isClosed) {
                   Utils.showMyFlushbar(
                     context,

@@ -1,4 +1,6 @@
 import 'package:LESSs/db/db_model/entity_slots.dart';
+import 'package:LESSs/db/db_model/user_token.dart';
+import 'package:LESSs/tuple.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:another_flushbar/flushbar.dart';
 
@@ -74,6 +76,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   int numOfTokensByUser = 0;
   List<String> bookedSlots = [];
   EntitySlots entitySlot;
+  TokenCounter tokenCounter;
+  Map<String, int> _tokensMap = new Map<String, int>();
+  int maxAllowedTokensForUser;
 
   @override
   void initState() {
@@ -108,10 +113,21 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
     //Fetch details from server
     getSlotsListForEntity(metaEntity, _date).then((slotListTuple) {
-      setState(() {
-        _slotList = slotListTuple.item2;
-        entitySlot = slotListTuple.item1;
-        _initCompleted = true;
+      _slotList = slotListTuple.item2;
+      entitySlot = slotListTuple.item1;
+
+      maxAllowedTokensForUser = (entitySlot != null)
+          ? entitySlot.maxTokensByUserInDay
+          : metaEntity.maxTokensByUserInDay;
+      _gs
+          .getTokenService()
+          .getTokenCounterForEntity(
+              widget.metaEntity.entityId, widget.dateTime.year.toString())
+          .then((value) {
+        slotsStatusUpdate(value, null);
+        setState(() {
+          _initCompleted = true;
+        });
       });
     }).catchError((onError) {
       switch (onError.code) {
@@ -177,9 +193,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   @override
   Widget build(BuildContext context) {
     if (_initCompleted) {
-      if (Utils.isNullOrEmpty(_slotList))
+      if (Utils.isNullOrEmpty(_slotList)) {
+        errMsg =
+            "Time-Slot information not found for this place. Please contact admin of this place.";
         return _noSlotsPage(errMsg);
-      else {
+      } else {
         Widget pageHeader = Text(
           _storeName,
           style: TextStyle(
@@ -288,14 +306,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                             ],
                           ),
                         ),
-                      if (metaEntity.maxTokensByUserInDay != null)
+                      if (maxAllowedTokensForUser != null)
                         Container(
                           margin: EdgeInsets.only(top: 5),
                           alignment: Alignment.centerLeft,
                           child: Text(
                             '* ' +
                                 INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_DAY_1 +
-                                metaEntity.maxTokensByUserInDay.toString() +
+                                maxAllowedTokensForUser.toString() +
                                 INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_DAY_2 +
                                 '\n',
                             textAlign: TextAlign.center,
@@ -606,6 +624,46 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     return isDisabled;
   }
 
+  slotsStatusUpdate(TokenCounter counter, Slot bookedSlot) {
+    if (counter != null) {
+      int updatedIndex;
+      for (int i = 0; i <= _slotList.length - 1; i++) {
+//Update SlotList with new Slot details.
+        if (bookedSlot != null) {
+          if (_slotList[i].dateTime.difference(bookedSlot.dateTime).inSeconds ==
+              0) {
+            updatedIndex = i;
+            break;
+            // _slotList[i].isFull = bookedSlot.isFull;
+            // _slotList[i].slotId = bookedSlot.slotId;
+            // _slotList[i].tokens = bookedSlot.tokens;
+            // _slotList[i].totalBooked = bookedSlot.totalBooked;
+            // _slotList[i].totalCancelled = bookedSlot.totalCancelled;
+          }
+        }
+      }
+      if (updatedIndex != null) {
+        _slotList[updatedIndex] = bookedSlot;
+      }
+
+      for (int i = 0; i <= _slotList.length - 1; i++) {
+        List<String> slotIdVals = Utils.isNotNullOrEmpty(_slotList[i].slotId)
+            ? _slotList[i].slotId.split('#')
+            : null;
+        if (!Utils.isNullOrEmpty(slotIdVals)) {
+          String slotId = slotIdVals[1] + '#' + slotIdVals[2];
+          TokenStats slotStats = counter.slotWiseStats[slotId];
+          int numberOfBookingsLeft = widget.metaEntity.maxAllowed -
+              (slotStats.numberOfTokensCreated -
+                  slotStats.numberOfTokensCancelled);
+          //   if (_tokensMap.containsKey(_slotList[i].slotId)) {
+          _tokensMap[_slotList[i].slotId] = numberOfBookingsLeft;
+          //  }
+        }
+      }
+    }
+  }
+
   Widget _buildGridItem(BuildContext context, int index) {
     //TODO: Check what information coming from server, then process and use it.
     Slot sl = _slotList[index];
@@ -686,9 +744,13 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AutoSizeText(
-                  (sl.totalBooked -
-                          (sl.totalCancelled != null ? sl.totalCancelled : 0))
+                  (_tokensMap.containsKey(sl.slotId)
+                          ? _tokensMap[sl.slotId]
+                          : metaEntity.maxAllowed)
                       .toString(),
+                  // (sl.totalBooked -
+                  //         (sl.totalCancelled != null ? sl.totalCancelled : 0))
+                  //     .toString(),
                   minFontSize: 9,
                   maxFontSize: 11,
                   style: TextStyle(
@@ -696,7 +758,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                     fontFamily: 'Roboto',
                     letterSpacing: 0.5,
                   )),
-              AutoSizeText(' booked',
+              AutoSizeText(' left',
                   minFontSize: 8,
                   maxFontSize: 10,
                   style: TextStyle(
@@ -723,14 +785,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         slotBooking,
         takingMoment);
 
-    print(metaEntity.maxTokensByUserInDay);
-    int maxTokenByUser;
+    // print(metaEntity.maxTokensByUserInDay);
+    // int maxTokenByUser;
 
-    maxTokenByUser = (entitySlot != null)
-        ? entitySlot.maxTokensByUserInDay
-        : metaEntity.maxTokensByUserInDay;
+    // maxTokenByUser = (entitySlot != null)
+    //     ? entitySlot.maxTokensByUserInDay
+    //     : metaEntity.maxTokensByUserInDay;
 
-    if (maxTokenByUser <= bookedSlots.length) {
+    if (maxAllowedTokensForUser <= bookedSlots.length) {
       //Max tokens already booked, then user cant book further slots.
       Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
           maxTokenLimitReached, maxTokenLimitReachedSub);
@@ -753,46 +815,55 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                 isOnlineToken: enableVideoChat)));
       }
     } else {
-      bookSlotForStore(metaEntity, selectedSlot, enableVideoChat).then((value) {
+      _gs.addBooking(metaEntity, selectedSlot, enableVideoChat).then((value) {
         if (value == null) {
           showFlushBar();
           selectedSlot = null;
           setState(() {});
           return;
         } else {
+          UserTokens tokens;
+          Tuple<UserTokens, TokenCounter> tuple = value;
+          tokens = tuple.item1;
+          tokenCounter = tuple.item2;
+          slotsStatusUpdate(tokenCounter, selectedSlot);
+
+          _gs.getNotificationService().registerTokenNotification(tokens);
+
           //update in global State
           selectedSlot.totalBooked++;
-        }
-        _token = value.getDisplayName();
-        final dtFormat = new DateFormat(dateDisplayFormat);
-        String _dateFormatted = dtFormat.format(selectedSlot.dateTime);
 
-        String slotTiming =
-            Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
-                ':' +
-                Utils.formatTime(selectedSlot.dateTime.minute.toString());
+          _token = tokens.tokens.last.getDisplayName();
+          final dtFormat = new DateFormat(dateDisplayFormat);
+          String _dateFormatted = dtFormat.format(selectedSlot.dateTime);
 
-        String msg = enableVideoChat ? tokenTextH2Online : tokenTextH2Walkin;
+          String slotTiming =
+              Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
+                  ':' +
+                  Utils.formatTime(selectedSlot.dateTime.minute.toString());
 
-        showTokenAlert(
-                context, msg, _token, _storeName, _dateFormatted, slotTiming)
-            .then((value) {
-          _returnValues(value);
+          String msg = enableVideoChat ? tokenTextH2Online : tokenTextH2Walkin;
 
-          setState(() {
-            bookedSlot = selectedSlot;
-            selectedSlot = null;
-          });
-          //Ask user if he wants to receive the notifications
+          showTokenAlert(
+                  context, msg, _token, _storeName, _dateFormatted, slotTiming)
+              .then((value) {
+            _returnValues(value);
 
-          //End of notification permission
+            setState(() {
+              bookedSlot = selectedSlot;
+              selectedSlot = null;
+            });
+            //Ask user if he wants to receive the notifications
+
+            //End of notification permission
 
 //Update local file with new booking.
 
-          String returnVal = value + '-' + slotTiming;
-          // Navigator.of(context).pop(returnVal);
-          // print(value);
-        });
+            String returnVal = value + '-' + slotTiming;
+            // Navigator.of(context).pop(returnVal);
+            // print(value);
+          });
+        }
       }).catchError((error, stackTrace) {
         print("Error in token booking" + error.toString());
 

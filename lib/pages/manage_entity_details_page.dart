@@ -500,10 +500,19 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         (entity.breakEndHour == null && entity.breakStartHour != null)) {
       return "Both Break Start and Break End time should be specified.";
     }
+    // if ((entity.breakEndHour != null && entity.breakStartHour != null)) {
+    //   //Check if End is after start time.
+    //   return "Break End time should be after Break Start time.";
+    // }
+    // if ((entity.startTimeHour != null && entity.endTimeHour != null)) {
+    //   //Check if End is after start time.
+    //   return "Place Closing(End) time should be after Opening(Start) time.";
+    // }
     if ((entity.startTimeHour != null && entity.endTimeHour == null) ||
         (entity.startTimeHour == null && entity.endTimeHour != null)) {
       return "Both Day Start and Day End time should be specified.";
     }
+
     return null;
   }
 
