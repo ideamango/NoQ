@@ -1,5 +1,7 @@
 import 'package:LESSs/db/db_model/entity_slots.dart';
 import 'package:LESSs/db/db_model/user_token.dart';
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/tuple.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -601,22 +603,30 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   bool isBooked(DateTime dateTime, String entityId) {
-    if (_gs.bookings == null) {
-      return false;
-    }
-
-    for (int i = 0; i < _gs.bookings.length; i++) {
-      if (_gs.bookings[i].parent.entityId == entityId &&
-          _gs.bookings[i].parent.dateTime == dateTime) {
-        if (_gs.bookings[i].number != -1) {
-          if (!bookedSlots.contains(_gs.bookings[i].parent.slotId)) {
-            bookedSlots.add(_gs.bookings[i].parent.slotId);
+    int bookedTokens = 0;
+    int cancelledTokens = 0;
+    if (entitySlot != null) {
+      for (Slot sl in entitySlot.slots) {
+        if (sl.dateTime.hour == dateTime.hour &&
+            sl.dateTime.minute == dateTime.minute) {
+          for (UserTokens uts in sl.tokens) {
+            if (uts.userId == _gs.getCurrentUser().ph) {
+              bookedTokens++;
+            }
+            for (UserToken ut in uts.tokens) {
+              if (ut.number == -1) {
+                cancelledTokens++;
+              }
+            }
           }
-          return true;
         }
       }
-    }
-    return false;
+      if (bookedTokens - cancelledTokens > 0)
+        return true;
+      else
+        return false;
+    } else
+      return false;
   }
 
   bool isDisabled(DateTime dateTime) {
@@ -785,13 +795,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         slotBooking,
         takingMoment);
 
-    // print(metaEntity.maxTokensByUserInDay);
-    // int maxTokenByUser;
-
-    // maxTokenByUser = (entitySlot != null)
-    //     ? entitySlot.maxTokensByUserInDay
-    //     : metaEntity.maxTokensByUserInDay;
-
     if (maxAllowedTokensForUser <= bookedSlots.length) {
       //Max tokens already booked, then user cant book further slots.
       Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
@@ -866,8 +869,15 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         }
       }).catchError((error, stackTrace) {
         print("Error in token booking" + error.toString());
+        if (error is MaxTokenReachedByUserPerSlotException) {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotBookToken, error.cause);
+        }
+        if (error is MaxTokenReachedByUserPerDayException) {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotBookToken, error.cause);
+        }
 
-        //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
         if (error is SlotFullException) {
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotBookToken, slotsAlreadyBooked);

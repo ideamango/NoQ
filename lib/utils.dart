@@ -1277,6 +1277,11 @@ class Utils {
             slotsAlreadyBooked, selectDateSub);
         print("slot full ");
         break;
+      case AccessDeniedException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            (error as AccessDeniedException).cause, contactAdminIfIssue);
+        break;
+
       default:
         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
             error.toString(), tryAgainToBook);

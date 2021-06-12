@@ -274,7 +274,9 @@ class TokenService {
 
       if (entitySlotsSnapshot.exists) {
         DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
-        tokens = UserTokens.fromJson(tokenSnapshot.data());
+        if (tokenSnapshot.exists) {
+          tokens = UserTokens.fromJson(tokenSnapshot.data());
+        }
         // if (tokenSnapshot.exists && metaEntity.maxTokensPerSlotByUser == 1) {
         //   if (tokens.tokens[0].number != -1)
         //     throw new TokenAlreadyExistsException(
@@ -283,9 +285,9 @@ class TokenService {
         //atleast one token is issued for the given entity for that day
         es = EntitySlots.fromJson(entitySlotsSnapshot.data());
         int maxAllowed = es.maxAllowed;
+        int maxTokensPerSlotByUser = es.maxTokensPerSlotByUser;
 
-        if (tokenSnapshot.exists &&
-            metaEntity.maxTokensPerSlotByUser <= tokens.tokens.length) {
+        if (tokenSnapshot.exists) {
           int numberOfCancelledInSlot = 0;
           for (UserToken ut in tokens.tokens) {
             if (ut.number == -1) {
@@ -294,7 +296,7 @@ class TokenService {
           }
 
           if (tokens.tokens.length - numberOfCancelledInSlot ==
-              es.maxTokensPerSlotByUser) {
+              maxTokensPerSlotByUser) {
             throw new MaxTokenReachedByUserPerSlotException(
                 "Can't book more than ${metaEntity.maxTokensPerSlotByUser.toString} tokens per slot");
           }

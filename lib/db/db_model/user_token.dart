@@ -92,7 +92,10 @@ class UserTokens {
         upiPhoneNumber: json['upiPhoneNumber'],
         upiQRImagePath: json['upiQRImagePath'],
         isOnlineAppointment: json['isOnlineAppointment'],
-        createdOn: json['createdOn']);
+        createdOn: json['createdOn'] != null
+            ? new DateTime.fromMillisecondsSinceEpoch(
+                json['createdOn'].seconds * 1000)
+            : null);
 
     for (UserToken token in tokens.tokens) {
       token.parent = tokens;

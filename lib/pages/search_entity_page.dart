@@ -1843,9 +1843,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                 ? Colors.grey[300]
                 : (!isBookingAllowed
                     ? Colors.grey[300]
-                    : (dateBooked
-                        ? Colors.greenAccent[700]
-                        : Colors.cyan[50])), // button color
+                    // : (dateBooked
+                    //     ? Colors.greenAccent[700]
+                    : Colors.cyan[50]), // button color
             child: InkWell(
               splashColor: (isClosed || !isBookingAllowed)
                   ? null
@@ -1887,9 +1887,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                               ? Colors.grey[500]
                               : (!isBookingAllowed
                                   ? Colors.grey[500]
-                                  : (dateBooked
-                                      ? Colors.white
-                                      : primaryDarkColor))))),
+                                  // : (dateBooked
+                                  //     ? Colors.white
+                                  : primaryDarkColor)))),
                   Text(dayOfWeek,
                       style: TextStyle(
                           fontSize: 8,
@@ -1898,9 +1898,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                               ? Colors.grey[500]
                               : (!isBookingAllowed
                                   ? Colors.grey[500]
-                                  : (dateBooked
-                                      ? Colors.white
-                                      : primaryDarkColor))))), // text
+                                  // : (dateBooked
+                                  //     ? Colors.white
+                                  : primaryDarkColor)))), // text
                 ],
               ),
             ),
