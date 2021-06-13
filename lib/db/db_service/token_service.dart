@@ -1068,4 +1068,23 @@ class TokenService {
 
     return toks;
   }
+
+  Future<Tuple<UserTokens, DocumentSnapshot>> getToken(String tokenId) async {
+    User user = getFirebaseAuth().currentUser;
+    if (user == null) return null;
+
+    FirebaseFirestore fStore = getFirestore();
+
+    final DocumentReference tokRef = fStore.doc('tokens/' + tokenId);
+
+    DocumentSnapshot doc = await tokRef.get();
+
+    if (doc.exists) {
+      Map<String, dynamic> map = doc.data();
+      UserTokens u = UserTokens.fromJson(map);
+      return new Tuple<UserTokens, DocumentSnapshot>(item1: u, item2: doc);
+    }
+
+    return null;
+  }
 }

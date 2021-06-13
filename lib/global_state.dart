@@ -541,16 +541,25 @@ class GlobalState {
           break;
         }
       }
-      if (lastDoc.item2 == null) {
-        //TODO - get this token DocumentSnapshot from server and set it
-      }
+      DocumentSnapshot lastDocSnap;
+      if (lastDoc != null) {
+        if (lastDoc.item2 == null) {
+          Tuple<UserTokens, DocumentSnapshot> tokDetails = await _gs
+              ._tokenService
+              .getToken(lastDoc.item1.parent.getTokenId());
 
+          if (tokDetails != null) {
+            lastDoc.item2 = tokDetails.item2;
+            lastDocSnap = tokDetails.item2;
+          }
+        }
+      }
       //remaining tokens to be loaded from server
 
       int remainingCount = takeCount - uts.length;
       List<Tuple<UserTokens, DocumentSnapshot>> remainingTokens =
           await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
-              now, false, null, lastDoc.item2, remainingCount);
+              now, false, null, lastDocSnap, remainingCount);
 
       if (remainingTokens != null && remainingTokens.length > 0) {
         for (Tuple<UserTokens, DocumentSnapshot> tokens in remainingTokens) {
@@ -576,10 +585,18 @@ class GlobalState {
           break;
         }
       }
+
       DocumentSnapshot lastDocSnap;
       if (lastDoc != null) {
         if (lastDoc.item2 == null) {
-          //TODO - get this token DocumentSnapshot from server and set it
+          Tuple<UserTokens, DocumentSnapshot> tokDetails = await _gs
+              ._tokenService
+              .getToken(lastDoc.item1.parent.getTokenId());
+
+          if (tokDetails != null) {
+            lastDoc.item2 = tokDetails.item2;
+            lastDocSnap = tokDetails.item2;
+          }
         }
       }
 
