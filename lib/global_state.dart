@@ -542,12 +542,16 @@ class GlobalState {
         }
       }
       DocumentSnapshot lastDocSnap;
-      if (lastDoc.item2 == null) {
-        Tuple<UserTokens, DocumentSnapshot> tokDetails =
-            await _gs._tokenService.getToken(lastDoc.item1.parent.getTokenId());
+      if (lastDoc != null) {
+        if (lastDoc.item2 == null) {
+          Tuple<UserTokens, DocumentSnapshot> tokDetails = await _gs
+              ._tokenService
+              .getToken(lastDoc.item1.parent.getTokenId());
 
-        if (tokDetails != null) {
-          lastDoc.item2 = tokDetails.item2;
+          if (tokDetails != null) {
+            lastDoc.item2 = tokDetails.item2;
+            lastDocSnap = tokDetails.item2;
+          }
         }
       }
       //remaining tokens to be loaded from server
@@ -583,12 +587,16 @@ class GlobalState {
       }
 
       DocumentSnapshot lastDocSnap;
-      if (lastDoc.item2 == null) {
-        Tuple<UserTokens, DocumentSnapshot> tokDetails =
-            await _gs._tokenService.getToken(lastDoc.item1.parent.getTokenId());
+      if (lastDoc != null) {
+        if (lastDoc.item2 == null) {
+          Tuple<UserTokens, DocumentSnapshot> tokDetails = await _gs
+              ._tokenService
+              .getToken(lastDoc.item1.parent.getTokenId());
 
-        if (tokDetails != null) {
-          lastDoc.item2 = tokDetails.item2;
+          if (tokDetails != null) {
+            lastDoc.item2 = tokDetails.item2;
+            lastDocSnap = tokDetails.item2;
+          }
         }
       }
 
