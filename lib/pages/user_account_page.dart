@@ -303,7 +303,7 @@ class _UserAccountPageState extends State<UserAccountPage>
   }
 
   Future<void> _loadBookings() async {
-    _pastBookingsList = _gs.getPastBookings();
+    // _pastBookingsList = _gs.getPastBookings();
 
     _newBookingsList = await _gs.getUpcomingBookings(1, 5);
 
@@ -312,14 +312,19 @@ class _UserAccountPageState extends State<UserAccountPage>
       // true, null, _newBookingsList[_newBookingsList.length - 1], 5);
       //  _newBookingsList =
 
-      if (_pastBookingsList.length != 0) {
-        _pastBkgStatus = 'Success';
-      } else
-        _pastBkgStatus = 'NoBookings';
-      if (_newBookingsList.length != 0) {
-        _upcomingBkgStatus = 'Success';
-      } else
-        _upcomingBkgStatus = 'NoBookings';
+      if (_newBookingsList != null) {
+        if (_newBookingsList.length != 0) {
+          _upcomingBkgStatus = 'Success';
+        } else
+          _upcomingBkgStatus = 'NoBookings';
+      }
+
+      // if (_newBookingsList != null) {
+      //   if (_newBookingsList.length != 0) {
+      //     _upcomingBkgStatus = 'Success';
+      //   } else
+      //     _upcomingBkgStatus = 'NoBookings';
+      // }
     });
   }
 
