@@ -151,12 +151,13 @@ class _UserHomePageState extends State<UserHomePage>
     _gs = await GlobalState.getGlobalState();
   }
 
-  void fetchDataFromGlobalState() {
+  void _loadBookings() async {
+    //Fetch booking details from server
     if (!Utils.isNullOrEmpty(_gs.bookings)) {
       if (_gs.bookings.length != 0) {
         _pastBookingsList = _gs.getPastBookings();
 
-        _newBookingsList = _gs.getUpcomingBookings();
+        _newBookingsList = await _gs.getUpcomingBookings(1, 5);
 
         if (_pastBookingsList.length != 0) {
           _pastBkgStatus = 'Success';
@@ -171,11 +172,6 @@ class _UserHomePageState extends State<UserHomePage>
       _upcomingBkgStatus = 'NoBookings';
       _pastBkgStatus = 'NoBookings';
     }
-  }
-
-  void _loadBookings() async {
-    //Fetch booking details from server
-    fetchDataFromGlobalState();
   }
 
   openPlayStore() async {

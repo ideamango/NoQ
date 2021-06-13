@@ -319,28 +319,30 @@ class GlobalState {
       }
     }
 
-    if (_gs._currentUser != null && _gs.bookings == null) {
-      DateTime fromDate = DateTime.now().subtract(new Duration(days: 60));
-      DateTime toDate = DateTime.now().add(new Duration(days: 30));
+    //_gs.getUpcomingBookings(1, 5);
 
-      try {
-        List<Tuple<UserTokens, DocumentSnapshot>> listTokens =
-            await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
-                DateTime.now(), false, null, null, 5);
-        _gs.bookings = [];
+    // if (_gs._currentUser != null && _gs.bookings == null) {
+    //   DateTime fromDate = DateTime.now().subtract(new Duration(days: 60));
+    //   DateTime toDate = DateTime.now().add(new Duration(days: 30));
 
-        if (listTokens != null && listTokens.length > 0) {
-          for (Tuple<UserTokens, DocumentSnapshot> tokens in listTokens) {
-            for (UserToken token in tokens.item1.tokens) {
-              _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
-                  item1: token, item2: tokens.item2));
-            }
-          }
-        }
-      } catch (e) {
-        print("In exception");
-      }
-    }
+    //   try {
+    //     List<Tuple<UserTokens, DocumentSnapshot>> listTokens =
+    //         await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
+    //             DateTime.now(), false, null, null, 5);
+    //     _gs.bookings = [];
+
+    //     if (listTokens != null && listTokens.length > 0) {
+    //       for (Tuple<UserTokens, DocumentSnapshot> tokens in listTokens) {
+    //         for (UserToken token in tokens.item1.tokens) {
+    //           _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
+    //               item1: token, item2: tokens.item2));
+    //         }
+    //       }
+    //     }
+    //   } catch (e) {
+    //     print("In exception");
+    //   }
+    // }
 
     //unlock
     completer.complete();
@@ -521,11 +523,13 @@ class GlobalState {
             b.parent.dateTime.millisecondsSinceEpoch)
         ? 1
         : -1);
-
+    //CASE:1
     if (newBookings.length >= startNum + takeCount - 1) {
       //e.g. total items are 10, start num is 6 and take count is 5
       return newBookings.getRange(startNum - 1, startNum + takeCount);
-    } else if (newBookings.length > startNum &&
+    }
+    //CASE:2
+    else if (newBookings.length > startNum &&
         newBookings.length < startNum + takeCount - 1) {
       List<UserToken> uts = [];
       uts.addAll(newBookings.getRange(startNum - 1, newBookings.length));
@@ -537,7 +541,6 @@ class GlobalState {
           break;
         }
       }
-
       if (lastDoc.item2 == null) {
         //TODO - get this token DocumentSnapshot from server and set it
       }
@@ -558,7 +561,10 @@ class GlobalState {
           }
         }
       }
-    } else if (startNum == newBookings.length + 1) {
+      return uts;
+    }
+    //CASE:3
+    else if (startNum == newBookings.length + 1) {
       //this is first time scenario where start num = 1 and no items will be there in the newBookings
       //also this will be usual load more scenario from server when user reaches to the last item in the list
       List<UserToken> uts = [];
@@ -588,6 +594,7 @@ class GlobalState {
           }
         }
       }
+      return uts;
     } else {
       throw new Exception("Supplied param for loading Tokens is not valid");
     }

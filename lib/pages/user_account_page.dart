@@ -303,32 +303,24 @@ class _UserAccountPageState extends State<UserAccountPage>
   }
 
   Future<void> _loadBookings() async {
-    if (!Utils.isNullOrEmpty(_gs.bookings)) {
-      if (_gs.bookings.length != 0) {
-        setState(() {
-          _pastBookingsList = _gs.getPastBookings();
+    _pastBookingsList = _gs.getPastBookings();
 
-          _newBookingsList = _gs.getUpcomingBookings();
-          //  _gs.getTokenService().getTokens(null, _gs.getCurrentUser().ph, null, null,
-          // true, null, _newBookingsList[_newBookingsList.length - 1], 5);
-          //  _newBookingsList =
+    _newBookingsList = await _gs.getUpcomingBookings(1, 5);
 
-          if (_pastBookingsList.length != 0) {
-            _pastBkgStatus = 'Success';
-          } else
-            _pastBkgStatus = 'NoBookings';
-          if (_newBookingsList.length != 0) {
-            _upcomingBkgStatus = 'Success';
-          } else
-            _upcomingBkgStatus = 'NoBookings';
-        });
-      }
-    } else {
-      setState(() {
-        _upcomingBkgStatus = 'NoBookings';
+    setState(() {
+      //  _gs.getTokenService().getTokens(null, _gs.getCurrentUser().ph, null, null,
+      // true, null, _newBookingsList[_newBookingsList.length - 1], 5);
+      //  _newBookingsList =
+
+      if (_pastBookingsList.length != 0) {
+        _pastBkgStatus = 'Success';
+      } else
         _pastBkgStatus = 'NoBookings';
-      });
-    }
+      if (_newBookingsList.length != 0) {
+        _upcomingBkgStatus = 'Success';
+      } else
+        _upcomingBkgStatus = 'NoBookings';
+    });
   }
 
   List cardList = [Item1(), Item2(), Item3(), Item4(), Item5(), Item6()];

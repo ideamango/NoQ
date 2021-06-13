@@ -92,13 +92,16 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
             Duration(seconds: 4),
             "Important details are missing in entity, Please fill those first.",
             "Save Entity and then Share!!");
-      } else
+      } else {
+        //SMITA - test params
         Navigator.of(context)
             .push(PageAnimation.createRoute(GenerateQrUserApplication(
-          uniqueTokenIdentifier: widget.ba.id,
+          uniqueTokenIdentifier: null,
           entityName: metaEntity.name,
           backRoute: "UserAppsList",
+          baId: widget.ba.id,
         )));
+      }
     });
   }
 
