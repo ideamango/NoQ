@@ -155,7 +155,7 @@ class _UserHomePageState extends State<UserHomePage>
     //Fetch booking details from server
     if (!Utils.isNullOrEmpty(_gs.bookings)) {
       if (_gs.bookings.length != 0) {
-        _pastBookingsList = _gs.getPastBookings();
+        _pastBookingsList = await _gs.getPastBookings(1, 5);
 
         _newBookingsList = await _gs.getUpcomingBookings(1, 5);
 
