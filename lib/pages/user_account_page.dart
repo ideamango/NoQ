@@ -228,24 +228,18 @@ class _UserAccountPageState extends State<UserAccountPage>
     _upcomingBkgStatus = 'Loading';
     _pastBkgStatus = 'Loading';
     showLoading = true;
-    //Fetch Next Set of Upcoming Tokens SMITA
+    _gs.getUpcomingBookings(6, 5).then((value) {
+      if (Utils.isNullOrEmpty(value)) {
+        loadUpcomingTokens = 'Thats all. No more Tokens to load.';
+      } else {
+        _newBookingsList.addAll(value);
+        keepExpandedUpcomingTokens = true;
+      }
+    });
 
-    // _gs.getUpcomingBookings(null, _gs.getCurrentUser().ph, null, null,
-    //     false, null, _listOfUpcomingTokens[_listOfUpcomingTokens.length - 1].item2, 5).then((value){
-    //       _listOfUpcomingTokens=value;
-    //     });
-
-    //     .then((value) {
-    //   if (Utils.isNullOrEmpty(value)) {
-    //     loadUpcomingTokens = 'Thats all. No more Tokens to load.';
-    //   } else {
-    //     _newBookingsList.addAll(value);
-    //     keepExpandedUpcomingTokens = true;
-    //   }
     setState(() {
       showLoading = false;
     });
-    // });
   }
 
   void refreshToken(event, args) {
@@ -319,12 +313,12 @@ class _UserAccountPageState extends State<UserAccountPage>
           _upcomingBkgStatus = 'NoBookings';
       }
 
-      // if (_newBookingsList != null) {
-      //   if (_newBookingsList.length != 0) {
-      //     _upcomingBkgStatus = 'Success';
-      //   } else
-      //     _upcomingBkgStatus = 'NoBookings';
-      // }
+      if (_pastBookingsList != null) {
+        if (_pastBookingsList.length != 0) {
+          _pastBkgStatus = 'Success';
+        } else
+          _pastBkgStatus = 'NoBookings';
+      }
     });
   }
 
