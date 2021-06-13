@@ -41,7 +41,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 class GlobalState {
   AppUser _currentUser;
   Configurations _conf;
-  List<UserToken> bookings;
+  List<Tuple<UserToken, DocumentSnapshot>> bookings;
   String lastSearchName;
   EntityType lastSearchType;
   List<Entity> lastSearchResults;
@@ -332,7 +332,8 @@ class GlobalState {
         if (listTokens != null && listTokens.length > 0) {
           for (Tuple<UserTokens, DocumentSnapshot> tokens in listTokens) {
             for (UserToken token in tokens.item1.tokens) {
-              _gs.bookings.add(token);
+              _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
+                  item1: token, item2: tokens.item2));
             }
           }
         }
@@ -488,8 +489,8 @@ class GlobalState {
     List<UserToken> pastBookings = [];
     DateTime now = DateTime.now();
 
-    for (UserToken tok in bookings) {
-      if (tok.parent.dateTime.isBefore(now)) pastBookings.add(tok);
+    for (Tuple<UserToken, DocumentSnapshot> tok in bookings) {
+      if (tok.item1.parent.dateTime.isBefore(now)) pastBookings.add(tok.item1);
     }
 
     pastBookings.sort((a, b) => (a.parent.dateTime.millisecondsSinceEpoch >
@@ -499,19 +500,97 @@ class GlobalState {
     return pastBookings;
   }
 
-  List<UserToken> getUpcomingBookings() {
+  Future<List<UserToken>> getUpcomingBookings(
+      int startNum, int takeCount) async {
+    if (_gs._currentUser == null) {
+      return [];
+    }
+
+    if (_gs._currentUser != null && _gs.bookings == null) {
+      _gs.bookings = [];
+    }
+
     List<UserToken> newBookings = [];
     DateTime now = DateTime.now();
 
-    for (UserToken tok in bookings) {
-      if (!tok.parent.dateTime.isBefore(now)) newBookings.add(tok);
+    for (Tuple<UserToken, DocumentSnapshot> tok in bookings) {
+      if (!tok.item1.parent.dateTime.isBefore(now)) newBookings.add(tok.item1);
     }
 
     newBookings.sort((a, b) => (a.parent.dateTime.millisecondsSinceEpoch >
             b.parent.dateTime.millisecondsSinceEpoch)
         ? 1
         : -1);
-    return newBookings;
+
+    if (newBookings.length >= startNum + takeCount - 1) {
+      //e.g. total items are 10, start num is 6 and take count is 5
+      return newBookings.getRange(startNum - 1, startNum + takeCount);
+    } else if (newBookings.length > startNum &&
+        newBookings.length < startNum + takeCount - 1) {
+      List<UserToken> uts = [];
+      uts.addAll(newBookings.getRange(startNum - 1, newBookings.length));
+
+      Tuple<UserToken, DocumentSnapshot> lastDoc;
+      for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
+        if (lastDoc.item1.getID() == uts[uts.length - 1].getID()) {
+          lastDoc = doc;
+          break;
+        }
+      }
+
+      if (lastDoc.item2 == null) {
+        //TODO - get this token DocumentSnapshot from server and set it
+      }
+
+      //remaining tokens to be loaded from server
+
+      int remainingCount = takeCount - uts.length;
+      List<Tuple<UserTokens, DocumentSnapshot>> remainingTokens =
+          await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
+              now, false, null, lastDoc.item2, remainingCount);
+
+      if (remainingTokens != null && remainingTokens.length > 0) {
+        for (Tuple<UserTokens, DocumentSnapshot> tokens in remainingTokens) {
+          for (UserToken token in tokens.item1.tokens) {
+            _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
+                item1: token, item2: tokens.item2));
+            uts.add(token);
+          }
+        }
+      }
+    } else if (startNum == newBookings.length + 1) {
+      //this is first time scenario where start num = 1 and no items will be there in the newBookings
+      //also this will be usual load more scenario from server when user reaches to the last item in the list
+      List<UserToken> uts = [];
+      Tuple<UserToken, DocumentSnapshot> lastDoc;
+      for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
+        if (lastDoc.item1.getID() ==
+            newBookings[newBookings.length - 1].getID()) {
+          lastDoc = doc;
+          break;
+        }
+      }
+
+      if (lastDoc.item2 == null) {
+        //TODO - get this token DocumentSnapshot from server and set it
+      }
+
+      List<Tuple<UserTokens, DocumentSnapshot>> allTokens =
+          await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
+              now, false, null, lastDoc.item2, takeCount);
+
+      if (allTokens != null && allTokens.length > 0) {
+        for (Tuple<UserTokens, DocumentSnapshot> tokens in allTokens) {
+          for (UserToken token in tokens.item1.tokens) {
+            _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
+                item1: token, item2: tokens.item2));
+            uts.add(token);
+          }
+        }
+      }
+    } else {
+      throw new Exception("Supplied param for loading Tokens is not valid");
+    }
   }
 
   List<EntityType> getActiveEntityTypes() {
@@ -635,8 +714,8 @@ class GlobalState {
     if (tokens != null) {
       for (UserToken tok in tokens.tokens) {
         matched = false;
-        for (UserToken ut in bookings) {
-          if (ut.getID() == tok.getID()) {
+        for (Tuple<UserToken, DocumentSnapshot> ut in bookings) {
+          if (ut.item1.getID() == tok.getID()) {
             matched = true;
             break;
           }
@@ -648,7 +727,8 @@ class GlobalState {
         }
       }
       if (newToken != null) {
-        bookings.add(newToken);
+        bookings.add(
+            Tuple<UserToken, DocumentSnapshot>(item1: newToken, item2: null));
       }
     }
     return tuple;
@@ -694,9 +774,9 @@ class GlobalState {
       int index = -1;
       UserToken cancelledToken;
       bool didMatch = false;
-      for (UserToken existingTok in bookings) {
+      for (Tuple<UserToken, DocumentSnapshot> existingTok in bookings) {
         index++;
-        if (existingTok.parent.getTokenId() == uts.getTokenId()) {
+        if (existingTok.item1.parent.getTokenId() == uts.getTokenId()) {
           if (number == null) {
             didMatch = true;
             cancelledToken = uts.tokens[0];
@@ -705,7 +785,7 @@ class GlobalState {
             //supplied number should not exist in the returned UserTokens object as that would have changed to -1 and original number should match
             for (UserToken ut in uts.tokens) {
               if (number == ut.numberBeforeCancellation &&
-                  number == existingTok.number) {
+                  number == existingTok.item1.number) {
                 didMatch = true;
                 cancelledToken = ut;
                 break;
@@ -719,7 +799,8 @@ class GlobalState {
       }
 
       if (didMatch) {
-        bookings[index] = cancelledToken;
+        bookings[index] = new Tuple<UserToken, DocumentSnapshot>(
+            item1: cancelledToken, item2: null);
       }
       return true;
     } else {

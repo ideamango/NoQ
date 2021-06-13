@@ -7,6 +7,7 @@ import 'package:LESSs/pages/user_account_page.dart';
 import 'package:LESSs/services/circular_progress.dart';
 import 'package:LESSs/services/url_services.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -20,6 +21,7 @@ import '../global_state.dart';
 import '../pages/show_user_application_details.dart';
 import '../services/qr_code_user_application.dart';
 import '../style.dart';
+import '../tuple.dart';
 import '../utils.dart';
 import '../widget/page_animation.dart';
 import '../widget/widgets.dart';
@@ -49,12 +51,12 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
     getGlobalState().whenComplete(() {
       //get Token details from GS
       if (Utils.isNotNullOrEmpty(widget.ba.tokenId)) {
-        List<UserToken> listOfAllTokens = _gs.bookings;
+        List<Tuple<UserToken, DocumentSnapshot>> listOfAllTokens = _gs.bookings;
         if (!Utils.isNullOrEmpty(listOfAllTokens)) {
           tokens = [];
           for (var token in listOfAllTokens) {
-            if (token.getID() == widget.ba.tokenId) {
-              tokens.add(token);
+            if (token.item1.getID() == widget.ba.tokenId) {
+              tokens.add(token.item1);
             }
           }
         }
