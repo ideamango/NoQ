@@ -71,9 +71,9 @@ class _UserAccountPageState extends State<UserAccountPage>
   // bool _expansionClick = false;
   AnimationController _animationController;
   Animation animation;
-  String loadMoreMsg;
-  String loadUpcomingTokens;
-  String loadPastTokens;
+  String loadMoreApplicationsMsg;
+  String loadUpcomingTokensMsg;
+  String loadPastTokensMsg;
   bool keepExpandedAppls = false;
   ScrollController _childScrollControllerAppls;
   bool keepExpandedUpcomingTokens = false;
@@ -165,7 +165,7 @@ class _UserAccountPageState extends State<UserAccountPage>
             1)
         .then((value) {
       if (Utils.isNullOrEmpty(value)) {
-        loadMoreMsg = 'Thats all. No more Applications to load.';
+        loadMoreApplicationsMsg = 'Thats all. No more Applications to load.';
       } else {
         _listOfApplications.addAll(value);
         keepExpandedAppls = true;
@@ -228,24 +228,18 @@ class _UserAccountPageState extends State<UserAccountPage>
     _upcomingBkgStatus = 'Loading';
     _pastBkgStatus = 'Loading';
     showLoading = true;
-    //Fetch Next Set of Upcoming Tokens SMITA
-
-    // _gs.getUpcomingBookings(null, _gs.getCurrentUser().ph, null, null,
-    //     false, null, _listOfUpcomingTokens[_listOfUpcomingTokens.length - 1].item2, 5).then((value){
-    //       _listOfUpcomingTokens=value;
-    //     });
-
-    //     .then((value) {
-    //   if (Utils.isNullOrEmpty(value)) {
-    //     loadUpcomingTokens = 'Thats all. No more Tokens to load.';
-    //   } else {
-    //     _newBookingsList.addAll(value);
-    //     keepExpandedUpcomingTokens = true;
-    //   }
-    setState(() {
-      showLoading = false;
+    _gs.getUpcomingBookings(_newBookingsList.length + 1, 5).then((value) {
+      if (Utils.isNullOrEmpty(value)) {
+        loadUpcomingTokensMsg = 'Thats all. No more Tokens to load.';
+      } else {
+        _newBookingsList.addAll(value);
+        _upcomingBkgStatus = 'Success';
+        keepExpandedUpcomingTokens = true;
+      }
+      setState(() {
+        showLoading = false;
+      });
     });
-    // });
   }
 
   void refreshToken(event, args) {
@@ -319,12 +313,12 @@ class _UserAccountPageState extends State<UserAccountPage>
           _upcomingBkgStatus = 'NoBookings';
       }
 
-      // if (_newBookingsList != null) {
-      //   if (_newBookingsList.length != 0) {
-      //     _upcomingBkgStatus = 'Success';
-      //   } else
-      //     _upcomingBkgStatus = 'NoBookings';
-      // }
+      if (_pastBookingsList != null) {
+        if (_pastBookingsList.length != 0) {
+          _pastBkgStatus = 'Success';
+        } else
+          _pastBkgStatus = 'NoBookings';
+      }
     });
   }
 
@@ -1261,14 +1255,15 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      if (Utils.isNotNullOrEmpty(loadMoreMsg))
+                                      if (Utils.isNotNullOrEmpty(
+                                          loadMoreApplicationsMsg))
                                         Row(
                                           children: [
                                             Container(
                                                 margin:
                                                     EdgeInsets.only(bottom: 10),
                                                 child: Text(
-                                                  loadMoreMsg,
+                                                  loadMoreApplicationsMsg,
                                                   style: TextStyle(
                                                       color:
                                                           Colors.blueGrey[700],
@@ -1276,7 +1271,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                                                 ))
                                           ],
                                         ),
-                                      if (!Utils.isNotNullOrEmpty(loadMoreMsg))
+                                      if (!Utils.isNotNullOrEmpty(
+                                          loadMoreApplicationsMsg))
                                         Container(
                                           margin: EdgeInsets.all(10),
                                           child: MaterialButton(
@@ -1359,14 +1355,14 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         CrossAxisAlignment.center,
                                     children: [
                                       if (Utils.isNotNullOrEmpty(
-                                          loadUpcomingTokens))
+                                          loadUpcomingTokensMsg))
                                         Row(
                                           children: [
                                             Container(
                                                 margin:
                                                     EdgeInsets.only(bottom: 10),
                                                 child: Text(
-                                                  loadUpcomingTokens,
+                                                  loadUpcomingTokensMsg,
                                                   style: TextStyle(
                                                       color:
                                                           Colors.blueGrey[700],
@@ -1375,7 +1371,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                           ],
                                         ),
                                       if (!Utils.isNotNullOrEmpty(
-                                          loadUpcomingTokens))
+                                          loadUpcomingTokensMsg))
                                         MaterialButton(
                                           child: Column(
                                             children: [
@@ -1454,14 +1450,14 @@ class _UserAccountPageState extends State<UserAccountPage>
                                             CrossAxisAlignment.center,
                                         children: [
                                           if (Utils.isNotNullOrEmpty(
-                                              loadPastTokens))
+                                              loadPastTokensMsg))
                                             Row(
                                               children: [
                                                 Container(
                                                     margin: EdgeInsets.only(
                                                         bottom: 10),
                                                     child: Text(
-                                                      loadPastTokens,
+                                                      loadPastTokensMsg,
                                                       style: TextStyle(
                                                           color: Colors
                                                               .blueGrey[700],
@@ -1470,7 +1466,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               ],
                                             ),
                                           if (!Utils.isNotNullOrEmpty(
-                                              loadPastTokens))
+                                              loadPastTokensMsg))
                                             MaterialButton(
                                               child: Column(
                                                 children: [
