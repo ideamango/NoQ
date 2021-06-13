@@ -536,7 +536,7 @@ class GlobalState {
 
       Tuple<UserToken, DocumentSnapshot> lastDoc;
       for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-        if (lastDoc.item1.getID() == uts[uts.length - 1].getID()) {
+        if (doc.item1.getID() == uts[uts.length - 1].getID()) {
           lastDoc = doc;
           break;
         }
@@ -579,7 +579,7 @@ class GlobalState {
       List<UserToken> uts = [];
       Tuple<UserToken, DocumentSnapshot> lastDoc;
       for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-        if (lastDoc.item1.getID() ==
+        if (doc.item1.getID() ==
             newBookings[newBookings.length - 1].getID()) {
           lastDoc = doc;
           break;
