@@ -526,7 +526,9 @@ class GlobalState {
     //CASE:1
     if (newBookings.length >= startNum + takeCount - 1) {
       //e.g. total items are 10, start num is 6 and take count is 5
-      return newBookings.getRange(startNum - 1, startNum + takeCount);
+      List<UserToken> list = [];
+      list.addAll(newBookings.getRange(startNum - 1, startNum + takeCount - 1));
+      return list;
     }
     //CASE:2
     else if (newBookings.length > startNum &&
@@ -552,6 +554,8 @@ class GlobalState {
             lastDoc.item2 = tokDetails.item2;
             lastDocSnap = tokDetails.item2;
           }
+        } else {
+          lastDocSnap = lastDoc.item2;
         }
       }
       //remaining tokens to be loaded from server
@@ -579,8 +583,7 @@ class GlobalState {
       List<UserToken> uts = [];
       Tuple<UserToken, DocumentSnapshot> lastDoc;
       for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-        if (doc.item1.getID() ==
-            newBookings[newBookings.length - 1].getID()) {
+        if (doc.item1.getID() == newBookings[newBookings.length - 1].getID()) {
           lastDoc = doc;
           break;
         }
@@ -597,6 +600,8 @@ class GlobalState {
             lastDoc.item2 = tokDetails.item2;
             lastDocSnap = tokDetails.item2;
           }
+        } else {
+          lastDocSnap = lastDoc.item2;
         }
       }
 
