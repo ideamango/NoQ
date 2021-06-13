@@ -682,9 +682,9 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
     }
 
     for (int i = 0; i < _gs.bookings.length; i++) {
-      if (_gs.bookings[i].parent.entityId == entityId &&
-          _gs.bookings[i].parent.dateTime == dateTime) {
-        if (_gs.bookings[i].number != -1) return true;
+      if (_gs.bookings[i].item1.parent.entityId == entityId &&
+          _gs.bookings[i].item1.parent.dateTime == dateTime) {
+        if (_gs.bookings[i].item1.number != -1) return true;
       }
     }
     return false;

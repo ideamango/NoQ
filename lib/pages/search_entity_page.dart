@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import '../pages/show_slots_page.dart';
 import '../services/circular_progress.dart';
 import '../services/url_services.dart';
 import '../style.dart';
+import '../tuple.dart';
 import '../utils.dart';
 import '../widget/appbar.dart';
 import '../widget/bottom_nav_bar.dart';
@@ -1822,12 +1824,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     bool dateBooked = false;
 
     if (_state.bookings != null) {
-      for (UserToken obj in (_state.bookings)) {
-        if ((compareDateFormat
-                    .format(dt)
-                    .compareTo(compareDateFormat.format(obj.parent.dateTime)) ==
+      for (Tuple<UserToken, DocumentSnapshot> obj in (_state.bookings)) {
+        if ((compareDateFormat.format(dt).compareTo(
+                    compareDateFormat.format(obj.item1.parent.dateTime)) ==
                 0) &&
-            (obj.parent.entityId == sid && obj.number != -1)) {
+            (obj.item1.parent.entityId == sid && obj.item1.number != -1)) {
           dateBooked = true;
         }
       }

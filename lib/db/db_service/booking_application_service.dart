@@ -360,7 +360,8 @@ class BookingApplicationService {
           ba.tokenId = lastTok.getID();
 
           //HACK: by accessing bookings of GS to add this new Token, so that it apears immediately in users list
-          _gs.bookings.add(lastTok);
+          _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
+              item1: lastTok, item2: null));
           tok = lastTok;
         }
 
@@ -538,10 +539,10 @@ class BookingApplicationService {
           int index = -1;
           bool matched = false;
 
-          for (UserToken ut in _gs.bookings) {
+          for (Tuple<UserToken, DocumentSnapshot> ut in _gs.bookings) {
             index++;
             for (UserToken cut in cancelledTokens.tokens) {
-              if (ut.getID() == cut.getID() &&
+              if (ut.item1.getID() == cut.getID() &&
                   tokenNumber == cut.numberBeforeCancellation) {
                 matched = true;
                 cancelledTok = cut;
@@ -554,7 +555,8 @@ class BookingApplicationService {
           }
 
           if (index > -1 && cancelledTok != null) {
-            _gs.bookings[index] = cancelledTok;
+            _gs.bookings[index] = new Tuple<UserToken, DocumentSnapshot>(
+                item1: cancelledTok, item2: null);
           }
         }
 
