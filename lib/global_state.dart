@@ -578,7 +578,12 @@ class GlobalState {
       }
 
       if (lastDoc.item2 == null) {
-        //TODO - get this token DocumentSnapshot from server and set it
+        Tuple<UserTokens, DocumentSnapshot> tokDetails =
+            await _gs._tokenService.getToken(lastDoc.item1.parent.getTokenId());
+
+        if (tokDetails != null) {
+          lastDoc.item2 = tokDetails.item2;
+        }
       }
 
       List<Tuple<UserTokens, DocumentSnapshot>> allTokens =
