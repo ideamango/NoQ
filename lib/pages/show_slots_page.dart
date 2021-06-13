@@ -877,7 +877,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotBookToken, error.cause);
         }
-
         if (error is SlotFullException) {
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotBookToken, slotsAlreadyBooked);

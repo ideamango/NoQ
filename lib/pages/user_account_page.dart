@@ -82,6 +82,8 @@ class _UserAccountPageState extends State<UserAccountPage>
   ScrollController _childScrollControllerPastTokens;
   bool showLoading = false;
 
+  List<Tuple<UserTokens, DocumentSnapshot>> _listOfUpcomingTokens;
+
   @override
   void initState() {
     super.initState();
@@ -228,20 +230,11 @@ class _UserAccountPageState extends State<UserAccountPage>
     showLoading = true;
     //Fetch Next Set of Upcoming Tokens SMITA
 
-    // _gs
-    //     .getUpcomingBookings(
-    //         null,
-    //         null,
-    //         null,
-    //         _gs.getCurrentUser().ph,
-    //         null,
-    //         null,
-    //         null,
-    //         "timeOfSubmission",
-    //         true,
-    //         null,
-    //         _listOfApplications[_listOfApplications.length - 1].item2,
-    //         1)
+    // _gs.getUpcomingBookings(null, _gs.getCurrentUser().ph, null, null,
+    //     false, null, _listOfUpcomingTokens[_listOfUpcomingTokens.length - 1].item2, 5).then((value){
+    //       _listOfUpcomingTokens=value;
+    //     });
+
     //     .then((value) {
     //   if (Utils.isNullOrEmpty(value)) {
     //     loadUpcomingTokens = 'Thats all. No more Tokens to load.';
@@ -309,13 +302,16 @@ class _UserAccountPageState extends State<UserAccountPage>
     // }
   }
 
-  void fetchDataFromGlobalState() {
+  Future<void> _loadBookings() async {
     if (!Utils.isNullOrEmpty(_gs.bookings)) {
       if (_gs.bookings.length != 0) {
         setState(() {
           _pastBookingsList = _gs.getPastBookings();
 
           _newBookingsList = _gs.getUpcomingBookings();
+          //  _gs.getTokenService().getTokens(null, _gs.getCurrentUser().ph, null, null,
+          // true, null, _newBookingsList[_newBookingsList.length - 1], 5);
+          //  _newBookingsList =
 
           if (_pastBookingsList.length != 0) {
             _pastBkgStatus = 'Success';
@@ -333,13 +329,6 @@ class _UserAccountPageState extends State<UserAccountPage>
         _pastBkgStatus = 'NoBookings';
       });
     }
-  }
-
-  Future<void> _loadBookings() async {
-    //Fetch details from server
-
-    //loadDataFromPrefs();
-    fetchDataFromGlobalState();
   }
 
   List cardList = [Item1(), Item2(), Item3(), Item4(), Item5(), Item6()];

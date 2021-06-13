@@ -269,7 +269,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                     isReadOnly: widget.isReadOnly)));
                           },
                           child: Card(
-                            elevation: 20,
+                            elevation: 8,
                             color: Colors.amberAccent.withOpacity(0.7),
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .42,

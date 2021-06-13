@@ -561,7 +561,7 @@ class _SlotSelectionAdminState extends State<SlotSelectionAdmin> {
                                     // height:
                                     //     MediaQuery.of(context).size.height * .06,
                                     child: RaisedButton(
-                                      elevation: 10.0,
+                                      elevation: 2.0,
                                       color: btnColor,
                                       splashColor: highlightColor,
                                       shape: RoundedRectangleBorder(
@@ -764,7 +764,7 @@ class _SlotSelectionAdminState extends State<SlotSelectionAdmin> {
           child: MaterialButton(
             elevation: (isDisabled(sl.dateTime))
                 ? 0
-                : ((isSelected(sl.dateTime) == true) ? 0.0 : 10.0),
+                : ((isSelected(sl.dateTime) == true) ? 0.0 : 2.0),
             padding: EdgeInsets.all(2),
             child: Text(
               hrs + ':' + mnts,
