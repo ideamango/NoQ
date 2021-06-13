@@ -576,14 +576,16 @@ class GlobalState {
           break;
         }
       }
-
-      if (lastDoc.item2 == null) {
-        //TODO - get this token DocumentSnapshot from server and set it
+      DocumentSnapshot lastDocSnap;
+      if (lastDoc != null) {
+        if (lastDoc.item2 == null) {
+          //TODO - get this token DocumentSnapshot from server and set it
+        }
       }
 
       List<Tuple<UserTokens, DocumentSnapshot>> allTokens =
           await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
-              now, false, null, lastDoc.item2, takeCount);
+              now, false, null, lastDocSnap, takeCount);
 
       if (allTokens != null && allTokens.length > 0) {
         for (Tuple<UserTokens, DocumentSnapshot> tokens in allTokens) {
