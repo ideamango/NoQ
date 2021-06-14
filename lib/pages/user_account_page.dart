@@ -76,7 +76,6 @@ class _UserAccountPageState extends State<UserAccountPage>
   String loadPastTokensMsg;
   bool keepExpandedAppls = false;
   ScrollController _childScrollControllerAppls;
-  bool keepExpandedUpcomingTokens = false;
   ScrollController _childScrollControllerUpcomingTokens;
   bool keepExpandedPastTokens = false;
   ScrollController _childScrollControllerPastTokens;
@@ -211,7 +210,6 @@ class _UserAccountPageState extends State<UserAccountPage>
       } else {
         _newBookingsList.addAll(value);
         _upcomingBkgStatus = 'Success';
-        keepExpandedUpcomingTokens = true;
       }
       setState(() {
         //    showLoadingAppls = false;

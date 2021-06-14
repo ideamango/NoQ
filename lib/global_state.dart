@@ -643,7 +643,7 @@ class GlobalState {
       return list;
     }
     //CASE:2
-    else if (newBookings.length > startNum &&
+    else if (newBookings.length >= startNum &&
         newBookings.length < startNum + takeCount - 1) {
       List<UserToken> uts = [];
       uts.addAll(newBookings.getRange(startNum - 1, newBookings.length));

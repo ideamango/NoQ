@@ -92,6 +92,7 @@ class _UserHomePageState extends State<UserHomePage>
 
   AnimationController _animationController;
   Animation animation;
+  String loadUpcomingTokensMsg;
 
   @override
   void initState() {
@@ -103,7 +104,6 @@ class _UserHomePageState extends State<UserHomePage>
     animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
 
     getGlobalState().whenComplete(() {
-      _loadBookings();
 //Start Code for UPI pay -donation
       upiId = _gs.getConfigurations().upi;
       upiQrImgPath = "assets/bigpiq_gpay.jpg";
@@ -131,12 +131,28 @@ class _UserHomePageState extends State<UserHomePage>
 //_state.getConfigurations().isDonationEnabled()
 //
       isDonationEnabled = _gs.getConfigurations().isDonationEnabled();
-      if (this.mounted) {
-        setState(() {
+      _loadInitialUpcomingBookings().then((value) {
+        if (this.mounted) {
+          setState(() {
+            _initCompleted = true;
+          });
+        } else
           _initCompleted = true;
-        });
-      } else
-        _initCompleted = true;
+      });
+    });
+  }
+
+  Future<void> _loadInitialUpcomingBookings() async {
+    _upcomingBkgStatus = 'Loading';
+    _newBookingsList = await _gs.getUpcomingBookings(1, 3);
+
+    setState(() {
+      if (_newBookingsList != null) {
+        if (_newBookingsList.length != 0) {
+          _upcomingBkgStatus = 'Success';
+        } else
+          _upcomingBkgStatus = 'NoBookings';
+      }
     });
   }
 
@@ -151,28 +167,47 @@ class _UserHomePageState extends State<UserHomePage>
     _gs = await GlobalState.getGlobalState();
   }
 
-  void _loadBookings() async {
-    //Fetch booking details from server
-    if (!Utils.isNullOrEmpty(_gs.bookings)) {
-      if (_gs.bookings.length != 0) {
-        _pastBookingsList = await _gs.getPastBookings(1, 5);
-
-        _newBookingsList = await _gs.getUpcomingBookings(1, 5);
-
-        if (_pastBookingsList.length != 0) {
-          _pastBkgStatus = 'Success';
-        } else
-          _pastBkgStatus = 'NoBookings';
-        if (_newBookingsList.length != 0) {
-          _upcomingBkgStatus = 'Success';
-        } else
-          _upcomingBkgStatus = 'NoBookings';
+  void loadMoreUpcomingTokens() {
+    _upcomingBkgStatus = 'Loading';
+    // _pastBkgStatus = 'Loading';
+    //  showLoadingAppls = true;
+    _gs.getUpcomingBookings(_newBookingsList.length + 1, 5).then((value) {
+      if (Utils.isNullOrEmpty(value)) {
+        loadUpcomingTokensMsg = 'Thats all. No more Tokens to load.';
+      } else {
+        _newBookingsList.addAll(value);
+        _upcomingBkgStatus = 'Success';
       }
-    } else {
-      _upcomingBkgStatus = 'NoBookings';
-      _pastBkgStatus = 'NoBookings';
-    }
+      setState(() {
+        //    showLoadingAppls = false;
+        _upcomingBkgStatus = 'Success';
+        // _pastBkgStatus = 'Success';
+      });
+    });
   }
+
+  // void _loadBookings() async {
+  //   //Fetch booking details from server
+  //   if (!Utils.isNullOrEmpty(_gs.bookings)) {
+  //     if (_gs.bookings.length != 0) {
+  //       _pastBookingsList = await _gs.getPastBookings(1, 5);
+
+  //       _newBookingsList = await _gs.getUpcomingBookings(1, 5);
+
+  //       if (_pastBookingsList.length != 0) {
+  //         _pastBkgStatus = 'Success';
+  //       } else
+  //         _pastBkgStatus = 'NoBookings';
+  //       if (_newBookingsList.length != 0) {
+  //         _upcomingBkgStatus = 'Success';
+  //       } else
+  //         _upcomingBkgStatus = 'NoBookings';
+  //     }
+  //   } else {
+  //     _upcomingBkgStatus = 'NoBookings';
+  //     _pastBkgStatus = 'NoBookings';
+  //   }
+  // }
 
   openPlayStore() async {
     // PackageInfo info = await PackageInfo.fromPlatform();
@@ -476,28 +511,75 @@ class _UserHomePageState extends State<UserHomePage>
                               ),
                               children: <Widget>[
                                 if (_upcomingBkgStatus == 'Success')
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.vertical,
-                                    physics: ClampingScrollPhysics(),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Container(
-                                          child: _buildItem(
-                                              _newBookingsList[index],
-                                              _newBookingsList,
-                                              index));
-                                    },
-                                    itemCount: _newBookingsList.length,
+                                  Scrollbar(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.vertical,
+                                      physics: ClampingScrollPhysics(),
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Container(
+                                            child: _buildItem(
+                                                _newBookingsList[index],
+                                                _newBookingsList,
+                                                index)
+
+                                            //children: <Widget>[firstRow, secondRow],
+                                            );
+                                      },
+                                      itemCount: _newBookingsList.length,
+                                    ),
                                   ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    if (Utils.isNotNullOrEmpty(
+                                        loadUpcomingTokensMsg))
+                                      Row(
+                                        children: [
+                                          Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 10),
+                                              child: Text(
+                                                loadUpcomingTokensMsg,
+                                                style: TextStyle(
+                                                    color: Colors.blueGrey[700],
+                                                    fontSize: 14),
+                                              ))
+                                        ],
+                                      ),
+                                    if (!Utils.isNotNullOrEmpty(
+                                            loadUpcomingTokensMsg) &&
+                                        _upcomingBkgStatus != 'NoBookings')
+                                      MaterialButton(
+                                        shape: RoundedRectangleBorder(
+                                            side: BorderSide(color: btnColor),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(3.0))),
+                                        child: Column(
+                                          children: [
+                                            Text('Show more Tokens',
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: Colors.blue)),
+                                          ],
+                                        ),
+                                        onPressed: () {
+                                          loadMoreUpcomingTokens();
+                                        },
+                                      ),
+                                  ],
+                                ),
                                 if (_upcomingBkgStatus == 'NoBookings')
                                   _emptyStorePage(
                                       "No bookings yet.. ", bookNowMsg),
+                                if (_upcomingBkgStatus == 'Loading')
+                                  showCircularProgress(),
                               ],
                             ),
                           ),
                         ),
-//
 
                         verticalSpacer,
 
