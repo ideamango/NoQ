@@ -477,7 +477,11 @@ class _ShowUserApplicationDetailsState
                   conds = conds + newfield.responseValues[i].value.toString();
               }
             } else {
-              conds = newfield.responseValues[0].value.toString();
+              if (Utils.isNullOrEmpty(newfield.responseValues)) {
+                conds = "None";
+              } else {
+                conds = newfield.responseValues[0].value.toString();
+              }
             }
 
             listOfControllers[field.label].text = conds;

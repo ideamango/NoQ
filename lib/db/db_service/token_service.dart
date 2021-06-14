@@ -1036,7 +1036,8 @@ class TokenService {
       query = query.where("dateTime",
           isGreaterThanOrEqualTo: refDateTime.millisecondsSinceEpoch);
     } else if (refDateTime != null && isDescending) {
-      query = query.where("dateTime", isLessThan: refDateTime);
+      query = query.where("dateTime",
+          isLessThan: refDateTime.millisecondsSinceEpoch);
     }
 
     if (Utils.isNotNullOrEmpty("dateTime")) {

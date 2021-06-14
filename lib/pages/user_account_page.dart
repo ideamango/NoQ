@@ -111,7 +111,7 @@ class _UserAccountPageState extends State<UserAccountPage>
         _gs
             .getApplicationService()
             .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
-                null, null, "timeOfSubmission", true, null, null, 1)
+                null, null, "timeOfSubmission", true, null, null, 3)
             .then((value) {
           _listOfApplications = value;
           setState(() {
@@ -162,7 +162,7 @@ class _UserAccountPageState extends State<UserAccountPage>
             true,
             null,
             _listOfApplications[_listOfApplications.length - 1].item2,
-            1)
+            3)
         .then((value) {
       if (Utils.isNullOrEmpty(value)) {
         loadMoreApplicationsMsg = 'Thats all. No more Applications to load.';
@@ -183,50 +183,29 @@ class _UserAccountPageState extends State<UserAccountPage>
   }
 
   void loadMorePastTokens() {
-    _upcomingBkgStatus = 'Loading';
+    // _upcomingBkgStatus = 'Loading';
     _pastBkgStatus = 'Loading';
     showLoading = true;
-    // getGlobalState().whenComplete(() {
-    //   _loadBookings().then((value) {
-    //     _gs
-    //         .getApplicationService()
-    //         .getApplications(
-    //             null,
-    //             null,
-    //             null,
-    //             _gs.getCurrentUser().ph,
-    //             null,
-    //             null,
-    //             null,
-    //             "timeOfSubmission",
-    //             true,
-    //             null,
-    //             _listOfApplications[_listOfApplications.length - 1].item2,
-    //             1)
-    //         .then((value) {
-    //       if (Utils.isNullOrEmpty(value)) {
-    //         loadMoreMsg = 'Thats all. No more Applications to load.';
-    //       } else {
-    //         _listOfApplications.addAll(value);
-    //         keepExpandedAppls = true;
-    //         // if (_childScrollController.hasClients) {
-    //         //   _childScrollController.animateTo(
-    //         //       _childScrollController.position.maxScrollExtent,
-    //         //       curve: Curves.easeInToLinear,
-    //         //       duration: Duration(milliseconds: 200));
-    //         // }
-    //       }
-    setState(() {
-      showLoading = false;
+    _gs.getPastBookings(_pastBookingsList.length + 1, 5).then((value) {
+      if (Utils.isNullOrEmpty(value)) {
+        loadPastTokensMsg = 'Thats all. No more Tokens to load.';
+      } else {
+        _pastBookingsList.addAll(value);
+        _pastBkgStatus = 'Success';
+        keepExpandedPastTokens = true;
+      }
+      setState(() {
+        showLoading = false;
+        _pastBkgStatus = 'Success';
+      });
     });
-    //     });
     //   });
     // });
   }
 
   void loadMoreUpcomingTokens() {
     _upcomingBkgStatus = 'Loading';
-    _pastBkgStatus = 'Loading';
+    // _pastBkgStatus = 'Loading';
     showLoading = true;
     _gs.getUpcomingBookings(_newBookingsList.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
@@ -238,6 +217,8 @@ class _UserAccountPageState extends State<UserAccountPage>
       }
       setState(() {
         showLoading = false;
+        _upcomingBkgStatus = 'Success';
+        // _pastBkgStatus = 'Success';
       });
     });
   }
@@ -297,29 +278,29 @@ class _UserAccountPageState extends State<UserAccountPage>
   }
 
   Future<void> _loadBookings() async {
-    // _pastBookingsList = _gs.getPastBookings();
+    //  _pastBookingsList = await _gs.getPastBookings(1, 3);
 
-    _newBookingsList = await _gs.getUpcomingBookings(1, 5);
+    _newBookingsList = await _gs.getUpcomingBookings(1, 3);
 
     setState(() {
-      //  _gs.getTokenService().getTokens(null, _gs.getCurrentUser().ph, null, null,
-      // true, null, _newBookingsList[_newBookingsList.length - 1], 5);
-      //  _newBookingsList =
-
       if (_newBookingsList != null) {
         if (_newBookingsList.length != 0) {
           _upcomingBkgStatus = 'Success';
         } else
           _upcomingBkgStatus = 'NoBookings';
       }
-
-      if (_pastBookingsList != null) {
-        if (_pastBookingsList.length != 0) {
-          _pastBkgStatus = 'Success';
-        } else
-          _pastBkgStatus = 'NoBookings';
-      }
     });
+  }
+
+  Future<void> _loadInitialPastBookings() async {
+    _pastBookingsList = await _gs.getPastBookings(1, 3);
+    if (_pastBookingsList != null) {
+      if (_pastBookingsList.length != 0) {
+        _pastBkgStatus = 'Success';
+      } else
+        _pastBkgStatus = 'NoBookings';
+    }
+    setState(() {});
   }
 
   List cardList = [Item1(), Item2(), Item3(), Item4(), Item5(), Item6()];
@@ -1316,7 +1297,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                               ),
                               child: ExpansionTile(
                                 //key: PageStorageKey(this.widget.headerTitle),
-
+                                initiallyExpanded: true,
                                 title: Text(
                                   "Upcoming Bookings",
                                   style: TextStyle(
@@ -1371,19 +1352,19 @@ class _UserAccountPageState extends State<UserAccountPage>
                                           ],
                                         ),
                                       if (!Utils.isNotNullOrEmpty(
-                                          loadUpcomingTokensMsg))
+                                              loadUpcomingTokensMsg) &&
+                                          _upcomingBkgStatus != 'NoBookings')
                                         MaterialButton(
+                                          shape: RoundedRectangleBorder(
+                                              side: BorderSide(color: btnColor),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(3.0))),
                                           child: Column(
                                             children: [
                                               Text('Show more Tokens',
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       color: Colors.blue)),
-                                              Icon(
-                                                Icons.keyboard_arrow_down,
-                                                size: 50,
-                                                color: Colors.blue,
-                                              )
                                             ],
                                           ),
                                           onPressed: () {
@@ -1413,7 +1394,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                 accentColor: btnColor,
                               ),
                               child: ExpansionTile(
-                                initiallyExpanded: true,
+                                initiallyExpanded: false,
                                 title: Text(
                                   "Past Bookings",
                                   style: TextStyle(
@@ -1425,6 +1406,11 @@ class _UserAccountPageState extends State<UserAccountPage>
                                   Icons.access_time,
                                   color: primaryIcon,
                                 ),
+                                onExpansionChanged: (value) {
+                                  if (value) {
+                                    _loadInitialPastBookings();
+                                  }
+                                },
                                 children: <Widget>[
                                   Column(
                                     children: <Widget>[
@@ -1465,20 +1451,23 @@ class _UserAccountPageState extends State<UserAccountPage>
                                                     ))
                                               ],
                                             ),
-                                          if (!Utils.isNotNullOrEmpty(
-                                              loadPastTokensMsg))
+                                          if (Utils.isStrNullOrEmpty(
+                                                  loadPastTokensMsg) &&
+                                              _pastBkgStatus == 'Success')
                                             MaterialButton(
+                                              shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color: btnColor),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              3.0))),
                                               child: Column(
                                                 children: [
                                                   Text('Show more Tokens',
                                                       style: TextStyle(
                                                           fontSize: 15,
                                                           color: Colors.blue)),
-                                                  Icon(
-                                                    Icons.keyboard_arrow_down,
-                                                    size: 50,
-                                                    color: Colors.blue,
-                                                  )
                                                 ],
                                               ),
                                               onPressed: () {

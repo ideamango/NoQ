@@ -521,12 +521,15 @@ class GlobalState {
       uts.addAll(newBookings.getRange(startNum - 1, newBookings.length));
 
       Tuple<UserToken, DocumentSnapshot> lastDoc;
-      for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-        if (doc.item1.getID() == uts[uts.length - 1].getID()) {
-          lastDoc = doc;
-          break;
+      if (uts.length > 0) {
+        for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
+          if (doc.item1.getID() == uts[uts.length - 1].getID()) {
+            lastDoc = doc;
+            break;
+          }
         }
       }
+
       DocumentSnapshot lastDocSnap;
       if (lastDoc != null) {
         if (lastDoc.item2 == null) {
@@ -566,10 +569,13 @@ class GlobalState {
       //also this will be usual load more scenario from server when user reaches to the last item in the list
       List<UserToken> uts = [];
       Tuple<UserToken, DocumentSnapshot> lastDoc;
-      for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-        if (doc.item1.getID() == newBookings[newBookings.length - 1].getID()) {
-          lastDoc = doc;
-          break;
+      if (newBookings.length > 0) {
+        for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
+          if (doc.item1.getID() ==
+              newBookings[newBookings.length - 1].getID()) {
+            lastDoc = doc;
+            break;
+          }
         }
       }
 
@@ -643,10 +649,13 @@ class GlobalState {
       uts.addAll(newBookings.getRange(startNum - 1, newBookings.length));
 
       Tuple<UserToken, DocumentSnapshot> lastDoc;
-      for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-        if (doc.item1.getID() == uts[uts.length - 1].getID()) {
-          lastDoc = doc;
-          break;
+
+      if (uts.length > 0) {
+        for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
+          if (doc.item1.getID() == uts[uts.length - 1].getID()) {
+            lastDoc = doc;
+            break;
+          }
         }
       }
       DocumentSnapshot lastDocSnap;
@@ -688,10 +697,13 @@ class GlobalState {
       //also this will be usual load more scenario from server when user reaches to the last item in the list
       List<UserToken> uts = [];
       Tuple<UserToken, DocumentSnapshot> lastDoc;
-      for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-        if (doc.item1.getID() == newBookings[newBookings.length - 1].getID()) {
-          lastDoc = doc;
-          break;
+      if (newBookings.length > 0) {
+        for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
+          if (doc.item1.getID() ==
+              newBookings[newBookings.length - 1].getID()) {
+            lastDoc = doc;
+            break;
+          }
         }
       }
 
