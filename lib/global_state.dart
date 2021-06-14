@@ -510,7 +510,9 @@ class GlobalState {
     //CASE:1
     if (newBookings.length >= startNum + takeCount - 1) {
       //e.g. total items are 10, start num is 6 and take count is 5
-      return newBookings.getRange(startNum - 1, startNum + takeCount);
+      List<UserToken> list = [];
+      list.addAll(newBookings.getRange(startNum - 1, startNum + takeCount - 1));
+      return list;
     }
     //CASE:2
     else if (newBookings.length > startNum &&
@@ -536,6 +538,8 @@ class GlobalState {
             lastDoc.item2 = tokDetails.item2;
             lastDocSnap = tokDetails.item2;
           }
+        } else {
+          lastDocSnap = lastDoc.item2;
         }
       }
       //remaining tokens to be loaded from server
@@ -543,7 +547,7 @@ class GlobalState {
       int remainingCount = takeCount - uts.length;
       List<Tuple<UserTokens, DocumentSnapshot>> remainingTokens =
           await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
-              now, false, null, lastDocSnap, remainingCount);
+              now, true, null, lastDocSnap, remainingCount);
 
       if (remainingTokens != null && remainingTokens.length > 0) {
         for (Tuple<UserTokens, DocumentSnapshot> tokens in remainingTokens) {
@@ -580,12 +584,14 @@ class GlobalState {
             lastDoc.item2 = tokDetails.item2;
             lastDocSnap = tokDetails.item2;
           }
+        } else {
+          lastDocSnap = lastDoc.item2;
         }
       }
 
       List<Tuple<UserTokens, DocumentSnapshot>> allTokens =
           await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
-              now, false, null, lastDocSnap, takeCount);
+              now, true, null, lastDocSnap, takeCount);
 
       if (allTokens != null && allTokens.length > 0) {
         for (Tuple<UserTokens, DocumentSnapshot> tokens in allTokens) {
