@@ -479,9 +479,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                       style: buttonMedTextStyle,
                                     ),
                                     onPressed: () {
-                                      if (selectedSlot != null)
+                                      if (selectedSlot != null) {
                                         bookSlot();
-                                      else {
+                                      } else {
                                         Utils.showMyFlushbar(
                                             context,
                                             Icons.error,
@@ -663,7 +663,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         if (!Utils.isNullOrEmpty(slotIdVals)) {
           String slotId = slotIdVals[1] + '#' + slotIdVals[2];
           TokenStats slotStats = counter.slotWiseStats[slotId];
-          int numberOfBookingsLeft = widget.metaEntity.maxAllowed -
+          int numberOfBookingsLeft = (entitySlot != null
+                  ? entitySlot.maxAllowed
+                  : widget.metaEntity.maxAllowed) -
               (slotStats.numberOfTokensCreated -
                   slotStats.numberOfTokensCancelled);
           //   if (_tokensMap.containsKey(_slotList[i].slotId)) {
@@ -675,7 +677,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   Widget _buildGridItem(BuildContext context, int index) {
-    //TODO: Check what information coming from server, then process and use it.
     Slot sl = _slotList[index];
     String hrs = Utils.formatTime(sl.dateTime.hour.toString());
     String mnts = Utils.formatTime(sl.dateTime.minute.toString());
@@ -683,7 +684,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     return Column(
       children: <Widget>[
         Container(
-          child: RaisedButton(
+          child: MaterialButton(
             elevation: (isDisabled(sl.dateTime))
                 ? 0
                 : ((isSelected(sl.dateTime) == true) ? 0.0 : 3.0),
@@ -699,7 +700,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                 // textAlign: TextAlign.center,
               ),
             ),
-
             autofocus: false,
             color: (isDisabled(sl.dateTime))
                 ? disabledColor
@@ -710,11 +710,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                         : (sl.isFull == false)
                             ? Colors.cyan[50]
                             : btnDisabledolor)),
-
             disabledColor: Colors.grey[200],
-            //textTheme: ButtonTextTheme.normal,
-            //highlightColor: Colors.green,
-            // highlightElevation: 10.0,
             splashColor: (sl.isFull == true) ? highlightColor : null,
             shape: (isSelected(sl.dateTime) == true)
                 ? RoundedRectangleBorder(
@@ -756,7 +752,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               AutoSizeText(
                   (_tokensMap.containsKey(sl.slotId)
                           ? _tokensMap[sl.slotId]
-                          : metaEntity.maxAllowed)
+                          : (entitySlot != null
+                              ? entitySlot.maxAllowed
+                              : metaEntity.maxAllowed))
                       .toString(),
                   // (sl.totalBooked -
                   //         (sl.totalCancelled != null ? sl.totalCancelled : 0))
@@ -786,15 +784,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   void bookSlot() {
     _gs.initializeNotification();
 
-    Utils.showMyFlushbar(
-        context,
-        Icons.info_outline,
-        Duration(
-          seconds: 4,
-        ),
-        slotBooking,
-        takingMoment);
-
     if (maxAllowedTokensForUser <= bookedSlots.length) {
       //Max tokens already booked, then user cant book further slots.
       Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
@@ -818,6 +807,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                 isOnlineToken: enableVideoChat)));
       }
     } else {
+      Utils.showMyFlushbar(
+          context,
+          Icons.info_outline,
+          Duration(
+            seconds: 3,
+          ),
+          slotBooking,
+          takingMoment);
       _gs.addBooking(metaEntity, selectedSlot, enableVideoChat).then((value) {
         if (value == null) {
           showFlushBar();
@@ -851,7 +848,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   context, msg, _token, _storeName, _dateFormatted, slotTiming)
               .then((value) {
             _returnValues(value);
-
             setState(() {
               bookedSlot = selectedSlot;
               selectedSlot = null;

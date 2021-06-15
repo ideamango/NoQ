@@ -189,179 +189,188 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
       statusText = "Upcoming";
       textColor = Colors.blue;
     }
+    if (bookingToken.number == -1) {
+      statusText = "Cancelled";
+      textColor = Colors.red;
+    }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+    return Card(
+      margin: EdgeInsets.all(8),
+      child: Container(
+        margin: EdgeInsets.only(left: 8, bottom: 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: EdgeInsets.all(6),
-              margin: EdgeInsets.all(0),
-              alignment: Alignment.topCenter,
-              decoration: BoxDecoration(
-                  color:
-                      (bookingToken.number == -1 ? Colors.red : Colors.green),
-                  shape: BoxShape.rectangle,
-                  borderRadius:
-                      BorderRadius.only(bottomLeft: Radius.circular(5.0))),
-              child: SizedBox(
-                child: Center(
-                  child: AutoSizeText(
-                      bookingToken.number == -1 ? 'Invalid' : 'Valid',
-                      textAlign: TextAlign.center,
-                      minFontSize: 9,
-                      maxFontSize: 10,
-                      style: TextStyle(
-                          //fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                          color: Colors.white,
-                          fontFamily: 'RalewayRegular')),
-                ),
-              ),
-            ),
-          ],
-        ),
-        nameValueText('User', bookingToken.parent.userId),
-        nameValueText('Place', Utils.stringToPascalCase(entityName)),
-        nameValueText('Date', dateTime),
-        Row(
-          children: [
-            Container(
-              //  padding: EdgeInsets.all(5),
-              child: Row(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * .2,
-                    child: Text(
-                      'Time',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontFamily: 'RalewayRegular'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(6),
+                  margin: EdgeInsets.all(0),
+                  alignment: Alignment.topCenter,
+                  decoration: BoxDecoration(
+                      color: (bookingToken.number == -1
+                          ? Colors.red
+                          : Colors.green),
+                      shape: BoxShape.rectangle,
+                      borderRadius:
+                          BorderRadius.only(bottomLeft: Radius.circular(5.0))),
+                  child: SizedBox(
+                    child: Center(
+                      child: AutoSizeText(
+                          bookingToken.number == -1 ? 'Invalid' : 'Valid',
+                          textAlign: TextAlign.center,
+                          minFontSize: 9,
+                          maxFontSize: 10,
+                          style: TextStyle(
+                              //fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                              color: Colors.white,
+                              fontFamily: 'RalewayRegular')),
                     ),
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * .2,
-                    child: Text(
-                      time,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          color: Colors.blueGrey[800],
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  )
-                ],
-              ),
+                ),
+              ],
             ),
-            FadeTransition(
-              opacity: animation,
-              child: Text(
-                statusText,
-                style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: 'RalewayRegular',
-                    color: textColor,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-        nameValueText('Token', bookingToken.getDisplayName()),
-        if (Utils.isNotNullOrEmpty(bookingToken.applicationId))
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  print('tapped');
-                  bool isReadOnly = false;
-
-                  _gs
-                      .getApplicationService()
-                      .getApplication(token.tokens[0].applicationId)
-                      .then((newBaFromGS) {
-//Check if the person scanning the token is exec, mgr, or admin
-                    tokenStatus =
-                        EnumToString.convertToString(newBaFromGS.status);
-                    if (_gs
-                        .getCurrentUser()
-                        .entityVsRole
-                        .containsKey(bookingToken.parent.entityId)) {
-                      if (_gs
-                              .getCurrentUser()
-                              .entityVsRole[bookingToken.parent.entityId] ==
-                          EntityRole.Executive) {
-                        isReadOnly = true;
-                      }
-                    }
-
-                    if (newBaFromGS != null) {
-                      mapOfBa[token.tokens[0].getID()] = newBaFromGS;
-                      _gs
-                          .getEntityService()
-                          .getEntity(bookingToken.parent.entityId)
-                          .then((entity) {
-                        Navigator.of(context)
-                            .push(PageAnimation.createRoute(
-                                ShowApplicationDetails(
-                          bookingApplication: newBaFromGS,
-                          showReject: false,
-                          metaEntity: entity.getMetaEntity(),
-                          newBookingDate: null,
-                          isReadOnly: isReadOnly,
-                          isAvailable: true,
-                          tokenCounter: null,
-                          backRoute: null,
-                          forInfo: false,
-                        )))
-                            .then((updatedBaTuple) {
-                          if (updatedBaTuple != null) {
-                            if (updatedBaTuple.item1.status ==
-                                    ApplicationStatus.ONHOLD ||
-                                updatedBaTuple.item1.status ==
-                                    ApplicationStatus.REJECTED) {
-                              tokenStatus = EnumToString.convertToString(
-                                  newBaFromGS.status);
-                              bookingToken.number = -1;
-                              //bookingToken.numberBeforeCancellation
-                            }
-                            setState(() {
-                              print(
-                                  'Updated returned TokenCounter and BA from details page');
-                            });
-                          }
-                        });
-                      });
-                    } else {
-                      Utils.showMyFlushbar(
-                          context,
-                          Icons.info,
-                          Duration(seconds: 5),
-                          'Oho! Could not fetch the Application details.',
-                          'Please try again later.');
-                    }
-                  });
-                },
-                child: Container(
-                  margin: EdgeInsets.only(top: 8, right: 5),
+            nameValueText('User', bookingToken.parent.userId),
+            nameValueText('Place', Utils.stringToPascalCase(entityName)),
+            nameValueText('Date', dateTime),
+            Row(
+              children: [
+                Container(
+                  //  padding: EdgeInsets.all(5),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width * .2,
+                        child: Text(
+                          'Time',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontFamily: 'RalewayRegular'),
+                        ),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * .2,
+                        child: Text(
+                          time,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.blueGrey[800],
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                FadeTransition(
+                  opacity: animation,
                   child: Text(
-                    '..view application details',
+                    statusText,
                     style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 18,
                         fontFamily: 'RalewayRegular',
-                        color: Colors.blue,
+                        color: textColor,
                         fontWeight: FontWeight.bold),
                   ),
                 ),
-              ),
-            ],
-          )
-      ],
+              ],
+            ),
+            nameValueText('Token', bookingToken.getDisplayName()),
+            if (Utils.isNotNullOrEmpty(bookingToken.applicationId))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  MaterialButton(
+                    visualDensity: VisualDensity.compact,
+                    child: Text(
+                      '. . view application details',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'RalewayRegular',
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      print('tapped');
+                      bool isReadOnly = false;
+
+                      _gs
+                          .getApplicationService()
+                          .getApplication(token.tokens[0].applicationId)
+                          .then((newBaFromGS) {
+//Check if the person scanning the token is exec, mgr, or admin
+                        tokenStatus =
+                            EnumToString.convertToString(newBaFromGS.status);
+                        if (_gs
+                            .getCurrentUser()
+                            .entityVsRole
+                            .containsKey(bookingToken.parent.entityId)) {
+                          if (_gs
+                                  .getCurrentUser()
+                                  .entityVsRole[bookingToken.parent.entityId] ==
+                              EntityRole.Executive) {
+                            isReadOnly = true;
+                          }
+                        }
+
+                        if (newBaFromGS != null) {
+                          mapOfBa[token.tokens[0].getID()] = newBaFromGS;
+                          _gs
+                              .getEntityService()
+                              .getEntity(bookingToken.parent.entityId)
+                              .then((entity) {
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(
+                                    ShowApplicationDetails(
+                              bookingApplication: newBaFromGS,
+                              showReject: false,
+                              metaEntity: entity.getMetaEntity(),
+                              newBookingDate: null,
+                              isReadOnly: isReadOnly,
+                              isAvailable: true,
+                              tokenCounter: null,
+                              backRoute: null,
+                              forInfo: false,
+                            )))
+                                .then((updatedBaTuple) {
+                              if (updatedBaTuple != null) {
+                                if (updatedBaTuple.item1.status ==
+                                        ApplicationStatus.ONHOLD ||
+                                    updatedBaTuple.item1.status ==
+                                        ApplicationStatus.REJECTED) {
+                                  tokenStatus = EnumToString.convertToString(
+                                      newBaFromGS.status);
+                                  bookingToken.number = -1;
+                                  //bookingToken.numberBeforeCancellation
+                                }
+                                setState(() {
+                                  print(
+                                      'Updated returned TokenCounter and BA from details page');
+                                });
+                              }
+                            });
+                          });
+                        } else {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info,
+                              Duration(seconds: 5),
+                              'Oho! Could not fetch the Application details.',
+                              'Please try again later.');
+                        }
+                      });
+                    },
+                  ),
+                ],
+              )
+          ],
+        ),
+      ),
     );
   }
 
@@ -379,41 +388,37 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
               backRoute: UserHomePage(),
             ),
             body: Center(
-              child: Card(
-                margin: EdgeInsets.all(10),
-                elevation: 30,
-                child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: borderColor, width: 2),
-                      color: Colors.white,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  margin: EdgeInsets.all(0),
-                  padding: EdgeInsets.all(0),
-                  //  color: Colors.cyan[100],
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      (listOfTokens.length != 0)
-                          ? ListView.builder(
-                              padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                              scrollDirection: Axis.vertical,
-                              physics: ClampingScrollPhysics(),
-                              reverse: true,
-                              shrinkWrap: true,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Column(
-                                  children: [
-                                    buildTokenCard(listOfTokens[index]),
-                                  ],
-                                );
-                              },
-                              itemCount: listOfTokens.length,
-                            )
-                          : Container(height: 0),
-                    ],
-                  ),
+              child: Container(
+                // decoration: BoxDecoration(
+                //     border: Border.all(color: borderColor, width: 1),
+                //     color: Colors.white,
+                //     shape: BoxShape.rectangle,
+                //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                margin: EdgeInsets.all(8),
+                padding: EdgeInsets.all(0),
+                //  color: Colors.cyan[100],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    (listOfTokens.length != 0)
+                        ? ListView.builder(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            scrollDirection: Axis.vertical,
+                            physics: ClampingScrollPhysics(),
+                            reverse: true,
+                            shrinkWrap: true,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Column(
+                                children: [
+                                  buildTokenCard(listOfTokens[index]),
+                                ],
+                              );
+                            },
+                            itemCount: listOfTokens.length,
+                          )
+                        : Container(height: 0),
+                  ],
                 ),
               ),
             ),
