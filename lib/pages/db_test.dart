@@ -105,7 +105,7 @@ class DBTest {
     await createBookingGlobalSchoolNewAdmission(
         SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
     await createBookingFormGlobalSchoolTC(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
-    await createBookingFormGlobalCovidVaccination(
+    await createBookingFormForCovidVaccination(
         COVID_VACCINATION_BOOKING_FORM_ID);
     await createNewAdmissionFormForHospital(HOSPITAL_ADMISSION_FORM);
 
@@ -2804,7 +2804,7 @@ class DBTest {
     return tcForm;
   }
 
-  Future<BookingForm> createBookingFormGlobalCovidVaccination(
+  Future<BookingForm> createBookingFormGlobalCovidVaccination_OLD(
       String formId) async {
     BookingForm bf = new BookingForm(
         formName: "Covid-19 Vacination Applicant Details",
@@ -2899,6 +2899,71 @@ class DBTest {
         "Please enter the applicant's phone number");
 
     bf.addField(phoneField);
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(bf);
+    return bf;
+  }
+
+  Future<BookingForm> createBookingFormForCovidVaccination(
+      String formId) async {
+    BookingForm bf = new BookingForm(
+        formName: "Covid-19 Vacination Applicant Details",
+        headerMsg:
+            "You request will be approved based on the information provided by you, please enter the correct information.",
+        footerMsg:
+            "Applicant must carry the same ID proof documents to the vacination center. Also mark your presence 5 minutes prior to your alloted time-slot. Failing to do so could result in cancellation of your application.",
+        autoApproved: true);
+
+    bf.isSystemTemplate = true;
+    bf.id = formId;
+    bf.autoApproved = false;
+
+    FormInputFieldText nameInput = FormInputFieldText("Name of the Applicant",
+        true, "Please enter your name as per Government ID proof", 50);
+    nameInput.isMeta = true;
+
+    bf.addField(nameInput);
+
+    FormInputFieldDateTime dob = FormInputFieldDateTime(
+        "Date of Birth of the Applicant",
+        true,
+        "Please select the applicant's Date of Birth");
+    dob.isMeta = true;
+    dob.isAge = true;
+    dob.yearOnly = true;
+
+    bf.addField(dob);
+
+    FormInputFieldPhone phoneField = FormInputFieldPhone(
+        "Registered phone number with COWIN",
+        true,
+        "Please enter the applicant's phone number which is registered with COWIN app");
+
+    bf.addField(phoneField);
+
+    FormInputFieldOptionsWithAttachments preferredVaccine =
+        FormInputFieldOptionsWithAttachments(
+            "Please select your preferred vaccine",
+            false,
+            "You will be alloted the time-slot based on the availability of Vaccine selected by you",
+            [Value('COVISHIELD'), Value('COVAXIN')],
+            true);
+
+    preferredVaccine.isMeta = true;
+    preferredVaccine.isMultiSelect = false;
+    preferredVaccine.defaultValueIndex = 0;
+
+    bf.addField(preferredVaccine);
+
+    FormInputFieldNumber cowinSecrete = FormInputFieldNumber(
+        "COWIN Secrete Code",
+        true,
+        "This is last four digit of REF ID on the COWIN app",
+        0001,
+        9999);
+
+    bf.addField(cowinSecrete);
+
     //NOTE: If this is executed, every time the ID of the field is going to change
     await _gs.getApplicationService().saveBookingForm(bf);
     return bf;
