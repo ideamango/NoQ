@@ -145,7 +145,7 @@ class _UserHomePageState extends State<UserHomePage>
   }
 
   Future<void> _loadInitialUpcomingBookings() async {
-    _upcomingBkgStatus = 'Loading';
+    _upcomingBkgStatus = 'Loading..';
     _newBookingsList = await _gs.getUpcomingBookings(1, 3);
 
     setState(() {

@@ -499,7 +499,7 @@ class GlobalState {
     List<UserToken> newBookings = [];
     DateTime now = DateTime.now();
 
-    for (Tuple<UserToken, DocumentSnapshot> tok in bookings) {
+    for (Tuple<UserToken, DocumentSnapshot> tok in _gs.bookings) {
       if (tok.item1.parent.dateTime.isBefore(now)) newBookings.add(tok.item1);
     }
 
@@ -627,7 +627,7 @@ class GlobalState {
     List<UserToken> newBookings = [];
     DateTime now = DateTime.now();
 
-    for (Tuple<UserToken, DocumentSnapshot> tok in bookings) {
+    for (Tuple<UserToken, DocumentSnapshot> tok in _gs.bookings) {
       if (!tok.item1.parent.dateTime.isBefore(now)) newBookings.add(tok.item1);
     }
 
