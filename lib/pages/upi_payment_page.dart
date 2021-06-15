@@ -73,7 +73,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
       }
       if (Platform.isIOS) {
         //TODO: show the QR code and the UPI ID for IOS users to make the payment
-
+        _upiAddressController.text = widget.upiId;
       }
       setState(() {
         initCompleted = true;
