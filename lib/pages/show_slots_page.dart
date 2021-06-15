@@ -663,7 +663,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         if (!Utils.isNullOrEmpty(slotIdVals)) {
           String slotId = slotIdVals[1] + '#' + slotIdVals[2];
           TokenStats slotStats = counter.slotWiseStats[slotId];
-          int numberOfBookingsLeft = widget.metaEntity.maxAllowed -
+          int numberOfBookingsLeft = (entitySlot != null
+                  ? entitySlot.maxAllowed
+                  : widget.metaEntity.maxAllowed) -
               (slotStats.numberOfTokensCreated -
                   slotStats.numberOfTokensCancelled);
           //   if (_tokensMap.containsKey(_slotList[i].slotId)) {
@@ -756,7 +758,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               AutoSizeText(
                   (_tokensMap.containsKey(sl.slotId)
                           ? _tokensMap[sl.slotId]
-                          : metaEntity.maxAllowed)
+                          : (entitySlot != null
+                              ? entitySlot.maxAllowed
+                              : metaEntity.maxAllowed))
                       .toString(),
                   // (sl.totalBooked -
                   //         (sl.totalCancelled != null ? sl.totalCancelled : 0))
