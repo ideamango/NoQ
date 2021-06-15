@@ -677,7 +677,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   Widget _buildGridItem(BuildContext context, int index) {
-    //TODO: Check what information coming from server, then process and use it.
     Slot sl = _slotList[index];
     String hrs = Utils.formatTime(sl.dateTime.hour.toString());
     String mnts = Utils.formatTime(sl.dateTime.minute.toString());
@@ -685,7 +684,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     return Column(
       children: <Widget>[
         Container(
-          child: RaisedButton(
+          child: MaterialButton(
             elevation: (isDisabled(sl.dateTime))
                 ? 0
                 : ((isSelected(sl.dateTime) == true) ? 0.0 : 3.0),
@@ -701,7 +700,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                 // textAlign: TextAlign.center,
               ),
             ),
-
             autofocus: false,
             color: (isDisabled(sl.dateTime))
                 ? disabledColor
@@ -712,11 +710,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                         : (sl.isFull == false)
                             ? Colors.cyan[50]
                             : btnDisabledolor)),
-
             disabledColor: Colors.grey[200],
-            //textTheme: ButtonTextTheme.normal,
-            //highlightColor: Colors.green,
-            // highlightElevation: 10.0,
             splashColor: (sl.isFull == true) ? highlightColor : null,
             shape: (isSelected(sl.dateTime) == true)
                 ? RoundedRectangleBorder(
