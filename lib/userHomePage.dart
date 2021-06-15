@@ -93,6 +93,7 @@ class _UserHomePageState extends State<UserHomePage>
   AnimationController _animationController;
   Animation animation;
   String loadUpcomingTokensMsg;
+  bool dontShowUpdate;
 
   @override
   void initState() {
@@ -102,7 +103,7 @@ class _UserHomePageState extends State<UserHomePage>
         vsync: this, duration: Duration(milliseconds: 1500));
     _animationController.repeat(reverse: true);
     animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
-
+    dontShowUpdate = widget.dontShowUpdate;
     getGlobalState().whenComplete(() {
 //Start Code for UPI pay -donation
       upiId = _gs.getConfigurations().upi;
@@ -110,7 +111,7 @@ class _UserHomePageState extends State<UserHomePage>
       upiId = upiId;
 //End Code for UPI pay -donation
 //Start Code for version update dialog
-      if (widget.dontShowUpdate != null) {
+      if (dontShowUpdate != null) {
         if (_gs.isEligibleForUpdate()) {
           if (_gs.getConfigurations().isForceUpdateRequired()) {
             isForceUpdateRequired = true;
@@ -230,7 +231,7 @@ class _UserHomePageState extends State<UserHomePage>
     if (_initCompleted) {
       String title = "Home Page";
 
-      if (widget.dontShowUpdate != null && Utils.isNotNullOrEmpty(msg)) {
+      if (dontShowUpdate != null && Utils.isNotNullOrEmpty(msg)) {
         return Scaffold(
             // backgroundColor: Colors.cyan[200],
             body: Card(
@@ -295,9 +296,13 @@ class _UserHomePageState extends State<UserHomePage>
                                     BorderRadius.all(Radius.circular(5.0))),
                             onPressed: () {
 //Goto play store and update app.
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(
-                                      UserHomePage(dontShowUpdate: null)));
+
+                              setState(() {
+                                dontShowUpdate = null;
+                              });
+                              // Navigator.of(context).push(
+                              //     PageAnimation.createRoute(
+                              //         UserHomePage(dontShowUpdate: null)));
                             },
                             child: Container(
                               width: MediaQuery.of(context).size.width * .3,

@@ -1,6 +1,7 @@
 import 'package:LESSs/constants.dart';
 import 'package:LESSs/db/db_model/booking_form.dart';
 import 'package:LESSs/db/db_service/booking_application_service.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import '../db/db_model/configurations.dart';
@@ -237,123 +238,155 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                         children: [
                                           Row(
                                             children: [
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.add_circle,
-                                                  color: widget.isReadOnly
-                                                      ? Colors.grey[700]
-                                                      : Colors.cyan[700],
-                                                  size: 30,
-                                                ),
-                                                onPressed: () {
-                                                  if (widget.isReadOnly) {
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info,
-                                                        Duration(seconds: 3),
-                                                        "$noEditPermission Forms",
-                                                        "");
-                                                    return;
-                                                  } else {
-                                                    checkBoxListTileModel[index]
-                                                        .isCheck = true;
-
-                                                    bool isFormAlreadyAdded =
-                                                        false;
-
-                                                    for (MetaForm metaForm
-                                                        in selectedForms) {
-                                                      String origFormId =
-                                                          metaForm.id
-                                                              .split('#')[0];
-                                                      if (checkBoxListTileModel[
-                                                                  index]
-                                                              .form
-                                                              .id ==
-                                                          origFormId) {
-                                                        isFormAlreadyAdded =
-                                                            true;
-                                                      }
-                                                    }
-                                                    if (isFormAlreadyAdded) {
+                                              Container(
+                                                margin:
+                                                    EdgeInsets.only(left: 5),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .08,
+                                                child: IconButton(
+                                                  icon: Icon(
+                                                    Icons.add_circle,
+                                                    color: widget.isReadOnly
+                                                        ? Colors.grey[700]
+                                                        : Colors.cyan[700],
+                                                    size: 30,
+                                                  ),
+                                                  onPressed: () {
+                                                    if (widget.isReadOnly) {
                                                       Utils.showMyFlushbar(
                                                           context,
                                                           Icons.info,
                                                           Duration(seconds: 3),
-                                                          "This Booking Form is already added.",
+                                                          "$noEditPermission Forms",
                                                           "");
+                                                      return;
                                                     } else {
-                                                      _gs
-                                                          .getApplicationService()
-                                                          .getBookingForm(
-                                                              checkBoxListTileModel[
-                                                                      index]
-                                                                  .form
-                                                                  .id)
-                                                          .then((value) {
-                                                        BookingForm
-                                                            bookingForm = value;
+                                                      checkBoxListTileModel[
+                                                              index]
+                                                          .isCheck = true;
 
-                                                        BookingForm cloneForm =
-                                                            bookingForm.clone();
+                                                      bool isFormAlreadyAdded =
+                                                          false;
 
-                                                        newlyAddedForms
-                                                            .add(cloneForm);
+                                                      for (MetaForm metaForm
+                                                          in selectedForms) {
+                                                        String origFormId =
+                                                            metaForm.id
+                                                                .split('#')[0];
+                                                        if (checkBoxListTileModel[
+                                                                    index]
+                                                                .form
+                                                                .id ==
+                                                            origFormId) {
+                                                          isFormAlreadyAdded =
+                                                              true;
+                                                        }
+                                                      }
+                                                      if (isFormAlreadyAdded) {
+                                                        Utils.showMyFlushbar(
+                                                            context,
+                                                            Icons.info,
+                                                            Duration(
+                                                                seconds: 3),
+                                                            "This Booking Form is already added.",
+                                                            "");
+                                                      } else {
+                                                        _gs
+                                                            .getApplicationService()
+                                                            .getBookingForm(
+                                                                checkBoxListTileModel[
+                                                                        index]
+                                                                    .form
+                                                                    .id)
+                                                            .then((value) {
+                                                          BookingForm
+                                                              bookingForm =
+                                                              value;
 
-                                                        setState(() {
-                                                          selectedForms.add(
-                                                              cloneForm
-                                                                  .getMetaForm());
+                                                          BookingForm
+                                                              cloneForm =
+                                                              bookingForm
+                                                                  .clone();
+
+                                                          newlyAddedForms
+                                                              .add(cloneForm);
+
+                                                          setState(() {
+                                                            selectedForms.add(
+                                                                cloneForm
+                                                                    .getMetaForm());
+                                                          });
                                                         });
-                                                      });
 
-                                                      // selectedForms.add(
-                                                      //     checkBoxListTileModel[
-                                                      //             index]
-                                                      //         .form);
+                                                        // selectedForms.add(
+                                                        //     checkBoxListTileModel[
+                                                        //             index]
+                                                        //         .form);
 
+                                                      }
                                                     }
-                                                  }
-                                                },
+                                                  },
+                                                ),
                                               ),
-                                              Text(
-                                                checkBoxListTileModel[index]
-                                                    .form
-                                                    .name,
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w400,
-                                                    letterSpacing: 0.5),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .7,
+                                                child: AutoSizeText(
+                                                  checkBoxListTileModel[index]
+                                                      .form
+                                                      .name,
+                                                  minFontSize: 9,
+                                                  maxFontSize: 13,
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      letterSpacing: 0.5),
+                                                ),
                                               ),
                                             ],
                                           ),
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.preview,
-                                              color: primaryIcon,
-                                            ),
-                                            onPressed: () {
-                                              Navigator.of(context).push(
-                                                  PageAnimation.createRoute(
-                                                      EntityForm(
-                                                bookingFormId:
-                                                    checkBoxListTileModel[index]
-                                                        .form
-                                                        .id,
-                                                metaEntity: widget.metaEntity,
-                                                preferredSlotTime:
-                                                    widget.preferredSlotTime,
-                                                backRoute: ManageEntityForms(
-                                                  isFullPermission:
-                                                      widget.isFullPermission,
+                                          Container(
+                                            margin: EdgeInsets.only(right: 5),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .08,
+                                            child: IconButton(
+                                              icon: Icon(
+                                                Icons.preview,
+                                                color: primaryIcon,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context).push(
+                                                    PageAnimation.createRoute(
+                                                        EntityForm(
+                                                  bookingFormId:
+                                                      checkBoxListTileModel[
+                                                              index]
+                                                          .form
+                                                          .id,
                                                   metaEntity: widget.metaEntity,
                                                   preferredSlotTime:
                                                       widget.preferredSlotTime,
-                                                  backRoute: widget.backRoute,
-                                                  isReadOnly: widget.isReadOnly,
-                                                ),
-                                              )));
-                                            },
+                                                  backRoute: ManageEntityForms(
+                                                    isFullPermission:
+                                                        widget.isFullPermission,
+                                                    metaEntity:
+                                                        widget.metaEntity,
+                                                    preferredSlotTime: widget
+                                                        .preferredSlotTime,
+                                                    backRoute: widget.backRoute,
+                                                    isReadOnly:
+                                                        widget.isReadOnly,
+                                                  ),
+                                                )));
+                                              },
+                                            ),
                                           ),
                                         ],
                                       ),
