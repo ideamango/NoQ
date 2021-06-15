@@ -1366,9 +1366,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                                                 child: Text(
                                                   loadUpcomingTokensMsg,
                                                   style: TextStyle(
-                                                      color:
-                                                          Colors.blueGrey[700],
-                                                      fontSize: 14),
+                                                      color: btnColor,
+                                                      fontSize: 17),
                                                 ))
                                           ],
                                         ),
@@ -1466,9 +1465,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                                                     child: Text(
                                                       loadPastTokensMsg,
                                                       style: TextStyle(
-                                                          color: Colors
-                                                              .blueGrey[700],
-                                                          fontSize: 14),
+                                                          color: btnColor,
+                                                          fontSize: 17),
                                                     ))
                                               ],
                                             ),
