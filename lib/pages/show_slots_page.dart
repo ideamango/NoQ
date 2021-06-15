@@ -479,9 +479,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                       style: buttonMedTextStyle,
                                     ),
                                     onPressed: () {
-                                      if (selectedSlot != null)
+                                      if (selectedSlot != null) {
                                         bookSlot();
-                                      else {
+                                      } else {
                                         Utils.showMyFlushbar(
                                             context,
                                             Icons.error,
@@ -786,15 +786,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   void bookSlot() {
     _gs.initializeNotification();
 
-    Utils.showMyFlushbar(
-        context,
-        Icons.info_outline,
-        Duration(
-          seconds: 4,
-        ),
-        slotBooking,
-        takingMoment);
-
     if (maxAllowedTokensForUser <= bookedSlots.length) {
       //Max tokens already booked, then user cant book further slots.
       Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
@@ -818,6 +809,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                 isOnlineToken: enableVideoChat)));
       }
     } else {
+      Utils.showMyFlushbar(
+          context,
+          Icons.info_outline,
+          Duration(
+            seconds: 3,
+          ),
+          slotBooking,
+          takingMoment);
       _gs.addBooking(metaEntity, selectedSlot, enableVideoChat).then((value) {
         if (value == null) {
           showFlushBar();
@@ -851,7 +850,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   context, msg, _token, _storeName, _dateFormatted, slotTiming)
               .then((value) {
             _returnValues(value);
-
             setState(() {
               bookedSlot = selectedSlot;
               selectedSlot = null;

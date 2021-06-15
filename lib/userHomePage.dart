@@ -7,9 +7,11 @@ import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:LESSs/pages/help_page.dart';
 import 'package:LESSs/services/qr_code_user_application.dart';
 import 'package:LESSs/widget/countdown_timer.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:package_info/package_info.dart';
 import './constants.dart';
 
@@ -225,6 +227,7 @@ class _UserHomePageState extends State<UserHomePage>
         forReview: false);
   }
 
+  DateTime currentBackPressTime;
   @override
   Widget build(BuildContext context) {
     if (_initCompleted) {
@@ -687,9 +690,7 @@ class _UserHomePageState extends State<UserHomePage>
                   barIndex: 0,
                 ),
               ),
-              onWillPop: () async {
-                return true;
-              },
+              onWillPop: onWillPop,
             ),
             routes: <String, WidgetBuilder>{
               '/DLink': (BuildContext context) => new SearchEntityPage(),
@@ -729,6 +730,62 @@ class _UserHomePageState extends State<UserHomePage>
         ),
       );
     }
+  }
+
+  Future<bool> onWillPop() {
+    DateTime now = DateTime.now();
+    if (currentBackPressTime == null) {
+      currentBackPressTime = now;
+    } else if (now.difference(currentBackPressTime) < Duration(seconds: 2)) {
+      Flushbar(
+        padding: EdgeInsets.fromLTRB(4, 8, 8, 4),
+        margin: EdgeInsets.zero,
+        flushbarPosition: FlushbarPosition.TOP,
+        flushbarStyle: FlushbarStyle.FLOATING,
+        reverseAnimationCurve: Curves.decelerate,
+        forwardAnimationCurve: Curves.easeInToLinear,
+        backgroundColor: Colors.amber,
+        boxShadows: [
+          BoxShadow(
+              color: primaryAccentColor,
+              offset: Offset(0.0, 2.0),
+              blurRadius: 3.0)
+        ],
+        isDismissible: false,
+        duration: Duration(seconds: 5),
+        icon: Icon(
+          Icons.info,
+          //color: fontcolor,
+          size: 35,
+        ),
+        //   showProgressIndicator: showFlushBar,
+        //  progressIndicatorBackgroundColor: barcolor,
+        // progressIndicatorValueColor: animationColor,
+        routeBlur: 1.0,
+        titleText: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            verticalSpacer,
+            Text(
+              "Do you want to exit the app.. SMITA correct this please?",
+              style: TextStyle(
+                  //fontWeight: FontWeight.bold,
+                  fontSize: 15.0,
+                  color: Colors.white,
+                  fontFamily: "Roboto"),
+            ),
+          ],
+        ),
+        messageText: Text(
+          msg,
+          style: TextStyle(
+              fontSize: 12.0, color: borderColor, fontFamily: "Roboto"),
+        ),
+      )..show(context);
+      SystemNavigator.pop();
+      return Future.value(false);
+    }
+    return Future.value(true);
   }
 
   void showShoppingList(UserToken booking) {

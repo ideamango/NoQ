@@ -197,7 +197,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
     return Card(
       margin: EdgeInsets.all(8),
       child: Container(
-        margin: EdgeInsets.only(left: 8, bottom: 8),
+        margin: EdgeInsets.only(left: 8, bottom: 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -285,8 +285,17 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  GestureDetector(
-                    onTap: () {
+                  MaterialButton(
+                    visualDensity: VisualDensity.compact,
+                    child: Text(
+                      '. . view application details',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'RalewayRegular',
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
                       print('tapped');
                       bool isReadOnly = false;
 
@@ -356,17 +365,6 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                         }
                       });
                     },
-                    child: Container(
-                      margin: EdgeInsets.only(top: 8, right: 5),
-                      child: Text(
-                        '..view application details',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'RalewayRegular',
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
                   ),
                 ],
               )
