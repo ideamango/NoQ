@@ -176,6 +176,12 @@ class _UserAccountPageState extends State<UserAccountPage>
       setState(() {
         showLoadingAppls = false;
       });
+    }).onError((error, stackTrace) {
+      setState(() {
+        loadMoreApplicationsMsg =
+            'Couldn\'t load more Applications, Please try again later.';
+        showLoadingAppls = false;
+      });
     });
   }
 
@@ -193,6 +199,12 @@ class _UserAccountPageState extends State<UserAccountPage>
       }
       setState(() {
         //  showLoadingAppls = false;
+        _pastBkgStatus = 'Success';
+      });
+    }).onError((error, stackTrace) {
+      setState(() {
+        loadPastTokensMsg =
+            'Couldn\'t load more Tokens, Please try again later.';
         _pastBkgStatus = 'Success';
       });
     });
@@ -215,6 +227,12 @@ class _UserAccountPageState extends State<UserAccountPage>
         //    showLoadingAppls = false;
         _upcomingBkgStatus = 'Success';
         // _pastBkgStatus = 'Success';
+      });
+    }).onError((error, stackTrace) {
+      setState(() {
+        loadUpcomingTokensMsg =
+            'Couldn\'t load more Tokens, Please try again later.';
+        _upcomingBkgStatus = 'Success';
       });
     });
   }
