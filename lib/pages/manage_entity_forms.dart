@@ -236,119 +236,108 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Row(
-                                            children: [
-                                              Container(
-                                                margin:
-                                                    EdgeInsets.only(left: 5),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .08,
-                                                child: IconButton(
-                                                  icon: Icon(
-                                                    Icons.add_circle,
-                                                    color: widget.isReadOnly
-                                                        ? Colors.grey[700]
-                                                        : Colors.cyan[700],
-                                                    size: 30,
-                                                  ),
-                                                  onPressed: () {
-                                                    if (widget.isReadOnly) {
-                                                      Utils.showMyFlushbar(
-                                                          context,
-                                                          Icons.info,
-                                                          Duration(seconds: 3),
-                                                          "$noEditPermission Forms",
-                                                          "");
-                                                      return;
-                                                    } else {
-                                                      checkBoxListTileModel[
-                                                              index]
-                                                          .isCheck = true;
+                                          Container(
+                                            margin: EdgeInsets.only(left: 5),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .08,
+                                            child: IconButton(
+                                              padding: EdgeInsets.zero,
+                                              icon: Icon(
+                                                Icons.add_circle,
+                                                color: widget.isReadOnly
+                                                    ? Colors.grey[700]
+                                                    : Colors.cyan[700],
+                                                size: 30,
+                                              ),
+                                              onPressed: () {
+                                                if (widget.isReadOnly) {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info,
+                                                      Duration(seconds: 3),
+                                                      "$noEditPermission Forms",
+                                                      "");
+                                                  return;
+                                                } else {
+                                                  checkBoxListTileModel[index]
+                                                      .isCheck = true;
 
-                                                      bool isFormAlreadyAdded =
-                                                          false;
+                                                  bool isFormAlreadyAdded =
+                                                      false;
 
-                                                      for (MetaForm metaForm
-                                                          in selectedForms) {
-                                                        String origFormId =
-                                                            metaForm.id
-                                                                .split('#')[0];
-                                                        if (checkBoxListTileModel[
+                                                  for (MetaForm metaForm
+                                                      in selectedForms) {
+                                                    String origFormId = metaForm
+                                                        .id
+                                                        .split('#')[0];
+                                                    if (checkBoxListTileModel[
+                                                                index]
+                                                            .form
+                                                            .id ==
+                                                        origFormId) {
+                                                      isFormAlreadyAdded = true;
+                                                    }
+                                                  }
+                                                  if (isFormAlreadyAdded) {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info,
+                                                        Duration(seconds: 3),
+                                                        "This Booking Form is already added.",
+                                                        "");
+                                                  } else {
+                                                    _gs
+                                                        .getApplicationService()
+                                                        .getBookingForm(
+                                                            checkBoxListTileModel[
                                                                     index]
                                                                 .form
-                                                                .id ==
-                                                            origFormId) {
-                                                          isFormAlreadyAdded =
-                                                              true;
-                                                        }
-                                                      }
-                                                      if (isFormAlreadyAdded) {
-                                                        Utils.showMyFlushbar(
-                                                            context,
-                                                            Icons.info,
-                                                            Duration(
-                                                                seconds: 3),
-                                                            "This Booking Form is already added.",
-                                                            "");
-                                                      } else {
-                                                        _gs
-                                                            .getApplicationService()
-                                                            .getBookingForm(
-                                                                checkBoxListTileModel[
-                                                                        index]
-                                                                    .form
-                                                                    .id)
-                                                            .then((value) {
-                                                          BookingForm
-                                                              bookingForm =
-                                                              value;
+                                                                .id)
+                                                        .then((value) {
+                                                      BookingForm bookingForm =
+                                                          value;
 
-                                                          BookingForm
-                                                              cloneForm =
-                                                              bookingForm
-                                                                  .clone();
+                                                      BookingForm cloneForm =
+                                                          bookingForm.clone();
 
-                                                          newlyAddedForms
-                                                              .add(cloneForm);
+                                                      newlyAddedForms
+                                                          .add(cloneForm);
 
-                                                          setState(() {
-                                                            selectedForms.add(
-                                                                cloneForm
-                                                                    .getMetaForm());
-                                                          });
-                                                        });
+                                                      setState(() {
+                                                        selectedForms.add(
+                                                            cloneForm
+                                                                .getMetaForm());
+                                                      });
+                                                    });
 
-                                                        // selectedForms.add(
-                                                        //     checkBoxListTileModel[
-                                                        //             index]
-                                                        //         .form);
+                                                    // selectedForms.add(
+                                                    //     checkBoxListTileModel[
+                                                    //             index]
+                                                    //         .form);
 
-                                                      }
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .7,
-                                                child: AutoSizeText(
-                                                  checkBoxListTileModel[index]
-                                                      .form
-                                                      .name,
-                                                  minFontSize: 9,
-                                                  maxFontSize: 13,
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      letterSpacing: 0.5),
-                                                ),
-                                              ),
-                                            ],
+                                                  }
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .68,
+                                            child: AutoSizeText(
+                                              checkBoxListTileModel[index]
+                                                  .form
+                                                  .name,
+                                              minFontSize: 9,
+                                              maxFontSize: 13,
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w400,
+                                                  letterSpacing: 0.5),
+                                            ),
                                           ),
                                           Container(
                                             margin: EdgeInsets.only(right: 5),
@@ -357,6 +346,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                     .width *
                                                 .08,
                                             child: IconButton(
+                                              padding: EdgeInsets.zero,
                                               icon: Icon(
                                                 Icons.preview,
                                                 color: primaryIcon,
