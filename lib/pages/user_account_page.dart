@@ -162,7 +162,7 @@ class _UserAccountPageState extends State<UserAccountPage>
             3)
         .then((value) {
       if (Utils.isNullOrEmpty(value)) {
-        loadMoreApplicationsMsg = 'Thats all. No more Applications to load.';
+        loadMoreApplicationsMsg = thatsAllStr;
       } else {
         _listOfApplications.addAll(value);
         keepExpandedAppls = true;
@@ -191,7 +191,7 @@ class _UserAccountPageState extends State<UserAccountPage>
     //  showLoadingAppls = true;
     _gs.getPastBookings(_pastBookingsList.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
-        loadPastTokensMsg = 'Thats all. No more Tokens to load.';
+        loadPastTokensMsg = thatsAllStr;
       } else {
         _pastBookingsList.addAll(value);
         _pastBkgStatus = 'Success';
@@ -218,7 +218,7 @@ class _UserAccountPageState extends State<UserAccountPage>
     //  showLoadingAppls = true;
     _gs.getUpcomingBookings(_newBookingsList.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
-        loadUpcomingTokensMsg = 'Thats all. No more Tokens to load.';
+        loadUpcomingTokensMsg = thatsAllStr;
       } else {
         _newBookingsList.addAll(value);
         _upcomingBkgStatus = 'Success';
@@ -1279,24 +1279,24 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         Row(
                                           children: [
                                             Container(
-                                                margin:
-                                                    EdgeInsets.only(bottom: 10),
+                                                margin: EdgeInsets.only(
+                                                    top: 10, bottom: 15),
                                                 child: Text(
                                                   loadMoreApplicationsMsg,
                                                   style: TextStyle(
-                                                      color: btnColor,
+                                                      color: Colors.black,
                                                       fontSize: 17),
                                                 ))
                                           ],
                                         ),
-                                      if (!Utils.isNotNullOrEmpty(
+                                      if (Utils.isStrNullOrEmpty(
                                           loadMoreApplicationsMsg))
                                         Container(
                                           margin: EdgeInsets.all(10),
                                           child: MaterialButton(
                                             shape: RoundedRectangleBorder(
-                                                side:
-                                                    BorderSide(color: btnColor),
+                                                side: BorderSide(
+                                                    color: Colors.blueGrey),
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(3.0))),
                                             child: Column(
@@ -1379,35 +1379,39 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         Row(
                                           children: [
                                             Container(
-                                                margin:
-                                                    EdgeInsets.only(bottom: 10),
+                                                margin: EdgeInsets.only(
+                                                    top: 10, bottom: 15),
                                                 child: Text(
                                                   loadUpcomingTokensMsg,
                                                   style: TextStyle(
-                                                      color: btnColor,
+                                                      color: Colors.black,
                                                       fontSize: 17),
                                                 ))
                                           ],
                                         ),
-                                      if (!Utils.isNotNullOrEmpty(
+                                      if (Utils.isStrNullOrEmpty(
                                               loadUpcomingTokensMsg) &&
                                           _upcomingBkgStatus != 'NoBookings')
-                                        MaterialButton(
-                                          shape: RoundedRectangleBorder(
-                                              side: BorderSide(color: btnColor),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(3.0))),
-                                          child: Column(
-                                            children: [
-                                              Text('Show more Tokens',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.blue)),
-                                            ],
+                                        Container(
+                                          margin: EdgeInsets.all(10),
+                                          child: MaterialButton(
+                                            shape: RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                    color: Colors.blueGrey),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(3.0))),
+                                            child: Column(
+                                              children: [
+                                                Text('Show more Tokens',
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.blue)),
+                                              ],
+                                            ),
+                                            onPressed: () {
+                                              loadMoreUpcomingTokens();
+                                            },
                                           ),
-                                          onPressed: () {
-                                            loadMoreUpcomingTokens();
-                                          },
                                         ),
                                     ],
                                   ),
@@ -1479,11 +1483,11 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               children: [
                                                 Container(
                                                     margin: EdgeInsets.only(
-                                                        bottom: 10),
+                                                        top: 10, bottom: 15),
                                                     child: Text(
                                                       loadPastTokensMsg,
                                                       style: TextStyle(
-                                                          color: btnColor,
+                                                          color: Colors.black,
                                                           fontSize: 17),
                                                     ))
                                               ],
@@ -1491,25 +1495,29 @@ class _UserAccountPageState extends State<UserAccountPage>
                                           if (Utils.isStrNullOrEmpty(
                                                   loadPastTokensMsg) &&
                                               _pastBkgStatus == 'Success')
-                                            MaterialButton(
-                                              shape: RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                      color: btnColor),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              3.0))),
-                                              child: Column(
-                                                children: [
-                                                  Text('Show more Tokens',
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.blue)),
-                                                ],
+                                            Container(
+                                              margin: EdgeInsets.all(10),
+                                              child: MaterialButton(
+                                                shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        color: Colors.blueGrey),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                3.0))),
+                                                child: Column(
+                                                  children: [
+                                                    Text('Show more Tokens',
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            color:
+                                                                Colors.blue)),
+                                                  ],
+                                                ),
+                                                onPressed: () {
+                                                  loadMorePastTokens();
+                                                },
                                               ),
-                                              onPressed: () {
-                                                loadMorePastTokens();
-                                              },
                                             ),
                                         ],
                                       ),

@@ -1561,7 +1561,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
     //    Utils.isNotNullOrEmpty(mbImg1)? mbImg1 + (Utils.isNotNullOrEmpty(mbImg2) ? " & $mbImg2" : "");
 
     return Card(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.zero,
       elevation: 5,
       child: SingleChildScrollView(
         physics: ScrollPhysics(),

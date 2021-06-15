@@ -129,7 +129,7 @@ String qrCodeShareHeading = "You Safety and Convenience is our top priority!";
 String applicationShareTitle =
     "View the application details you have submitted";
 String applicationShareMessage = "Show this QR when you reach the Place";
-
+String thatsAllStr = 'That\'s all!';
 String qrCodeShareMessage =
     "For your next visit, book an appointment when the crowd is less.\n\nUse the LESSs app and start booking your peace of mind!";
 String tokenAccessNotAuthorised =

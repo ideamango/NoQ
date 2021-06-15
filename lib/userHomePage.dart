@@ -173,7 +173,7 @@ class _UserHomePageState extends State<UserHomePage>
     //  showLoadingAppls = true;
     _gs.getUpcomingBookings(_newBookingsList.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
-        loadUpcomingTokensMsg = 'Thats all. No more Tokens to load.';
+        loadUpcomingTokensMsg = 'That\'s all!';
       } else {
         _newBookingsList.addAll(value);
         _upcomingBkgStatus = 'Success';
@@ -545,12 +545,13 @@ class _UserHomePageState extends State<UserHomePage>
                                       Row(
                                         children: [
                                           Container(
-                                              margin:
-                                                  EdgeInsets.only(bottom: 10),
+                                              margin: EdgeInsets.only(
+                                                  top: 10, bottom: 15),
                                               child: Text(
                                                 loadUpcomingTokensMsg,
                                                 style: TextStyle(
-                                                    color: btnColor,
+                                                    color: Colors.black,
+                                                    //fontWeight: FontWeight.bold,
                                                     fontSize: 17),
                                               ))
                                         ],
@@ -558,22 +559,26 @@ class _UserHomePageState extends State<UserHomePage>
                                     if (!Utils.isNotNullOrEmpty(
                                             loadUpcomingTokensMsg) &&
                                         _upcomingBkgStatus != 'NoBookings')
-                                      MaterialButton(
-                                        shape: RoundedRectangleBorder(
-                                            side: BorderSide(color: btnColor),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(3.0))),
-                                        child: Column(
-                                          children: [
-                                            Text('Show more Tokens',
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    color: Colors.blue)),
-                                          ],
+                                      Container(
+                                        margin: EdgeInsets.all(10),
+                                        child: MaterialButton(
+                                          shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                  color: Colors.blueGrey),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(3.0))),
+                                          child: Column(
+                                            children: [
+                                              Text('Show more Tokens',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.blue)),
+                                            ],
+                                          ),
+                                          onPressed: () {
+                                            loadMoreUpcomingTokens();
+                                          },
                                         ),
-                                        onPressed: () {
-                                          loadMoreUpcomingTokens();
-                                        },
                                       ),
                                   ],
                                 ),
