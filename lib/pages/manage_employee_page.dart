@@ -556,7 +556,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * .72,
+                    height: MediaQuery.of(context).size.height * .832,
                     child: Scrollbar(
                       child: SingleChildScrollView(
                         child: Column(
