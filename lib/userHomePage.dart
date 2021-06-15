@@ -98,7 +98,6 @@ class _UserHomePageState extends State<UserHomePage>
   @override
   void initState() {
     super.initState();
-
     _animationController = new AnimationController(
         vsync: this, duration: Duration(milliseconds: 1500));
     _animationController.repeat(reverse: true);
