@@ -76,11 +76,10 @@ class _UserAccountPageState extends State<UserAccountPage>
   String loadPastTokensMsg;
   bool keepExpandedAppls = false;
   ScrollController _childScrollControllerAppls;
-  bool keepExpandedUpcomingTokens = false;
   ScrollController _childScrollControllerUpcomingTokens;
   bool keepExpandedPastTokens = false;
   ScrollController _childScrollControllerPastTokens;
-  bool showLoading = false;
+  bool showLoadingAppls = false;
 
   List<Tuple<UserTokens, DocumentSnapshot>> _listOfUpcomingTokens;
 
@@ -97,8 +96,7 @@ class _UserAccountPageState extends State<UserAccountPage>
     if (!kIsWeb) _setTargetPlatformForDesktop();
     _pageController = PageController(initialPage: 8);
 
-    _upcomingBkgStatus = 'Loading';
-    _pastBkgStatus = 'Loading';
+    //_pastBkgStatus = 'Loading';
 
     getGlobalState().whenComplete(() {
       AppReview.getAppID.then((onValue) {
@@ -107,16 +105,9 @@ class _UserAccountPageState extends State<UserAccountPage>
         });
         print("App ID" + appID);
       });
-      _loadBookings().then((value) {
-        _gs
-            .getApplicationService()
-            .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
-                null, null, "timeOfSubmission", true, null, null, 3)
-            .then((value) {
-          _listOfApplications = value;
-          setState(() {
-            _initCompleted = true;
-          });
+      _loadInitialUpcomingBookings().then((value) {
+        setState(() {
+          _initCompleted = true;
         });
       });
     });
@@ -124,30 +115,36 @@ class _UserAccountPageState extends State<UserAccountPage>
         EventBus.registerEvent(TOKEN_STATUS_UPDATED, null, this.refreshToken);
   }
 
-  void loadGS() {
+  Future<void> _loadInitialUpcomingBookings() async {
     _upcomingBkgStatus = 'Loading';
-    _pastBkgStatus = 'Loading';
-    _initCompleted = false;
-    getGlobalState().whenComplete(() {
-      _loadBookings().then((value) {
-        _gs
-            .getApplicationService()
-            .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
-                null, null, "timeOfSubmission", true, null, null, 1)
-            .then((value) {
-          _listOfApplications = value;
-          setState(() {
-            _initCompleted = true;
-          });
-        });
-      });
+    _newBookingsList = await _gs.getUpcomingBookings(1, 3);
+
+    setState(() {
+      if (_newBookingsList != null) {
+        if (_newBookingsList.length != 0) {
+          _upcomingBkgStatus = 'Success';
+        } else
+          _upcomingBkgStatus = 'NoBookings';
+      }
     });
   }
 
-  void loadMore() {
-    _upcomingBkgStatus = 'Loading';
+  Future<void> _loadInitialPastBookings() async {
     _pastBkgStatus = 'Loading';
-    showLoading = true;
+    _pastBookingsList = await _gs.getPastBookings(1, 3);
+    if (_pastBookingsList != null) {
+      if (_pastBookingsList.length != 0) {
+        _pastBkgStatus = 'Success';
+      } else
+        _pastBkgStatus = 'NoBookings';
+    }
+    setState(() {});
+  }
+
+  void loadMoreApplications() {
+    //  _upcomingBkgStatus = 'Loading';
+    // _pastBkgStatus = 'Loading';
+    showLoadingAppls = true;
     _gs
         .getApplicationService()
         .getApplications(
@@ -165,7 +162,7 @@ class _UserAccountPageState extends State<UserAccountPage>
             3)
         .then((value) {
       if (Utils.isNullOrEmpty(value)) {
-        loadMoreApplicationsMsg = 'Thats all. No more Applications to load.';
+        loadMoreApplicationsMsg = thatsAllStr;
       } else {
         _listOfApplications.addAll(value);
         keepExpandedAppls = true;
@@ -177,7 +174,13 @@ class _UserAccountPageState extends State<UserAccountPage>
         // }
       }
       setState(() {
-        showLoading = false;
+        showLoadingAppls = false;
+      });
+    }).onError((error, stackTrace) {
+      setState(() {
+        loadMoreApplicationsMsg =
+            'Couldn\'t load more Applications, Please try again later.';
+        showLoadingAppls = false;
       });
     });
   }
@@ -185,17 +188,23 @@ class _UserAccountPageState extends State<UserAccountPage>
   void loadMorePastTokens() {
     // _upcomingBkgStatus = 'Loading';
     _pastBkgStatus = 'Loading';
-    showLoading = true;
+    //  showLoadingAppls = true;
     _gs.getPastBookings(_pastBookingsList.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
-        loadPastTokensMsg = 'Thats all. No more Tokens to load.';
+        loadPastTokensMsg = thatsAllStr;
       } else {
         _pastBookingsList.addAll(value);
         _pastBkgStatus = 'Success';
         keepExpandedPastTokens = true;
       }
       setState(() {
-        showLoading = false;
+        //  showLoadingAppls = false;
+        _pastBkgStatus = 'Success';
+      });
+    }).onError((error, stackTrace) {
+      setState(() {
+        loadPastTokensMsg =
+            'Couldn\'t load more Tokens, Please try again later.';
         _pastBkgStatus = 'Success';
       });
     });
@@ -206,19 +215,44 @@ class _UserAccountPageState extends State<UserAccountPage>
   void loadMoreUpcomingTokens() {
     _upcomingBkgStatus = 'Loading';
     // _pastBkgStatus = 'Loading';
-    showLoading = true;
+    //  showLoadingAppls = true;
     _gs.getUpcomingBookings(_newBookingsList.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
-        loadUpcomingTokensMsg = 'Thats all. No more Tokens to load.';
+        loadUpcomingTokensMsg = thatsAllStr;
       } else {
         _newBookingsList.addAll(value);
         _upcomingBkgStatus = 'Success';
-        keepExpandedUpcomingTokens = true;
       }
       setState(() {
-        showLoading = false;
+        //    showLoadingAppls = false;
         _upcomingBkgStatus = 'Success';
         // _pastBkgStatus = 'Success';
+      });
+    }).onError((error, stackTrace) {
+      setState(() {
+        loadUpcomingTokensMsg =
+            'Couldn\'t load more Tokens, Please try again later.';
+        _upcomingBkgStatus = 'Success';
+      });
+    });
+  }
+
+  void loadGS() {
+    // _upcomingBkgStatus = 'Loading';
+    //  _pastBkgStatus = 'Loading';
+    _initCompleted = false;
+    getGlobalState().whenComplete(() {
+      _loadInitialUpcomingBookings().then((value) {
+        _gs
+            .getApplicationService()
+            .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
+                null, null, "timeOfSubmission", true, null, null, 1)
+            .then((value) {
+          _listOfApplications = value;
+          setState(() {
+            _initCompleted = true;
+          });
+        });
       });
     });
   }
@@ -275,32 +309,6 @@ class _UserAccountPageState extends State<UserAccountPage>
     //     print(scanResult);
     //   });
     // }
-  }
-
-  Future<void> _loadBookings() async {
-    //  _pastBookingsList = await _gs.getPastBookings(1, 3);
-
-    _newBookingsList = await _gs.getUpcomingBookings(1, 3);
-
-    setState(() {
-      if (_newBookingsList != null) {
-        if (_newBookingsList.length != 0) {
-          _upcomingBkgStatus = 'Success';
-        } else
-          _upcomingBkgStatus = 'NoBookings';
-      }
-    });
-  }
-
-  Future<void> _loadInitialPastBookings() async {
-    _pastBookingsList = await _gs.getPastBookings(1, 3);
-    if (_pastBookingsList != null) {
-      if (_pastBookingsList.length != 0) {
-        _pastBkgStatus = 'Success';
-      } else
-        _pastBkgStatus = 'NoBookings';
-    }
-    setState(() {});
   }
 
   List cardList = [Item1(), Item2(), Item3(), Item4(), Item5(), Item6()];
@@ -1207,6 +1215,36 @@ class _UserAccountPageState extends State<UserAccountPage>
                                   Icons.app_registration,
                                   color: primaryIcon,
                                 ),
+                                onExpansionChanged: (value) {
+                                  if (value) {
+                                    setState(() {
+                                      showLoadingAppls = true;
+                                    });
+
+                                    _gs
+                                        .getApplicationService()
+                                        .getApplications(
+                                            null,
+                                            null,
+                                            null,
+                                            _gs.getCurrentUser().ph,
+                                            null,
+                                            null,
+                                            null,
+                                            "timeOfSubmission",
+                                            true,
+                                            null,
+                                            null,
+                                            3)
+                                        .then((value) {
+                                      _listOfApplications = value;
+                                      setState(() {
+                                        showLoadingAppls = false;
+                                      });
+                                    });
+                                  }
+                                },
+
                                 children: <Widget>[
                                   if (!Utils.isNullOrEmpty(_listOfApplications))
                                     ListView.builder(
@@ -1241,25 +1279,24 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         Row(
                                           children: [
                                             Container(
-                                                margin:
-                                                    EdgeInsets.only(bottom: 10),
+                                                margin: EdgeInsets.only(
+                                                    top: 10, bottom: 15),
                                                 child: Text(
                                                   loadMoreApplicationsMsg,
                                                   style: TextStyle(
-                                                      color:
-                                                          Colors.blueGrey[700],
-                                                      fontSize: 14),
+                                                      color: Colors.black,
+                                                      fontSize: 17),
                                                 ))
                                           ],
                                         ),
-                                      if (!Utils.isNotNullOrEmpty(
+                                      if (Utils.isStrNullOrEmpty(
                                           loadMoreApplicationsMsg))
                                         Container(
                                           margin: EdgeInsets.all(10),
                                           child: MaterialButton(
                                             shape: RoundedRectangleBorder(
-                                                side:
-                                                    BorderSide(color: btnColor),
+                                                side: BorderSide(
+                                                    color: Colors.blueGrey),
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(3.0))),
                                             child: Column(
@@ -1271,13 +1308,15 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               ],
                                             ),
                                             onPressed: () {
-                                              loadMore();
+                                              loadMoreApplications();
                                             },
                                           ),
                                         ),
                                     ],
                                   ),
-                                  if (Utils.isNullOrEmpty(_listOfApplications))
+                                  if (showLoadingAppls) showCircularProgress(),
+                                  if (!showLoadingAppls &&
+                                      Utils.isNullOrEmpty(_listOfApplications))
                                     _emptyStorePage(
                                         "No Applications yet.. ", bookNowMsg),
                                 ],
@@ -1340,36 +1379,39 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         Row(
                                           children: [
                                             Container(
-                                                margin:
-                                                    EdgeInsets.only(bottom: 10),
+                                                margin: EdgeInsets.only(
+                                                    top: 10, bottom: 15),
                                                 child: Text(
                                                   loadUpcomingTokensMsg,
                                                   style: TextStyle(
-                                                      color:
-                                                          Colors.blueGrey[700],
-                                                      fontSize: 14),
+                                                      color: Colors.black,
+                                                      fontSize: 17),
                                                 ))
                                           ],
                                         ),
-                                      if (!Utils.isNotNullOrEmpty(
+                                      if (Utils.isStrNullOrEmpty(
                                               loadUpcomingTokensMsg) &&
                                           _upcomingBkgStatus != 'NoBookings')
-                                        MaterialButton(
-                                          shape: RoundedRectangleBorder(
-                                              side: BorderSide(color: btnColor),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(3.0))),
-                                          child: Column(
-                                            children: [
-                                              Text('Show more Tokens',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.blue)),
-                                            ],
+                                        Container(
+                                          margin: EdgeInsets.all(10),
+                                          child: MaterialButton(
+                                            shape: RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                    color: Colors.blueGrey),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(3.0))),
+                                            child: Column(
+                                              children: [
+                                                Text('Show more Tokens',
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.blue)),
+                                              ],
+                                            ),
+                                            onPressed: () {
+                                              loadMoreUpcomingTokens();
+                                            },
                                           ),
-                                          onPressed: () {
-                                            loadMoreUpcomingTokens();
-                                          },
                                         ),
                                     ],
                                   ),
@@ -1441,38 +1483,41 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               children: [
                                                 Container(
                                                     margin: EdgeInsets.only(
-                                                        bottom: 10),
+                                                        top: 10, bottom: 15),
                                                     child: Text(
                                                       loadPastTokensMsg,
                                                       style: TextStyle(
-                                                          color: Colors
-                                                              .blueGrey[700],
-                                                          fontSize: 14),
+                                                          color: Colors.black,
+                                                          fontSize: 17),
                                                     ))
                                               ],
                                             ),
                                           if (Utils.isStrNullOrEmpty(
                                                   loadPastTokensMsg) &&
                                               _pastBkgStatus == 'Success')
-                                            MaterialButton(
-                                              shape: RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                      color: btnColor),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              3.0))),
-                                              child: Column(
-                                                children: [
-                                                  Text('Show more Tokens',
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.blue)),
-                                                ],
+                                            Container(
+                                              margin: EdgeInsets.all(10),
+                                              child: MaterialButton(
+                                                shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        color: Colors.blueGrey),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                3.0))),
+                                                child: Column(
+                                                  children: [
+                                                    Text('Show more Tokens',
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            color:
+                                                                Colors.blue)),
+                                                  ],
+                                                ),
+                                                onPressed: () {
+                                                  loadMorePastTokens();
+                                                },
                                               ),
-                                              onPressed: () {
-                                                loadMorePastTokens();
-                                              },
                                             ),
                                         ],
                                       ),

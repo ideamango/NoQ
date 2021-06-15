@@ -52,6 +52,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
   int index = 0;
   dynamic dashBoardRoute;
   dynamic reportsRoute;
+  String errStr;
   @override
   void initState() {
     super.initState();
@@ -60,8 +61,13 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
     getGlobalState().whenComplete(() {
       if (widget.entity == null) {
         _gs.getEntity(widget.entityId).then((value) {
-          entity = value.item1;
-          forms = entity.forms;
+          if (value == null) {
+            errStr =
+                "Oops..There seems to some problem. Please try again later.";
+          } else {
+            entity = value.item1;
+            forms = entity.forms;
+          }
           setState(() {
             initCompleted = true;
           });
@@ -154,213 +160,228 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
               //   },
               // ),
             ),
-            body: Padding(
-              padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                child: new Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Select the purpose for submitting application request",
-                      style: TextStyle(
-                        color: Colors.blueGrey[700],
-                        fontFamily: 'RalewayRegular',
-                        letterSpacing: 0.5,
-                        fontSize: 12.0,
-                        //height: 2,
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.only(top: 10),
-                        child: ListView.builder(
-                            itemCount: forms.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  _handleRadioValueChange1(index);
-                                },
-                                child: Container(
-                                  color: (_selectedValue == index)
-                                      ? Colors.cyan[100]
-                                      : Colors.transparent,
-                                  //  child: Text("$index"),
-                                  child: Row(
-                                    children: [
-                                      new Radio(
-                                        activeColor: (_selectedValue == index)
-                                            ? Colors.blueGrey[900]
-                                            : Colors.blueGrey[600],
-                                        hoverColor: highlightColor,
-                                        focusColor: highlightColor,
-                                        value: index,
-                                        groupValue: _selectedValue,
-                                        onChanged: _handleRadioValueChange1,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Wrap(children: [
-                                            new Text(
-                                              forms[index].name,
-                                              style: TextStyle(
-                                                color: (_selectedValue == index)
-                                                    ? Colors.blueGrey[900]
-                                                    : Colors.blueGrey[600],
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: 'RalewayRegular',
-                                                letterSpacing: 0.5,
-                                                fontSize: 14.0,
-                                                //height: 2,
-                                              ),
+            body: Utils.isStrNullOrEmpty(errStr)
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "Select the purpose for submitting application request",
+                            style: TextStyle(
+                              color: Colors.blueGrey[700],
+                              fontFamily: 'RalewayRegular',
+                              letterSpacing: 0.5,
+                              fontSize: 12.0,
+                              //height: 2,
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.only(top: 10),
+                              child: ListView.builder(
+                                  itemCount: forms.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        _handleRadioValueChange1(index);
+                                      },
+                                      child: Container(
+                                        color: (_selectedValue == index)
+                                            ? Colors.cyan[100]
+                                            : Colors.transparent,
+                                        //  child: Text("$index"),
+                                        child: Row(
+                                          children: [
+                                            new Radio(
+                                              activeColor:
+                                                  (_selectedValue == index)
+                                                      ? Colors.blueGrey[900]
+                                                      : Colors.blueGrey[600],
+                                              hoverColor: highlightColor,
+                                              focusColor: highlightColor,
+                                              value: index,
+                                              groupValue: _selectedValue,
+                                              onChanged:
+                                                  _handleRadioValueChange1,
                                             ),
-                                          ]),
-                                          Utils.isNotNullOrEmpty(
-                                                  forms[index].description)
-                                              ? new Text(
-                                                  forms[index].description,
-                                                  style: TextStyle(
-                                                      fontSize: 10,
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Wrap(children: [
+                                                  new Text(
+                                                    forms[index].name,
+                                                    style: TextStyle(
                                                       color: (_selectedValue ==
                                                               index)
-                                                          ? Colors.indigo
+                                                          ? Colors.blueGrey[900]
                                                           : Colors
-                                                              .blueGrey[600]),
-                                                )
-                                              : Container(height: 0),
-                                        ],
+                                                              .blueGrey[600],
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontFamily:
+                                                          'RalewayRegular',
+                                                      letterSpacing: 0.5,
+                                                      fontSize: 14.0,
+                                                      //height: 2,
+                                                    ),
+                                                  ),
+                                                ]),
+                                                Utils.isNotNullOrEmpty(
+                                                        forms[index]
+                                                            .description)
+                                                    ? new Text(
+                                                        forms[index]
+                                                            .description,
+                                                        style: TextStyle(
+                                                            fontSize: 10,
+                                                            color: (_selectedValue ==
+                                                                    index)
+                                                                ? Colors.indigo
+                                                                : Colors.blueGrey[
+                                                                    600]),
+                                                      )
+                                                    : Container(height: 0),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }),
+                                    );
+                                  }),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              // if (!widget.forUser)
+                              //   MaterialButton(
+                              //       minWidth: MediaQuery.of(context).size.width * .4,
+                              //       child: Text("Reports"),
+                              //       color: Colors.white,
+                              //       splashColor: highlightColor.withOpacity(.8),
+                              //       shape: RoundedRectangleBorder(
+                              //           side: BorderSide(color: Colors.blueGrey[500]),
+                              //           borderRadius:
+                              //               BorderRadius.all(Radius.circular(5.0))),
+                              //       onPressed: () {
+                              //         if (_selectedValue == -1) {
+                              //           print("Nothing selected");
+                              //           Utils.showMyFlushbar(
+                              //               context,
+                              //               Icons.error,
+                              //               Duration(seconds: 5),
+                              //               "No Form Selected!!",
+                              //               "Please select something..");
+                              //         } else {
+                              //           if (reportsRoute != null)
+                              //             Navigator.of(context).push(
+                              //                 PageAnimation.createRoute(
+                              //                     reportsRoute));
+                              //         }
+                              //       }),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .11,
+                              ),
+                              MaterialButton(
+                                  minWidth:
+                                      MediaQuery.of(context).size.width * .4,
+                                  elevation: _selectedValue != -1 ? 8 : 0,
+                                  shape: RoundedRectangleBorder(
+                                      side: BorderSide(color: btnDisabledolor),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0))),
+                                  child: (widget.forUser)
+                                      ? Row(
+                                          children: [
+                                            horizontalSpacer,
+                                            Text("Next ",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: _selectedValue != -1
+                                                        ? Colors.white
+                                                        : headerBarColor)),
+                                            horizontalSpacer,
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Container(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 0),
+                                                  transform:
+                                                      Matrix4.translationValues(
+                                                          4.0, 0, 0),
+                                                  child: Icon(
+                                                    Icons.arrow_forward_ios,
+                                                    color: _selectedValue != -1
+                                                        ? Colors.white
+                                                        : btnDisabledolor,
+                                                    size: 20,
+                                                    // color: Colors.white38,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 0),
+                                                  transform:
+                                                      Matrix4.translationValues(
+                                                          -8.0, 0, 0),
+                                                  child: Icon(
+                                                    Icons.arrow_forward_ios,
+                                                    color: _selectedValue != -1
+                                                        ? Colors.white
+                                                        : headerBarColor,
+                                                    size: 22,
+                                                    // color: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            // Icon(Icons.arrow_forward_ios,
+                                            //     size: 20,
+                                            //     color: _selectedValue != -1
+                                            //         ? Colors.white
+                                            //         : btnColor),
+                                          ],
+                                        )
+                                      : Text("Dashboard"),
+                                  color: _selectedValue != -1
+                                      ? btnColor
+                                      : Colors.white,
+                                  splashColor: _selectedValue != -1
+                                      ? highlightColor
+                                      : btnDisabledolor,
+                                  onPressed: () {
+                                    if (_selectedValue == -1) {
+                                      print("Nothing selected");
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.error,
+                                          Duration(seconds: 5),
+                                          "Please select the Request Form to view it's details.",
+                                          "");
+                                    } else {
+                                      if (dashBoardRoute != null)
+                                        Navigator.of(context).push(
+                                            PageAnimation.createRoute(
+                                                dashBoardRoute));
+                                    }
+                                  }),
+                            ],
+                          )
+                        ],
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        // if (!widget.forUser)
-                        //   MaterialButton(
-                        //       minWidth: MediaQuery.of(context).size.width * .4,
-                        //       child: Text("Reports"),
-                        //       color: Colors.white,
-                        //       splashColor: highlightColor.withOpacity(.8),
-                        //       shape: RoundedRectangleBorder(
-                        //           side: BorderSide(color: Colors.blueGrey[500]),
-                        //           borderRadius:
-                        //               BorderRadius.all(Radius.circular(5.0))),
-                        //       onPressed: () {
-                        //         if (_selectedValue == -1) {
-                        //           print("Nothing selected");
-                        //           Utils.showMyFlushbar(
-                        //               context,
-                        //               Icons.error,
-                        //               Duration(seconds: 5),
-                        //               "No Form Selected!!",
-                        //               "Please select something..");
-                        //         } else {
-                        //           if (reportsRoute != null)
-                        //             Navigator.of(context).push(
-                        //                 PageAnimation.createRoute(
-                        //                     reportsRoute));
-                        //         }
-                        //       }),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .11,
-                        ),
-                        MaterialButton(
-                            minWidth: MediaQuery.of(context).size.width * .4,
-                            elevation: _selectedValue != -1 ? 8 : 0,
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(color: btnDisabledolor),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            child: (widget.forUser)
-                                ? Row(
-                                    children: [
-                                      horizontalSpacer,
-                                      Text("Next ",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: _selectedValue != -1
-                                                  ? Colors.white
-                                                  : headerBarColor)),
-                                      horizontalSpacer,
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Container(
-                                            padding:
-                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                            transform:
-                                                Matrix4.translationValues(
-                                                    4.0, 0, 0),
-                                            child: Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: _selectedValue != -1
-                                                  ? Colors.white
-                                                  : btnDisabledolor,
-                                              size: 20,
-                                              // color: Colors.white38,
-                                            ),
-                                          ),
-                                          Container(
-                                            padding:
-                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                            transform:
-                                                Matrix4.translationValues(
-                                                    -8.0, 0, 0),
-                                            child: Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: _selectedValue != -1
-                                                  ? Colors.white
-                                                  : headerBarColor,
-                                              size: 22,
-                                              // color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      // Icon(Icons.arrow_forward_ios,
-                                      //     size: 20,
-                                      //     color: _selectedValue != -1
-                                      //         ? Colors.white
-                                      //         : btnColor),
-                                    ],
-                                  )
-                                : Text("Dashboard"),
-                            color:
-                                _selectedValue != -1 ? btnColor : Colors.white,
-                            splashColor: _selectedValue != -1
-                                ? highlightColor
-                                : btnDisabledolor,
-                            onPressed: () {
-                              if (_selectedValue == -1) {
-                                print("Nothing selected");
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.error,
-                                    Duration(seconds: 5),
-                                    "Please select the Request Form to view it's details.",
-                                    "");
-                              } else {
-                                if (dashBoardRoute != null)
-                                  Navigator.of(context).push(
-                                      PageAnimation.createRoute(
-                                          dashBoardRoute));
-                              }
-                            }),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
+                  )
+                : Center(
+                    child: Container(child: Text(errStr)),
+                  ),
           ),
           onWillPop: () async {
             return true;
