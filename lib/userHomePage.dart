@@ -183,6 +183,12 @@ class _UserHomePageState extends State<UserHomePage>
         _upcomingBkgStatus = 'Success';
         // _pastBkgStatus = 'Success';
       });
+    }).onError((error, stackTrace) {
+      setState(() {
+        loadUpcomingTokensMsg =
+            'Couldn\'t load more Tokens, Please try again later.';
+        _upcomingBkgStatus = 'Success';
+      });
     });
   }
 
@@ -544,8 +550,8 @@ class _UserHomePageState extends State<UserHomePage>
                                               child: Text(
                                                 loadUpcomingTokensMsg,
                                                 style: TextStyle(
-                                                    color: Colors.blueGrey[700],
-                                                    fontSize: 14),
+                                                    color: btnColor,
+                                                    fontSize: 17),
                                               ))
                                         ],
                                       ),
