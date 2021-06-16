@@ -1465,7 +1465,6 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 isReadOnly: widget.isReadOnly,
                                 status: widget.status,
                                 titleText: widget.titleText),
-                            forInfo: false,
                           )))
                               .then((value) {
                             tokenCounterForEntity = value;

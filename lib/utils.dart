@@ -525,7 +525,6 @@ class Utils {
             isAvailable: true,
             tokenCounter: null,
             backRoute: UserHomePage(),
-            forInfo: false,
           )));
         });
       } else {

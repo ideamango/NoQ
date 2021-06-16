@@ -29,7 +29,6 @@ import '../widget/widgets.dart';
 class ShowApplicationDetails extends StatefulWidget {
   final BookingApplication bookingApplication;
   final bool showReject;
-  final bool forInfo;
   final dynamic backRoute;
   final bool isReadOnly;
   final MetaEntity metaEntity;
@@ -41,7 +40,6 @@ class ShowApplicationDetails extends StatefulWidget {
     Key key,
     @required this.bookingApplication,
     @required this.showReject,
-    @required this.forInfo,
     @required this.backRoute,
     @required this.isReadOnly,
     @required this.metaEntity,
@@ -706,16 +704,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     return fieldsContainer;
   }
 
-  // Widget _buildItem(BookingApplication ba) {
-  //   return Column(
-  //     children: <Widget>[
-  //       Expanded(
-  //         child:
-  //       ),
-  //     ],
-  //   );
-  // }
-
   @override
   void dispose() {
     super.dispose();
@@ -732,13 +720,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
-            // appBar: CustomAppBarWithBackButton(
-            //   backRoute: null,
-            //   // (widget.backRoute != null)
-            //   //     ? widget.backRoute
-            //   //     : UserHomePage(),
-            //   titleTxt: "Application Details",
-            // ),
             appBar: AppBar(
               title: Text(
                 "Applicant Details",
@@ -1604,7 +1585,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                 )
                               ])),
                     ),
-                  if (!widget.forInfo)
+                  if (!widget.isReadOnly)
                     Divider(
                       indent: 0,
                       endIndent: 0,
@@ -1612,7 +1593,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       height: 5,
                       color: Colors.blueGrey[400],
                     ),
-                  if (!widget.forInfo)
+                  if (!widget.isReadOnly)
                     IntrinsicHeight(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

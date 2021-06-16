@@ -305,7 +305,6 @@ class _TokensInSlotState extends State<TokensInSlot>
                                 backRoute: widget.backRoute,
                                 isReadOnly: widget.isReadOnly,
                               ),
-                              forInfo: true,
                             )))
                                 .then((value) {
                               print(
@@ -700,7 +699,6 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     isAvailable: null,
                                     tokenCounter: null,
                                     backRoute: null,
-                                    forInfo: true,
                                   )))
                                       .then((value) {
                                     if (value != null) {
