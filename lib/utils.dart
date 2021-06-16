@@ -942,9 +942,10 @@ class Utils {
           ? Uri.parse(shareURLPrefix + '/?entityId=$entityId')
           : Uri.parse(shareURLPrefix),
       androidParameters: AndroidParameters(
-          packageName: bundleId,
-          minimumVersion: 1,
-          fallbackUrl: Uri.parse('https://bigpiq.com/#product')),
+        packageName: bundleId,
+        minimumVersion: 1,
+        // fallbackUrl: Uri.parse('https://bigpiq.com/#product')
+      ),
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',

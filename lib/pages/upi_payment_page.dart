@@ -372,7 +372,6 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                               ),
                             ],
                           ),
-
                           Container(
                             height: MediaQuery.of(context).size.height * .45,
                             margin: EdgeInsets.only(top: 20, bottom: 10),
