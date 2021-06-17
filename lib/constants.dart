@@ -130,13 +130,13 @@ String whatsappVideoToPlaceOwner_2 =
 String whatsappMessage =
     "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your peace of mind with LESSs mobile app. \nBook your slot when it's Less crowded and Stay Safe!!";
 String videoCallWhatsappMsg = "LESSs: Video Call ";
-String qrCodeShareHeading = "You Safety and Convenience is our top priority!";
+String qrCodeShareHeading = "Your Safety and Convenience is a top priority at ";
 String applicationShareTitle =
     "View the application details you have submitted";
 String applicationShareMessage = "Show this QR when you reach the Place";
 String thatsAllStr = 'That\'s all!';
 String qrCodeShareMessage =
-    "For your next visit, book an appointment when the crowd is less.\n\nUse the LESSs app and start booking your peace of mind!";
+    "Use the LESSs app to book your Time-Slot. Book your peace of mind!";
 String tokenAccessNotAuthorised =
     "You are not authorised to access the Bookings for this Place.";
 String contactAdminIfIssue =
