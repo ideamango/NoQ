@@ -844,9 +844,10 @@ class Utils {
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
       link: Uri.parse(shareURLPrefix + '/?entityId=$entityId'),
       androidParameters: AndroidParameters(
-          packageName: bundleId,
-          minimumVersion: 1,
-          fallbackUrl: Uri.parse('https://bigpiq.com/#product')),
+        packageName: bundleId,
+        minimumVersion: 1,
+        //fallbackUrl: Uri.parse('https://bigpiq.com/#product')
+      ),
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',
@@ -876,9 +877,10 @@ class Utils {
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
       link: Uri.parse(shareURLPrefix + '/?applicationID=$applicationID'),
       androidParameters: AndroidParameters(
-          packageName: bundleId,
-          minimumVersion: 1,
-          fallbackUrl: Uri.parse('https://bigpiq.com/#product')),
+        packageName: bundleId,
+        minimumVersion: 1,
+        //  fallbackUrl: Uri.parse('https://bigpiq.com/#product')
+      ),
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',
@@ -908,9 +910,10 @@ class Utils {
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
       link: Uri.parse(shareURLPrefix + '/?tokenIdentifier=$tokenID'),
       androidParameters: AndroidParameters(
-          packageName: bundleId,
-          minimumVersion: 1,
-          fallbackUrl: Uri.parse('https://bigpiq.com/#product')),
+        packageName: bundleId,
+        minimumVersion: 1,
+        //  fallbackUrl: Uri.parse('https://bigpiq.com/#product')
+      ),
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',

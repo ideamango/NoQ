@@ -213,19 +213,24 @@ class GenerateScreenState extends State<GenerateScreen> {
                           key: globalKey,
                           child: Container(
                             color: Colors.white,
-                            child: QrImage(
-                              data: _dataString,
-                              size: MediaQuery.of(context).size.width * .5,
-                              errorStateBuilder: (cxt, err) {
-                                return Container(
-                                  child: Center(
-                                    child: Text(
-                                      "Uh oh! Something went wrong!! May be the text is too long. Try again.",
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                );
-                              },
+                            child: Column(
+                              children: [
+                                QrImage(
+                                  data: _dataString,
+                                  size: MediaQuery.of(context).size.width * .5,
+                                  errorStateBuilder: (cxt, err) {
+                                    return Container(
+                                      child: Center(
+                                        child: Text(
+                                          "Uh oh! Something went wrong!! May be the text is too long. Try again.",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                Text("This is message")
+                              ],
                             ),
                           ),
                         ),
