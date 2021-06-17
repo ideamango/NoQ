@@ -205,7 +205,7 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
             child: Column(
               children: [
                 Container(
-                  margin: EdgeInsets.all(10),
+                  margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
                   height: MediaQuery.of(context).size.height * .12,
                   child: Text(
                     QRMessageInToken,
@@ -220,10 +220,11 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
                 Card(
                   elevation: 8,
                   child: Container(
+                    margin: EdgeInsets.only(bottom: 20),
                     padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
                     color: Colors.white,
                     width: MediaQuery.of(context).size.width * .8,
-                    height: MediaQuery.of(context).size.height * .7,
+                    height: MediaQuery.of(context).size.height * .65,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
@@ -235,6 +236,8 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
                                 alignment: Alignment.center,
                                 color: Colors.white,
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     QrImage(
                                       data: _dataString,
@@ -251,17 +254,18 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
                                         );
                                       },
                                     ),
-                                    if (Platform.isIOS)
-                                      Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(20, 10, 10, 0),
-                                        child: Column(
-                                          children: [
-                                            Text(msgTitle + '\n'),
-                                            Text(msgBody),
-                                          ],
-                                        ),
-                                      )
+                                    (Platform.isIOS)
+                                        ? Container(
+                                            margin: EdgeInsets.fromLTRB(
+                                                20, 10, 10, 0),
+                                            child: Column(
+                                              children: [
+                                                Text(msgTitle + '\n'),
+                                                Text(msgBody),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(height: 0),
                                   ],
                                 ),
                               ),
@@ -278,7 +282,8 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
                             color: btnColor,
                             child: Container(
                                 margin: EdgeInsets.all(10),
-                                child: Text("Share QR Code")),
+                                child: Text("Share QR Code",
+                                    style: TextStyle(color: Colors.white))),
                             onPressed: () {
                               _shareContent();
                             },
