@@ -106,17 +106,20 @@ String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
 String whatsappContactUsMsg = "Hey!!";
 String bookNowMsg = "Book now to save time later!";
-String donationMessage = "Scan this QR code with any UPI app to donate.";
-String donationMsg1 =
-    "Every contribution matters, no amount is small for us. \nDonate as per your comfort.";
 String yourTurnUserMessage1 = "It's not your time yet!";
 String yourTurnUserMessage2 =
     "Start the call 1 minute before your allotted time slot.";
 String yourTurnUserMessageWhenTokenIsNotAlloted =
     "Token is not issued yet. \nYou should start the call only when a time-slot is allotted.";
+//UPI Payment Page Strings - Start
+String paymentDisclaimer = "Disclaimer";
+String upiHeaderMsg = 'UPI Payments';
+String directUpiPayMsg = 'Copy UPI Id Or Scan QR code and pay with any UPI app';
+String donationMessage = "Scan this QR code to make the payment";
+String donationMsg1 =
+    "Every contribution matters, no amount is small for us. \nDonate as per your comfort.";
 
-String directUpiPayMsg =
-    'If the payment doesn\'t go through, you can directly pay using the above UPI Id.';
+//UPI Payment Page Strings - End
 String whatsappMessageToPlaceOwner = "Hey there! My LESSs Token number is ";
 String whatsappVideoToPlaceOwner_1 = "Hey there! My LESSs Token number is ";
 String whatsappVideoToUser_1 = "Hey there! Your LESSs Token number is ";
@@ -201,8 +204,8 @@ String drawerHeaderTxt32 = 'Rush ';
 String drawerHeaderTxt33 = 'hours !!  ';
 String drawerHeaderTxt41 = 'Save ';
 String drawerHeaderTxt42 = 'time !!';
-String bundleId = 'net.lesss';
-String appStoreId = '1545296767';
+//String bundleId = 'net.lesss';
+//String appStoreId = '1545296767';
 String shareURLPrefix = 'https://in.lesss.net';
 String noViewPermission = "It seems you do not have permission to view";
 String noEditPermission = "It seems you do not have permission to modify";
@@ -326,6 +329,8 @@ String alreadyHaveBooking = "You already have an active booking for same time.";
 String timeSlotExpired = "Time-Slot has already expired.";
 String wantToBookAnotherSlot =
     "If you wish to book for another time, cancel this one from your bookings in Home Page";
+String connectionIssue =
+    "Seems to be some problem with internet connection, Please check and try again.";
 
 String allSlotsBookedForDate = 'All slots are booked for this date!!';
 

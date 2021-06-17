@@ -75,7 +75,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   String _searchText = "";
   String searchType = "";
   String pageName;
-  GlobalState _state;
+  GlobalState _gs;
   bool stateInitFinished = false;
   String messageTitle;
   String messageSubTitle;
@@ -148,7 +148,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     _isSearching = "initial";
     getGlobalState().whenComplete(() {
       fetchPastSearchesList();
-      searchTypes = _state.getConfigurations().entityTypes;
+      searchTypes = _gs.getConfigurations().entityTypes;
       if (this.mounted) {
         setState(() {
           initCompleted = true;
@@ -209,12 +209,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   void fetchPastSearchesList() {
     //Load details from local files
 
-    if (!Utils.isNullOrEmpty(_state.lastSearchResults)) {
+    if (!Utils.isNullOrEmpty(_gs.lastSearchResults)) {
       setState(() {
-        _stores = _state.lastSearchResults;
-        _searchText = _state.lastSearchName;
+        _stores = _gs.lastSearchResults;
+        _searchText = _gs.lastSearchName;
         _searchTextController.text = _searchText;
-        _entityType = _state.lastSearchType;
+        _entityType = _gs.lastSearchType;
         _isSearching = "done";
         //  _stores = _pastSearches;
       });
@@ -223,7 +223,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   Future<void> getGlobalState() async {
-    _state = await GlobalState.getGlobalState();
+    _gs = await GlobalState.getGlobalState();
   }
 
   void getChildStoresList() async {
@@ -242,9 +242,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   bool isFavourite(MetaEntity en) {
-    List<MetaEntity> favs = _state.getCurrentUser() != null
-        ? _state.getCurrentUser().favourites
-        : null;
+    List<MetaEntity> favs =
+        _gs.getCurrentUser() != null ? _gs.getCurrentUser().favourites : null;
     if (Utils.isNullOrEmpty(favs)) return false;
 
     for (int i = 0; i < favs.length; i++) {
@@ -261,10 +260,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     MetaEntity en = strData.getMetaEntity();
     isFav = isFavourite(en);
     if (isFav) {
-      _state.removeFavourite(en).then((value) => setState(() {}));
+      _gs.removeFavourite(en).then((value) => setState(() {}));
       setState(() {});
     } else {
-      _state.addFavourite(en).then((value) => setState(() {}));
+      _gs.addFavourite(en).then((value) => setState(() {}));
       setState(() {});
     }
 
@@ -285,7 +284,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
 
     String appShareHeading = entityShareByUserHeading + entityName;
     String appShareMessage = entityShareByUserMessage;
-    Utils.generateLinkAndShare(entityId, appShareHeading, appShareMessage);
+    Utils.generateLinkAndShare(entityId, appShareHeading, appShareMessage,
+        _gs.getConfigurations().packageName, _gs.getConfigurations().iOSAppId);
   }
 
   Widget _emptySearchPage() {
@@ -329,7 +329,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                             Utils.generateLinkAndShare(
                                 null,
                                 appShareWithOwnerHeading,
-                                appShareWithOwnerMessage);
+                                appShareWithOwnerMessage,
+                                _gs.getConfigurations().packageName,
+                                _gs.getConfigurations().iOSAppId);
                           },
                         ),
                         InkWell(
@@ -499,7 +501,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   Widget _listSearchResults() {
     if (_stores.length != 0) {
       //Add search results to past searches.
-      _state.setPastSearch(_stores, _searchText, _entityType);
+      _gs.setPastSearch(_stores, _searchText, _entityType);
       // _state.pastSearches = _stores;
       return Center(
         child: Column(
@@ -1017,7 +1019,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 padding: EdgeInsets.all(0),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
-                                itemCount: _state.getActiveEntityTypes().length,
+                                itemCount: _gs.getActiveEntityTypes().length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 4,
@@ -1033,10 +1035,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                       // decoration:
                                       //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                                       child: Center(
-                                        child: _buildCategoryItem(
-                                            context,
-                                            _state
-                                                .getActiveEntityTypes()[index]),
+                                        child: _buildCategoryItem(context,
+                                            _gs.getActiveEntityTypes()[index]),
                                       ),
                                     ),
                                   );
@@ -1823,8 +1823,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       bool isBookingAllowed, int advanceDays, DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
 
-    if (_state.bookings != null) {
-      for (Tuple<UserToken, DocumentSnapshot> obj in (_state.bookings)) {
+    if (_gs.bookings != null) {
+      for (Tuple<UserToken, DocumentSnapshot> obj in (_gs.bookings)) {
         if ((compareDateFormat.format(dt).compareTo(
                     compareDateFormat.format(obj.item1.parent.dateTime)) ==
                 0) &&
@@ -1943,12 +1943,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     EntityType entityTypeForSearch;
     entityTypeForSearch = (_entityType == _searchInAll) ? null : _entityType;
 
-    List<Entity> searchEntityList = await _state.getEntityService().search(
+    List<Entity> searchEntityList = await _gs.getEntityService().search(
         _searchText,
         entityTypeForSearch,
         lat,
         lon,
-        _state.getConfigurations().searchRadius,
+        _gs.getConfigurations().searchRadius,
         pageNumber,
         pageSize);
 
@@ -1989,8 +1989,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     recognizer: new TapGestureRecognizer()
                       ..onTap = () {
                         _searchTextController.text = "";
-                        Utils.generateLinkAndShare(null,
-                            appShareWithOwnerHeading, appShareWithOwnerMessage);
+                        Utils.generateLinkAndShare(
+                            null,
+                            appShareWithOwnerHeading,
+                            appShareWithOwnerMessage,
+                            _gs.getConfigurations().packageName,
+                            _gs.getConfigurations().iOSAppId);
                       },
                   ),
                   TextSpan(text: notFoundMsg5),
@@ -2029,7 +2033,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         }
       }
       //Write Gstate to file
-      _state.updateSearchResults(_stores);
+      _gs.updateSearchResults(_stores);
       if (this.mounted) {
         setState(() {
           //searchDone = true;

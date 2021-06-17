@@ -1171,7 +1171,13 @@ class _UserAccountPageState extends State<UserAccountPage>
                                                 Utils.generateLinkAndShare(
                                                     null,
                                                     appShareHeading,
-                                                    appShareMessage);
+                                                    appShareMessage,
+                                                    _gs
+                                                        .getConfigurations()
+                                                        .packageName,
+                                                    _gs
+                                                        .getConfigurations()
+                                                        .iOSAppId);
                                               },
                                         child: Row(
                                             mainAxisAlignment:

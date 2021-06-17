@@ -1,3 +1,4 @@
+import 'package:LESSs/global_state.dart';
 import 'package:LESSs/userHomePage.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
@@ -44,11 +45,19 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
   Directory tempDir;
   Uri uriLink;
   bool _initCompleted = false;
+  String iosAppId;
+  String packageId;
 
   @override
   void initState() {
     super.initState();
-    generateQrCode();
+
+    GlobalState.getGlobalState().then((value) {
+      iosAppId = value.getConfigurations().iOSAppId;
+      packageId = value.getConfigurations().packageName;
+      generateQrCode();
+    });
+
     if (widget.backRoute == "UserAppsList") {
       route = UserAccountPage();
     }
@@ -63,8 +72,8 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
   void generateQrCode() {
     //dataString needs to be set, using this the Qr code is generated.
     if (Utils.isNotNullOrEmpty(widget.uniqueTokenIdentifier)) {
-      Utils.createQrScreenForBookingTokens(
-              widget.uniqueTokenIdentifier, widget.entityName)
+      Utils.createQrScreenForBookingTokens(widget.uniqueTokenIdentifier,
+              widget.entityName, packageId, iosAppId)
           .then((value) {
         uriLink = value;
         // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
@@ -75,7 +84,8 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
         });
       });
     } else if (Utils.isNotNullOrEmpty(widget.baId)) {
-      Utils.createQrScreenForUserApplications(widget.baId, widget.entityName)
+      Utils.createQrScreenForUserApplications(
+              widget.baId, widget.entityName, packageId, iosAppId)
           .then((value) {
         uriLink = value;
         // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();

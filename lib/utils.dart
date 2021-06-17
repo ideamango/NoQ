@@ -525,7 +525,6 @@ class Utils {
             isAvailable: true,
             tokenCounter: null,
             backRoute: UserHomePage(),
-            forInfo: false,
           )));
         });
       } else {
@@ -836,8 +835,8 @@ class Utils {
     }
   }
 
-  static Future<Uri> createDynamicLinkFullWithParams(
-      String entityId, String entityName) async {
+  static Future<Uri> createDynamicLinkFullWithParams(String entityId,
+      String entityName, String bundleId, String appStoreId) async {
     String msgTitle = entityName + entityShareByOwnerHeading;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
@@ -845,9 +844,10 @@ class Utils {
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
       link: Uri.parse(shareURLPrefix + '/?entityId=$entityId'),
       androidParameters: AndroidParameters(
-          packageName: bundleId,
-          minimumVersion: 1,
-          fallbackUrl: Uri.parse('https://bigpiq.com/#product')),
+        packageName: bundleId,
+        minimumVersion: 1,
+        //fallbackUrl: Uri.parse('https://bigpiq.com/#product')
+      ),
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',
@@ -868,8 +868,8 @@ class Utils {
     return link;
   }
 
-  static Future<Uri> createQrScreenForUserApplications(
-      String applicationID, String entityName) async {
+  static Future<Uri> createQrScreenForUserApplications(String applicationID,
+      String entityName, String bundleId, String appStoreId) async {
     String msgTitle = entityShareByUserHeading + entityName;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
@@ -877,9 +877,10 @@ class Utils {
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
       link: Uri.parse(shareURLPrefix + '/?applicationID=$applicationID'),
       androidParameters: AndroidParameters(
-          packageName: bundleId,
-          minimumVersion: 1,
-          fallbackUrl: Uri.parse('https://bigpiq.com/#product')),
+        packageName: bundleId,
+        minimumVersion: 1,
+        //  fallbackUrl: Uri.parse('https://bigpiq.com/#product')
+      ),
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',
@@ -900,8 +901,8 @@ class Utils {
     return link;
   }
 
-  static Future<Uri> createQrScreenForBookingTokens(
-      String tokenID, String entityName) async {
+  static Future<Uri> createQrScreenForBookingTokens(String tokenID,
+      String entityName, String bundleId, String appStoreId) async {
     String msgTitle = entityShareByUserHeading + entityName;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
@@ -909,9 +910,10 @@ class Utils {
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
       link: Uri.parse(shareURLPrefix + '/?tokenIdentifier=$tokenID'),
       androidParameters: AndroidParameters(
-          packageName: bundleId,
-          minimumVersion: 1,
-          fallbackUrl: Uri.parse('https://bigpiq.com/#product')),
+        packageName: bundleId,
+        minimumVersion: 1,
+        //  fallbackUrl: Uri.parse('https://bigpiq.com/#product')
+      ),
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',
@@ -932,8 +934,8 @@ class Utils {
     return link;
   }
 
-  static Future<Uri> createDynamicLinkWithParams(
-      String entityId, String msgTitle) async {
+  static Future<Uri> createDynamicLinkWithParams(String entityId,
+      String msgTitle, String bundleId, String appStoreId) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
       uriPrefix: shareURLPrefix,
@@ -943,9 +945,10 @@ class Utils {
           ? Uri.parse(shareURLPrefix + '/?entityId=$entityId')
           : Uri.parse(shareURLPrefix),
       androidParameters: AndroidParameters(
-          packageName: bundleId,
-          minimumVersion: 1,
-          fallbackUrl: Uri.parse('https://bigpiq.com/#product')),
+        packageName: bundleId,
+        minimumVersion: 1,
+        // fallbackUrl: Uri.parse('https://bigpiq.com/#product')
+      ),
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',
@@ -965,10 +968,10 @@ class Utils {
     return shortenedLink.shortUrl;
   }
 
-  static generateLinkAndShare(
-      String entityId, String msgTitle, String msgBody) async {
-    var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId, msgTitle);
+  static generateLinkAndShare(String entityId, String msgTitle, String msgBody,
+      String bundleId, String appStoreId) async {
+    var dynamicLink = await Utils.createDynamicLinkWithParams(
+        entityId, msgTitle, bundleId, appStoreId);
     Share.share(
         msgBody +
             "\n" +

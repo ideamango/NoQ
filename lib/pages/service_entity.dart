@@ -95,7 +95,12 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       String msgTitle = name + entityShareByOwnerHeading;
       String msgBody = entityShareMessage;
 
-      Utils.generateLinkAndShare(entityId, msgTitle, msgBody);
+      Utils.generateLinkAndShare(
+          entityId,
+          msgTitle,
+          msgBody,
+          _gs.getConfigurations().packageName,
+          _gs.getConfigurations().iOSAppId);
     }
 
     share() {

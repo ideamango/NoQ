@@ -64,7 +64,7 @@ class _FavsListPageState extends State<FavsListPage>
   List<MetaEntity> _list;
 
   String pageName;
-  GlobalState _state;
+  GlobalState _gs;
   bool stateInitFinished = false;
   String emptyPageMsg;
   double fontSize;
@@ -95,17 +95,17 @@ class _FavsListPageState extends State<FavsListPage>
   }
 
   Future<void> getGlobalState() async {
-    _state = await GlobalState.getGlobalState();
+    _gs = await GlobalState.getGlobalState();
   }
 
   Future<void> fetchFavStoresList() async {
     //List<MetaEntity> newList = new List<MetaEntity>();
     Entity e;
     //if (initCompleted) {
-    print(_state.getCurrentUser().favourites);
+    print(_gs.getCurrentUser().favourites);
     _stores.clear();
-    if (!Utils.isNullOrEmpty(_state.getCurrentUser().favourites)) {
-      for (MetaEntity fs in _state.getCurrentUser().favourites) {
+    if (!Utils.isNullOrEmpty(_gs.getCurrentUser().favourites)) {
+      for (MetaEntity fs in _gs.getCurrentUser().favourites) {
         //e = await EntityService().getEntity(fs.entityId);
         _stores.add(fs);
       }
@@ -126,11 +126,11 @@ class _FavsListPageState extends State<FavsListPage>
   }
 
   bool isFavourite(MetaEntity en) {
-    if (_state.getCurrentUser() == null) {
+    if (_gs.getCurrentUser() == null) {
       return false;
     }
 
-    List<MetaEntity> favs = _state.getCurrentUser().favourites;
+    List<MetaEntity> favs = _gs.getCurrentUser().favourites;
     for (int i = 0; i < favs.length; i++) {
       if (favs[i].entityId == en.entityId) {
         return true;
@@ -144,13 +144,13 @@ class _FavsListPageState extends State<FavsListPage>
     isFav = isFavourite(en);
     if (isFav) {
       setState(() {
-        _state.removeFavourite(en);
+        _gs.removeFavourite(en);
       });
 
       return true;
     } else {
       setState(() {
-        _state.addFavourite(en);
+        _gs.addFavourite(en);
       });
 
       return false;
@@ -161,7 +161,7 @@ class _FavsListPageState extends State<FavsListPage>
 //Removes favorite from User-Favorites and update favs list being displayed.
 //If nothing in list then displays message.
     MetaEntity metaEn = strData;
-    _state.removeFavourite(metaEn).then((value) {
+    _gs.removeFavourite(metaEn).then((value) {
       _stores?.remove(strData);
       setState(() {});
     });
@@ -231,7 +231,8 @@ class _FavsListPageState extends State<FavsListPage>
     String msgTitle = entityShareByUserHeading + name;
     String msgBody = entityShareByUserMessage;
 
-    Utils.generateLinkAndShare(entityId, msgTitle, msgBody);
+    Utils.generateLinkAndShare(entityId, msgTitle, msgBody,
+        _gs.getConfigurations().packageName, _gs.getConfigurations().iOSAppId);
   }
 
   Widget _emptyFavsPage() {
@@ -395,10 +396,8 @@ class _FavsListPageState extends State<FavsListPage>
                                 GestureDetector(
                                   onTap: () {
                                     print("Container clicked");
-                                    _state.getEntity(str.entityId).then(
-                                        (value) => {
-                                              showPlaceDetailsSheet(value.item1)
-                                            });
+                                    _gs.getEntity(str.entityId).then((value) =>
+                                        {showPlaceDetailsSheet(value.item1)});
                                   },
                                   child: Container(
                                     padding: EdgeInsets.zero,
@@ -892,7 +891,7 @@ class _FavsListPageState extends State<FavsListPage>
                               onPressed: () {
                                 //Load child page.
 
-                                _state.getEntity(str.entityId).then((value) {
+                                _gs.getEntity(str.entityId).then((value) {
                                   if (value != null) {
                                     dynamic route = SearchChildEntityPage(
                                         pageName: "FavsSearch",
@@ -1011,8 +1010,8 @@ class _FavsListPageState extends State<FavsListPage>
     bool dateBooked = false;
     // UserAppData user = _userProfile;
 
-    if (_state.bookings != null) {
-      for (Tuple<UserToken, DocumentSnapshot> obj in (_state.bookings)) {
+    if (_gs.bookings != null) {
+      for (Tuple<UserToken, DocumentSnapshot> obj in (_gs.bookings)) {
         if ((compareDateFormat.format(dt).compareTo(
                     compareDateFormat.format(obj.item1.parent.dateTime)) ==
                 0) &&

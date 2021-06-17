@@ -335,7 +335,6 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                               isAvailable: true,
                               tokenCounter: null,
                               backRoute: null,
-                              forInfo: false,
                             )))
                                 .then((updatedBaTuple) {
                               if (updatedBaTuple != null) {
