@@ -89,7 +89,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   String _searchText = "";
   String searchType = "";
   String pageName;
-  GlobalState _state;
+  GlobalState _gs;
   bool stateInitFinished = false;
   String messageTitle;
   String messageSubTitle;
@@ -121,7 +121,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
     title = "Places inside " + widget.parentName;
     getGlobalState().whenComplete(() {
-      searchTypes = _state.getConfigurations().entityTypes;
+      searchTypes = _gs.getConfigurations().entityTypes;
       getEntitiesList().whenComplete(() {
         if (this.mounted) {
           setState(() {
@@ -215,7 +215,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     if (!Utils.isNullOrEmpty(widget.childList)) {
       for (int i = 0; i < widget.childList.length; i++) {
         Tuple<Entity, bool> value =
-            await _state.getEntity(widget.childList[i].entityId);
+            await _gs.getEntity(widget.childList[i].entityId);
         if (value == null) {
           continue;
         }
@@ -250,7 +250,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   }
 
   Future<void> getGlobalState() async {
-    _state = await GlobalState.getGlobalState();
+    _gs = await GlobalState.getGlobalState();
   }
 
   void _prepareDateList() {
@@ -265,7 +265,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   }
 
   bool isFavourite(MetaEntity en) {
-    List<MetaEntity> favs = _state.getCurrentUser().favourites;
+    List<MetaEntity> favs = _gs.getCurrentUser().favourites;
     if (Utils.isNullOrEmpty(favs)) return false;
 
     for (int i = 0; i < favs.length; i++) {
@@ -282,10 +282,10 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     MetaEntity en = strData.getMetaEntity();
     isFav = isFavourite(en);
     if (isFav) {
-      _state.removeFavourite(en).then((value) => setState(() {}));
+      _gs.removeFavourite(en).then((value) => setState(() {}));
       setState(() {});
     } else {
-      _state.addFavourite(en).then((value) => setState(() {}));
+      _gs.addFavourite(en).then((value) => setState(() {}));
       setState(() {});
     }
 
@@ -295,7 +295,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   generateLinkAndShareWithParams(String entityId, String name) async {
     String msgTitle = entityShareByUserHeading + name;
     String msgBody = entityShareByUserMessage;
-    Utils.generateLinkAndShare(entityId, msgTitle, msgBody);
+    Utils.generateLinkAndShare(entityId, msgTitle, msgBody,
+        _gs.getConfigurations().packageName, _gs.getConfigurations().iOSAppId);
   }
 
   Widget _emptySearchPage() {
@@ -333,8 +334,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       ),
                       onTap: () {
                         _searchTextController.text = "";
-                        Utils.generateLinkAndShare(null,
-                            appShareWithOwnerHeading, appShareWithOwnerMessage);
+                        Utils.generateLinkAndShare(
+                            null,
+                            appShareWithOwnerHeading,
+                            appShareWithOwnerMessage,
+                            _gs.getConfigurations().packageName,
+                            _gs.getConfigurations().iOSAppId);
                       },
                     ),
                     InkWell(
@@ -972,7 +977,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                     padding: EdgeInsets.all(0),
                                     scrollDirection: Axis.vertical,
                                     shrinkWrap: true,
-                                    itemCount: _state
+                                    itemCount: _gs
                                         .getActiveChildEntityTypes(
                                             widget.parentType)
                                         .length,
@@ -995,7 +1000,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                           child: Center(
                                             child: _buildCategoryItem(
                                                 context,
-                                                _state.getActiveChildEntityTypes(
+                                                _gs.getActiveChildEntityTypes(
                                                     widget.parentType)[index]),
                                           ),
                                         ),
@@ -1733,8 +1738,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       bool isBookingAllowed, int advanceDays, DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
 
-    if (_state.bookings != null) {
-      for (Tuple<UserToken, DocumentSnapshot> obj in (_state.bookings)) {
+    if (_gs.bookings != null) {
+      for (Tuple<UserToken, DocumentSnapshot> obj in (_gs.bookings)) {
         if ((compareDateFormat.format(dt).compareTo(
                     compareDateFormat.format(obj.item1.parent.dateTime)) ==
                 0) &&
@@ -1987,8 +1992,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   recognizer: new TapGestureRecognizer()
                     ..onTap = () {
                       _searchTextController.text = "";
-                      Utils.generateLinkAndShare(null, appShareWithOwnerHeading,
-                          appShareWithOwnerMessage);
+                      Utils.generateLinkAndShare(
+                          null,
+                          appShareWithOwnerHeading,
+                          appShareWithOwnerMessage,
+                          _gs.getConfigurations().packageName,
+                          _gs.getConfigurations().iOSAppId);
                     },
                 ),
                 TextSpan(text: notFoundMsg5),

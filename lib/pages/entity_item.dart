@@ -38,7 +38,7 @@ class EntityRowState extends State<EntityRow> {
   Entity entity;
   bool getEntityDone = false;
 
-  GlobalState _state;
+  GlobalState _gs;
   bool _initCompleted = false;
   bool isExec = false;
   bool isManager = false;
@@ -49,21 +49,18 @@ class EntityRowState extends State<EntityRow> {
   void initState() {
     super.initState();
     GlobalState.getGlobalState().then((value) {
-      _state = value;
+      _gs = value;
       _metaEntity = widget.entity;
       //
       //Check if logged in user is Admin or not
-      if (_state.getCurrentUser() != null &&
-          _state
-              .getCurrentUser()
-              .entityVsRole
-              .containsKey(_metaEntity.entityId)) {
-        if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+      if (_gs.getCurrentUser() != null &&
+          _gs.getCurrentUser().entityVsRole.containsKey(_metaEntity.entityId)) {
+        if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
             EntityRole.Executive) isExec = true;
 
-        if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+        if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
             EntityRole.Manager) isManager = true;
-        if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+        if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
             EntityRole.Admin) isAdmin = true;
         //isExec = true;
       } else {
@@ -88,7 +85,7 @@ class EntityRowState extends State<EntityRow> {
   @override
   Widget build(BuildContext context) {
     showServiceForm() {
-      _state.getEntity(_metaEntity.entityId).then((value) {
+      _gs.getEntity(_metaEntity.entityId).then((value) {
         entity = value?.item1;
         if (entity == null) {
           Utils.showMyFlushbar(
@@ -108,11 +105,16 @@ class EntityRowState extends State<EntityRow> {
     generateLinkAndShareWithParams(String entityId, String name) async {
       String msgTitle = entityShareByOwnerHeading + " - " + name;
       String msgBody = entityShareMessage;
-      Utils.generateLinkAndShare(entityId, msgTitle, msgBody);
+      Utils.generateLinkAndShare(
+          entityId,
+          msgTitle,
+          msgBody,
+          _gs.getConfigurations().packageName,
+          _gs.getConfigurations().iOSAppId);
     }
 
     showChildListPage() {
-      _state.getEntity(_metaEntity.entityId, true).then((value) {
+      _gs.getEntity(_metaEntity.entityId, true).then((value) {
         bool isSavedOnServer = false;
         Entity ent;
         if (value != null) {
@@ -139,7 +141,7 @@ class EntityRowState extends State<EntityRow> {
 
     share() {
       Entity en;
-      _state.getEntity(_metaEntity.entityId, false).then((value) {
+      _gs.getEntity(_metaEntity.entityId, false).then((value) {
         bool isSavedOnServer = true;
         if (value != null) {
           en = value.item1;
@@ -161,7 +163,7 @@ class EntityRowState extends State<EntityRow> {
 
     shareQr() {
       Entity en;
-      _state.getEntity(_metaEntity.entityId, false).then((value) {
+      _gs.getEntity(_metaEntity.entityId, false).then((value) {
         bool isSavedOnServer = true;
         if (value != null) {
           en = value.item1;
@@ -332,7 +334,7 @@ class EntityRowState extends State<EntityRow> {
                 Card(
                   margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
                   elevation: (Utils.isNullOrEmpty(
-                          _state.getActiveChildEntityTypes(_metaEntity.type)))
+                          _gs.getActiveChildEntityTypes(_metaEntity.type)))
                       ? 2
                       : 8,
                   child: GestureDetector(
@@ -345,8 +347,8 @@ class EntityRowState extends State<EntityRow> {
                             "$noViewPermission Employees!!",
                             contactAdmin);
                       } else {
-                        if (Utils.isNullOrEmpty(_state
-                            .getActiveChildEntityTypes(_metaEntity.type))) {
+                        if (Utils.isNullOrEmpty(
+                            _gs.getActiveChildEntityTypes(_metaEntity.type))) {
                           Utils.showMyFlushbar(
                               context,
                               Icons.info_outline,
@@ -360,8 +362,8 @@ class EntityRowState extends State<EntityRow> {
                       }
                     },
                     child: Container(
-                      foregroundDecoration: Utils.isNullOrEmpty(_state
-                              .getActiveChildEntityTypes(_metaEntity.type))
+                      foregroundDecoration: Utils.isNullOrEmpty(
+                              _gs.getActiveChildEntityTypes(_metaEntity.type))
                           ? BoxDecoration(
                               color: Colors.grey[200],
                               backgroundBlendMode: BlendMode.saturation,
@@ -390,7 +392,7 @@ class EntityRowState extends State<EntityRow> {
                             style: TextStyle(
                                 letterSpacing: 1.1,
                                 color: Utils.isNullOrEmpty(
-                                        _state.getActiveChildEntityTypes(
+                                        _gs.getActiveChildEntityTypes(
                                             _metaEntity.type))
                                     ? disabledColor
                                     : whiteBtnTextColor,
@@ -470,7 +472,7 @@ class EntityRowState extends State<EntityRow> {
                             contactAdmin);
                       } else {
                         print("Over To overview page");
-                        _state.getEntity(_metaEntity.entityId).then((value) {
+                        _gs.getEntity(_metaEntity.entityId).then((value) {
                           if (value.item1 != null) {
                             if (!Utils.isNullOrEmpty(value.item1.forms)) {
                               Navigator.of(context).push(

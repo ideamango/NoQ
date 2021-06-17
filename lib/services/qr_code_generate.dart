@@ -1,3 +1,4 @@
+import 'package:LESSs/global_state.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../pages/manage_child_entity_list_page.dart';
@@ -46,12 +47,19 @@ class GenerateScreenState extends State<GenerateScreen> {
   Directory tempDir;
   Uri uriLink;
   bool _initCompleted = false;
+  String iosAppId;
+  String packageId;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    generateQrCode();
+
+    GlobalState.getGlobalState().then((value) {
+      iosAppId = value.getConfigurations().iOSAppId;
+      packageId = value.getConfigurations().packageName;
+      generateQrCode();
+    });
 
     // if (widget.backRoute == "UserAppsList") {
     //   route = UserAccountPage();
@@ -64,7 +72,8 @@ class GenerateScreenState extends State<GenerateScreen> {
   void generateQrCode() {
     //dataString needs to be set, using this the Qr code is generated.
 
-    Utils.createDynamicLinkFullWithParams(widget.entityId, widget.entityName)
+    Utils.createDynamicLinkFullWithParams(
+            widget.entityId, widget.entityName, packageId, iosAppId)
         .then((value) {
       uriLink = value;
       // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();

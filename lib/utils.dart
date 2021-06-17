@@ -835,8 +835,8 @@ class Utils {
     }
   }
 
-  static Future<Uri> createDynamicLinkFullWithParams(
-      String entityId, String entityName) async {
+  static Future<Uri> createDynamicLinkFullWithParams(String entityId,
+      String entityName, String bundleId, String appStoreId) async {
     String msgTitle = entityName + entityShareByOwnerHeading;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
@@ -867,8 +867,8 @@ class Utils {
     return link;
   }
 
-  static Future<Uri> createQrScreenForUserApplications(
-      String applicationID, String entityName) async {
+  static Future<Uri> createQrScreenForUserApplications(String applicationID,
+      String entityName, String bundleId, String appStoreId) async {
     String msgTitle = entityShareByUserHeading + entityName;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
@@ -899,8 +899,8 @@ class Utils {
     return link;
   }
 
-  static Future<Uri> createQrScreenForBookingTokens(
-      String tokenID, String entityName) async {
+  static Future<Uri> createQrScreenForBookingTokens(String tokenID,
+      String entityName, String bundleId, String appStoreId) async {
     String msgTitle = entityShareByUserHeading + entityName;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
@@ -931,8 +931,8 @@ class Utils {
     return link;
   }
 
-  static Future<Uri> createDynamicLinkWithParams(
-      String entityId, String msgTitle) async {
+  static Future<Uri> createDynamicLinkWithParams(String entityId,
+      String msgTitle, String bundleId, String appStoreId) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
       uriPrefix: shareURLPrefix,
@@ -965,10 +965,10 @@ class Utils {
     return shortenedLink.shortUrl;
   }
 
-  static generateLinkAndShare(
-      String entityId, String msgTitle, String msgBody) async {
-    var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId, msgTitle);
+  static generateLinkAndShare(String entityId, String msgTitle, String msgBody,
+      String bundleId, String appStoreId) async {
+    var dynamicLink = await Utils.createDynamicLinkWithParams(
+        entityId, msgTitle, bundleId, appStoreId);
     Share.share(
         msgBody +
             "\n" +

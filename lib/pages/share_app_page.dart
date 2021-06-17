@@ -1,3 +1,4 @@
+import 'package:LESSs/global_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../constants.dart';
@@ -20,9 +21,15 @@ class _ShareAppPageState extends State<ShareAppPage> {
 
   String inviteSubject = "Invite friends via..";
   bool _initCompleted = false;
+  String iosAppId;
+  String packageId;
   @override
   void initState() {
     super.initState();
+    GlobalState.getGlobalState().then((value) {
+      iosAppId = value.getConfigurations().iOSAppId;
+      packageId = value.getConfigurations().packageName;
+    });
   }
 
   @override
@@ -86,7 +93,10 @@ class _ShareAppPageState extends State<ShareAppPage> {
                                         "Preparing the information..",
                                         "");
                                     Utils.createDynamicLinkWithParams(
-                                            null, appShareHeading)
+                                            null,
+                                            appShareHeading,
+                                            packageId,
+                                            iosAppId)
                                         .then((value) {
                                       setState(() {
                                         dynamicLink = value;
