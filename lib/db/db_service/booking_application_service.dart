@@ -539,24 +539,26 @@ class BookingApplicationService {
           int index = -1;
           bool matched = false;
 
-          for (Tuple<UserToken, DocumentSnapshot> ut in _gs.bookings) {
-            index++;
-            for (UserToken cut in cancelledTokens.tokens) {
-              if (ut.item1.getID() == cut.getID() &&
-                  tokenNumber == cut.numberBeforeCancellation) {
-                matched = true;
-                cancelledTok = cut;
+          if (_gs.bookings != null) {
+            for (Tuple<UserToken, DocumentSnapshot> ut in _gs.bookings) {
+              index++;
+              for (UserToken cut in cancelledTokens.tokens) {
+                if (ut.item1.getID() == cut.getID() &&
+                    tokenNumber == cut.numberBeforeCancellation) {
+                  matched = true;
+                  cancelledTok = cut;
+                  break;
+                }
+              }
+              if (matched) {
                 break;
               }
             }
-            if (matched) {
-              break;
-            }
-          }
 
-          if (index > -1 && cancelledTok != null) {
-            _gs.bookings[index] = new Tuple<UserToken, DocumentSnapshot>(
-                item1: cancelledTok, item2: null);
+            if (index > -1 && cancelledTok != null) {
+              _gs.bookings[index] = new Tuple<UserToken, DocumentSnapshot>(
+                  item1: cancelledTok, item2: null);
+            }
           }
         }
 

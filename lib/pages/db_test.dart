@@ -71,6 +71,10 @@ class DBTest {
   Future<void> deleteBookingForms() async {
     await _gs
         .getApplicationService()
+        .deleteBookingForm(COVID_VACCINATION_BOOKING_FORM_ID_OLD);
+
+    await _gs
+        .getApplicationService()
         .deleteBookingForm(COVID_VACCINATION_BOOKING_FORM_ID);
 
     await _gs
@@ -102,6 +106,8 @@ class DBTest {
   }
 
   Future<void> createBookingForms() async {
+    await createBookingFormGlobalCovidVaccination_OLD(
+        COVID_VACCINATION_BOOKING_FORM_ID_OLD);
     await createBookingGlobalSchoolNewAdmission(
         SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
     await createBookingFormGlobalSchoolTC(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
@@ -2057,7 +2063,7 @@ class DBTest {
 
     BookingForm bf = await _gs
         .getApplicationService()
-        .getBookingForm(COVID_VACCINATION_BOOKING_FORM_ID);
+        .getBookingForm(COVID_VACCINATION_BOOKING_FORM_ID_OLD);
 
     List<MetaForm> forms = [];
     forms.add(bf.getMetaForm());
@@ -2161,7 +2167,7 @@ class DBTest {
       BookingApplication ba = new BookingApplication();
       ba.responseForm = bf;
       ba.bookingFormId = bf.id;
-      ba.id = COVID_VACCINATION_BOOKING_FORM_ID +
+      ba.id = COVID_VACCINATION_BOOKING_FORM_ID_OLD +
           "#" +
           "TestApplicationID" +
           i.toString();
@@ -2187,7 +2193,7 @@ class DBTest {
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
-        .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
+        .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center, DateTime.now().year);
 
     // if (globalOverView.numberOfApproved == 0 &&
@@ -2217,7 +2223,7 @@ class DBTest {
     List<Tuple<BookingApplication, DocumentSnapshot>> applications = await _gs
         .getApplicationService()
         .getApplications(
-            COVID_VACCINATION_BOOKING_FORM_ID,
+            COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center,
             null,
             null,
@@ -2273,7 +2279,7 @@ class DBTest {
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
-        .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
+        .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center, DateTime.now().year);
 
     // if (globalOverView.numberOfApproved == 2 &&
@@ -2328,7 +2334,7 @@ class DBTest {
 
     List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
         await _gs.getApplicationService().getApplications(
-            COVID_VACCINATION_BOOKING_FORM_ID,
+            COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center,
             ApplicationStatus.APPROVED,
             null,
@@ -2372,7 +2378,7 @@ class DBTest {
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
-        .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
+        .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center, DateTime.now().year);
 
     // if (globalOverView.numberOfApproved == 1 &&
@@ -2432,7 +2438,7 @@ class DBTest {
 
     List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
         await _gs.getApplicationService().getApplications(
-            COVID_VACCINATION_BOOKING_FORM_ID,
+            COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center,
             ApplicationStatus.APPROVED,
             null,
@@ -2541,7 +2547,7 @@ class DBTest {
   void testPaginationInFetchingApplication() async {
     List<Tuple<BookingApplication, DocumentSnapshot>> top5Applications =
         await _gs.getApplicationService().getApplications(
-            COVID_VACCINATION_BOOKING_FORM_ID,
+            COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center,
             null,
             null,
@@ -2565,7 +2571,7 @@ class DBTest {
 
     List<Tuple<BookingApplication, DocumentSnapshot>> next5Applications =
         await _gs.getApplicationService().getApplications(
-            COVID_VACCINATION_BOOKING_FORM_ID,
+            COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center,
             null,
             null,
@@ -2589,7 +2595,7 @@ class DBTest {
         previousApplicationsFrom6thTo9th = await _gs
             .getApplicationService()
             .getApplications(
-                COVID_VACCINATION_BOOKING_FORM_ID,
+                COVID_VACCINATION_BOOKING_FORM_ID_OLD,
                 Covid_Vacination_Center,
                 null,
                 null,
@@ -2963,6 +2969,11 @@ class DBTest {
         9999);
 
     bf.addField(cowinSecrete);
+
+    FormInputFieldAttachment payment = FormInputFieldAttachment(
+        "Payment receipt", false, "Please attach image of payment made");
+
+    bf.addField(payment);
 
     //NOTE: If this is executed, every time the ID of the field is going to change
     await _gs.getApplicationService().saveBookingForm(bf);

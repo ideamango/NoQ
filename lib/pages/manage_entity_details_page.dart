@@ -2044,7 +2044,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           if (entity.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER &&
               Utils.isNullOrEmpty(entity.forms)) {
             MetaForm mForm = MetaForm(
-                id: COVID_VACCINATION_BOOKING_FORM_ID,
+                id: COVID_VACCINATION_BOOKING_FORM_ID_OLD,
                 name: COVID_BOOKING_FORM_NAME);
             if (entity.forms == null) {
               entity.forms = List<MetaForm>();
