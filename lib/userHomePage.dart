@@ -1248,7 +1248,7 @@ class _UserHomePageState extends State<UserHomePage>
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(
                                       GenerateQrUserApplication(
-                                entityName: "Application QR code",
+                                entityName: token.parent.entityName,
                                 backRoute: "UserHome",
                                 baId: null,
                                 uniqueTokenIdentifier: id,

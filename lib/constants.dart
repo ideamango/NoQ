@@ -133,10 +133,10 @@ String videoCallWhatsappMsg = "LESSs: Video Call ";
 String qrCodeShareHeading = "Your Safety and Convenience is a top priority at ";
 String applicationShareTitle =
     "View the application details you have submitted";
-String applicationShareMessage = "Show this QR when you reach the Place";
+String applicationShareMessage = "Show this QR when you reach ";
 String thatsAllStr = 'That\'s all!';
 String qrCodeShareMessage =
-    "Use the LESSs app to book your Time-Slot. Book your peace of mind!";
+    "Use LESSs app to Book your Time-Slot. Book your Peace of Mind!";
 String tokenAccessNotAuthorised =
     "You are not authorised to access the Bookings for this Place.";
 String contactAdminIfIssue =

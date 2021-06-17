@@ -218,13 +218,14 @@ class GenerateScreenState extends State<GenerateScreen> {
                             child: RepaintBoundary(
                               key: globalKey,
                               child: Container(
+                                alignment: Alignment.center,
                                 color: Colors.white,
                                 child: Column(
                                   children: [
                                     QrImage(
                                       data: _dataString,
                                       size: MediaQuery.of(context).size.width *
-                                          .5,
+                                          .7,
                                       errorStateBuilder: (cxt, err) {
                                         return Container(
                                           child: Center(

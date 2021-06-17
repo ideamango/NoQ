@@ -47,10 +47,13 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
   bool _initCompleted = false;
   String iosAppId;
   String packageId;
-
+  String msgTitle;
+  String msgBody;
   @override
   void initState() {
     super.initState();
+    msgTitle = applicationShareMessage + widget.entityName;
+    msgBody = qrCodeShareMessage;
 
     GlobalState.getGlobalState().then((value) {
       iosAppId = value.getConfigurations().iOSAppId;
@@ -135,8 +138,6 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
       //Dynamic Link Text
       //'LESSs ~ Book your peace of mind!!'
       // String msgTitle = qrCodeShareHeading + " - " + widget.entityName;
-      String msgTitle = applicationShareMessage;
-      String msgBody = qrCodeShareMessage;
 
       RenderRepaintBoundary boundary =
           globalKey.currentContext.findRenderObject();
@@ -151,10 +152,12 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
       // final channel = const MethodChannel('channel:me.sukoon.share/share');
       // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
       final RenderBox box = context.findRenderObject();
-      Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
-          subject: msgTitle,
-          text: msgTitle + '\n\n' + msgBody,
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      if (Platform.isAndroid) {
+        Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
+            subject: msgTitle,
+            text: msgTitle + '\n\n' + msgBody,
+            sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      }
       if (Platform.isIOS) {
         Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
             //subject: msgTitle,
@@ -199,71 +202,93 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
           appBar:
               CustomAppBarWithBackButton(titleTxt: "QR Code", backRoute: route),
           body: Center(
-            child: Card(
-              child: Container(
-                color: Colors.white,
-                width: MediaQuery.of(context).size.width * .8,
-                height: MediaQuery.of(context).size.height * .8,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.all(10),
-                      height: MediaQuery.of(context).size.height * .2,
-                      child: Text(
-                        QRMessageInToken,
-                        style: TextStyle(
-                            color: btnColor,
-                            fontSize: 18,
-                            height: 1.5,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'RalewayRegular'),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: RepaintBoundary(
-                          key: globalKey,
-                          child: Container(
-                            alignment: Alignment.center,
-                            color: Colors.white,
-                            child: QrImage(
-                              data: _dataString,
-                              size: MediaQuery.of(context).size.width * .7,
-                              errorStateBuilder: (cxt, err) {
-                                return Container(
-                                  child: Center(
-                                    child: Text(
-                                      "Uh oh! Something went wrong!! May be the text is too long. Try again.",
-                                      textAlign: TextAlign.center,
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(10),
+                  height: MediaQuery.of(context).size.height * .12,
+                  child: Text(
+                    QRMessageInToken,
+                    style: TextStyle(
+                        color: Colors.blueGrey[700],
+                        fontSize: 16,
+                        height: 1.5,
+                        // fontWeight: FontWeight.bold,
+                        fontFamily: 'RalewayRegular'),
+                  ),
+                ),
+                Card(
+                  elevation: 8,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+                    color: Colors.white,
+                    width: MediaQuery.of(context).size.width * .8,
+                    height: MediaQuery.of(context).size.height * .7,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          child: Center(
+                            child: RepaintBoundary(
+                              key: globalKey,
+                              child: Container(
+                                alignment: Alignment.center,
+                                color: Colors.white,
+                                child: Column(
+                                  children: [
+                                    QrImage(
+                                      data: _dataString,
+                                      size: MediaQuery.of(context).size.width *
+                                          .7,
+                                      errorStateBuilder: (cxt, err) {
+                                        return Container(
+                                          child: Center(
+                                            child: Text(
+                                              "Uh oh! Something went wrong!! May be the text is too long. Try again.",
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  ),
-                                );
-                              },
+                                    if (Platform.isIOS)
+                                      Container(
+                                        margin:
+                                            EdgeInsets.fromLTRB(20, 10, 10, 0),
+                                        child: Column(
+                                          children: [
+                                            Text(msgTitle + '\n'),
+                                            Text(msgBody),
+                                          ],
+                                        ),
+                                      )
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(10),
-                      child: MaterialButton(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[400]),
-                          borderRadius: BorderRadius.circular(5),
+                        Container(
+                          margin: EdgeInsets.all(10),
+                          child: MaterialButton(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.blueGrey[400]),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            color: btnColor,
+                            child: Container(
+                                margin: EdgeInsets.all(10),
+                                child: Text("Share QR Code")),
+                            onPressed: () {
+                              _shareContent();
+                            },
+                          ),
                         ),
-                        color: btnColor,
-                        child: Container(
-                            margin: EdgeInsets.all(10),
-                            child: Text("Share QR Code")),
-                        onPressed: () {
-                          _shareContent();
-                        },
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

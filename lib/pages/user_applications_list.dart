@@ -1598,7 +1598,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                   PageAnimation.createRoute(
                                       GenerateQrUserApplication(
                                 baId: ba.id,
-                                entityName: "Application QR code",
+                                entityName: ba.entityName,
                                 backRoute: "UserAppsList",
                                 uniqueTokenIdentifier: null,
                               )));

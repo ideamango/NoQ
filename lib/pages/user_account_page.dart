@@ -762,7 +762,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(
                                       GenerateQrUserApplication(
-                                entityName: "Application QR code",
+                                entityName: booking.parent.entityName,
                                 backRoute: "UserAppsList",
                                 uniqueTokenIdentifier: id,
                                 baId: null,
