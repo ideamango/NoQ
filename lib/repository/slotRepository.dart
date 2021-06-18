@@ -2,6 +2,8 @@
 //Cancel Slot
 //List Slots for particular store
 
+import 'package:LESSs/triplet.dart';
+
 import '../db/db_model/entity_slots.dart';
 import '../db/db_model/meta_entity.dart';
 import '../db/db_model/slot.dart';
@@ -30,7 +32,7 @@ Future<UserToken> bookSlotForStore(
 
   GlobalState gs = await GlobalState.getGlobalState();
   UserTokens tokens;
-  Tuple<UserTokens, TokenCounter> tuple =
+  Triplet<UserTokens, TokenCounter, EntitySlots> tuple =
       await gs.addBooking(meta, slot, enableVideoChat);
   tokens = tuple.item1;
 

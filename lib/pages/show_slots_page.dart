@@ -2,6 +2,7 @@ import 'package:LESSs/db/db_model/entity_slots.dart';
 import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
+import 'package:LESSs/triplet.dart';
 import 'package:LESSs/tuple.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -126,7 +127,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           .getTokenCounterForEntity(
               widget.metaEntity.entityId, widget.dateTime.year.toString())
           .then((value) {
-        slotsStatusUpdate(value, null);
+        slotsStatusUpdate(value, null, null);
         setState(() {
           _initCompleted = true;
         });
@@ -634,7 +635,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     return isDisabled;
   }
 
-  slotsStatusUpdate(TokenCounter counter, Slot bookedSlot) {
+  slotsStatusUpdate(
+      TokenCounter counter, Slot bookedSlot, EntitySlots entitySlots) {
     if (counter != null) {
       int updatedIndex;
       for (int i = 0; i <= _slotList.length - 1; i++) {
@@ -653,7 +655,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         }
       }
       if (updatedIndex != null) {
-        _slotList[updatedIndex] = bookedSlot;
+        for (Slot sl in entitySlots.slots) {
+          if (sl.dateTime.compareTo(bookedSlot.dateTime) == 0) {
+            _slotList[updatedIndex] = sl;
+            break;
+          }
+        }
       }
 
       for (int i = 0; i <= _slotList.length - 1; i++) {
@@ -823,13 +830,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           return;
         } else {
           UserTokens tokens;
-          Tuple<UserTokens, TokenCounter> tuple = value;
+          Triplet<UserTokens, TokenCounter, EntitySlots> tuple = value;
           tokens = tuple.item1;
           tokenCounter = tuple.item2;
-          selectedSlot.tokens.add(tokens);
-          selectedSlot.totalBooked++;
+          entitySlot = tuple.item3;
+          //selectedSlot.tokens.add(tokens);
+          //selectedSlot.totalBooked++;
           //selectedSlot.slotId  = entitySlot.e
-          slotsStatusUpdate(tokenCounter, selectedSlot);
+          slotsStatusUpdate(tokenCounter, selectedSlot, entitySlot);
 
           _gs.getNotificationService().registerTokenNotification(tokens);
 

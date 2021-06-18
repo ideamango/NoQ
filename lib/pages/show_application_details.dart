@@ -1,9 +1,11 @@
 import 'package:LESSs/SlotSelectionPage.dart';
 import 'package:LESSs/constants.dart';
+import 'package:LESSs/db/db_model/entity_slots.dart';
 import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/pages/token_alert.dart';
 import 'package:LESSs/services/url_services.dart';
 import 'package:LESSs/slot_selection_admin.dart';
+import 'package:LESSs/triplet.dart';
 import 'package:LESSs/tuple.dart';
 import 'package:LESSs/widget/page_animation.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -60,7 +62,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   bool showLoading = false;
   DateTime newBookingDate;
   bool applicationUpdated = false;
-  Tuple<BookingApplication, TokenCounter> returnTupleNewBa;
+  Triplet<BookingApplication, TokenCounter, EntitySlots> returnTupleNewBa;
   @override
   void initState() {
     super.initState();
