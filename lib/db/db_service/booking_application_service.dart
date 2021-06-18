@@ -1,3 +1,4 @@
+import 'package:LESSs/db/db_model/entity_slots.dart';
 import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/db/exceptions/application_status_not_allowed.dart';
 import 'package:LESSs/db/exceptions/slot_time_null_cant_approve_application_exception.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import '../../constants.dart';
+import '../../triplet.dart';
 import '../db_model/booking_application.dart';
 import '../db_model/booking_form.dart';
 import '../db_model/meta_entity.dart';
@@ -181,7 +183,7 @@ class BookingApplicationService {
 
   //To be done by the Applicant
   //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
-  Future<Tuple<UserToken, TokenCounter>> submitApplication(
+  Future<Triplet<UserToken, TokenCounter, EntitySlots>> submitApplication(
       BookingApplication ba, MetaEntity metaEntity,
       [bool enableVideoChat = false]) async {
     //Security: BookingApplication (Application Status by the applicant can be only Null, New, Cancelled), other statuses are reserved for the Manager/Admin
@@ -210,6 +212,7 @@ class BookingApplicationService {
     BookingApplication baDraft;
     BookingApplicationCounter localCounter;
     TokenCounter tokenCounter;
+    EntitySlots es;
     //BookingApplicationCounter globalCounter;
 
     String bookingApplicationId = ba.id;
@@ -338,10 +341,10 @@ class BookingApplicationService {
             bf.autoApproved &&
             bf.generateTokenOnApproval) {
           //generate the token
-          Tuple<UserTokens, TokenCounter> tuple;
+          Triplet<UserTokens, TokenCounter, EntitySlots> triplet;
           UserTokens toks;
           try {
-            tuple = await _gs.getTokenService().generateTokenInTransaction(
+            triplet = await _gs.getTokenService().generateTokenInTransaction(
                 tx,
                 userPhone,
                 metaEntity,
@@ -350,8 +353,9 @@ class BookingApplicationService {
                 ba.bookingFormId,
                 ba.responseForm.formName,
                 enableVideoChat);
-            toks = tuple.item1;
-            tokenCounter = tuple.item2;
+            toks = triplet.item1;
+            tokenCounter = triplet.item2;
+            es = triplet.item3;
           } catch (e) {
             throw e;
           }
@@ -397,7 +401,7 @@ class BookingApplicationService {
       //auto generated Token is issued, create a notification
       _gs.getNotificationService().registerTokenNotification(tok.parent);
     }
-    return new Tuple(item1: tok, item2: tokenCounter);
+    return new Triplet(item1: tok, item2: tokenCounter, item3: es);
   }
 
   //to be done by the Applicant
@@ -527,12 +531,12 @@ class BookingApplicationService {
           String tokenIdWithoutNumber = tokenIdSplitted.item1;
           int tokenNumber = tokenIdSplitted.item2;
 
-          Tuple<UserToken, TokenCounter> tuple;
+          Triplet<UserToken, TokenCounter, EntitySlots> triplet;
           //cancel the token
-          tuple = await _gs.getTokenService().cancelTokenInTransaction(
+          triplet = await _gs.getTokenService().cancelTokenInTransaction(
               tx, userPhone, tokenIdWithoutNumber, tokenNumber);
-          cancelledTok = tuple.item1;
-          tokenCounter = tuple.item2;
+          cancelledTok = triplet.item1;
+          tokenCounter = triplet.item2;
           cancelledTokens = cancelledTok.parent;
 
           //update the GlobalState bookings collection with the cancelled token
@@ -641,13 +645,10 @@ class BookingApplicationService {
   //To be called by Manager of the Entity who has restricted rights or by the Admin
   //Throws: SlotTimeNotDefinedCantApproveException, ApplicationStatusNotAllowed, TokenAlreadyExistsException
   //MaxTokenReachedByUserPerSlotException, SlotFullException, MaxTokenReachedByUserPerDayException,
-  Future<Tuple<BookingApplication, TokenCounter>> updateApplicationStatus(
-      String applicationId,
-      ApplicationStatus status,
-      String note,
-      MetaEntity metaEntity,
-      DateTime tokenTime,
-      [bool enableVideoChat = false]) async {
+  Future<Triplet<BookingApplication, TokenCounter, EntitySlots>>
+      updateApplicationStatus(String applicationId, ApplicationStatus status,
+          String note, MetaEntity metaEntity, DateTime tokenTime,
+          [bool enableVideoChat = false]) async {
     //TODO Security: Application Status, Time of Respective Status Change and Status can only be updated by the Entity Manager/Entity Admin
     //TODO Security: Once submitted for review, the Application can't be edited by the Applicant
     //TODO Security: Application can be only accessed and Updated by Entity Manager/Admin
@@ -684,6 +685,7 @@ class BookingApplicationService {
     //String globalCounterId;
     bool requestProcessed = false;
     TokenCounter tokenCounter;
+    EntitySlots es;
 
     String dailyStatsKey = now.year.toString() +
         "~" +
@@ -774,10 +776,10 @@ class BookingApplicationService {
           //generate the token
           //send notification
           UserTokens toks;
-          Tuple<UserTokens, TokenCounter> tuple;
+          Triplet<UserTokens, TokenCounter, EntitySlots> triplet;
           if (bf.generateTokenOnApproval && bf.appointmentRequired) {
             try {
-              tuple = await _gs.getTokenService().generateTokenInTransaction(
+              triplet = await _gs.getTokenService().generateTokenInTransaction(
                   tx,
                   requestingUser,
                   metaEntity,
@@ -786,8 +788,9 @@ class BookingApplicationService {
                   application.bookingFormId,
                   application.responseForm.formName,
                   enableVideoChat);
-              toks = tuple.item1;
-              tokenCounter = tuple.item2;
+              toks = triplet.item1;
+              tokenCounter = triplet.item2;
+              es = triplet.item3;
             } catch (e) {
               throw e;
             }
@@ -869,12 +872,13 @@ class BookingApplicationService {
                 Utils.getTokenIdWithoutNumber(application.tokenId);
             String tokenIdWithoutNumber = tokenIdSplitted.item1;
             int tokenNumber = tokenIdSplitted.item2;
-            Tuple<UserToken, TokenCounter> tuple;
-            tuple = await _gs.getTokenService().cancelTokenInTransaction(
+            Triplet<UserToken, TokenCounter, EntitySlots> triplet;
+            triplet = await _gs.getTokenService().cancelTokenInTransaction(
                 tx, userPhone, tokenIdWithoutNumber, tokenNumber);
-            cancelledToken = tuple.item1;
-            tokenCounter = tuple.item2;
+            cancelledToken = triplet.item1;
+            tokenCounter = triplet.item2;
             cancelledTokens = cancelledToken.parent;
+            es = triplet.item3;
           }
 
           if (localCounter != null) {
@@ -908,11 +912,12 @@ class BookingApplicationService {
                 Utils.getTokenIdWithoutNumber(application.tokenId);
             String tokenIdWithoutNumber = tokenIdSplitted.item1;
             int tokenNumber = tokenIdSplitted.item2;
-            Tuple<UserToken, TokenCounter> tuple;
-            tuple = await _gs.getTokenService().cancelTokenInTransaction(
+            Triplet<UserToken, TokenCounter, EntitySlots> triplet;
+            triplet = await _gs.getTokenService().cancelTokenInTransaction(
                 tx, userPhone, tokenIdWithoutNumber, tokenNumber);
-            cancelledToken = tuple.item1;
-            tokenCounter = tuple.item2;
+            cancelledToken = triplet.item1;
+            tokenCounter = triplet.item2;
+            es = triplet.item3;
             cancelledTokens = cancelledToken.parent;
           }
 
@@ -999,7 +1004,8 @@ class BookingApplicationService {
       throw e;
     }
 
-    return new Tuple(item1: application, item2: tokenCounter);
+    return new Triplet<BookingApplication, TokenCounter, EntitySlots>(
+        item1: application, item2: tokenCounter, item3: es);
   }
 
   Future<BookingApplicationCounter> getApplicationsOverview(
