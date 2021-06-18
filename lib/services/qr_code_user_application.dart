@@ -241,8 +241,8 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
                                   children: [
                                     QrImage(
                                       data: _dataString,
-                                      size: MediaQuery.of(context).size.width *
-                                          .7,
+                                      size: MediaQuery.of(context).size.height *
+                                          .32,
                                       errorStateBuilder: (cxt, err) {
                                         return Container(
                                           child: Center(
@@ -256,6 +256,10 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
                                     ),
                                     (Platform.isIOS)
                                         ? Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .15,
                                             margin: EdgeInsets.fromLTRB(
                                                 20, 10, 10, 0),
                                             child: Column(
