@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:LESSs/services/location_util.dart';
+import 'package:LESSs/triplet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,6 +31,7 @@ import './tuple.dart';
 import './utils.dart';
 import 'package:package_info/package_info.dart';
 import 'db/db_model/employee.dart';
+import 'db/db_model/entity_slots.dart';
 import 'db/db_service/notification_service.dart';
 import 'db/db_service/user_service.dart';
 import 'enum/entity_role.dart';
@@ -849,14 +851,14 @@ class GlobalState {
   }
 
   //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
-  Future<Tuple<UserTokens, TokenCounter>> addBooking(
+  Future<Triplet<UserTokens, TokenCounter, EntitySlots>> addBooking(
       MetaEntity meta, Slot slot, bool enableVideoChat) async {
     UserTokens tokens;
-    Tuple<UserTokens, TokenCounter> tuple;
-    tuple =
+    Triplet<UserTokens, TokenCounter, EntitySlots> triplet;
+    triplet =
         await _tokenService.generateToken(meta, slot.dateTime, enableVideoChat);
 
-    tokens = tuple.item1;
+    tokens = triplet.item1;
 
     UserToken newToken;
     bool matched;
@@ -880,7 +882,7 @@ class GlobalState {
             Tuple<UserToken, DocumentSnapshot>(item1: newToken, item2: null));
       }
     }
-    return tuple;
+    return triplet;
   }
 
   static clearGlobalState() {
@@ -912,7 +914,7 @@ class GlobalState {
 
   //Throws => TokenAlreadyCancelledException, NoTokenFoundException
   Future<bool> cancelBooking(String tokenId, [int number]) async {
-    Tuple<UserToken, TokenCounter> tuple;
+    Triplet<UserToken, TokenCounter, EntitySlots> tuple;
     if (_gs == null || _tokenService == null) return false;
 
     tuple = await _tokenService.cancelToken(tokenId, number);

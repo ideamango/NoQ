@@ -27,6 +27,7 @@ import '../events/events.dart';
 import '../events/local_notification_data.dart';
 import '../constants.dart';
 import '../global_state.dart';
+import '../triplet.dart';
 import '../tuple.dart';
 import '../utils.dart';
 
@@ -588,7 +589,7 @@ class DBTest {
           "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
     }
 
-    Tuple<UserToken, TokenCounter> cancelledTup;
+    Triplet<UserToken, TokenCounter, EntitySlots> cancelledTup;
     cancelledTup = await _gs
         .getTokenService()
         .cancelToken("Child101-1#2020~7~7#10~30#+919999999999");
@@ -1227,7 +1228,7 @@ class DBTest {
         .getTokenService()
         .generateToken(me, new DateTime(2021, 4, 13, 10, 30));
 
-    Tuple<UserTokens, TokenCounter> tup1 = await _gs
+    Triplet<UserTokens, TokenCounter, EntitySlots> tup1 = await _gs
         .getTokenService()
         .generateToken(me, new DateTime(2021, 4, 13, 11, 30));
     UserTokens ut1 = tup1.item1;
@@ -1257,7 +1258,7 @@ class DBTest {
         .generateToken(me, new DateTime(2021, 4, 14, 11, 30));
 
     //book tokens for May 1st (10:30 - 2, 11:30 - 1, 12:30 - 1) = Total: 4
-    Tuple<UserTokens, TokenCounter> tup2 = await _gs
+    Triplet<UserTokens, TokenCounter, EntitySlots> tup2 = await _gs
         .getTokenService()
         .generateToken(me, new DateTime(2021, 5, 1, 10, 30));
     UserTokens ut2 = tup2.item1;
