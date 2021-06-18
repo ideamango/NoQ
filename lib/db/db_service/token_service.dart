@@ -555,6 +555,7 @@ class TokenService {
     Exception exception;
     SlotFullException slotFullException;
     TokenAlreadyExistsException tokenAlreadyExistsException;
+    MaxTokenReachedByUserPerDayException maxTokenReachedByUserPerDayException;
 
     //TODO: To run the validation on DateTime for holidays, break, advnanceDays and during closing hours
 
@@ -569,11 +570,12 @@ class TokenService {
             e.toString());
         if (e is SlotFullException) {
           slotFullException = e;
-        }
-        if (e is TokenAlreadyExistsException) {
+        } else if (e is TokenAlreadyExistsException) {
           tokenAlreadyExistsException = e;
-        }
-        exception = e;
+        } else if (e is MaxTokenReachedByUserPerDayException) {
+          maxTokenReachedByUserPerDayException = e;
+        } else
+          exception = e;
       }
     });
 
@@ -583,6 +585,9 @@ class TokenService {
 
     if (tokenAlreadyExistsException != null) {
       throw tokenAlreadyExistsException;
+    }
+    if (maxTokenReachedByUserPerDayException != null) {
+      throw maxTokenReachedByUserPerDayException;
     }
 
     if (exception != null) {

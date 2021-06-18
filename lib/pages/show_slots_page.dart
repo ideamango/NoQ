@@ -826,6 +826,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           Tuple<UserTokens, TokenCounter> tuple = value;
           tokens = tuple.item1;
           tokenCounter = tuple.item2;
+          selectedSlot.tokens.add(tokens);
+          selectedSlot.totalBooked++;
+          //selectedSlot.slotId  = entitySlot.e
           slotsStatusUpdate(tokenCounter, selectedSlot);
 
           _gs.getNotificationService().registerTokenNotification(tokens);
@@ -844,6 +847,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
           String msg = enableVideoChat ? tokenTextH2Online : tokenTextH2Walkin;
 
+          setState(() {});
           showTokenAlert(
                   context, msg, _token, _storeName, _dateFormatted, slotTiming)
               .then((value) {
@@ -868,12 +872,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         if (error is MaxTokenReachedByUserPerSlotException) {
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotBookToken, error.cause);
-        }
-        if (error is MaxTokenReachedByUserPerDayException) {
+        } else if (error is MaxTokenReachedByUserPerDayException) {
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotBookToken, error.cause);
-        }
-        if (error is SlotFullException) {
+        } else if (error is SlotFullException) {
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotBookToken, slotsAlreadyBooked);
         } else if (error is TokenAlreadyExistsException) {
