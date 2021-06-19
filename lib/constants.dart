@@ -115,7 +115,8 @@ String yourTurnUserMessageWhenTokenIsNotAlloted =
 String paymentDisclaimer =
     "Disclaimer: LESSs App does not process or track any payment you make to the Service Provider.\nNote, you are directly paying through the UPI Apps installed on your phone to the UPI Id of the Service Provider.";
 String upiHeaderMsg = 'UPI Payments';
-String directUpiPayMsg = 'Pay through any UPI Apps on your phone';
+String copyUpiId = 'Copy the UPI Id and pay via any Payment Apps.';
+String directUpiPayMsg = 'Pay with any UPI App';
 String donationMessage = "Scan this QR code to make the payment";
 String donationMsg1 =
     "Every contribution matters, no amount is small for us. \nDonate as per your comfort.";
