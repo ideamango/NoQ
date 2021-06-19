@@ -113,9 +113,9 @@ String yourTurnUserMessageWhenTokenIsNotAlloted =
     "Token is not issued yet. \nYou should start the call only when a time-slot is allotted.";
 //UPI Payment Page Strings - Start
 String paymentDisclaimer =
-    "Disclaimer: LESSs App does not process or track any payment you make to the Service Provider. Note: You are directly paying through the UPI Apps installed on your phone to the UPI Id of the Service Provider.";
+    "Disclaimer: LESSs App does not process or track any payment you make to the Service Provider.\nNote, you are directly paying through the UPI Apps installed on your phone to the UPI Id of the Service Provider.";
 String upiHeaderMsg = 'UPI Payments';
-String directUpiPayMsg = 'Pay through any UPI App';
+String directUpiPayMsg = 'Pay through any UPI Apps on your phone';
 String donationMessage = "Scan this QR code to make the payment";
 String donationMsg1 =
     "Every contribution matters, no amount is small for us. \nDonate as per your comfort.";
@@ -136,8 +136,7 @@ String applicationShareTitle =
     "View the application details you have submitted";
 String applicationShareMessage = "Show this QR when you reach ";
 String thatsAllStr = 'That\'s all!';
-String qrCodeShareMessage =
-    "Use LESSs app to Book your Time-Slot. Book your Peace of Mind!";
+String qrCodeShareMessage = "Book your Peace of Mind! - LESSs";
 String tokenAccessNotAuthorised =
     "You are not authorised to access the Bookings for this Place.";
 String contactAdminIfIssue =
