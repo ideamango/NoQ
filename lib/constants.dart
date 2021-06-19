@@ -112,9 +112,10 @@ String yourTurnUserMessage2 =
 String yourTurnUserMessageWhenTokenIsNotAlloted =
     "Token is not issued yet. \nYou should start the call only when a time-slot is allotted.";
 //UPI Payment Page Strings - Start
-String paymentDisclaimer = "Disclaimer";
+String paymentDisclaimer =
+    "Disclaimer: LESSs App does not process or track any payment you make to the Service Provider. Note: You are directly paying through the UPI Apps installed on your phone to the UPI Id of the Service Provider.";
 String upiHeaderMsg = 'UPI Payments';
-String directUpiPayMsg = 'Copy UPI Id Or Scan QR code and pay with any UPI app';
+String directUpiPayMsg = 'Pay through any UPI App';
 String donationMessage = "Scan this QR code to make the payment";
 String donationMsg1 =
     "Every contribution matters, no amount is small for us. \nDonate as per your comfort.";
