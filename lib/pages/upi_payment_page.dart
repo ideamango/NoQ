@@ -699,16 +699,18 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Divider(
-                                indent: 0,
-                                thickness: 1,
-                                endIndent: 8,
-                                color: Colors.grey[400],
-                              ),
+                              // Divider(
+                              //   indent: 0,
+                              //   thickness: 1,
+                              //   endIndent: 8,
+                              //   color: Colors.grey[400],
+                              // ),
                               Container(
-                                  margin: EdgeInsets.fromLTRB(2, 0, 2, 20),
-                                  height:
-                                      MediaQuery.of(context).size.height * .1,
+                                  color: Colors.grey[300],
+                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                                  padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
+                                  // height:
+                                  //     MediaQuery.of(context).size.height * .1,
                                   child: Text(paymentDisclaimer)),
                             ],
                           ),
