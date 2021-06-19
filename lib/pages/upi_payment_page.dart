@@ -495,11 +495,11 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                                             widget.upiQrCodeImgPath))
                                           Container(
                                             margin: EdgeInsets.fromLTRB(
-                                                0, 10, 0, 10),
+                                                2, 10, 2, 10),
                                             child: Text(
-                                              "You can copy the UPI Id and pay via any Payment Channels.",
+                                              copyUpiId,
                                               style: TextStyle(
-                                                  fontSize: 13,
+                                                  fontSize: 14,
                                                   color: Colors.blueGrey[600]),
                                             ),
                                           )
