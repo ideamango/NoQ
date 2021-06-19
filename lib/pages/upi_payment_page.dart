@@ -252,68 +252,48 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          (widget.isDonation)
-                              ? Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * .11,
-                                  margin: EdgeInsets.fromLTRB(
-                                      MediaQuery.of(context).size.width * .05,
-                                      MediaQuery.of(context).size.width * .04,
-                                      MediaQuery.of(context).size.width * .05,
-                                      MediaQuery.of(context).size.width * .04),
-                                  child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      //  padding: EdgeInsets.zero,
-                                      children: <Widget>[
-                                        // Text(
-                                        //   'Thats wonderful! ',
-                                        //   style: TextStyle(
-                                        //       color: Colors.blueGrey[800],
-                                        //       fontFamily: 'RalewayRegular',
-                                        //       fontSize: 17.0),
-                                        // ),
-                                        // verticalSpacer,
-                                        RichText(
-                                            textAlign: TextAlign.center,
-                                            text: TextSpan(
-                                                style: TextStyle(
-                                                    height: 1.3,
-                                                    color: Colors.blueGrey[800],
-                                                    fontFamily:
-                                                        'RalewayRegular',
-                                                    fontSize: 12.0),
-                                                children: <TextSpan>[
-                                                  TextSpan(
-                                                      text:
-                                                          'Do MORE with LESSs.\n',
-                                                      style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.w800,
-                                                      )),
-                                                  TextSpan(
-                                                    text: donationMsg1,
-                                                  ),
-                                                ])),
-                                      ]),
-                                )
-                              : Container(
-                                  // margin: EdgeInsets.fromLTRB(
-                                  //     5,
-                                  //     MediaQuery.of(context).size.width * .1,
-                                  //     MediaQuery.of(context).size.width * .05,
-                                  //     MediaQuery.of(context).size.width * .04),
-                                  // padding: EdgeInsets.zero,
-                                  // child: Text(
-                                  //   upiHeaderMsg,
-                                  //   textAlign: TextAlign.center,
-                                  //   style: TextStyle(
-                                  //       fontSize: 16, color: Colors.black),
-                                  // ),
-
-                                  height: 0,
-                                ),
+                          if (widget.isDonation)
+                            Container(
+                              height: MediaQuery.of(context).size.height * .11,
+                              margin: EdgeInsets.fromLTRB(
+                                  MediaQuery.of(context).size.width * .05,
+                                  MediaQuery.of(context).size.width * .04,
+                                  MediaQuery.of(context).size.width * .05,
+                                  MediaQuery.of(context).size.width * .04),
+                              child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  //  padding: EdgeInsets.zero,
+                                  children: <Widget>[
+                                    // Text(
+                                    //   'Thats wonderful! ',
+                                    //   style: TextStyle(
+                                    //       color: Colors.blueGrey[800],
+                                    //       fontFamily: 'RalewayRegular',
+                                    //       fontSize: 17.0),
+                                    // ),
+                                    // verticalSpacer,
+                                    RichText(
+                                        textAlign: TextAlign.center,
+                                        text: TextSpan(
+                                            style: TextStyle(
+                                                height: 1.3,
+                                                color: Colors.blueGrey[800],
+                                                fontFamily: 'RalewayRegular',
+                                                fontSize: 12.0),
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                  text: 'Do MORE with LESSs.\n',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w800,
+                                                  )),
+                                              TextSpan(
+                                                text: donationMsg1,
+                                              ),
+                                            ])),
+                                  ]),
+                            ),
 
                           //Phase3 - DO NOT DELETE
                           // Container(
@@ -385,130 +365,126 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
-                                if (Platform.isIOS)
-                                  Container(
-                                    child: Column(
-                                      children: [
-                                        // Text(
-                                        //   donationMessage,
-                                        //   style: TextStyle(fontSize: 20),
-                                        // ),
-                                        Card(
-                                          elevation: 8,
-                                          margin: EdgeInsets.all(0),
-                                          child: Container(
-                                            // height: MediaQuery.of(context)
-                                            //         .size
-                                            //         .height *
-                                            //     .06,
-                                            // margin: EdgeInsets.only(top: 10),
-                                            padding: EdgeInsets.all(10),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  //mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    Container(
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              8, 0, 10, 0),
-                                                      child: Text(
-                                                        'UPI Id',
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: Colors
-                                                                .blueGrey),
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                        padding:
-                                                            EdgeInsets.fromLTRB(
-                                                                10, 0, 10, 0),
-                                                        child: Text(
-                                                          _upiAddressController
-                                                              .text,
-                                                          style: TextStyle(
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.black),
-                                                        )),
-                                                  ],
-                                                ),
-                                                IconButton(
-                                                    visualDensity:
-                                                        VisualDensity.compact,
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      // Text(
+                                      //   donationMessage,
+                                      //   style: TextStyle(fontSize: 20),
+                                      // ),
+                                      Card(
+                                        elevation: 8,
+                                        margin: EdgeInsets.all(0),
+                                        child: Container(
+                                          // height: MediaQuery.of(context)
+                                          //         .size
+                                          //         .height *
+                                          //     .06,
+                                          // margin: EdgeInsets.only(top: 10),
+                                          padding: EdgeInsets.all(10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                //mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Container(
                                                     padding:
                                                         EdgeInsets.fromLTRB(
-                                                            0, 0, 0, 0),
-                                                    alignment: Alignment.center,
-                                                    highlightColor:
-                                                        Colors.orange[300],
-                                                    icon: Icon(
-                                                      Icons.copy,
+                                                            8, 0, 10, 0),
+                                                    child: Text(
+                                                      'UPI Id',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color:
+                                                              Colors.blueGrey),
                                                     ),
-                                                    onPressed: () {
-                                                      Clipboard.setData(
-                                                              new ClipboardData(
-                                                                  text:
-                                                                      _upiAddressController
-                                                                          .text))
-                                                          .then((_) {
-                                                        Utils.showMyFlushbar(
-                                                            context,
-                                                            Icons.copy,
-                                                            Duration(
-                                                                seconds: 5),
-                                                            "UPI Id copied to clipboard",
-                                                            "");
-                                                      });
-                                                    }),
-                                              ],
+                                                  ),
+                                                  Container(
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              10, 0, 10, 0),
+                                                      child: AutoSizeText(
+                                                        _upiAddressController
+                                                            .text,
+                                                        minFontSize: 9,
+                                                        maxFontSize: 18,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color:
+                                                                Colors.black),
+                                                      )),
+                                                ],
+                                              ),
+                                              IconButton(
+                                                  visualDensity:
+                                                      VisualDensity.compact,
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 0),
+                                                  alignment: Alignment.center,
+                                                  highlightColor:
+                                                      Colors.orange[300],
+                                                  icon: Icon(
+                                                    Icons.copy,
+                                                  ),
+                                                  onPressed: () {
+                                                    Clipboard.setData(
+                                                            new ClipboardData(
+                                                                text:
+                                                                    _upiAddressController
+                                                                        .text))
+                                                        .then((_) {
+                                                      Utils.showMyFlushbar(
+                                                          context,
+                                                          Icons.copy,
+                                                          Duration(seconds: 5),
+                                                          "UPI Id copied to clipboard",
+                                                          "");
+                                                    });
+                                                  }),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      if (Utils.isNotNullOrEmpty(
+                                          widget.upiQrCodeImgPath))
+                                        Card(
+                                          elevation: 8,
+                                          child: Container(
+                                            margin: EdgeInsets.only(top: 20),
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .3,
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: AssetImage(
+                                                      "assets/bigpiq_upi.jpg"),
+                                                  fit: BoxFit.contain),
                                             ),
                                           ),
                                         ),
-                                        if (Utils.isNotNullOrEmpty(
-                                            widget.upiQrCodeImgPath))
-                                          Card(
-                                            elevation: 8,
-                                            child: Container(
-                                              margin: EdgeInsets.only(top: 20),
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  .3,
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                    image: AssetImage(
-                                                        "assets/bigpiq_upi.jpg"),
-                                                    fit: BoxFit.contain),
-                                              ),
-                                            ),
+                                      if (Utils.isStrNullOrEmpty(
+                                          widget.upiQrCodeImgPath))
+                                        Container(
+                                          margin:
+                                              EdgeInsets.fromLTRB(2, 10, 2, 10),
+                                          child: Text(
+                                            copyUpiId,
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.blueGrey[600]),
                                           ),
-                                        if (Utils.isStrNullOrEmpty(
-                                            widget.upiQrCodeImgPath))
-                                          Container(
-                                            margin: EdgeInsets.fromLTRB(
-                                                2, 10, 2, 10),
-                                            child: Text(
-                                              copyUpiId,
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.blueGrey[600]),
-                                            ),
-                                          )
-                                      ],
-                                    ),
+                                        )
+                                    ],
                                   ),
+                                ),
                                 if (!Platform.isIOS)
                                   FutureBuilder<List<ApplicationMeta>>(
                                     future: _appsFuture,
