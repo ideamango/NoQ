@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
 import 'package:LESSs/db/exceptions/access_denied_exception.dart';
+import 'package:LESSs/db/exceptions/invalid_slottime_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
 import 'package:LESSs/triplet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
 
 import '../../tuple.dart';
 import '../db_model/entity_slots.dart';
@@ -308,6 +308,12 @@ class TokenService {
 
         int newNumber = 1;
         Slot existingSlot;
+        //validate the requested time-slot with the EntitySlots object
+        if (!Utils.isValidSlotTiming(es, metaEntity, dateTime, slotId)) {
+          throw new InvalidSlotTimeException(
+              "Selected time-slot is no longer valid, please refresh the slots and try again!");
+        }
+
         for (var sl in es.slots) {
           slotCount++;
           if (sl.dateTime.hour == dateTime.hour &&

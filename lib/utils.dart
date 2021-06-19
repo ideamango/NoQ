@@ -550,6 +550,19 @@ class Utils {
     });
   }
 
+  static bool isValidSlotTiming(EntitySlots entitySlots, MetaEntity me,
+      DateTime dateTime, String slotId) {
+    List<Slot> slots = getSlots(entitySlots, me, dateTime);
+
+    for (Slot sl in slots) {
+      if (sl.slotId == slotId) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   static List<Slot> getSlots(
       EntitySlots entitySlots, MetaEntity me, DateTime dateTime) {
     //if EntitySlots is null, this method will return all the slots without merging the booking info from the DB
