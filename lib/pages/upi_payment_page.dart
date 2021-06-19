@@ -311,7 +311,9 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                                   //   style: TextStyle(
                                   //       fontSize: 16, color: Colors.black),
                                   // ),
-                                  ),
+
+                                  height: 0,
+                                ),
 
                           //Phase3 - DO NOT DELETE
                           // Container(
@@ -348,39 +350,40 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                           //     ],
                           //   ),
                           // ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                  // height:
-                                  //     MediaQuery.of(context).size.height * .08,
-                                  //  height: MediaQuery.of(context).size.height * .06,
-                                  width: MediaQuery.of(context).size.width * .9,
-                                  margin: EdgeInsets.only(
-                                      left: 5, top: 0, bottom: 0),
-                                  padding: EdgeInsets.zero,
-                                  child: AutoSizeText(
-                                    directUpiPayMsg,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        //fontWeight: FontWeight.bold,
-                                        color: Colors.blueGrey,
-                                        fontSize: 18),
-                                  )),
-                              Divider(
-                                indent: 0,
-                                thickness: 1,
-                                endIndent: 8,
-                                color: Colors.grey[400],
-                              ),
-                            ],
-                          ),
+                          // Column(
+                          //   mainAxisAlignment: MainAxisAlignment.start,
+                          //   children: [
+                          //     Container(
+                          //         // height:
+                          //         //     MediaQuery.of(context).size.height * .08,
+                          //         //  height: MediaQuery.of(context).size.height * .06,
+                          //         width: MediaQuery.of(context).size.width * .9,
+                          //         margin: EdgeInsets.only(
+                          //             left: 5, top: 0, bottom: 0),
+                          //         padding: EdgeInsets.zero,
+                          //         child: AutoSizeText(
+                          //           directUpiPayMsg,
+                          //           textAlign: TextAlign.center,
+                          //           style: TextStyle(
+                          //               //fontWeight: FontWeight.bold,
+                          //               color: Colors.blueGrey,
+                          //               fontSize: 18),
+                          //         )),
+                          //     Divider(
+                          //       indent: 0,
+                          //       thickness: 1,
+                          //       endIndent: 8,
+                          //       color: Colors.grey[400],
+                          //     ),
+                          //   ],
+                          // ),
+
                           Container(
                             height: MediaQuery.of(context).size.height * .45,
                             margin: EdgeInsets.only(top: 20, bottom: 10),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 if (Platform.isIOS)
                                   Container(
