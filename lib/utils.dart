@@ -15,14 +15,12 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import './db/db_model/address.dart';
-import './db/db_model/booking_application.dart';
+
 import './db/db_model/meta_entity.dart';
 import './enum/entity_type.dart';
 import './global_state.dart';
 import './pages/favs_list_page.dart';
-import './pages/show_slots_page.dart';
-import './pages/show_user_application_details.dart';
-import './services/auth_service.dart';
+
 import './style.dart';
 import './widget/weekday_selector.dart';
 import './widget/widgets.dart';
