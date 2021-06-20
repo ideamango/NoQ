@@ -1691,6 +1691,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     });
     if (_bookingFormKey.currentState.validate()) {
       if (!validateMandatoryFields()) {
+        setState(() {
+          showLoading = false;
+        });
         Utils.showMyFlushbar(
             context,
             Icons.error,
@@ -1809,14 +1812,14 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
       ///**Validation Ends */
 
-      Utils.showMyFlushbar(
-          context,
-          Icons.info,
-          Duration(
-            seconds: 5,
-          ),
-          "Processing your Request..",
-          '');
+      // Utils.showMyFlushbar(
+      //     context,
+      //     Icons.info,
+      //     Duration(
+      //       seconds: 5,
+      //     ),
+      //     "Processing your Request..",
+      //     '');
       if (Utils.isStrNullOrEmpty(validationErrMsg)) {
         _bookingFormKey.currentState.save();
         _gs
