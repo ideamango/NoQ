@@ -554,12 +554,14 @@ class _UserHomePageState extends State<UserHomePage>
                                           Container(
                                               margin: EdgeInsets.only(
                                                   top: 10, bottom: 15),
-                                              child: Text(
+                                              child: AutoSizeText(
                                                 loadUpcomingTokensMsg,
+                                                minFontSize: 11,
+                                                maxFontSize: 17,
                                                 style: TextStyle(
-                                                    color: Colors.black,
-                                                    //fontWeight: FontWeight.bold,
-                                                    fontSize: 17),
+                                                  color: Colors.black,
+                                                  //fontWeight: FontWeight.bold,
+                                                ),
                                               ))
                                         ],
                                       ),

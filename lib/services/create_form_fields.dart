@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
+import 'package:LESSs/db/exceptions/invalid_slottime_exception.dart';
 import 'package:LESSs/pages/search_entity_page.dart';
 import 'package:LESSs/pages/token_alert.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -1831,7 +1832,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             String time =
                 " ${Utils.formatTime(bookingApplication.preferredSlotTiming.hour.toString())} : ${Utils.formatTime(bookingApplication.preferredSlotTiming.minute.toString())}";
             setState(() {
-              showLoading = true;
+              showLoading = false;
             });
             Future.delayed(Duration(seconds: 2)).then((value) {
               showTokenAlert(
@@ -1852,7 +1853,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             });
           } else {
             //The application could not be submitted, Show appropriate msg to User.
-
+            setState(() {
+              showLoading = false;
+            });
             showMessageDialog(
                     context,
                     "Request submitted successfully!",
@@ -1864,6 +1867,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         builder: (context) => SearchEntityPage())));
           }
         }).catchError((error) {
+          setState(() {
+            showLoading = false;
+          });
           switch (error.runtimeType) {
             case MaxTokenReachedByUserPerDayException:
               print("max token reached");
@@ -1880,6 +1886,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   tokenAlreadyExists, selectDateSub);
               print("token exists");
               break;
+            case InvalidSlotTimeException:
+              Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                  error.cause, selectDateSub);
+              print("token exists");
+              break;
+
             case SlotFullException:
               Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
                   slotsAlreadyBooked, selectDateSub);
@@ -1891,6 +1903,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         });
       }
     } else {
+      setState(() {
+        showLoading = false;
+      });
+
       print("Fields not vbalid");
       Utils.showMyFlushbar(
           context,
