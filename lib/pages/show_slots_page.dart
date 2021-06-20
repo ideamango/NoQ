@@ -667,9 +667,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         List<String> slotIdVals = Utils.isNotNullOrEmpty(_slotList[i].slotId)
             ? _slotList[i].slotId.split('#')
             : null;
-        if (!Utils.isNullOrEmpty(slotIdVals)) {
-          String slotId = slotIdVals[1] + '#' + slotIdVals[2];
+        String slotId = slotIdVals[1] + '#' + slotIdVals[2];
+        if (counter.slotWiseStats.containsKey(slotId)) {
           TokenStats slotStats = counter.slotWiseStats[slotId];
+
           int numberOfBookingsLeft = (entitySlot != null
                   ? entitySlot.maxAllowed
                   : widget.metaEntity.maxAllowed) -

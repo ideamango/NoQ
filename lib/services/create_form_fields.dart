@@ -1758,10 +1758,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                     await uploadFilesToServer(path, targetFileName);
                 print(targetPath);
                 targetPaths.add(targetPath);
-                (bookingApplication.responseForm.getFormFields()[i]
-                        as FormInputFieldAttachment)
-                    .responseFilePaths = targetPaths;
               }
+              (bookingApplication.responseForm.getFormFields()[i]
+                      as FormInputFieldAttachment)
+                  .responseFilePaths = targetPaths;
             }
 
             break;
@@ -1799,10 +1799,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                     await uploadFilesToServer(path, targetFileName);
                 print(targetPath);
                 targetPaths.add(targetPath);
-                (bookingApplication.responseForm.getFormFields()[i]
-                        as FormInputFieldOptionsWithAttachments)
-                    .responseFilePaths = targetPaths;
               }
+              (bookingApplication.responseForm.getFormFields()[i]
+                      as FormInputFieldOptionsWithAttachments)
+                  .responseFilePaths = targetPaths;
             }
             break;
           default:
@@ -1837,22 +1837,19 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             setState(() {
               showLoading = false;
             });
-            Future.delayed(Duration(seconds: 2)).then((value) {
-              showTokenAlert(
-                      context,
-                      token.parent.isOnlineAppointment
-                          ? tokenTextH2Online
-                          : tokenTextH2Walkin,
-                      token.getDisplayName(),
-                      widget.metaEntity.name,
-                      _dateFormatted,
-                      time)
-                  .then((value) {
-                Navigator.pushReplacement(
+
+            showTokenAlert(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchEntityPage()));
-              });
+                    token.parent.isOnlineAppointment
+                        ? tokenTextH2Online
+                        : tokenTextH2Walkin,
+                    token.getDisplayName(),
+                    widget.metaEntity.name,
+                    _dateFormatted,
+                    time)
+                .then((value) {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => SearchEntityPage()));
             });
           } else {
             //The application could not be submitted, Show appropriate msg to User.
