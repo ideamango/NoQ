@@ -147,8 +147,9 @@ class _SlotSelectionAdminState extends State<SlotSelectionAdmin> {
         List<String> slotIdVals = Utils.isNotNullOrEmpty(list[i].slotId)
             ? list[i].slotId.split('#')
             : null;
-        if (!Utils.isNullOrEmpty(slotIdVals)) {
-          String slotId = slotIdVals[1] + '#' + slotIdVals[2];
+
+        String slotId = slotIdVals[1] + '#' + slotIdVals[2];
+        if (widget.tokenCounter.slotWiseStats.containsKey(slotId)) {
           TokenStats slotStats = widget.tokenCounter.slotWiseStats[slotId];
           int numberOfBookingsLeft = widget.metaEntity.maxAllowed -
               (slotStats.numberOfTokensCreated -
