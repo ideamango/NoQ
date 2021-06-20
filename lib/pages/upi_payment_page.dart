@@ -77,11 +77,9 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
       }
       Future.delayed(Duration(seconds: 2)).then((value) {
         setState(() {
-          showPaymentApps = true;
           showLoading = false;
+          loadPaymentApps();
         });
-
-        loadPaymentApps();
       });
       setState(() {
         showLoading = true;
@@ -112,6 +110,9 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
   loadPaymentApps() {
     UpiPay.getInstalledUpiApplications().then((value) {
       _appsFuture = value;
+      setState(() {
+        showPaymentApps = true;
+      });
     });
   }
 
