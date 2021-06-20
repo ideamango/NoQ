@@ -1287,11 +1287,13 @@ class _UserAccountPageState extends State<UserAccountPage>
                                             Container(
                                                 margin: EdgeInsets.only(
                                                     top: 10, bottom: 15),
-                                                child: Text(
+                                                child: AutoSizeText(
                                                   loadMoreApplicationsMsg,
+                                                  minFontSize: 11,
+                                                  maxFontSize: 17,
                                                   style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 17),
+                                                    color: Colors.black,
+                                                  ),
                                                 ))
                                           ],
                                         ),
@@ -1387,11 +1389,13 @@ class _UserAccountPageState extends State<UserAccountPage>
                                             Container(
                                                 margin: EdgeInsets.only(
                                                     top: 10, bottom: 15),
-                                                child: Text(
+                                                child: AutoSizeText(
                                                   loadUpcomingTokensMsg,
+                                                  minFontSize: 11,
+                                                  maxFontSize: 17,
                                                   style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 17),
+                                                    color: Colors.black,
+                                                  ),
                                                 ))
                                           ],
                                         ),
