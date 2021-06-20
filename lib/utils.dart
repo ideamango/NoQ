@@ -584,6 +584,14 @@ class Utils {
 
     int slotDuration;
     int maxAllowed;
+    String prefixSlotId = me.entityId +
+        "#" +
+        dateTime.year.toString() +
+        "~" +
+        dateTime.month.toString() +
+        "~" +
+        dateTime.day.toString() +
+        "#"; //entityId#2021~6~24#  later add timing 11~15
 
     if (entitySlots != null) {
       startTimeHour = entitySlots.startTimeHour;
@@ -640,7 +648,8 @@ class Utils {
       Slot sl = checkIfSlotExists(entitySlots, dt);
       if (sl == null) {
         sl = new Slot(
-            slotId: "",
+            slotId:
+                prefixSlotId + dt.hour.toString() + "~" + dt.minute.toString(),
             totalBooked: 0,
             maxAllowed: maxAllowed,
             dateTime: dt,
@@ -657,7 +666,8 @@ class Utils {
       Slot sl = checkIfSlotExists(entitySlots, dt);
       if (sl == null) {
         sl = new Slot(
-            slotId: "",
+            slotId:
+                prefixSlotId + dt.hour.toString() + "~" + dt.minute.toString(),
             totalBooked: 0,
             maxAllowed: maxAllowed,
             dateTime: dt,
