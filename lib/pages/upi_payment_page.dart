@@ -50,6 +50,8 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
   GlobalState _gs;
   String upiId;
   GlobalKey upiKey = new GlobalKey();
+  bool showLoading = false;
+  bool showPaymentApps = false;
 
   TextStyle header = TextStyle(
     fontSize: 18,
@@ -67,14 +69,22 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
       _gs = gs;
 
       if (Platform.isAndroid) {
-        _appsFuture = UpiPay.getInstalledUpiApplications();
         _upiAddressController.text = widget.upiId;
       }
       if (Platform.isIOS) {
         //TODO: show the QR code and the UPI ID for IOS users to make the payment
         _upiAddressController.text = widget.upiId;
       }
+      Future.delayed(Duration(seconds: 2)).then((value) {
+        setState(() {
+          showPaymentApps = true;
+          showLoading = false;
+        });
+
+        loadPaymentApps();
+      });
       setState(() {
+        showLoading = true;
         initCompleted = true;
       });
     });
@@ -99,6 +109,12 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     );
   }
 
+  loadPaymentApps() {
+    UpiPay.getInstalledUpiApplications().then((value) {
+      _appsFuture = value;
+    });
+  }
+
   Future<GlobalState> getGlobalState() async {
     return await GlobalState.getGlobalState();
   }
@@ -109,7 +125,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
   final _amountController = TextEditingController();
 
   bool _isUpiEditable = false;
-  Future<List<ApplicationMeta>> _appsFuture;
+  List<ApplicationMeta> _appsFuture;
 
   @override
   void dispose() {
@@ -117,13 +133,6 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     _upiAddressController.dispose();
     super.dispose();
   }
-
-  // void _generateAmount() {
-  //   setState(() {
-  //     _amountController.text =
-  //         (Random.secure().nextDouble() * 10).toStringAsFixed(2);
-  //   });
-  // }
 
   Future<void> _onTap(ApplicationMeta app) async {
     final err = _validateAmount(_amountController.text);
@@ -230,385 +239,416 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
   Widget build(BuildContext context) {
     String title = "Easy Payments";
 
-    if (initCompleted) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            drawer: CustomDrawer(
-              phone: _gs.getCurrentUser().ph != null
-                  ? _gs.getCurrentUser().ph
-                  : "",
-            ),
-            appBar: CustomAppBarWithBackButton(
-              backRoute: widget.backRoute,
-              titleTxt: title,
-            ),
-            body: (initCompleted)
-                ? SafeArea(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          if (widget.isDonation)
-                            Container(
-                              height: MediaQuery.of(context).size.height * .11,
-                              margin: EdgeInsets.fromLTRB(
-                                  MediaQuery.of(context).size.width * .05,
-                                  MediaQuery.of(context).size.width * .04,
-                                  MediaQuery.of(context).size.width * .05,
-                                  MediaQuery.of(context).size.width * .04),
-                              child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  //  padding: EdgeInsets.zero,
-                                  children: <Widget>[
-                                    // Text(
-                                    //   'Thats wonderful! ',
-                                    //   style: TextStyle(
-                                    //       color: Colors.blueGrey[800],
-                                    //       fontFamily: 'RalewayRegular',
-                                    //       fontSize: 17.0),
-                                    // ),
-                                    // verticalSpacer,
-                                    RichText(
-                                        textAlign: TextAlign.center,
-                                        text: TextSpan(
-                                            style: TextStyle(
-                                                height: 1.3,
-                                                color: Colors.blueGrey[800],
-                                                fontFamily: 'RalewayRegular',
-                                                fontSize: 12.0),
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                  text: 'Do MORE with LESSs.\n',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w800,
-                                                  )),
-                                              TextSpan(
-                                                text: donationMsg1,
-                                              ),
-                                            ])),
-                                  ]),
-                            ),
-
-                          //Phase3 - DO NOT DELETE
-                          // Container(
-                          //   height: MediaQuery.of(context).size.height * .07,
-                          //   margin: EdgeInsets.only(top: 5),
-                          //   child: Row(
-                          //     children: <Widget>[
-                          //       Expanded(
-                          //         child: TextFormField(
-                          //             controller: _amountController,
-                          //             //  readOnly: true,
-                          //             enabled: true,
-                          //             style: TextStyle(
-                          //               fontSize: 14,
-                          //               letterSpacing: 1.5,
-                          //               color: Colors.blueGrey[600],
-                          //             ),
-                          //             keyboardType: TextInputType.number,
-                          //             autovalidateMode:
-                          //                 AutovalidateMode.onUserInteraction,
-                          //             decoration: InputDecoration(
-                          //               hintText: 'Amount in INR',
-                          //               enabledBorder: UnderlineInputBorder(
-                          //                   borderSide:
-                          //                       BorderSide(color: Colors.grey)),
-                          //               focusedBorder: UnderlineInputBorder(
-                          //                   borderSide: BorderSide(
-                          //                       color: Colors.orange)),
-                          //             ),
-                          //             validator: (String val) {
-                          //               return _validateAmount(val);
-                          //             }),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          // Column(
-                          //   mainAxisAlignment: MainAxisAlignment.start,
-                          //   children: [
-                          //     Container(
-                          //         // height:
-                          //         //     MediaQuery.of(context).size.height * .08,
-                          //         //  height: MediaQuery.of(context).size.height * .06,
-                          //         width: MediaQuery.of(context).size.width * .9,
-                          //         margin: EdgeInsets.only(
-                          //             left: 5, top: 0, bottom: 0),
-                          //         padding: EdgeInsets.zero,
-                          //         child: AutoSizeText(
-                          //           directUpiPayMsg,
-                          //           textAlign: TextAlign.center,
-                          //           style: TextStyle(
-                          //               //fontWeight: FontWeight.bold,
-                          //               color: Colors.blueGrey,
-                          //               fontSize: 18),
-                          //         )),
-                          //     Divider(
-                          //       indent: 0,
-                          //       thickness: 1,
-                          //       endIndent: 8,
-                          //       color: Colors.grey[400],
-                          //     ),
-                          //   ],
-                          // ),
-
-                          Container(
-                            height: MediaQuery.of(context).size.height * .45,
-                            margin: EdgeInsets.only(top: 20, bottom: 10),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  child: Column(
-                                    children: [
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.light().copyWith(),
+      home: WillPopScope(
+        child: Scaffold(
+          drawer: CustomDrawer(
+            phone:
+                _gs.getCurrentUser().ph != null ? _gs.getCurrentUser().ph : "",
+          ),
+          appBar: CustomAppBarWithBackButton(
+            backRoute: widget.backRoute,
+            titleTxt: title,
+          ),
+          body: (initCompleted)
+              ? SafeArea(
+                  child: Stack(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            if (widget.isDonation)
+                              Container(
+                                height:
+                                    MediaQuery.of(context).size.height * .11,
+                                margin: EdgeInsets.fromLTRB(
+                                    MediaQuery.of(context).size.width * .05,
+                                    MediaQuery.of(context).size.width * .04,
+                                    MediaQuery.of(context).size.width * .05,
+                                    MediaQuery.of(context).size.width * .04),
+                                child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    //  padding: EdgeInsets.zero,
+                                    children: <Widget>[
                                       // Text(
-                                      //   donationMessage,
-                                      //   style: TextStyle(fontSize: 20),
+                                      //   'Thats wonderful! ',
+                                      //   style: TextStyle(
+                                      //       color: Colors.blueGrey[800],
+                                      //       fontFamily: 'RalewayRegular',
+                                      //       fontSize: 17.0),
                                       // ),
-                                      Card(
-                                        elevation: 8,
-                                        margin: EdgeInsets.all(0),
-                                        child: Container(
-                                          // height: MediaQuery.of(context)
-                                          //         .size
-                                          //         .height *
-                                          //     .06,
-                                          // margin: EdgeInsets.only(top: 10),
-                                          padding: EdgeInsets.all(10),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                //mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            8, 0, 10, 0),
-                                                    child: Text(
-                                                      'UPI Id',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color:
-                                                              Colors.blueGrey),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              10, 0, 10, 0),
-                                                      child: AutoSizeText(
-                                                        _upiAddressController
-                                                            .text,
-                                                        minFontSize: 9,
-                                                        maxFontSize: 18,
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color:
-                                                                Colors.black),
-                                                      )),
-                                                ],
-                                              ),
-                                              IconButton(
-                                                  visualDensity:
-                                                      VisualDensity.compact,
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 0),
-                                                  alignment: Alignment.center,
-                                                  highlightColor:
-                                                      Colors.orange[300],
-                                                  icon: Icon(
-                                                    Icons.copy,
-                                                  ),
-                                                  onPressed: () {
-                                                    Clipboard.setData(
-                                                            new ClipboardData(
-                                                                text:
-                                                                    _upiAddressController
-                                                                        .text))
-                                                        .then((_) {
-                                                      Utils.showMyFlushbar(
-                                                          context,
-                                                          Icons.copy,
-                                                          Duration(seconds: 5),
-                                                          "UPI Id copied to clipboard",
-                                                          "");
-                                                    });
-                                                  }),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      if (Utils.isNotNullOrEmpty(
-                                          widget.upiQrCodeImgPath))
+                                      // verticalSpacer,
+                                      RichText(
+                                          textAlign: TextAlign.center,
+                                          text: TextSpan(
+                                              style: TextStyle(
+                                                  height: 1.3,
+                                                  color: Colors.blueGrey[800],
+                                                  fontFamily: 'RalewayRegular',
+                                                  fontSize: 12.0),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                    text:
+                                                        'Do MORE with LESSs.\n',
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                    )),
+                                                TextSpan(
+                                                  text: donationMsg1,
+                                                ),
+                                              ])),
+                                    ]),
+                              ),
+
+                            //Phase3 - DO NOT DELETE
+                            // Container(
+                            //   height: MediaQuery.of(context).size.height * .07,
+                            //   margin: EdgeInsets.only(top: 5),
+                            //   child: Row(
+                            //     children: <Widget>[
+                            //       Expanded(
+                            //         child: TextFormField(
+                            //             controller: _amountController,
+                            //             //  readOnly: true,
+                            //             enabled: true,
+                            //             style: TextStyle(
+                            //               fontSize: 14,
+                            //               letterSpacing: 1.5,
+                            //               color: Colors.blueGrey[600],
+                            //             ),
+                            //             keyboardType: TextInputType.number,
+                            //             autovalidateMode:
+                            //                 AutovalidateMode.onUserInteraction,
+                            //             decoration: InputDecoration(
+                            //               hintText: 'Amount in INR',
+                            //               enabledBorder: UnderlineInputBorder(
+                            //                   borderSide:
+                            //                       BorderSide(color: Colors.grey)),
+                            //               focusedBorder: UnderlineInputBorder(
+                            //                   borderSide: BorderSide(
+                            //                       color: Colors.orange)),
+                            //             ),
+                            //             validator: (String val) {
+                            //               return _validateAmount(val);
+                            //             }),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            // Column(
+                            //   mainAxisAlignment: MainAxisAlignment.start,
+                            //   children: [
+                            //     Container(
+                            //         // height:
+                            //         //     MediaQuery.of(context).size.height * .08,
+                            //         //  height: MediaQuery.of(context).size.height * .06,
+                            //         width: MediaQuery.of(context).size.width * .9,
+                            //         margin: EdgeInsets.only(
+                            //             left: 5, top: 0, bottom: 0),
+                            //         padding: EdgeInsets.zero,
+                            //         child: AutoSizeText(
+                            //           directUpiPayMsg,
+                            //           textAlign: TextAlign.center,
+                            //           style: TextStyle(
+                            //               //fontWeight: FontWeight.bold,
+                            //               color: Colors.blueGrey,
+                            //               fontSize: 18),
+                            //         )),
+                            //     Divider(
+                            //       indent: 0,
+                            //       thickness: 1,
+                            //       endIndent: 8,
+                            //       color: Colors.grey[400],
+                            //     ),
+                            //   ],
+                            // ),
+
+                            Container(
+                              height: MediaQuery.of(context).size.height * .45,
+                              margin: EdgeInsets.only(top: 20, bottom: 10),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    child: Column(
+                                      children: [
+                                        // Text(
+                                        //   donationMessage,
+                                        //   style: TextStyle(fontSize: 20),
+                                        // ),
                                         Card(
                                           elevation: 8,
+                                          margin: EdgeInsets.all(0),
                                           child: Container(
-                                            margin: EdgeInsets.only(top: 20),
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .3,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: AssetImage(
-                                                      "assets/bigpiq_upi.jpg"),
-                                                  fit: BoxFit.contain),
+                                            // height: MediaQuery.of(context)
+                                            //         .size
+                                            //         .height *
+                                            //     .06,
+                                            // margin: EdgeInsets.only(top: 10),
+                                            padding: EdgeInsets.all(10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  //mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Container(
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              8, 0, 10, 0),
+                                                      child: Text(
+                                                        'UPI Id',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors
+                                                                .blueGrey),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        padding:
+                                                            EdgeInsets.fromLTRB(
+                                                                10, 0, 10, 0),
+                                                        child: AutoSizeText(
+                                                          _upiAddressController
+                                                              .text,
+                                                          minFontSize: 9,
+                                                          maxFontSize: 18,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color:
+                                                                  Colors.black),
+                                                        )),
+                                                  ],
+                                                ),
+                                                IconButton(
+                                                    visualDensity:
+                                                        VisualDensity.compact,
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            0, 0, 0, 0),
+                                                    alignment: Alignment.center,
+                                                    highlightColor:
+                                                        Colors.orange[300],
+                                                    icon: Icon(
+                                                      Icons.copy,
+                                                    ),
+                                                    onPressed: () {
+                                                      Clipboard.setData(
+                                                              new ClipboardData(
+                                                                  text:
+                                                                      _upiAddressController
+                                                                          .text))
+                                                          .then((_) {
+                                                        Utils.showMyFlushbar(
+                                                            context,
+                                                            Icons.copy,
+                                                            Duration(
+                                                                seconds: 5),
+                                                            "UPI Id copied to clipboard",
+                                                            "");
+                                                      });
+                                                    }),
+                                              ],
                                             ),
                                           ),
                                         ),
-
-                                      Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(2, 10, 2, 10),
-                                        child: Text(
-                                          copyUpiId,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.blueGrey[600]),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                if (!Platform.isIOS)
-                                  FutureBuilder<List<ApplicationMeta>>(
-                                    future: _appsFuture,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState !=
-                                          ConnectionState.done) {
-                                        return showCircularProgress();
-                                      }
-                                      print(snapshot.data.length);
-                                      if (snapshot.data.length == 0) {
-                                        //  print("Have some data..huh!!");
-
-                                        return Container(
-                                            child: Text(
-                                                'No UPI Payment Apps found on your device.'));
-                                      } else {
-                                        return Expanded(
-                                          child: GridView.count(
-                                            crossAxisCount: 2,
-                                            shrinkWrap: true,
-                                            scrollDirection: Axis.vertical,
-                                            mainAxisSpacing: 8,
-                                            crossAxisSpacing: 8,
-                                            childAspectRatio: 1.6,
-                                            // physics: NeverScrollableScrollPhysics(),
-                                            children: snapshot.data
-                                                .map((it) => Material(
-                                                      key: ObjectKey(
-                                                          it.upiApplication),
-                                                      color: Colors.grey[200],
-                                                      child: InkWell(
-                                                        onTap: () => _onTap(it),
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: <Widget>[
-                                                            Image.memory(
-                                                              it.icon,
-                                                              width: 64,
-                                                              height: 64,
-                                                            ),
-                                                            Container(
-                                                              margin: EdgeInsets
-                                                                  .only(top: 4),
-                                                              child: Text(
-                                                                it.upiApplication
-                                                                    .getAppName(),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ))
-                                                .toList(),
+                                        if (Utils.isNotNullOrEmpty(
+                                            widget.upiQrCodeImgPath))
+                                          Card(
+                                            elevation: 8,
+                                            child: Container(
+                                              margin: EdgeInsets.only(top: 20),
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  .3,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: AssetImage(
+                                                        "assets/bigpiq_upi.jpg"),
+                                                    fit: BoxFit.contain),
+                                              ),
+                                            ),
                                           ),
-                                        );
-                                      }
-                                    },
+
+                                        Container(
+                                          margin:
+                                              EdgeInsets.fromLTRB(2, 10, 2, 10),
+                                          child: Text(
+                                            copyUpiId,
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.blueGrey[600]),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
+                                  if (showLoading)
+                                    Center(
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .3,
+                                        color: Colors.grey[200].withOpacity(.5),
+                                        // decoration: BoxDecoration(
+                                        //   color: Colors.white,
+                                        //   backgroundBlendMode: BlendMode.saturation,
+                                        // ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                                "Loading the UPI Payment Apps from your device"),
+                                            Container(
+                                              color: Colors.transparent,
+                                              padding: EdgeInsets.all(12),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .15,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .15,
+                                              child: CircularProgressIndicator(
+                                                backgroundColor: Colors.black,
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(Colors.white),
+                                                strokeWidth: 2,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  if (!Platform.isIOS &&
+                                      showPaymentApps &&
+                                      !Utils.isNullOrEmpty(_appsFuture) &&
+                                      !showLoading)
+                                    Expanded(
+                                      child: GridView.count(
+                                        crossAxisCount: 2,
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.vertical,
+                                        mainAxisSpacing: 8,
+                                        crossAxisSpacing: 8,
+                                        childAspectRatio: 1.6,
+                                        // physics: NeverScrollableScrollPhysics(),
+                                        children: _appsFuture
+                                            .map((it) => Material(
+                                                  key: ObjectKey(
+                                                      it.upiApplication),
+                                                  color: Colors.grey[200],
+                                                  child: InkWell(
+                                                    onTap: () => _onTap(it),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Image.memory(
+                                                          it.icon,
+                                                          width: 64,
+                                                          height: 64,
+                                                        ),
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  top: 4),
+                                                          child: Text(
+                                                            it.upiApplication
+                                                                .getAppName(),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                      ),
+                                    ),
+                                  if (!Platform.isIOS &&
+                                      showPaymentApps &&
+                                      Utils.isNullOrEmpty(_appsFuture) &&
+                                      !showLoading)
+                                    Container(
+                                        alignment: Alignment.center,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .3,
+                                        child: Text(
+                                            'No UPI Payment Apps found on your device.')),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                // Divider(
+                                //   indent: 0,
+                                //   thickness: 1,
+                                //   endIndent: 8,
+                                //   color: Colors.grey[400],
+                                // ),
+                                Container(
+                                    color: Colors.grey[300],
+                                    margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                                    padding:
+                                        EdgeInsets.fromLTRB(10, 10, 10, 20),
+                                    // height:
+                                    //     MediaQuery.of(context).size.height * .1,
+                                    child: Text(paymentDisclaimer)),
                               ],
                             ),
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              // Divider(
-                              //   indent: 0,
-                              //   thickness: 1,
-                              //   endIndent: 8,
-                              //   color: Colors.grey[400],
-                              // ),
-                              Container(
-                                  color: Colors.grey[300],
-                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                                  padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
-                                  // height:
-                                  //     MediaQuery.of(context).size.height * .1,
-                                  child: Text(paymentDisclaimer)),
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                : Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        showCircularProgress(),
-                      ],
-                    ),
+                    ],
                   ),
-          ),
-          onWillPop: () async {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserHomePage()));
-            return false;
-          },
-        ),
-      );
-    } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-              appBar: CustomAppBar(
-                titleTxt: "Donate Money",
-              ),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[showCircularProgress()],
+                )
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      showCircularProgress(),
+                    ],
+                  ),
                 ),
-              ),
-              bottomNavigationBar: CustomBottomBar(barIndex: 0)),
-          onWillPop: () async {
-            return true;
-          },
         ),
-      );
-    }
+        onWillPop: () async {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => UserHomePage()));
+          return false;
+        },
+      ),
+    );
   }
 
   showQrDialog() {
