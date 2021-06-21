@@ -146,7 +146,7 @@ String qrCodeShareMessage = "Book your Peace of Mind! - LESSs";
 String tokenAccessNotAuthorised =
     "You are not authorised to access the Bookings for this Place.";
 String contactAdminIfIssue =
-    "If you think this is a mistake, Please contact Admin of this place.";
+    "If you think this is a mistake, please contact Admin of this place.";
 String locationPermissionMsg =
     'To find nearby places we need access to your current location. Open Settings and give permission to "LESSs" to access your location.';
 String locationAccessDeniedStr =

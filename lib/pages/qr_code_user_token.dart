@@ -1,3 +1,4 @@
+import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/enum/application_status.dart';
 import 'package:LESSs/enum/entity_role.dart';
 import 'package:LESSs/pages/show_application_details.dart';
@@ -362,6 +363,14 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                               'Oho! Could not fetch the Application details.',
                               'Please try again later.');
                         }
+                      }).onError((error, stackTrace) {
+                        if (error is AccessDeniedException)
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.error,
+                              Duration(seconds: 8),
+                              (error).cause,
+                              contactAdminIfIssue);
                       });
                     },
                   ),
