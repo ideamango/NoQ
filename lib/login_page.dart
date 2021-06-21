@@ -434,17 +434,25 @@ class _LoginPageState extends State<LoginPage> {
           if (authException.message.contains('network'))
             message =
                 'There seems to be some problem with your internet connection. Please Check.';
-        } else
+        } else {
           message =
               'Oops, Something went wrong. Check your internet connection.';
+        }
         break;
     }
 
     setState(() {
       showLoading = false;
     });
-    Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6), message,
-        "Please try again later.");
+
+    Utils.showMyFlushbar(
+        context,
+        Icons.error,
+        Duration(seconds: 6),
+        Utils.isStrNullOrEmpty(message)
+            ? 'Oops, Something went wrong. Check your internet connection.'
+            : 'Please try again later',
+        Utils.isStrNullOrEmpty(message) ? "Please try again later" : "");
   }
 
   Future<void> resendOTP(String phone) async {

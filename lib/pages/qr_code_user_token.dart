@@ -298,7 +298,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                     ),
                     onPressed: () {
                       print('tapped');
-                      bool isReadOnly = false;
+                      bool isReadOnly = true;
 
                       _gs
                           .getApplicationService()
@@ -313,9 +313,9 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                             .containsKey(bookingToken.parent.entityId)) {
                           if (_gs
                                   .getCurrentUser()
-                                  .entityVsRole[bookingToken.parent.entityId] ==
+                                  .entityVsRole[bookingToken.parent.entityId] !=
                               EntityRole.Executive) {
-                            isReadOnly = true;
+                            isReadOnly = false;
                           }
                         }
 
