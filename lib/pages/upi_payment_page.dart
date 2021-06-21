@@ -488,7 +488,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                             ),
                           ),
 
-                        if (showLoading)
+                        if (showLoading && !Platform.isIOS)
                           Expanded(
                             child: Container(
                               //  height: MediaQuery.of(context).size.height * .24,
@@ -610,10 +610,11 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                               ),
                             ),
                           ),
-                        // new Flexible(child: new Container()),
+                        if (Platform.isIOS)
+                          new Flexible(child: new Container()),
                         if (!widget.isDonation)
                           Container(
-                              height: MediaQuery.of(context).size.height * .15,
+                              // height: MediaQuery.of(context).size.height * .17,
                               color: Colors.blueGrey[50],
                               margin: EdgeInsets.fromLTRB(10, 10, 10, 20),
                               padding: EdgeInsets.fromLTRB(10, 10, 10, 10),

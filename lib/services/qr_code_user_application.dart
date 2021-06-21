@@ -263,6 +263,8 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
                                             margin: EdgeInsets.fromLTRB(
                                                 20, 10, 10, 0),
                                             child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(msgTitle + '\n'),
                                                 Text(msgBody),
