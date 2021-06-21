@@ -124,7 +124,8 @@ String directUpiPayMsg = 'Pay with any UPI App';
 String payUpiQr = "Scan the QR code and pay with any UPI App";
 String donationMsg1 =
     "Every bit of encouragement matters. \nDonate as per your comfort.";
-
+String fillMandatoryInfo =
+    'Please provide all mandatory information and try again.';
 //UPI Payment Page Strings - End
 String whatsappMessageToPlaceOwner = "Hey there! My LESSs Token number is ";
 String whatsappVideoToPlaceOwner_1 = "Hey there! My LESSs Token number is ";

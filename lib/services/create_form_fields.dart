@@ -1740,10 +1740,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                     seconds: 5,
                   ),
                   validationErrMsg,
-                  'Please provide all mandatory information and try again.',
+                  fillMandatoryInfo,
                   Colors.red,
                   Colors.white);
-              return;
+              break;
             }
             break;
           case FieldType.ATTACHMENT:
@@ -1758,10 +1758,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                     seconds: 5,
                   ),
                   validationErrMsg,
-                  'Please provide all mandatory information and try again.',
+                  fillMandatoryInfo,
                   Colors.red,
                   Colors.white);
-              return;
+              break;
             } else {
               List<String> targetPaths = [];
               for (String path in (listOfFields[i] as FormInputFieldAttachment)
@@ -1797,10 +1797,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                     seconds: 5,
                   ),
                   validationErrMsg,
-                  'Please provide all mandatory information and try again.',
+                  fillMandatoryInfo,
                   Colors.red,
                   Colors.white);
-              return;
+              break;
             } else {
               print("df");
               List<String> targetPaths = [];
@@ -1825,6 +1825,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             break;
           default:
             break;
+        }
+        if (Utils.isNotNullOrEmpty(validationErrMsg)) {
+          setState(() {
+            showLoading = false;
+          });
+          return;
         }
       }
 
@@ -1932,7 +1938,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           Duration(
             seconds: 5,
           ),
-          'Please provide all mandatory information and try again.',
+          fillMandatoryInfo,
           "",
           Colors.red,
           Colors.white);
@@ -2373,7 +2379,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text("Saving the Application..",
+                              Text("Processing the Application..",
                                   style: TextStyle(
                                       color: Colors.amber, fontSize: 15)),
                               Container(
