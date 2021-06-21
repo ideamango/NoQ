@@ -73,6 +73,9 @@ class _UserAccountPageState extends State<UserAccountPage>
   Animation animation;
   String loadMoreApplicationsMsg;
   String loadUpcomingTokensMsg;
+  bool noAppls = false;
+  bool noUpcomingTokens = false;
+  bool noPastTokens = false;
   String loadPastTokensMsg;
   bool keepExpandedAppls = false;
   ScrollController _childScrollControllerAppls;
@@ -164,6 +167,10 @@ class _UserAccountPageState extends State<UserAccountPage>
       if (Utils.isNullOrEmpty(value)) {
         loadMoreApplicationsMsg = thatsAllStr;
       } else {
+        if (value.length < 5) {
+          noAppls = true;
+          loadMoreApplicationsMsg = thatsAllStr;
+        }
         _listOfApplications.addAll(value);
         keepExpandedAppls = true;
         // if (_childScrollController.hasClients) {
@@ -193,6 +200,10 @@ class _UserAccountPageState extends State<UserAccountPage>
       if (Utils.isNullOrEmpty(value)) {
         loadPastTokensMsg = thatsAllStr;
       } else {
+        if (value.length < 5) {
+          noPastTokens = true;
+          loadPastTokensMsg = thatsAllStr;
+        }
         _pastBookingsList.addAll(value);
         _pastBkgStatus = 'Success';
         keepExpandedPastTokens = true;
@@ -220,6 +231,10 @@ class _UserAccountPageState extends State<UserAccountPage>
       if (Utils.isNullOrEmpty(value)) {
         loadUpcomingTokensMsg = thatsAllStr;
       } else {
+        if (value.length < 5) {
+          noUpcomingTokens = true;
+          loadUpcomingTokensMsg = thatsAllStr;
+        }
         _newBookingsList.addAll(value);
         _upcomingBkgStatus = 'Success';
       }
@@ -1298,7 +1313,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                                           ],
                                         ),
                                       if (Utils.isStrNullOrEmpty(
-                                          loadMoreApplicationsMsg))
+                                              loadMoreApplicationsMsg) &&
+                                          !noAppls)
                                         Container(
                                           margin: EdgeInsets.all(10),
                                           child: MaterialButton(
@@ -1401,7 +1417,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         ),
                                       if (Utils.isStrNullOrEmpty(
                                               loadUpcomingTokensMsg) &&
-                                          _upcomingBkgStatus != 'NoBookings')
+                                          _upcomingBkgStatus != 'NoBookings' &&
+                                          !noUpcomingTokens)
                                         Container(
                                           margin: EdgeInsets.all(10),
                                           child: MaterialButton(
@@ -1506,7 +1523,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                                             ),
                                           if (Utils.isStrNullOrEmpty(
                                                   loadPastTokensMsg) &&
-                                              _pastBkgStatus == 'Success')
+                                              _pastBkgStatus == 'Success' &&
+                                              !noPastTokens)
                                             Container(
                                               margin: EdgeInsets.all(10),
                                               child: MaterialButton(
