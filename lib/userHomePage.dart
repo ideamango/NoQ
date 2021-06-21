@@ -148,14 +148,12 @@ class _UserHomePageState extends State<UserHomePage>
     _upcomingBkgStatus = 'Loading..';
     _newBookingsList = await _gs.getUpcomingBookings(1, 3);
 
-    setState(() {
-      if (_newBookingsList != null) {
-        if (_newBookingsList.length != 0) {
-          _upcomingBkgStatus = 'Success';
-        } else
-          _upcomingBkgStatus = 'NoBookings';
-      }
-    });
+    if (_newBookingsList != null) {
+      if (_newBookingsList.length != 0) {
+        _upcomingBkgStatus = 'Success';
+      } else
+        _upcomingBkgStatus = 'NoBookings';
+    }
   }
 
   @override
