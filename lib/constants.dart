@@ -3,8 +3,10 @@ import 'dart:core';
 
 const COVID_VACCINATION_BOOKING_FORM_ID_OLD =
     "COVID_VACCINATION_BOOKING_FORM_ID_OLD";
-const COVID_VACCINATION_CLINIC_BOOKING_FORM_ID = "COVID_VACCINATION_CLINIC_BOOKING_FORM_ID";
-const COVID_VACCINATION_HOSPITAL_BOOKING_FORM_ID = "COVID_VACCINATION_HOSPITAL_BOOKING_FORM_ID";
+const COVID_VACCINATION_CLINIC_BOOKING_FORM_ID =
+    "COVID_VACCINATION_CLINIC_BOOKING_FORM_ID";
+const COVID_VACCINATION_HOSPITAL_BOOKING_FORM_ID =
+    "COVID_VACCINATION_HOSPITAL_BOOKING_FORM_ID";
 const SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID =
     "SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID";
 const SCHOOL_GENERAL_INQUIRY_FORM_ID = "SCHOOL_GENERAL_INQUIRY_FORM_ID";
@@ -116,11 +118,11 @@ String yourTurnUserMessageWhenTokenIsNotAlloted =
 String paymentDisclaimer =
     "Disclaimer: LESSs App does not process or track any payment you make to the Service Provider.\nNote, you are directly paying through the UPI Apps installed on your phone to the UPI Id of the Service Provider.";
 String upiHeaderMsg = 'UPI Payments';
-String copyUpiId = 'Copy the UPI Id and pay via any Payment Apps.';
+String copyUpiId = 'Copy the UPI Id and pay with any UPI Apps.';
 String directUpiPayMsg = 'Pay with any UPI App';
 String donationMessage = "Scan this QR code to make the payment";
 String donationMsg1 =
-    "Every contribution matters, no amount is small for us. \nDonate as per your comfort.";
+    "Every bit of encouragement matters. \nDonate as per your comfort.";
 
 //UPI Payment Page Strings - End
 String whatsappMessageToPlaceOwner = "Hey there! My LESSs Token number is ";
