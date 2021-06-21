@@ -269,7 +269,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                               MediaQuery.of(context).size.width * .05,
                               MediaQuery.of(context).size.width * .04,
                               MediaQuery.of(context).size.width * .05,
-                              MediaQuery.of(context).size.width * .04),
+                              0),
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               //  padding: EdgeInsets.zero,
@@ -367,7 +367,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                       // ),
                       Card(
                         elevation: 8,
-                        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        margin: EdgeInsets.fromLTRB(10, 20, 10, 10),
                         child: Container(
                           padding: EdgeInsets.all(10),
                           child: Row(
