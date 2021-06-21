@@ -2924,7 +2924,7 @@ class DBTest {
   Future<BookingForm> createBookingFormForCovidVaccination(
       String formId) async {
     BookingForm bf = new BookingForm(
-        formName: "Covid-19 Vacination Applicant Details",
+        formName: "Covid-19 Vaccination Registration Form",
         headerMsg:
             "You request will be approved based on the information provided by you, please enter the correct information.",
         footerMsg:
