@@ -410,13 +410,13 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         child: CustomExpansionTile(
                           //key: PageStorageKey(this.widget.headerTitle),
                           initiallyExpanded: false,
-                          title: Container(
+                          title: SizedBox(
                             width: MediaQuery.of(context).size.width * .8,
                             child: AutoSizeText(
                               (field.isMandatory)
                                   ? field.label + ' (mandatory)'
                                   : field.label + ' (optional)',
-                              maxLines: 2,
+                              maxLines: null,
                               minFontSize: 8,
                               maxFontSize: 14,
                               style: TextStyle(
@@ -536,14 +536,17 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       initiallyExpanded: false,
                       title: Row(
                         children: <Widget>[
-                          AutoSizeText(
-                            (field.isMandatory)
-                                ? field.label + ' (mandatory)'
-                                : field.label + ' (optional)',
-                            maxLines: 2,
-                            minFontSize: 11,
-                            maxFontSize: 14,
-                            style: TextStyle(color: Colors.white),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .8,
+                            child: AutoSizeText(
+                              (field.isMandatory)
+                                  ? field.label + ' (mandatory)'
+                                  : field.label + ' (optional)',
+                              maxLines: null,
+                              minFontSize: 11,
+                              maxFontSize: 14,
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                           SizedBox(width: 5),
                         ],
@@ -771,14 +774,17 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           initiallyExpanded: false,
                           title: Row(
                             children: <Widget>[
-                              AutoSizeText(
-                                (field.isMandatory)
-                                    ? field.label + ' (mandatory)'
-                                    : field.label + ' (optional)',
-                                maxLines: 2,
-                                minFontSize: 11,
-                                maxFontSize: 14,
-                                style: TextStyle(color: Colors.white),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .8,
+                                child: AutoSizeText(
+                                  (field.isMandatory)
+                                      ? field.label + ' (mandatory)'
+                                      : field.label + ' (optional)',
+                                  maxLines: null,
+                                  minFontSize: 11,
+                                  maxFontSize: 14,
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                               SizedBox(width: 5),
                             ],
@@ -882,15 +888,18 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           initiallyExpanded: false,
                           title: Row(
                             children: <Widget>[
-                              AutoSizeText(
-                                (field.isMandatory)
-                                    ? field.label + ' (mandatory)'
-                                    : field.label + ' (optional)',
-                                maxLines: 2,
-                                minFontSize: 11,
-                                maxFontSize: 14,
-                                style: TextStyle(
-                                  color: Colors.white,
+                              Container(
+                                width: MediaQuery.of(context).size.width * .8,
+                                child: AutoSizeText(
+                                  (field.isMandatory)
+                                      ? field.label + ' (mandatory)'
+                                      : field.label + ' (optional)',
+                                  maxLines: null,
+                                  minFontSize: 11,
+                                  maxFontSize: 14,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                               SizedBox(width: 5),
@@ -977,16 +986,19 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       initiallyExpanded: false,
                       title: Row(
                         children: <Widget>[
-                          AutoSizeText(
-                              (newOptionsField.isMandatory)
-                                  ? newOptionsField.label + ' (mandatory)'
-                                  : newOptionsField.label + ' (optional)',
-                              maxLines: 2,
-                              minFontSize: 11,
-                              maxFontSize: 14,
-                              style: TextStyle(
-                                color: Colors.white,
-                              )),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .8,
+                            child: AutoSizeText(
+                                (newOptionsField.isMandatory)
+                                    ? newOptionsField.label + ' (mandatory)'
+                                    : newOptionsField.label + ' (optional)',
+                                maxLines: null,
+                                minFontSize: 11,
+                                maxFontSize: 14,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                )),
+                          ),
                           SizedBox(width: 5),
                         ],
                       ),
@@ -1096,15 +1108,18 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       initiallyExpanded: false,
                       title: Row(
                         children: <Widget>[
-                          AutoSizeText(
-                            (attsField.isMandatory)
-                                ? attsField.label + ' (mandatory)'
-                                : attsField.label + ' (optional)',
-                            maxLines: 2,
-                            minFontSize: 11,
-                            maxFontSize: 14,
-                            style: TextStyle(
-                              color: Colors.white,
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .8,
+                            child: AutoSizeText(
+                              (attsField.isMandatory)
+                                  ? attsField.label + ' (mandatory)'
+                                  : attsField.label + ' (optional)',
+                              maxLines: null,
+                              minFontSize: 11,
+                              maxFontSize: 14,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                           SizedBox(width: 5),
@@ -1277,13 +1292,13 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       initiallyExpanded: false,
                       title: Row(
                         children: <Widget>[
-                          Container(
+                          SizedBox(
                             width: MediaQuery.of(context).size.width * .74,
                             child: AutoSizeText(
                               (optsAttsField.isMandatory)
                                   ? optsAttsField.label + ' (mandatory)'
                                   : optsAttsField.label + ' (optional)',
-                              maxLines: 2,
+                              maxLines: null,
                               minFontSize: 8,
                               maxFontSize: 14,
                               style: TextStyle(
@@ -1511,15 +1526,18 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           initiallyExpanded: false,
                           title: Row(
                             children: <Widget>[
-                              AutoSizeText(
-                                (field.isMandatory)
-                                    ? field.label + ' (mandatory)'
-                                    : field.label + ' (optional)',
-                                maxLines: 2,
-                                minFontSize: 11,
-                                maxFontSize: 14,
-                                style: TextStyle(
-                                  color: Colors.white,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .8,
+                                child: AutoSizeText(
+                                  (field.isMandatory)
+                                      ? field.label + ' (mandatory)'
+                                      : field.label + ' (optional)',
+                                  maxLines: null,
+                                  minFontSize: 11,
+                                  maxFontSize: 14,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                               SizedBox(width: 5),
