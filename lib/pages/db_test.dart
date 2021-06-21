@@ -63,47 +63,55 @@ class DBTest {
 
   Future<void> systemSetUp() async {
     //await createConf();
-    //await deleteBookingForms();
+    await deleteBookingForms();
     await createBookingForms();
   }
 
   Future<void> createConf() async {}
 
   Future<void> deleteBookingForms() async {
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(COVID_VACCINATION_BOOKING_FORM_ID_OLD);
+    try {
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(COVID_VACCINATION_BOOKING_FORM_ID_OLD);
 
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(COVID_VACCINATION_BOOKING_FORM_ID);
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(COVID_VACCINATION_CLINIC_BOOKING_FORM_ID);
 
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(COVID_VACCINATION_HOSPITAL_BOOKING_FORM_ID);
 
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
 
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(HOSPITAL_ADMISSION_FORM);
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
 
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(DOCTOR_CONSULTATION_CLINIC_FORM);
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(HOSPITAL_ADMISSION_FORM);
 
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(MEDICAL_TEST_HOSPITAL_FORM);
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(DOCTOR_CONSULTATION_CLINIC_FORM);
 
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(MEDICAL_TEST_DIAGNOSTIC_FORM);
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(MEDICAL_TEST_HOSPITAL_FORM);
+
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(MEDICAL_TEST_DIAGNOSTIC_FORM);
+    } catch (e) {
+      print("Error while cleaning the system booking forms");
+    }
   }
 
   Future<void> createBookingForms() async {
@@ -113,7 +121,9 @@ class DBTest {
         SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
     await createBookingFormGlobalSchoolTC(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
     await createBookingFormForCovidVaccination(
-        COVID_VACCINATION_BOOKING_FORM_ID);
+        COVID_VACCINATION_CLINIC_BOOKING_FORM_ID);
+    await createBookingFormForCovidVaccination(
+        COVID_VACCINATION_HOSPITAL_BOOKING_FORM_ID);
     await createNewAdmissionFormForHospital(HOSPITAL_ADMISSION_FORM);
 
     await createDoctorConsultationForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
@@ -2190,7 +2200,7 @@ class DBTest {
     // BookingApplicationCounter globalOverView = await _gs
     //     .getApplicationService()
     //     .getApplicationsOverview(
-    //         COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
+    //         COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
@@ -2276,7 +2286,7 @@ class DBTest {
     // BookingApplicationCounter globalOverView = await _gs
     //     .getApplicationService()
     //     .getApplicationsOverview(
-    //         COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
+    //         COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
@@ -2375,7 +2385,7 @@ class DBTest {
     // BookingApplicationCounter globalOverView = await _gs
     //     .getApplicationService()
     //     .getApplicationsOverview(
-    //         COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
+    //         COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
@@ -2932,9 +2942,9 @@ class DBTest {
     bf.addField(nameInput);
 
     FormInputFieldDateTime dob = FormInputFieldDateTime(
-        "Date of Birth of the Applicant",
+        "Year of Birth of the Applicant",
         true,
-        "Please select the applicant's Date of Birth");
+        "Please select the applicant's year of Birth");
     dob.isMeta = true;
     dob.isAge = true;
     dob.yearOnly = true;
@@ -2951,16 +2961,28 @@ class DBTest {
     FormInputFieldOptionsWithAttachments preferredVaccine =
         FormInputFieldOptionsWithAttachments(
             "Please select your preferred vaccine",
-            false,
+            true,
             "You will be alloted the time-slot based on the availability of Vaccine selected by you",
             [Value('COVISHIELD'), Value('COVAXIN')],
-            true);
+            false);
 
     preferredVaccine.isMeta = true;
-    preferredVaccine.isMultiSelect = false;
     preferredVaccine.defaultValueIndex = 0;
 
     bf.addField(preferredVaccine);
+
+    FormInputFieldOptionsWithAttachments doseNumber =
+        FormInputFieldOptionsWithAttachments(
+            "Dose number",
+            true,
+            "You will be alloted the time-slot based on the availability of Vaccine selected by you",
+            [Value('Dose 1'), Value('Dose 2')],
+            false);
+
+    doseNumber.isMeta = true;
+    doseNumber.defaultValueIndex = 0;
+
+    bf.addField(doseNumber);
 
     FormInputFieldNumber cowinSecrete = FormInputFieldNumber(
         "COWIN Secrete Code",
@@ -2972,7 +2994,9 @@ class DBTest {
     bf.addField(cowinSecrete);
 
     FormInputFieldAttachment payment = FormInputFieldAttachment(
-        "Payment receipt", false, "Please attach image of payment made");
+        "Payment receipt (if applicable)",
+        false,
+        "Please attach image of payment made");
 
     bf.addField(payment);
 

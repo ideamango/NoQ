@@ -443,13 +443,36 @@ class Entity {
       queriables.add(lowercased.substring(0, i));
     }
 
+    List<String> withoutStopWords = [];
+
     //break the words with space and add to the list
     List<String> words = lowercased.split(' ');
-    if (words.length > 0) {
-      for (int wordCount = 1; wordCount < words.length; wordCount++) {
-        String currentWord = words[wordCount];
-        if (wordCount == 3) {
-          break; //break at 3rd word
+    if (words.length > 1) {
+      //filter out the stop words
+      for (String word in words) {
+        if (!(word == "of" ||
+            word == "and" ||
+            word == "&" ||
+            word == "private" ||
+            word == "pvt" ||
+            word == "pvt." ||
+            word == "ltd" ||
+            word == "ltd." ||
+            word == "is" ||
+            word == "the" ||
+            word == "a" ||
+            word == "an" ||
+            word == "limited")) {
+          withoutStopWords.add(word);
+        }
+      }
+
+      for (int wordCount = 1;
+          wordCount < withoutStopWords.length;
+          wordCount++) {
+        String currentWord = withoutStopWords[wordCount];
+        if (wordCount == 4) {
+          break;
         }
         for (int i = 1; i <= currentWord.length; i++) {
           queriables.add(currentWord.substring(0, i));
