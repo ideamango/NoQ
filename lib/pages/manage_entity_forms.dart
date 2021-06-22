@@ -775,7 +775,10 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                       "");
                                   return;
                                 } else {
-                                  showLoading = true;
+                                  setState(() {
+                                    showLoading = true;
+                                  });
+
                                   if (entity.forms == null) entity.forms = [];
                                   bool entityModified = false;
                                   //If all pre existing forms for entity are deleted.
