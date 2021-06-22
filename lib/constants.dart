@@ -121,7 +121,8 @@ String upiHeaderMsg = 'UPI Payments';
 String noUpiAppsFound = 'No UPI Payment Apps found on your device.';
 String copyUpiId = 'Copy the UPI Id and pay with any UPI App';
 String directUpiPayMsg = 'Pay with any UPI App';
-String payUpiQr = "Scan the QR code and pay with any UPI App";
+String payUpiQr =
+    "Scan the QR code with any UPI payment App \n(Gpay, Paytm, PhonePe, BHIM, etc.)";
 String donationMsg1 =
     "Every bit of encouragement matters. \nDonate as per your comfort.";
 String fillMandatoryInfo =
