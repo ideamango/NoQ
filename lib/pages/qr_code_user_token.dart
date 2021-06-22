@@ -364,13 +364,21 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                               'Please try again later.');
                         }
                       }).onError((error, stackTrace) {
-                        if (error is AccessDeniedException)
+                        if (error is AccessDeniedException) {
                           Utils.showMyFlushbar(
                               context,
                               Icons.error,
                               Duration(seconds: 8),
                               (error).cause,
                               contactAdminIfIssue);
+                        } else {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info,
+                              Duration(seconds: 5),
+                              'Oho! Could not fetch the Application details.',
+                              'Please try again later.');
+                        }
                       });
                     },
                   ),

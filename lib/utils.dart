@@ -3,6 +3,7 @@ import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/db/exceptions/slot_full_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
+import 'package:LESSs/enum/entity_role.dart';
 import 'package:LESSs/pages/show_application_details.dart';
 import 'package:LESSs/tuple.dart';
 import 'package:LESSs/userHomePage.dart';
@@ -506,11 +507,19 @@ class Utils {
 
     GlobalState gs = await GlobalState.getGlobalState();
     print(applicationId);
+    bool isReadOnly = true;
 
     gs
         .getApplicationService()
         .getApplication(applicationId)
         .then((newBaFromGS) {
+      //SMITA Check this, Application QR scan
+      if (gs.getCurrentUser().entityVsRole.containsKey(newBaFromGS.entityId)) {
+        if (gs.getCurrentUser().entityVsRole[newBaFromGS.entityId] !=
+            EntityRole.Executive) {
+          isReadOnly = false;
+        }
+      }
       if (newBaFromGS != null) {
         gs.getEntityService().getEntity(newBaFromGS.entityId).then((entity) {
           Navigator.of(context)
@@ -519,7 +528,7 @@ class Utils {
             showReject: false,
             metaEntity: entity.getMetaEntity(),
             newBookingDate: newBaFromGS.preferredSlotTiming,
-            isReadOnly: false,
+            isReadOnly: isReadOnly,
             isAvailable: true,
             tokenCounter: null,
             backRoute: UserHomePage(),
