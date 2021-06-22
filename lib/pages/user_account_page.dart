@@ -264,6 +264,9 @@ class _UserAccountPageState extends State<UserAccountPage>
                 null, null, "timeOfSubmission", true, null, null, 1)
             .then((value) {
           _listOfApplications = value;
+          if (Utils.isNullOrEmpty(_listOfApplications)) {
+            noAppls = true;
+          }
           setState(() {
             _initCompleted = true;
           });
@@ -1259,6 +1262,10 @@ class _UserAccountPageState extends State<UserAccountPage>
                                             3)
                                         .then((value) {
                                       _listOfApplications = value;
+                                      if (Utils.isNullOrEmpty(
+                                          _listOfApplications)) {
+                                        noAppls = true;
+                                      }
                                       setState(() {
                                         showLoadingAppls = false;
                                       });
