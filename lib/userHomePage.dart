@@ -96,6 +96,7 @@ class _UserHomePageState extends State<UserHomePage>
   Animation animation;
   String loadUpcomingTokensMsg;
   bool dontShowUpdate;
+  bool noUpcomingTokens = false;
 
   @override
   void initState() {
@@ -151,8 +152,13 @@ class _UserHomePageState extends State<UserHomePage>
     if (_newBookingsList != null) {
       if (_newBookingsList.length != 0) {
         _upcomingBkgStatus = 'Success';
-      } else
+        if (_newBookingsList.length < 3) {
+          noUpcomingTokens = true;
+        }
+      } else {
         _upcomingBkgStatus = 'NoBookings';
+        noUpcomingTokens = true;
+      }
     }
   }
 
@@ -174,9 +180,15 @@ class _UserHomePageState extends State<UserHomePage>
     _gs.getUpcomingBookings(_newBookingsList.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
         loadUpcomingTokensMsg = 'That\'s all!';
+
+        noUpcomingTokens = true;
       } else {
         _newBookingsList.addAll(value);
         _upcomingBkgStatus = 'Success';
+        if (_newBookingsList.length < 5) {
+          noUpcomingTokens = true;
+          loadUpcomingTokensMsg = 'That\'s all!';
+        }
       }
       setState(() {
         //    showLoadingAppls = false;
@@ -565,7 +577,8 @@ class _UserHomePageState extends State<UserHomePage>
                                       ),
                                     if (!Utils.isNotNullOrEmpty(
                                             loadUpcomingTokensMsg) &&
-                                        _upcomingBkgStatus != 'NoBookings')
+                                        _upcomingBkgStatus != 'NoBookings' &&
+                                        !noUpcomingTokens)
                                       Container(
                                         margin: EdgeInsets.all(10),
                                         child: MaterialButton(

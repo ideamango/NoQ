@@ -126,8 +126,13 @@ class _UserAccountPageState extends State<UserAccountPage>
       if (_newBookingsList != null) {
         if (_newBookingsList.length != 0) {
           _upcomingBkgStatus = 'Success';
-        } else
+          if (_newBookingsList.length < 3) {
+            noUpcomingTokens = true;
+          }
+        } else {
           _upcomingBkgStatus = 'NoBookings';
+          noUpcomingTokens = true;
+        }
       }
     });
   }
@@ -230,6 +235,7 @@ class _UserAccountPageState extends State<UserAccountPage>
     _gs.getUpcomingBookings(_newBookingsList.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
         loadUpcomingTokensMsg = thatsAllStr;
+        noUpcomingTokens = true;
       } else {
         if (value.length < 5) {
           noUpcomingTokens = true;
