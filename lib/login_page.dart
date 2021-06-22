@@ -451,8 +451,8 @@ class _LoginPageState extends State<LoginPage> {
         Duration(seconds: 6),
         Utils.isStrNullOrEmpty(message)
             ? 'Oops, Something went wrong. Check your internet connection.'
-            : 'Please try again later',
-        Utils.isStrNullOrEmpty(message) ? "Please try again later" : "");
+            : message,
+        "Please try again later");
   }
 
   Future<void> resendOTP(String phone) async {
@@ -606,7 +606,7 @@ class _LoginPageState extends State<LoginPage> {
                             padding: EdgeInsets.zero,
                             margin: EdgeInsets.zero,
                             height: MediaQuery.of(context).size.height * .04,
-                            transform: Matrix4.translationValues(0, -14, 0),
+                            transform: Matrix4.translationValues(-10, -14, 0),
                             child: IconButton(
                               icon: Icon(
                                 Icons.cancel,
@@ -663,9 +663,9 @@ class _LoginPageState extends State<LoginPage> {
                           print(pin);
                           codeFilled = true;
                           timeLapsed = false;
-                          if (mounted) {
-                            setState(() {});
-                          }
+                          // if (mounted) {
+                          //     setState(() {});
+                          //    }
                           // try {
                           //   User user = FirebaseAuth.instance.currentUser;
                           //   if (user != null) {
