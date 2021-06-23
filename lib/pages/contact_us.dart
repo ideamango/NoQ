@@ -93,31 +93,27 @@ class _ContactUsPageState extends State<ContactUsPage> {
   @override
   Widget build(BuildContext context) {
     if (!initCompleted) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBar(
-              titleTxt: "Contact Us",
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
-            ),
-            //drawer: CustomDrawer(),
-            //bottomNavigationBar: CustomBottomBar(barIndex: 0),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBar(
+            titleTxt: "Contact Us",
           ),
-          onWillPop: () async {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserHomePage()));
-            return false;
-          },
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
+        onWillPop: () async {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => UserHomePage()));
+          return false;
+        },
       );
     } else {
       final nameField = TextFormField(
@@ -214,280 +210,273 @@ class _ContactUsPageState extends State<ContactUsPage> {
       );
 
       String title = "Contact Us";
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            //  resizeToAvoidBottomInset: false,
-            drawer: CustomDrawer(
-              phone: _state.getCurrentUser().ph,
-            ),
-            appBar: widget.showAppBar
-                ? CustomAppBarWithBackButton(
-                    backRoute: UserHomePage(),
-                    titleTxt: title,
-                  )
-                : null,
-            body: Center(
-                child: Container(
-                    height: MediaQuery.of(context).size.height * .85,
-                    margin: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width * .05,
-                        MediaQuery.of(context).size.width * .04,
-                        MediaQuery.of(context).size.width * .05,
-                        MediaQuery.of(context).size.width * .04),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        //  padding: EdgeInsets.zero,
-                        children: <Widget>[
-                          Text(
-                            'Your Feedback is Appreciated',
-                            style: TextStyle(
-                                color: Colors.blueGrey[800],
-                                fontFamily: 'RalewayRegular',
-                                fontSize: 17.0),
-                          ),
-                          verticalSpacer,
-                          Container(
-                              padding: EdgeInsets.all(0),
-                              height: MediaQuery.of(context).size.height * .2,
-                              child: Image.asset('assets/contactus.png')),
-                          RichText(
-                              text: TextSpan(
+      return WillPopScope(
+        child: Scaffold(
+          //  resizeToAvoidBottomInset: false,
+          drawer: CustomDrawer(
+            phone: _state.getCurrentUser().ph,
+          ),
+          appBar: widget.showAppBar
+              ? CustomAppBarWithBackButton(
+                  backRoute: UserHomePage(),
+                  titleTxt: title,
+                )
+              : null,
+          body: Center(
+              child: Container(
+                  height: MediaQuery.of(context).size.height * .85,
+                  margin: EdgeInsets.fromLTRB(
+                      MediaQuery.of(context).size.width * .05,
+                      MediaQuery.of(context).size.width * .04,
+                      MediaQuery.of(context).size.width * .05,
+                      MediaQuery.of(context).size.width * .04),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //  padding: EdgeInsets.zero,
+                      children: <Widget>[
+                        Text(
+                          'Your Feedback is Appreciated',
+                          style: TextStyle(
+                              color: Colors.blueGrey[800],
+                              fontFamily: 'RalewayRegular',
+                              fontSize: 17.0),
+                        ),
+                        verticalSpacer,
+                        Container(
+                            padding: EdgeInsets.all(0),
+                            height: MediaQuery.of(context).size.height * .2,
+                            child: Image.asset('assets/contactus.png')),
+                        RichText(
+                            text: TextSpan(
+                                style: TextStyle(
+                                    height: 1.3,
+                                    color: Colors.blueGrey[800],
+                                    fontFamily: 'RalewayRegular',
+                                    fontSize: 13.0),
+                                children: <TextSpan>[
+                              //TextSpan(text: contactUsPageHeadline),
+                              TextSpan(text: contactUsLine1),
+                              TextSpan(
+                                  text: contactUsLine2,
                                   style: TextStyle(
-                                      height: 1.3,
-                                      color: Colors.blueGrey[800],
-                                      fontFamily: 'RalewayRegular',
-                                      fontSize: 13.0),
-                                  children: <TextSpan>[
-                                //TextSpan(text: contactUsPageHeadline),
-                                TextSpan(text: contactUsLine1),
-                                TextSpan(
-                                    text: contactUsLine2,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                    )),
-                                TextSpan(text: contactUsLine3),
-                                TextSpan(
-                                    text: contactUsLine4,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontStyle: FontStyle.italic,
-                                      fontWeight: FontWeight.w600,
-                                    )),
-                                TextSpan(text: contactUsLine5),
-                                TextSpan(
-                                    text: contactUsLine6,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontStyle: FontStyle.italic,
-                                      fontWeight: FontWeight.w600,
-                                    )),
-                                TextSpan(text: contactUsLine7),
-                              ])),
-                          new ListTile(
-                            leading: Container(
-                                padding: EdgeInsets.fromLTRB(0, 7, 0, 0),
-                                child: const Icon(Icons.person)),
-                            title: nameField,
-                          ),
-                          new ListTile(
-                            leading: Container(
-                                padding: EdgeInsets.fromLTRB(0, 7, 0, 0),
-                                child: const Icon(Icons.phone)),
-                            title: phField,
-                          ),
-                          new ListTile(
-                            leading: Container(
-                                padding: EdgeInsets.fromLTRB(0, 7, 0, 0),
-                                child: const Icon(Icons.label_important)),
-                            title: reasonField,
-                          ),
-                          new ListTile(
-                            leading: Container(
-                                padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
-                                child: const Icon(Icons.email)),
-                            title: Column(
-                              children: <Widget>[
-                                TextField(
-                                  autofocus: false,
-                                  controller: _msgController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Enter your message here..',
-                                    enabledBorder: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.grey)),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.orange)),
-                                    // errorText:
-                                    //     _validate ? 'Please enter your message' : null,
-                                  ),
-                                  //validator: validateText,
-                                  keyboardType: TextInputType.multiline,
-                                  maxLength: null,
-                                  maxLines: 3,
-                                  onChanged: (value) {
-                                    if (_msgController.text?.length != 0)
-                                      setState(() {
-                                        _errMsg = null;
-                                      });
-                                    setState(() {
-                                      _mailSecLine = _msgController.text;
-                                      _mailBody =
-                                          _mailFirstline + "\n" + _mailSecLine;
-                                    });
-                                  },
-                                ),
-                                Text(
-                                  (_errMsg != null) ? _errMsg : "",
-                                  style: errorTextStyle,
-                                ),
-                              ],
-                            ),
-                          ),
-                          verticalSpacer,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  )),
+                              TextSpan(text: contactUsLine3),
+                              TextSpan(
+                                  text: contactUsLine4,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.w600,
+                                  )),
+                              TextSpan(text: contactUsLine5),
+                              TextSpan(
+                                  text: contactUsLine6,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.w600,
+                                  )),
+                              TextSpan(text: contactUsLine7),
+                            ])),
+                        new ListTile(
+                          leading: Container(
+                              padding: EdgeInsets.fromLTRB(0, 7, 0, 0),
+                              child: const Icon(Icons.person)),
+                          title: nameField,
+                        ),
+                        new ListTile(
+                          leading: Container(
+                              padding: EdgeInsets.fromLTRB(0, 7, 0, 0),
+                              child: const Icon(Icons.phone)),
+                          title: phField,
+                        ),
+                        new ListTile(
+                          leading: Container(
+                              padding: EdgeInsets.fromLTRB(0, 7, 0, 0),
+                              child: const Icon(Icons.label_important)),
+                          title: reasonField,
+                        ),
+                        new ListTile(
+                          leading: Container(
+                              padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+                              child: const Icon(Icons.email)),
+                          title: Column(
                             children: <Widget>[
-                              Container(
-                                padding: EdgeInsets.all(0),
-                                margin: EdgeInsets.all(0),
-                                height: 35.0,
-                                width: MediaQuery.of(context).size.width * .41,
-                                child: RaisedButton(
-                                  textColor: btnColor,
-                                  elevation: 5,
-                                  padding: EdgeInsets.all(5),
-                                  // alignment: Alignment.center,
-                                  shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          color: Colors.blueGrey[200]),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0))),
-                                  color: btnColor,
-                                  splashColor: highlightColor,
-                                  child: Container(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        Text(
-                                          "WhatsApp Us ",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        ImageIcon(
-                                          AssetImage('assets/whatsapp.png'),
-                                          size: 28,
-                                          color: Colors.lightGreenAccent[700],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  onPressed: () {
-                                    if (_state
-                                                .getConfigurations()
-                                                .whatsappPhone !=
-                                            null &&
-                                        _state
-                                                .getConfigurations()
-                                                .whatsappPhone !=
-                                            "") {
-                                      try {
-                                        launchWhatsApp(
-                                            message:
-                                                'Hello, This is ${_nameController.text}. \nIt\'s a $_reasonType regarding LESSs app.\nIt is \"${_msgController.text}\".',
-                                            phone: _state
-                                                .getConfigurations()
-                                                .whatsappPhone);
-                                      } catch (error) {
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.error,
-                                            Duration(seconds: 5),
-                                            "Could not connect to the WhatsApp number ${_state.getConfigurations().whatsappPhone} !!",
-                                            "Try again later");
-                                      }
-                                    } else {
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.info,
-                                          Duration(seconds: 5),
-                                          "WhatsApp contact information not found!!",
-                                          "");
-                                    }
-
-                                    // callPhone('+919611009823');
-                                    //callPhone(str.);
-                                  },
+                              TextField(
+                                autofocus: false,
+                                controller: _msgController,
+                                decoration: InputDecoration(
+                                  labelText: 'Enter your message here..',
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.orange)),
+                                  // errorText:
+                                  //     _validate ? 'Please enter your message' : null,
                                 ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(0),
-                                margin: EdgeInsets.all(0),
-                                height: 35.0,
-                                width: MediaQuery.of(context).size.width * .41,
-                                child: RaisedButton(
-                                  elevation: 5,
-                                  color: btnColor,
-                                  textColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          color: Colors.blueGrey[200]),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0))),
-                                  splashColor: highlightColor,
-                                  onPressed: () {
+                                //validator: validateText,
+                                keyboardType: TextInputType.multiline,
+                                maxLength: null,
+                                maxLines: 3,
+                                onChanged: (value) {
+                                  if (_msgController.text?.length != 0)
                                     setState(() {
-                                      _errMsg =
-                                          validateText(_msgController.text);
+                                      _errMsg = null;
                                     });
-
-                                    // setState(() {
-                                    //   _msgController.text.isEmpty
-                                    //       ? _validate = true
-                                    //       : _validate = false;
-                                    // });
-                                    String subjectOfMail = (_reasonType != null)
-                                        ? _reasonType
-                                        : 'Write what\s this about';
-                                    if (_errMsg == null) {
-                                      if (_mailBody == null) _mailBody = "";
-                                      _launchURL(
-                                          _state
-                                              .getConfigurations()
-                                              .contactEmail,
-                                          subjectOfMail,
-                                          _mailBody);
-                                    }
-                                  },
+                                  setState(() {
+                                    _mailSecLine = _msgController.text;
+                                    _mailBody =
+                                        _mailFirstline + "\n" + _mailSecLine;
+                                  });
+                                },
+                              ),
+                              Text(
+                                (_errMsg != null) ? _errMsg : "",
+                                style: errorTextStyle,
+                              ),
+                            ],
+                          ),
+                        ),
+                        verticalSpacer,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.all(0),
+                              margin: EdgeInsets.all(0),
+                              height: 35.0,
+                              width: MediaQuery.of(context).size.width * .41,
+                              child: RaisedButton(
+                                textColor: btnColor,
+                                elevation: 5,
+                                padding: EdgeInsets.all(5),
+                                // alignment: Alignment.center,
+                                shape: RoundedRectangleBorder(
+                                    side:
+                                        BorderSide(color: Colors.blueGrey[200]),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                color: btnColor,
+                                splashColor: highlightColor,
+                                child: Container(
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: <Widget>[
-                                      new Text('Email Us'),
-                                      Icon(Icons.mail)
+                                      Text(
+                                        "WhatsApp Us ",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      ImageIcon(
+                                        AssetImage('assets/whatsapp.png'),
+                                        size: 28,
+                                        color: Colors.lightGreenAccent[700],
+                                      ),
                                     ],
                                   ),
                                 ),
+
+                                onPressed: () {
+                                  if (_state
+                                              .getConfigurations()
+                                              .whatsappPhone !=
+                                          null &&
+                                      _state
+                                              .getConfigurations()
+                                              .whatsappPhone !=
+                                          "") {
+                                    try {
+                                      launchWhatsApp(
+                                          message:
+                                              'Hello, This is ${_nameController.text}. \nIt\'s a $_reasonType regarding LESSs app.\nIt is \"${_msgController.text}\".',
+                                          phone: _state
+                                              .getConfigurations()
+                                              .whatsappPhone);
+                                    } catch (error) {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.error,
+                                          Duration(seconds: 5),
+                                          "Could not connect to the WhatsApp number ${_state.getConfigurations().whatsappPhone} !!",
+                                          "Try again later");
+                                    }
+                                  } else {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 5),
+                                        "WhatsApp contact information not found!!",
+                                        "");
+                                  }
+
+                                  // callPhone('+919611009823');
+                                  //callPhone(str.);
+                                },
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ))),
-            // bottomNavigationBar: CustomBottomBar(
-            //   barIndex: 0,
-            // ),
-          ),
-          onWillPop: () async {
-            return true;
-          },
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(0),
+                              margin: EdgeInsets.all(0),
+                              height: 35.0,
+                              width: MediaQuery.of(context).size.width * .41,
+                              child: RaisedButton(
+                                elevation: 5,
+                                color: btnColor,
+                                textColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                    side:
+                                        BorderSide(color: Colors.blueGrey[200]),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                splashColor: highlightColor,
+                                onPressed: () {
+                                  setState(() {
+                                    _errMsg = validateText(_msgController.text);
+                                  });
+
+                                  // setState(() {
+                                  //   _msgController.text.isEmpty
+                                  //       ? _validate = true
+                                  //       : _validate = false;
+                                  // });
+                                  String subjectOfMail = (_reasonType != null)
+                                      ? _reasonType
+                                      : 'Write what\s this about';
+                                  if (_errMsg == null) {
+                                    if (_mailBody == null) _mailBody = "";
+                                    _launchURL(
+                                        _state.getConfigurations().contactEmail,
+                                        subjectOfMail,
+                                        _mailBody);
+                                  }
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    new Text('Email Us'),
+                                    Icon(Icons.mail)
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ))),
+          // bottomNavigationBar: CustomBottomBar(
+          //   barIndex: 0,
+          // ),
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

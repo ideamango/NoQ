@@ -954,60 +954,56 @@ class _TokensInSlotState extends State<TokensInSlot>
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-          appBar: CustomAppBarWithBackButton(
-            backRoute: widget.backRoute,
-            titleTxt:
-                "Tokens in ${Utils.formatTimeAsStr(timeSlot)} Slot on ${dtFormat.format(widget.date)}",
-          ),
-          body: (initCompleted)
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      child: Scrollbar(
-                          child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            (listOfTokens.length != 0)
-                                ? ListView.builder(
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.vertical,
-                                    physics: ClampingScrollPhysics(),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Container(
-                                        padding: EdgeInsets.all(10),
-                                        child: Card(
-                                            child: _buildItem(
-                                                listOfTokens[index], index)),
-                                        //children: <Widget>[firstRow, secondRow],
-                                      );
-                                    },
-                                    itemCount: listOfTokens.length,
-                                  )
-                                : _emptyPage(),
+    return Scaffold(
+      appBar: CustomAppBarWithBackButton(
+        backRoute: widget.backRoute,
+        titleTxt:
+            "Tokens in ${Utils.formatTimeAsStr(timeSlot)} Slot on ${dtFormat.format(widget.date)}",
+      ),
+      body: (initCompleted)
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  child: Scrollbar(
+                      child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        (listOfTokens.length != 0)
+                            ? ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                physics: ClampingScrollPhysics(),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: Card(
+                                        child: _buildItem(
+                                            listOfTokens[index], index)),
+                                    //children: <Widget>[firstRow, secondRow],
+                                  );
+                                },
+                                itemCount: listOfTokens.length,
+                              )
+                            : _emptyPage(),
 
-                            // (initCompleted)
-                            //     ? buildExpansionTile()
-                            //     : showCircularProgress(),
-                          ],
-                        ),
-                      )),
+                        // (initCompleted)
+                        //     ? buildExpansionTile()
+                        //     : showCircularProgress(),
+                      ],
                     ),
-                  ],
-                )
-              : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      showCircularProgress(),
-                    ],
-                  ),
+                  )),
                 ),
-        ));
+              ],
+            )
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  showCircularProgress(),
+                ],
+              ),
+            ),
+    );
   }
 }

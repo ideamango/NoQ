@@ -230,33 +230,29 @@ class _ManageTokensState extends State<ManageTokens> {
           break;
       }
     });
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(),
-      home: WillPopScope(
-        child: Scaffold(
-          appBar: CustomAppBarWithBackButton(
-            titleTxt: "Manage Bookings",
-            backRoute: UserHomePage(),
-          ),
-          body: Center(
-            //child: Text("Loading"),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                showCircularProgress(),
-              ],
-            ),
-          ),
-          //drawer: CustomDrawer(),
-          //bottomNavigationBar: CustomBottomBar(barIndex: 0),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: CustomAppBarWithBackButton(
+          titleTxt: "Manage Bookings",
+          backRoute: UserHomePage(),
         ),
-        onWillPop: () async {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => UserHomePage()));
-          return false;
-        },
+        body: Center(
+          //child: Text("Loading"),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              showCircularProgress(),
+            ],
+          ),
+        ),
+        //drawer: CustomDrawer(),
+        //bottomNavigationBar: CustomBottomBar(barIndex: 0),
       ),
+      onWillPop: () async {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => UserHomePage()));
+        return false;
+      },
     );
   }
 
@@ -338,86 +334,78 @@ class _ManageTokensState extends State<ManageTokens> {
   @override
   Widget build(BuildContext context) {
     if (!initCompleted) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              titleTxt: "Manage Bookings",
-              backRoute: UserHomePage(),
-            ),
-            body: Center(
-              //child: Text("Loading"),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
-            ),
-            //drawer: CustomDrawer(),
-            //bottomNavigationBar: CustomBottomBar(barIndex: 0),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            titleTxt: "Manage Bookings",
+            backRoute: UserHomePage(),
           ),
-          onWillPop: () async {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserHomePage()));
-            return false;
-          },
+          body: Center(
+            //child: Text("Loading"),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
+        onWillPop: () async {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => UserHomePage()));
+          return false;
+        },
       );
     } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            appBar: AppBar(
-              leading: IconButton(
-                  icon: Icon(Icons.arrow_back_ios),
+      return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios),
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .push(PageAnimation.createRoute(ManageEntityListPage()));
+                }),
+            flexibleSpace: Container(
+              decoration: gradientBackground,
+            ),
+            actions: <Widget>[
+              IconButton(
+                  icon: Icon(Icons.exit_to_app),
                   color: Colors.white,
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                        PageAnimation.createRoute(ManageEntityListPage()));
-                  }),
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              actions: <Widget>[
-                IconButton(
-                    icon: Icon(Icons.exit_to_app),
-                    color: Colors.white,
+                    Utils.logout(context);
+                  })
+            ],
+            title: Text('View Bookings'),
+          ),
+          body: Column(
+            children: [
+              Row(
+                children: [
+                  Text("Showing tokens for $dateForLoadingSlots"),
+                  RaisedButton(
+                    child: Text('Select another date'),
                     onPressed: () {
-                      Utils.logout(context);
-                    })
-              ],
-              title: Text('View Bookings'),
-            ),
-            body: Column(
-              children: [
-                Row(
-                  children: [
-                    Text("Showing tokens for $dateForLoadingSlots"),
-                    RaisedButton(
-                      child: Text('Select another date'),
-                      onPressed: () {
-                        pickAnyDate(context).then((value) {
-                          if (value != null) {
-                            print(value);
-                            setState(() {
-                              dateForLoadingSlots = value;
-                            });
-                          }
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                loadSlotsForDate(dateForLoadingSlots),
-              ],
-            ),
+                      pickAnyDate(context).then((value) {
+                        if (value != null) {
+                          print(value);
+                          setState(() {
+                            dateForLoadingSlots = value;
+                          });
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+              loadSlotsForDate(dateForLoadingSlots),
+            ],
           ),
         ),
       );

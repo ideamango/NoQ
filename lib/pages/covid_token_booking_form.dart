@@ -1246,398 +1246,515 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         });
       }
 
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        // title: 'Add child entities',
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: highlightColor,
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  print("going back");
-
-                  //Show flush bar to notify user
-                  if (flushStatus != "Showing") {
-                    flush = Flushbar<bool>(
-                      //padding: EdgeInsets.zero,
-                      margin: EdgeInsets.zero,
-                      flushbarPosition: FlushbarPosition.BOTTOM,
-                      flushbarStyle: FlushbarStyle.GROUNDED,
-                      reverseAnimationCurve: Curves.decelerate,
-                      forwardAnimationCurve: Curves.easeInToLinear,
-                      backgroundColor: Colors.cyan[200],
-                      boxShadows: [
-                        BoxShadow(
-                            color: Colors.cyan,
-                            offset: Offset(0.0, 2.0),
-                            blurRadius: 3.0)
-                      ],
-                      isDismissible: true,
-                      //duration: Duration(seconds: 4),
-                      icon: Icon(
-                        Icons.cancel,
-                        color: Colors.blueGrey[90],
-                      ),
-                      showProgressIndicator: true,
-                      progressIndicatorBackgroundColor: Colors.blueGrey[900],
-                      progressIndicatorValueColor:
-                          new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
-                      routeBlur: 10.0,
-                      titleText: Text(
-                        "Are you sure you want to leave this page?",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0,
-                            color: Colors.blueGrey[700],
-                            fontFamily: "ShadowsIntoLightTwo"),
-                      ),
-                      messageText: Text(
-                        "The changes you made might be lost, if not saved.",
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: Colors.blueGrey[800],
-                            fontFamily: "ShadowsIntoLightTwo"),
-                      ),
-
-                      mainButton: Column(
-                        children: <Widget>[
-                          FlatButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () {
-                              flushStatus = "Empty";
-                              flush.dismiss(false); // result = true
-                            },
-                            child: Text(
-                              "No",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          FlatButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () {
-                              flushStatus = "Empty";
-                              flush.dismiss(true); // result = true
-                            },
-                            child: Text(
-                              "Yes",
-                              style: TextStyle(color: Colors.blueGrey[700]),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                    // ..onStatusChanged = (FlushbarStatus status) {
-                    //     print("FlushbarStatus-------$status");
-                    //     if (status == FlushbarStatus.IS_APPEARING)
-                    //       flushStatus = "Showing";
-                    //     if (status == FlushbarStatus.DISMISSED)
-                    //       flushStatus = "Empty";
-                    //     print("gfdfgdfg");
-                    //   };
-
-                    flush
-                      ..show(context).then((result) {
-                        _wasButtonClicked = result;
-                        flushStatus = "Empty";
-                        if (_wasButtonClicked) processGoBackWithTimer();
-                      });
-                  }
-
-                  print("flush already running");
-                },
-              ),
-              title: Text("Booking Request Form",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[],
+            flexibleSpace: Container(
+              decoration: gradientBackground,
             ),
-            body: Center(
-              child: new SafeArea(
-                top: true,
-                bottom: true,
-                child: new Form(
-                  key: _tokenBookingDetailsFormKey,
-                  autovalidate: _autoValidate,
-                  child: new ListView(
-                    padding: const EdgeInsets.all(5.0),
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Basic Details",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
+            leading: IconButton(
+              padding: EdgeInsets.all(0),
+              alignment: Alignment.center,
+              highlightColor: highlightColor,
+              icon: Icon(Icons.arrow_back),
+              color: Colors.white,
+              onPressed: () {
+                print("going back");
 
+                //Show flush bar to notify user
+                if (flushStatus != "Showing") {
+                  flush = Flushbar<bool>(
+                    //padding: EdgeInsets.zero,
+                    margin: EdgeInsets.zero,
+                    flushbarPosition: FlushbarPosition.BOTTOM,
+                    flushbarStyle: FlushbarStyle.GROUNDED,
+                    reverseAnimationCurve: Curves.decelerate,
+                    forwardAnimationCurve: Curves.easeInToLinear,
+                    backgroundColor: Colors.cyan[200],
+                    boxShadows: [
+                      BoxShadow(
+                          color: Colors.cyan,
+                          offset: Offset(0.0, 2.0),
+                          blurRadius: 3.0)
+                    ],
+                    isDismissible: true,
+                    //duration: Duration(seconds: 4),
+                    icon: Icon(
+                      Icons.cancel,
+                      color: Colors.blueGrey[90],
+                    ),
+                    showProgressIndicator: true,
+                    progressIndicatorBackgroundColor: Colors.blueGrey[900],
+                    progressIndicatorValueColor:
+                        new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
+                    routeBlur: 10.0,
+                    titleText: Text(
+                      "Are you sure you want to leave this page?",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                          color: Colors.blueGrey[700],
+                          fontFamily: "ShadowsIntoLightTwo"),
+                    ),
+                    messageText: Text(
+                      "The changes you made might be lost, if not saved.",
+                      style: TextStyle(
+                          fontSize: 12.0,
+                          color: Colors.blueGrey[800],
+                          fontFamily: "ShadowsIntoLightTwo"),
+                    ),
+
+                    mainButton: Column(
+                      children: <Widget>[
+                        FlatButton(
+                          padding: EdgeInsets.all(0),
+                          onPressed: () {
+                            flushStatus = "Empty";
+                            flush.dismiss(false); // result = true
+                          },
+                          child: Text(
+                            "No",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        FlatButton(
+                          padding: EdgeInsets.all(0),
+                          onPressed: () {
+                            flushStatus = "Empty";
+                            flush.dismiss(true); // result = true
+                          },
+                          child: Text(
+                            "Yes",
+                            style: TextStyle(color: Colors.blueGrey[700]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                  // ..onStatusChanged = (FlushbarStatus status) {
+                  //     print("FlushbarStatus-------$status");
+                  //     if (status == FlushbarStatus.IS_APPEARING)
+                  //       flushStatus = "Showing";
+                  //     if (status == FlushbarStatus.DISMISSED)
+                  //       flushStatus = "Empty";
+                  //     print("gfdfgdfg");
+                  //   };
+
+                  flush
+                    ..show(context).then((result) {
+                      _wasButtonClicked = result;
+                      flushStatus = "Empty";
+                      if (_wasButtonClicked) processGoBackWithTimer();
+                    });
+                }
+
+                print("flush already running");
+              },
+            ),
+            title: Text("Booking Request Form",
+                style: TextStyle(color: Colors.white, fontSize: 16)),
+          ),
+          body: Center(
+            child: new SafeArea(
+              top: true,
+              bottom: true,
+              child: new Form(
+                key: _tokenBookingDetailsFormKey,
+                autovalidate: _autoValidate,
+                child: new ListView(
+                  padding: const EdgeInsets.all(5.0),
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
                                       children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(basicInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
+                                        Text(
+                                          "Basic Details",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
                                         ),
+                                        SizedBox(width: 5),
                                       ],
                                     ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(
+                                    backgroundColor: Colors.blueGrey[500],
+
                                     children: <Widget>[
-                                      nameField,
-                                      //   descField,
-                                      dobField,
-                                      primaryPhoneField,
-                                      // alternatePhoneField,
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(basicInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5),
+                                child: Column(
+                                  children: <Widget>[
+                                    nameField,
+                                    //   descField,
+                                    dobField,
+                                    primaryPhoneField,
+                                    // alternatePhoneField,
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Column(children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            frontlineWorkerField.label,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Column(children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
                                       children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(basicInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
+                                        Text(
+                                          frontlineWorkerField.label,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
                                         ),
+                                        SizedBox(width: 5),
                                       ],
                                     ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(children: <Widget>[
-                                    frontlineFieldInput,
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        (Utils.isNullOrEmpty(
-                                                frontlineWorkerField
-                                                    .responseFilePaths))
-                                            ? Container(
-                                                child: Text(
-                                                "No Image Selected",
-                                                style: TextStyle(
-                                                    color: (validateField)
-                                                        ? Colors.red
-                                                        : Colors.black),
-                                              ))
-                                            : Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .6,
-                                                child: ListView.builder(
-                                                  padding: EdgeInsets.all(
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .03),
-                                                  //  controller: _childScrollController,
-                                                  scrollDirection:
-                                                      Axis.vertical,
+                                    backgroundColor: Colors.blueGrey[500],
 
-                                                  shrinkWrap: true,
-                                                  //   itemExtent: itemSize,
-                                                  //scrollDirection: Axis.vertical,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index) {
-                                                    return Container(
-                                                      padding: EdgeInsets.only(
-                                                          bottom: 5),
-                                                      child: showImageList(
-                                                          context,
-                                                          _frontLineProofimages[
-                                                              index],
-                                                          _frontLineProofimages),
-                                                    );
-                                                  },
-                                                  itemCount:
-                                                      _frontLineProofimages
-                                                          .length,
-                                                ),
-                                              ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            clickPicForfrontLineBtn,
-                                            selectPicForFrontLineBtn
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(basicInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                  ]),
-                                ),
-                              ]),
-                            ]),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Column(children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            idProofField.label,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
                                       ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(
-                                                    idProofField.infoMessage,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                    ],
                                   ),
                                 ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(children: <Widget>[
-                                    idTypeField,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5),
+                                child: Column(children: <Widget>[
+                                  frontlineFieldInput,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      (Utils.isNullOrEmpty(frontlineWorkerField
+                                              .responseFilePaths))
+                                          ? Container(
+                                              child: Text(
+                                              "No Image Selected",
+                                              style: TextStyle(
+                                                  color: (validateField)
+                                                      ? Colors.red
+                                                      : Colors.black),
+                                            ))
+                                          : Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .6,
+                                              child: ListView.builder(
+                                                padding: EdgeInsets.all(
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        .03),
+                                                //  controller: _childScrollController,
+                                                scrollDirection: Axis.vertical,
+
+                                                shrinkWrap: true,
+                                                //   itemExtent: itemSize,
+                                                //scrollDirection: Axis.vertical,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return Container(
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 5),
+                                                    child: showImageList(
+                                                        context,
+                                                        _frontLineProofimages[
+                                                            index],
+                                                        _frontLineProofimages),
+                                                  );
+                                                },
+                                                itemCount: _frontLineProofimages
+                                                    .length,
+                                              ),
+                                            ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          clickPicForfrontLineBtn,
+                                          selectPicForFrontLineBtn
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ]),
+                              ),
+                            ]),
+                          ]),
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Column(children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          idProofField.label,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.blueGrey[500],
+
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(
+                                                  idProofField.infoMessage,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5),
+                                child: Column(children: <Widget>[
+                                  idTypeField,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      (Utils.isNullOrEmpty(
+                                              idProofField.responseFilePaths))
+                                          ? Container(
+                                              child: Text(
+                                              "No Image Selected",
+                                              style: TextStyle(
+                                                  color: (validateField)
+                                                      ? Colors.red
+                                                      : Colors.black),
+                                            ))
+                                          : Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .6,
+                                              child: ListView.builder(
+                                                padding: EdgeInsets.all(
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        .03),
+                                                //  controller: _childScrollController,
+                                                scrollDirection: Axis.vertical,
+
+                                                shrinkWrap: true,
+                                                //   itemExtent: itemSize,
+                                                //scrollDirection: Axis.vertical,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return Container(
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 5),
+                                                    child: showImageList(
+                                                        context,
+                                                        _idProofimages[index],
+                                                        _idProofimages),
+                                                  );
+                                                },
+                                                itemCount:
+                                                    _idProofimages.length,
+                                              ),
+                                            ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          clickPicForIdProofBtn,
+                                          selectPicForIdProofBtn
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ]),
+                              ),
+                            ]),
+                          ]),
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          medConditionsField.label,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.blueGrey[500],
+
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(
+                                                  medConditionsField
+                                                      .infoMessage,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5),
+                                child: Column(
+                                  children: <Widget>[
+                                    medicalConditionsField,
+                                    //medicalConditionsDescField,
+
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -1678,506 +1795,366 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                                           bottom: 5),
                                                       child: showImageList(
                                                           context,
-                                                          _idProofimages[index],
-                                                          _idProofimages),
+                                                          _medCondsProofimages[
+                                                              index],
+                                                          _medCondsProofimages),
                                                     );
                                                   },
                                                   itemCount:
-                                                      _idProofimages.length,
+                                                      _medCondsProofimages
+                                                          .length,
                                                 ),
                                               ),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
                                           children: [
-                                            clickPicForIdProofBtn,
-                                            selectPicForIdProofBtn
+                                            clickPicForMedCondsBtn,
+                                            selectPicsForMedCondsBtn,
                                           ],
                                         ),
                                       ],
                                     ),
-                                  ]),
+                                  ],
                                 ),
-                              ]),
-                            ]),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //       border: Border.all(color: containerColor),
+                    //       color: Colors.grey[50],
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius:
+                    //           BorderRadius.all(Radius.circular(5.0))),
+                    //   //padding: EdgeInsets.all(5.0),
+                    //   child: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: <Widget>[
+                    //       Column(
+                    //         children: <Widget>[
+                    //           Container(
+                    //             //padding: EdgeInsets.only(left: 5),
+                    //             decoration: darkContainer,
+                    //             child: Theme(
+                    //               data: ThemeData(
+                    //                 unselectedWidgetColor: Colors.white,
+                    //                 accentColor: Colors.grey[50],
+                    //               ),
+                    //               child: CustomExpansionTile(
+                    //                 //key: PageStorageKey(this.widget.headerTitle),
+                    //                 initiallyExpanded: false,
+                    //                 title: Row(
+                    //                   children: <Widget>[
+                    //                     Text(
+                    //                       "Current Location Details",
+                    //                       style: TextStyle(
+                    //                           color: Colors.white,
+                    //                           fontSize: 15),
+                    //                     ),
+                    //                     SizedBox(width: 5),
+                    //                   ],
+                    //                 ),
+                    //                 backgroundColor: Colors.blueGrey[500],
+
+                    //                 children: <Widget>[
+                    //                   new Container(
+                    //                     width: MediaQuery.of(context)
+                    //                             .size
+                    //                             .width *
+                    //                         .94,
+                    //                     decoration: darkContainer,
+                    //                     padding: EdgeInsets.all(2.0),
+                    //                     child: Row(
+                    //                       children: <Widget>[
+                    //                         Expanded(
+                    //                           child: Text(locationInfoStr,
+                    //                               style: buttonXSmlTextStyle),
+                    //                         ),
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       Container(
+                    //         padding: EdgeInsets.only(left: 5.0, right: 5),
+                    //         child: Column(
+                    //           children: <Widget>[
+                    //             Column(children: <Widget>[
+                    //               Container(
+                    //                 padding: EdgeInsets.all(4),
+                    //                 width: MediaQuery.of(context).size.width *
+                    //                     .95,
+                    //                 child: RichText(
+                    //                     text: TextSpan(
+                    //                         style: highlightSubTextStyle,
+                    //                         children: <TextSpan>[
+                    //                       TextSpan(
+                    //                           text: pressUseCurrentLocation),
+                    //                       TextSpan(
+                    //                           text: whyLocationIsRequired),
+                    //                     ])),
+                    //               ),
+                    //               Row(
+                    //                 mainAxisAlignment:
+                    //                     MainAxisAlignment.spaceAround,
+                    //                 children: <Widget>[
+                    //                   latField,
+                    //                   lonField,
+                    //                 ],
+                    //               ),
+                    //               verticalSpacer,
+                    //             ]),
+                    //             Row(
+                    //               mainAxisAlignment:
+                    //                   MainAxisAlignment.spaceAround,
+                    //               children: <Widget>[
+                    //                 clearBtn,
+                    //                 Container(
+                    //                   width:
+                    //                       MediaQuery.of(context).size.width *
+                    //                           .6,
+                    //                   child: RaisedButton(
+                    //                     elevation: 10,
+                    //                     color: btnColor,
+                    //                     splashColor: highlightColor,
+                    //                     textColor: Colors.white,
+                    //                     shape: RoundedRectangleBorder(
+                    //                         side:
+                    //                             BorderSide(color: btnColor)),
+                    //                     child: Text(
+                    //                       userCurrentLoc,
+                    //                       textAlign: TextAlign.center,
+                    //                     ),
+                    //                     onPressed: useCurrLocation,
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 7,
+                    // ),
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //       border: Border.all(color: containerColor),
+                    //       color: Colors.grey[50],
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius:
+                    //           BorderRadius.all(Radius.circular(5.0))),
+                    //   //padding: EdgeInsets.all(5.0),
+                    //   child: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: <Widget>[
+                    //       Column(
+                    //         children: <Widget>[
+                    //           Container(
+                    //             //padding: EdgeInsets.only(left: 5),
+                    //             decoration: darkContainer,
+                    //             child: Theme(
+                    //               data: ThemeData(
+                    //                 unselectedWidgetColor: Colors.white,
+                    //                 accentColor: Colors.grey[50],
+                    //               ),
+                    //               child: CustomExpansionTile(
+                    //                 //key: PageStorageKey(this.widget.headerTitle),
+                    //                 initiallyExpanded: false,
+                    //                 title: Row(
+                    //                   children: <Widget>[
+                    //                     Text(
+                    //                       "Address",
+                    //                       style: TextStyle(
+                    //                           color: Colors.white,
+                    //                           fontSize: 15),
+                    //                     ),
+                    //                     SizedBox(width: 5),
+                    //                   ],
+                    //                 ),
+                    //                 backgroundColor: Colors.blueGrey[500],
+
+                    //                 children: <Widget>[
+                    //                   new Container(
+                    //                     width: MediaQuery.of(context)
+                    //                             .size
+                    //                             .width *
+                    //                         .94,
+                    //                     decoration: darkContainer,
+                    //                     padding: EdgeInsets.all(2.0),
+                    //                     child: Row(
+                    //                       children: <Widget>[
+                    //                         Expanded(
+                    //                           child: Text(addressInfoStr,
+                    //                               style: buttonXSmlTextStyle),
+                    //                         ),
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       Container(
+                    //         padding: EdgeInsets.only(left: 5.0, right: 5),
+                    //         child: Column(
+                    //           children: <Widget>[
+                    //             adrsField1,
+                    //             landmarkField2,
+                    //             localityField,
+                    //             cityField,
+                    //             stateField,
+                    //             pinField,
+                    //             countryField,
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 7,
+                    // ),
+                    // Container(
+                    //   padding: EdgeInsets.only(left: 5.0, right: 5),
+                    //   decoration: BoxDecoration(
+                    //       border: Border.all(color: containerColor),
+                    //       color: Colors.grey[50],
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius:
+                    //           BorderRadius.all(Radius.circular(5.0))),
+                    //   //padding: EdgeInsets.all(5.0),
+                    //   child: prefTimeSlotField,
+                    // ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      //padding: EdgeInsets.all(5.0),
+                      child: descField,
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    (Utils.isNotNullOrEmpty(bookingForm.footerMsg)
+                        ? Container(
+                            padding: EdgeInsets.only(left: 5.0, right: 5),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: containerColor),
+                                color: Colors.grey[50],
+                                shape: BoxShape.rectangle,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0))),
+                            //padding: EdgeInsets.all(5.0),
+                            child: Text(
+                              bookingForm.footerMsg,
+                              // bookingForm.footerMsg,
+                              style: TextStyle(
+                                  color: Colors.orangeAccent.shade700,
+                                  //fontWeight: FontWeight.w600,
+                                  fontFamily: 'Montserrat',
+
+                                  // decoration: TextDecoration.underline,
+                                  fontSize: 16.0),
+                            ),
+                          )
+                        : Container()),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Builder(
+                      builder: (context) => RaisedButton(
+                          color: btnColor,
+                          splashColor: highlightColor,
+                          child: Container(
+                            // width: MediaQuery.of(context).size.width * .35,
+                            child: Column(
                               children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            medConditionsField.label,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(
-                                                    medConditionsField
-                                                        .infoMessage,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                Text(
+                                  'Save Details & Request Token',
+                                  style: buttonMedTextStyle,
                                 ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(
-                                    children: <Widget>[
-                                      medicalConditionsField,
-                                      //medicalConditionsDescField,
-
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          (Utils.isNullOrEmpty(idProofField
-                                                  .responseFilePaths))
-                                              ? Container(
-                                                  child: Text(
-                                                  "No Image Selected",
-                                                  style: TextStyle(
-                                                      color: (validateField)
-                                                          ? Colors.red
-                                                          : Colors.black),
-                                                ))
-                                              : Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .6,
-                                                  child: ListView.builder(
-                                                    padding: EdgeInsets.all(
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .03),
-                                                    //  controller: _childScrollController,
-                                                    scrollDirection:
-                                                        Axis.vertical,
-
-                                                    shrinkWrap: true,
-                                                    //   itemExtent: itemSize,
-                                                    //scrollDirection: Axis.vertical,
-                                                    itemBuilder:
-                                                        (BuildContext context,
-                                                            int index) {
-                                                      return Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 5),
-                                                        child: showImageList(
-                                                            context,
-                                                            _medCondsProofimages[
-                                                                index],
-                                                            _medCondsProofimages),
-                                                      );
-                                                    },
-                                                    itemCount:
-                                                        _medCondsProofimages
-                                                            .length,
-                                                  ),
-                                                ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              clickPicForMedCondsBtn,
-                                              selectPicsForMedCondsBtn,
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                // Text(
+                                //   'Details of amenities/services',
+                                //   style: buttonXSmlTextStyle,
+                                // ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      // Container(
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.grey[50],
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   //padding: EdgeInsets.all(5.0),
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: <Widget>[
-                      //       Column(
-                      //         children: <Widget>[
-                      //           Container(
-                      //             //padding: EdgeInsets.only(left: 5),
-                      //             decoration: darkContainer,
-                      //             child: Theme(
-                      //               data: ThemeData(
-                      //                 unselectedWidgetColor: Colors.white,
-                      //                 accentColor: Colors.grey[50],
-                      //               ),
-                      //               child: CustomExpansionTile(
-                      //                 //key: PageStorageKey(this.widget.headerTitle),
-                      //                 initiallyExpanded: false,
-                      //                 title: Row(
-                      //                   children: <Widget>[
-                      //                     Text(
-                      //                       "Current Location Details",
-                      //                       style: TextStyle(
-                      //                           color: Colors.white,
-                      //                           fontSize: 15),
-                      //                     ),
-                      //                     SizedBox(width: 5),
-                      //                   ],
-                      //                 ),
-                      //                 backgroundColor: Colors.blueGrey[500],
-
-                      //                 children: <Widget>[
-                      //                   new Container(
-                      //                     width: MediaQuery.of(context)
-                      //                             .size
-                      //                             .width *
-                      //                         .94,
-                      //                     decoration: darkContainer,
-                      //                     padding: EdgeInsets.all(2.0),
-                      //                     child: Row(
-                      //                       children: <Widget>[
-                      //                         Expanded(
-                      //                           child: Text(locationInfoStr,
-                      //                               style: buttonXSmlTextStyle),
-                      //                         ),
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       Container(
-                      //         padding: EdgeInsets.only(left: 5.0, right: 5),
-                      //         child: Column(
-                      //           children: <Widget>[
-                      //             Column(children: <Widget>[
-                      //               Container(
-                      //                 padding: EdgeInsets.all(4),
-                      //                 width: MediaQuery.of(context).size.width *
-                      //                     .95,
-                      //                 child: RichText(
-                      //                     text: TextSpan(
-                      //                         style: highlightSubTextStyle,
-                      //                         children: <TextSpan>[
-                      //                       TextSpan(
-                      //                           text: pressUseCurrentLocation),
-                      //                       TextSpan(
-                      //                           text: whyLocationIsRequired),
-                      //                     ])),
-                      //               ),
-                      //               Row(
-                      //                 mainAxisAlignment:
-                      //                     MainAxisAlignment.spaceAround,
-                      //                 children: <Widget>[
-                      //                   latField,
-                      //                   lonField,
-                      //                 ],
-                      //               ),
-                      //               verticalSpacer,
-                      //             ]),
-                      //             Row(
-                      //               mainAxisAlignment:
-                      //                   MainAxisAlignment.spaceAround,
-                      //               children: <Widget>[
-                      //                 clearBtn,
-                      //                 Container(
-                      //                   width:
-                      //                       MediaQuery.of(context).size.width *
-                      //                           .6,
-                      //                   child: RaisedButton(
-                      //                     elevation: 10,
-                      //                     color: btnColor,
-                      //                     splashColor: highlightColor,
-                      //                     textColor: Colors.white,
-                      //                     shape: RoundedRectangleBorder(
-                      //                         side:
-                      //                             BorderSide(color: btnColor)),
-                      //                     child: Text(
-                      //                       userCurrentLoc,
-                      //                       textAlign: TextAlign.center,
-                      //                     ),
-                      //                     onPressed: useCurrLocation,
-                      //                   ),
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // SizedBox(
-                      //   height: 7,
-                      // ),
-                      // Container(
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.grey[50],
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   //padding: EdgeInsets.all(5.0),
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: <Widget>[
-                      //       Column(
-                      //         children: <Widget>[
-                      //           Container(
-                      //             //padding: EdgeInsets.only(left: 5),
-                      //             decoration: darkContainer,
-                      //             child: Theme(
-                      //               data: ThemeData(
-                      //                 unselectedWidgetColor: Colors.white,
-                      //                 accentColor: Colors.grey[50],
-                      //               ),
-                      //               child: CustomExpansionTile(
-                      //                 //key: PageStorageKey(this.widget.headerTitle),
-                      //                 initiallyExpanded: false,
-                      //                 title: Row(
-                      //                   children: <Widget>[
-                      //                     Text(
-                      //                       "Address",
-                      //                       style: TextStyle(
-                      //                           color: Colors.white,
-                      //                           fontSize: 15),
-                      //                     ),
-                      //                     SizedBox(width: 5),
-                      //                   ],
-                      //                 ),
-                      //                 backgroundColor: Colors.blueGrey[500],
-
-                      //                 children: <Widget>[
-                      //                   new Container(
-                      //                     width: MediaQuery.of(context)
-                      //                             .size
-                      //                             .width *
-                      //                         .94,
-                      //                     decoration: darkContainer,
-                      //                     padding: EdgeInsets.all(2.0),
-                      //                     child: Row(
-                      //                       children: <Widget>[
-                      //                         Expanded(
-                      //                           child: Text(addressInfoStr,
-                      //                               style: buttonXSmlTextStyle),
-                      //                         ),
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       Container(
-                      //         padding: EdgeInsets.only(left: 5.0, right: 5),
-                      //         child: Column(
-                      //           children: <Widget>[
-                      //             adrsField1,
-                      //             landmarkField2,
-                      //             localityField,
-                      //             cityField,
-                      //             stateField,
-                      //             pinField,
-                      //             countryField,
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // SizedBox(
-                      //   height: 7,
-                      // ),
-                      // Container(
-                      //   padding: EdgeInsets.only(left: 5.0, right: 5),
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.grey[50],
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   //padding: EdgeInsets.all(5.0),
-                      //   child: prefTimeSlotField,
-                      // ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 5.0, right: 5),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
-                        child: descField,
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      (Utils.isNotNullOrEmpty(bookingForm.footerMsg)
-                          ? Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: containerColor),
-                                  color: Colors.grey[50],
-                                  shape: BoxShape.rectangle,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0))),
-                              //padding: EdgeInsets.all(5.0),
-                              child: Text(
-                                bookingForm.footerMsg,
-                                // bookingForm.footerMsg,
-                                style: TextStyle(
-                                    color: Colors.orangeAccent.shade700,
-                                    //fontWeight: FontWeight.w600,
-                                    fontFamily: 'Montserrat',
-
-                                    // decoration: TextDecoration.underline,
-                                    fontSize: 16.0),
-                              ),
-                            )
-                          : Container()),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Builder(
-                        builder: (context) => RaisedButton(
-                            color: btnColor,
-                            splashColor: highlightColor,
-                            child: Container(
-                              // width: MediaQuery.of(context).size.width * .35,
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    'Save Details & Request Token',
-                                    style: buttonMedTextStyle,
-                                  ),
-                                  // Text(
-                                  //   'Details of amenities/services',
-                                  //   style: buttonXSmlTextStyle,
-                                  // ),
-                                ],
-                              ),
-                            ),
-                            onPressed: () {
-                              print("FlushbarStatus-------");
-                              processSaveWithTimer();
-                            }),
-                      ),
-                    ],
-                  ),
+                          ),
+                          onPressed: () {
+                            print("FlushbarStatus-------");
+                            processSaveWithTimer();
+                          }),
+                    ),
+                  ],
                 ),
               ),
             ),
-            // bottomNavigationBar: CustomBottomBar(barIndex: 0),
           ),
-          onWillPop: () async {
-            return true;
-          },
+          // bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     } else
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: highlightColor,
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  print("going back");
-                  Navigator.of(context).pop();
-                },
-              ),
-              title: Text("Booking Request Form",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[],
+            flexibleSpace: Container(
+              decoration: gradientBackground,
             ),
-
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
+            leading: IconButton(
+              padding: EdgeInsets.all(0),
+              alignment: Alignment.center,
+              highlightColor: highlightColor,
+              icon: Icon(Icons.arrow_back),
+              color: Colors.white,
+              onPressed: () {
+                print("going back");
+                Navigator.of(context).pop();
+              },
             ),
-            //drawer: CustomDrawer(),
-            //bottomNavigationBar: CustomBottomBar(barIndex: 0),
+            title: Text("Booking Request Form",
+                style: TextStyle(color: Colors.white, fontSize: 16)),
           ),
-          onWillPop: () async {
-            return true;
-          },
+
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
   }
 }

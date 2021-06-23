@@ -741,10 +741,8 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   @override
   Widget build(BuildContext context) {
     if (initCompleted && !loadingData) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: Scaffold(
+      return new WillPopScope(
+        child: Scaffold(
           appBar: CustomAppBarWithBackButton(
             backRoute: ManageEntityListPage(),
             titleTxt: "Application Requests Overview ",
@@ -1028,30 +1026,29 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
             ),
           ),
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     } else if (!initCompleted || loadingData) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: new WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: "Booking Tokens Overview ",
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
+      return new WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: "Booking Tokens Overview ",
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
             ),
           ),
-          onWillPop: () async {
-            return true;
-          },
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

@@ -2408,159 +2408,281 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       String _msg;
 
       double rowWidth = MediaQuery.of(context).size.width * .9;
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        // title: 'Add child entities',
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: highlightColor,
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  print("going back");
-
-                  backPressed();
-
-                  print("flush already running");
-                },
-              ),
-              title: Text(Utils.getEntityTypeDisplayName(entity.type),
-                  style: drawerdefaultTextStyle),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[],
+            flexibleSpace: Container(
+              decoration: gradientBackground,
             ),
-            body: Center(
-              child: new SafeArea(
-                top: true,
-                bottom: true,
-                child: new Form(
-                  key: _entityDetailsFormKey,
-                  child: new ListView(
-                    padding: const EdgeInsets.all(8.0),
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.all(6),
-                        padding: EdgeInsets.all(0),
-                        child: Text('Fields marked with * are Mandatory.',
-                            style: TextStyle(
-                                color: btnColor, fontWeight: FontWeight.bold)),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        foregroundDecoration: widget.isManager
-                            ? BoxDecoration(
-                                color: Colors.grey[50],
-                                backgroundBlendMode: BlendMode.saturation,
-                              )
-                            : BoxDecoration(),
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Basic Details",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
+            leading: IconButton(
+              padding: EdgeInsets.all(0),
+              alignment: Alignment.center,
+              highlightColor: highlightColor,
+              icon: Icon(Icons.arrow_back),
+              color: Colors.white,
+              onPressed: () {
+                print("going back");
+
+                backPressed();
+
+                print("flush already running");
+              },
+            ),
+            title: Text(Utils.getEntityTypeDisplayName(entity.type),
+                style: drawerdefaultTextStyle),
+          ),
+          body: Center(
+            child: new SafeArea(
+              top: true,
+              bottom: true,
+              child: new Form(
+                key: _entityDetailsFormKey,
+                child: new ListView(
+                  padding: const EdgeInsets.all(8.0),
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.all(6),
+                      padding: EdgeInsets.all(0),
+                      child: Text('Fields marked with * are Mandatory.',
+                          style: TextStyle(
+                              color: btnColor, fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      foregroundDecoration: widget.isManager
+                          ? BoxDecoration(
+                              color: Colors.grey[50],
+                              backgroundBlendMode: BlendMode.saturation,
+                            )
+                          : BoxDecoration(),
+                      margin: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
                                       children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(basicInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
+                                        Text(
+                                          "Basic Details",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
                                         ),
+                                        SizedBox(width: 5),
                                       ],
                                     ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(
+                                    backgroundColor: Colors.blueGrey[500],
                                     children: <Widget>[
-                                      nameField,
-                                      descField,
-                                      regNumField,
-                                      callingPhone,
-                                      emailId,
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(basicInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5),
+                                child: Column(
+                                  children: <Widget>[
+                                    nameField,
+                                    descField,
+                                    regNumField,
+                                    callingPhone,
+                                    emailId,
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        foregroundDecoration: widget.isManager
-                            ? BoxDecoration(
-                                color: Colors.grey[50],
-                                backgroundBlendMode: BlendMode.saturation,
-                              )
-                            : BoxDecoration(),
-                        // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * .9,
+                      margin: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(0),
+                      foregroundDecoration: widget.isManager
+                          ? BoxDecoration(
+                              color: Colors.grey[50],
+                              backgroundBlendMode: BlendMode.saturation,
+                            )
+                          : BoxDecoration(),
+                      // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    width: rowWidth * .7,
+                                    child: FlatButton(
+                                        visualDensity: VisualDensity.compact,
+                                        padding: EdgeInsets.all(0),
+                                        child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Text('Allow Bookings',
+                                                  style:
+                                                      TextStyle(fontSize: 14)),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .1,
+                                                child: Icon(Icons.info,
+                                                    color: Colors.blueGrey[600],
+                                                    size: 17),
+                                              ),
+                                            ]),
+                                        onPressed: () {
+                                          if (!_isBookExpanded) {
+                                            setState(() {
+                                              _isBookExpanded = true;
+                                              _bookMargin =
+                                                  EdgeInsets.only(bottom: 5);
+                                              _bookWidth =
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .9;
+                                              _bookText = AutoSizeText(
+                                                  bookableInfo,
+                                                  minFontSize: 10,
+                                                  maxFontSize: 14,
+                                                  style: TextStyle(
+                                                      color: primaryDarkColor,
+                                                      // fontWeight: FontWeight.w800,
+                                                      fontFamily: 'Monsterrat',
+                                                      letterSpacing: 0.5,
+                                                      height: 1.5));
+
+                                              _bookHeight = 60;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              _isBookExpanded = false;
+                                              _bookWidth = 0;
+                                              _bookHeight = 0;
+                                            });
+                                          }
+                                        }),
+                                  ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        .08,
+                                    width:
+                                        MediaQuery.of(context).size.width * .2,
+                                    child: Transform.scale(
+                                      scale: .7,
+                                      alignment: Alignment.centerRight,
+                                      child: Switch(
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        value: isBookable,
+                                        onChanged: (value) {
+                                          if (widget.isManager) {
+                                            return;
+                                          } else {
+                                            isBookable = value;
+                                            if (value) {
+                                              showConfirmationDialog();
+                                              //Check if all mandatory fields for being bookable are not empty.
+                                              String errMsg =
+                                                  validateMandatoryFieldsForBookable();
+                                              if (Utils.isNotNullOrEmpty(
+                                                  errMsg)) {
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.info_outline,
+                                                    Duration(
+                                                      seconds: 4,
+                                                    ),
+                                                    errMsg,
+                                                    "Please fill all mandatory details to allow Booking.");
+                                                isBookable = !value;
+                                                return;
+                                              }
+                                            }
+
+                                            entity.isBookable = value;
+
+                                            setState(() {});
+                                          }
+                                        },
+                                        // activeTrackColor: Colors.green,
+                                        activeColor: Colors.green,
+                                        inactiveThumbColor: Colors.grey[300],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              AnimatedContainer(
+                                // Use the properties stored in the State class.
+                                margin: _bookMargin,
+                                padding: EdgeInsets.all(8),
+                                width: _bookWidth,
+                                height: _bookHeight,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border.all(color: primaryDarkColor),
+                                  borderRadius: _borderRadius,
+                                ),
+                                // Define how long the animation should take.
+                                duration: Duration(seconds: 1),
+                                // Provide an optional curve to make the animation feel smoother.
+                                curve: Curves.easeInOutCirc,
+                                child: Center(child: _bookText),
+                              ),
+                              if (isBookable)
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -2569,60 +2691,81 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       alignment: Alignment.centerLeft,
                                       padding:
                                           EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      width: rowWidth * .7,
-                                      child: FlatButton(
-                                          visualDensity: VisualDensity.compact,
-                                          padding: EdgeInsets.all(0),
-                                          child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Text('Allow Bookings',
-                                                    style: TextStyle(
-                                                        fontSize: 14)),
-                                                SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .1,
-                                                  child: Icon(Icons.info,
-                                                      color:
-                                                          Colors.blueGrey[600],
-                                                      size: 17),
+                                      width: rowWidth * .8,
+                                      // child: MaterialButton(
+                                      //     visualDensity:
+                                      //         VisualDensity.compact,
+                                      //     padding: EdgeInsets.all(0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Container(
+                                            //  width: rowWidth * .5,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                        'Enable Online mode of Interaction',
+                                                        style: TextStyle(
+                                                            fontSize: 14)),
+                                                    // SizedBox(
+                                                    //   width:
+                                                    //       rowWidth * .1,
+                                                    //   child: Icon(
+                                                    //     Icons.info,
+                                                    //     color: Colors
+                                                    //             .blueGrey[
+                                                    //         600],
+                                                    //     size: 17,
+                                                    //   ),
+                                                    // ),
+                                                  ],
                                                 ),
-                                              ]),
-                                          onPressed: () {
-                                            if (!_isBookExpanded) {
-                                              setState(() {
-                                                _isBookExpanded = true;
-                                                _bookMargin =
-                                                    EdgeInsets.only(bottom: 5);
-                                                _bookWidth =
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        .9;
-                                                _bookText = AutoSizeText(
-                                                    bookableInfo,
-                                                    minFontSize: 10,
-                                                    maxFontSize: 14,
-                                                    style: TextStyle(
-                                                        color: primaryDarkColor,
-                                                        // fontWeight: FontWeight.w800,
-                                                        fontFamily:
-                                                            'Monsterrat',
-                                                        letterSpacing: 0.5,
-                                                        height: 1.5));
+                                                Container(
+                                                  width: rowWidth * .7,
+                                                  child: Text(
+                                                      ADMIN_INFO_ONLINE_MODE,
+                                                      style: TextStyle(
+                                                          fontSize: 10)),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // onPressed: () {
+                                      //   if (!_isVideoExpanded) {
+                                      //     setState(() {
+                                      //       _isVideoExpanded = true;
+                                      //       _videoMargin =
+                                      //           EdgeInsets.fromLTRB(
+                                      //               0, 0, 0, 5);
+                                      //       _videoWidth =
+                                      //           MediaQuery.of(context)
+                                      //                   .size
+                                      //                   .width *
+                                      //               .9;
+                                      //       _videoText = AutoSizeText(
+                                      //           videoInfo,
+                                      //           minFontSize: 8,
+                                      //           maxFontSize: 14,
+                                      //           style:
+                                      //               textBotSheetTextStyle);
 
-                                                _bookHeight = 60;
-                                              });
-                                            } else {
-                                              setState(() {
-                                                _isBookExpanded = false;
-                                                _bookWidth = 0;
-                                                _bookHeight = 0;
-                                              });
-                                            }
-                                          }),
+                                      //       _videoHeight = 60;
+                                      //     });
+                                      //   } else {
+                                      //     setState(() {
+                                      //       _isVideoExpanded = false;
+                                      //       _videoWidth = 0;
+                                      //       _videoHeight = 0;
+                                      //     });
+                                      //   }
+                                      // }
+                                      //),
                                     ),
                                     SizedBox(
                                       height:
@@ -2636,33 +2779,58 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                         child: Switch(
                                           materialTapTargetSize:
                                               MaterialTapTargetSize.shrinkWrap,
-                                          value: isBookable,
+                                          value: isOnlineEnabled,
+
                                           onChanged: (value) {
                                             if (widget.isManager) {
                                               return;
                                             } else {
-                                              isBookable = value;
+                                              isOnlineEnabled = value;
+                                              entity.allowOnlineAppointment =
+                                                  value;
                                               if (value) {
-                                                showConfirmationDialog();
-                                                //Check if all mandatory fields for being bookable are not empty.
-                                                String errMsg =
-                                                    validateMandatoryFieldsForBookable();
+                                                String msg =
+                                                    validateFieldsForOnlineConsultation();
+                                                FocusScope.of(context)
+                                                    .requestFocus(
+                                                        whatsappFocus);
                                                 if (Utils.isNotNullOrEmpty(
-                                                    errMsg)) {
+                                                    msg)) {
+                                                  if (whatsappPhoneKey
+                                                          .currentState !=
+                                                      null) {
+                                                    whatsappPhoneKey
+                                                        .currentState
+                                                        .validate();
+                                                  }
                                                   Utils.showMyFlushbar(
                                                       context,
                                                       Icons.info_outline,
                                                       Duration(
-                                                        seconds: 4,
+                                                        seconds: 6,
                                                       ),
-                                                      errMsg,
-                                                      "Please fill all mandatory details to allow Booking.");
-                                                  isBookable = !value;
-                                                  return;
+                                                      msg,
+                                                      "");
+                                                  isOnlineEnabled = !value;
+                                                  entity.allowOnlineAppointment =
+                                                      !value;
+                                                }
+                                              } else {
+                                                if (!isOnlineEnabled &&
+                                                    !isOfflineEnabled) {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 6,
+                                                      ),
+                                                      onlineOfflineMsg,
+                                                      "");
+                                                  isOnlineEnabled = !value;
+                                                  entity.allowOnlineAppointment =
+                                                      !value;
                                                 }
                                               }
-
-                                              entity.isBookable = value;
 
                                               setState(() {});
                                             }
@@ -2675,1201 +2843,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                     ),
                                   ],
                                 ),
-                                AnimatedContainer(
-                                  // Use the properties stored in the State class.
-                                  margin: _bookMargin,
-                                  padding: EdgeInsets.all(8),
-                                  width: _bookWidth,
-                                  height: _bookHeight,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    border: Border.all(color: primaryDarkColor),
-                                    borderRadius: _borderRadius,
-                                  ),
-                                  // Define how long the animation should take.
-                                  duration: Duration(seconds: 1),
-                                  // Provide an optional curve to make the animation feel smoother.
-                                  curve: Curves.easeInOutCirc,
-                                  child: Center(child: _bookText),
-                                ),
-                                if (isBookable)
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        padding:
-                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                        width: rowWidth * .8,
-                                        // child: MaterialButton(
-                                        //     visualDensity:
-                                        //         VisualDensity.compact,
-                                        //     padding: EdgeInsets.all(0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            Container(
-                                              //  width: rowWidth * .5,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                          'Enable Online mode of Interaction',
-                                                          style: TextStyle(
-                                                              fontSize: 14)),
-                                                      // SizedBox(
-                                                      //   width:
-                                                      //       rowWidth * .1,
-                                                      //   child: Icon(
-                                                      //     Icons.info,
-                                                      //     color: Colors
-                                                      //             .blueGrey[
-                                                      //         600],
-                                                      //     size: 17,
-                                                      //   ),
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                  Container(
-                                                    width: rowWidth * .7,
-                                                    child: Text(
-                                                        ADMIN_INFO_ONLINE_MODE,
-                                                        style: TextStyle(
-                                                            fontSize: 10)),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        // onPressed: () {
-                                        //   if (!_isVideoExpanded) {
-                                        //     setState(() {
-                                        //       _isVideoExpanded = true;
-                                        //       _videoMargin =
-                                        //           EdgeInsets.fromLTRB(
-                                        //               0, 0, 0, 5);
-                                        //       _videoWidth =
-                                        //           MediaQuery.of(context)
-                                        //                   .size
-                                        //                   .width *
-                                        //               .9;
-                                        //       _videoText = AutoSizeText(
-                                        //           videoInfo,
-                                        //           minFontSize: 8,
-                                        //           maxFontSize: 14,
-                                        //           style:
-                                        //               textBotSheetTextStyle);
-
-                                        //       _videoHeight = 60;
-                                        //     });
-                                        //   } else {
-                                        //     setState(() {
-                                        //       _isVideoExpanded = false;
-                                        //       _videoWidth = 0;
-                                        //       _videoHeight = 0;
-                                        //     });
-                                        //   }
-                                        // }
-                                        //),
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                .08,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .2,
-                                        child: Transform.scale(
-                                          scale: .7,
-                                          alignment: Alignment.centerRight,
-                                          child: Switch(
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                            value: isOnlineEnabled,
-
-                                            onChanged: (value) {
-                                              if (widget.isManager) {
-                                                return;
-                                              } else {
-                                                isOnlineEnabled = value;
-                                                entity.allowOnlineAppointment =
-                                                    value;
-                                                if (value) {
-                                                  String msg =
-                                                      validateFieldsForOnlineConsultation();
-                                                  FocusScope.of(context)
-                                                      .requestFocus(
-                                                          whatsappFocus);
-                                                  if (Utils.isNotNullOrEmpty(
-                                                      msg)) {
-                                                    if (whatsappPhoneKey
-                                                            .currentState !=
-                                                        null) {
-                                                      whatsappPhoneKey
-                                                          .currentState
-                                                          .validate();
-                                                    }
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 6,
-                                                        ),
-                                                        msg,
-                                                        "");
-                                                    isOnlineEnabled = !value;
-                                                    entity.allowOnlineAppointment =
-                                                        !value;
-                                                  }
-                                                } else {
-                                                  if (!isOnlineEnabled &&
-                                                      !isOfflineEnabled) {
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 6,
-                                                        ),
-                                                        onlineOfflineMsg,
-                                                        "");
-                                                    isOnlineEnabled = !value;
-                                                    entity.allowOnlineAppointment =
-                                                        !value;
-                                                  }
-                                                }
-
-                                                setState(() {});
-                                              }
-                                            },
-                                            // activeTrackColor: Colors.green,
-                                            activeColor: Colors.green,
-                                            inactiveThumbColor:
-                                                Colors.grey[300],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                if (isBookable)
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        padding:
-                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                        width: rowWidth * .8,
-                                        // child: MaterialButton(
-                                        //     visualDensity:
-                                        //         VisualDensity.compact,
-                                        //     padding: EdgeInsets.all(0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            Container(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                          'Allow in-person visit from Customers',
-                                                          style: TextStyle(
-                                                              fontSize: 14)),
-                                                      // SizedBox(
-                                                      //   width: rowWidth * .1,
-                                                      //   child: Icon(
-                                                      //     Icons.info,
-                                                      //     color: Colors
-                                                      //         .blueGrey[600],
-                                                      //     size: 17,
-                                                      //   ),
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                  Container(
-                                                    width: rowWidth * .7,
-                                                    child: Text(
-                                                        ADMIN_INFO_OFFLINE_MODE,
-                                                        style: TextStyle(
-                                                            fontSize: 10)),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        // onPressed: () {
-                                        //   if (!_isVideoExpanded) {
-                                        //     setState(() {
-                                        //       _isVideoExpanded = true;
-                                        //       _videoMargin =
-                                        //           EdgeInsets.fromLTRB(
-                                        //               0, 0, 0, 5);
-                                        //       _videoWidth =
-                                        //           MediaQuery.of(context)
-                                        //                   .size
-                                        //                   .width *
-                                        //               .9;
-                                        //       _videoText = AutoSizeText(
-                                        //           videoInfo,
-                                        //           minFontSize: 8,
-                                        //           maxFontSize: 14,
-                                        //           style:
-                                        //               textBotSheetTextStyle);
-
-                                        //       _videoHeight = 60;
-                                        //     });
-                                        //   } else {
-                                        //     setState(() {
-                                        //       _isVideoExpanded = false;
-                                        //       _videoWidth = 0;
-                                        //       _videoHeight = 0;
-                                        //     });
-                                        //   }
-                                        // }),
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                .08,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .2,
-                                        child: Transform.scale(
-                                          scale: .7,
-                                          alignment: Alignment.centerRight,
-                                          child: Switch(
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                            value: isOfflineEnabled,
-
-                                            onChanged: (value) {
-                                              if (widget.isManager) {
-                                                return;
-                                              } else {
-                                                isOfflineEnabled = value;
-                                                entity.allowWalkinAppointment =
-                                                    value;
-                                                if (value) {
-                                                  String msg =
-                                                      validateFieldsForOfflineConsultation();
-                                                  if (Utils.isNotNullOrEmpty(
-                                                      msg)) {
-                                                    // if (whatsappPhoneKey
-                                                    //         .currentState !=
-                                                    //     null) {
-                                                    //   whatsappPhoneKey
-                                                    //       .currentState
-                                                    //       .validate();
-                                                    // }
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 6,
-                                                        ),
-                                                        msg,
-                                                        "");
-                                                    isOfflineEnabled = !value;
-                                                    entity.allowWalkinAppointment =
-                                                        !value;
-                                                  }
-                                                } else {
-                                                  if (!isOnlineEnabled &&
-                                                      !isOfflineEnabled) {
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 6,
-                                                        ),
-                                                        onlineOfflineMsg,
-                                                        "");
-                                                    isOfflineEnabled = !value;
-                                                    entity.allowWalkinAppointment =
-                                                        !value;
-                                                  }
-                                                }
-
-                                                setState(() {});
-                                              }
-                                            },
-                                            // activeTrackColor: Colors.green,
-                                            activeColor: Colors.green,
-                                            inactiveThumbColor:
-                                                Colors.grey[300],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                              ],
-                            ),
-                            AnimatedContainer(
-                              // Use the properties stored in the State class.
-                              margin: _videoMargin,
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              width: _videoWidth,
-                              height: _videoHeight,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: Border.all(color: Colors.blueGrey),
-                                borderRadius: _borderRadius,
-                              ),
-                              // Define how long the animation should take.
-                              duration: Duration(seconds: 1),
-                              // Provide an optional curve to make the animation feel smoother.
-                              curve: Curves.easeInOutCirc,
-                              child: Center(child: _videoText),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      if (isBookable)
-                        Container(
-                          width: MediaQuery.of(context).size.width * .9,
-                          margin: EdgeInsets.all(5),
-                          padding: EdgeInsets.all(0),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: borderColor),
-                              color: Colors.grey[50],
-                              shape: BoxShape.rectangle,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0))),
-                          foregroundDecoration: widget.isManager
-                              ? BoxDecoration(
-                                  color: Colors.grey[50],
-                                  backgroundBlendMode: BlendMode.saturation,
-                                )
-                              : BoxDecoration(),
-                          // padding: EdgeInsets.all(5.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Column(
-                                children: <Widget>[
-                                  Container(
-                                    decoration: darkContainer,
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.white,
-                                        accentColor: Colors.grey[50],
-                                      ),
-                                      child: CustomExpansionTile(
-                                        //key: PageStorageKey(this.widget.headerTitle),
-                                        initiallyExpanded: false,
-                                        title: Row(
-                                          children: <Widget>[
-                                            Text(
-                                              "Booking Details",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 15),
-                                            ),
-                                            SizedBox(width: 5),
-                                          ],
-                                        ),
-                                        backgroundColor: Colors.blueGrey[500],
-
-                                        children: <Widget>[
-                                          new Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .94,
-                                            decoration: darkContainer,
-                                            padding: EdgeInsets.all(2.0),
-                                            child: Expanded(
-                                              child: Text(basicInfoStr,
-                                                  style: buttonXSmlTextStyle),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.only(
-                                        left: 5.0, right: 5, bottom: 5),
-                                    child: Column(
-                                      children: <Widget>[
-                                        whatsappPhone,
-                                        opensTimeField,
-                                        closeTimeField,
-                                        breakSartTimeField,
-                                        breakEndTimeField,
-                                        daysClosedField,
-                                        slotDuration,
-                                        advBookingInDays,
-                                        maxpeopleInASlot,
-                                        maxTokenPerDay,
-                                        //maxTokenPerSlotInDay,
-                                        // maxPeopleInAToken,
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        foregroundDecoration: widget.isManager
-                            ? BoxDecoration(
-                                color: Colors.grey[50],
-                                backgroundBlendMode: BlendMode.saturation,
-                              )
-                            : BoxDecoration(),
-                        //padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Payment Details",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(paymentInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              child: Column(
-                                children: <Widget>[
-                                  upiIdField,
-                                  //  upiPhone,
-                                  // upiQrCodeField,
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        foregroundDecoration: widget.isManager
-                            ? BoxDecoration(
-                                color: Colors.grey[50],
-                                backgroundBlendMode: BlendMode.saturation,
-                              )
-                            : BoxDecoration(),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Offer Details",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(offerInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(
-                                    children: <Widget>[
-                                      messageField,
-                                      couponField,
-                                      Row(
-                                        children: <Widget>[
-                                          Expanded(child: startDateField),
-                                          Expanded(child: endDateField),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .3,
-                                              child: FlatButton(
-                                                //elevation: 20,
-                                                color: Colors.transparent,
-                                                splashColor: highlightColor,
-                                                textColor: btnColor,
-                                                shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color: btnColor)),
-                                                child: Text(
-                                                  'Clear',
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                onPressed: clearOfferDetail,
-                                              )),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        foregroundDecoration: widget.isManager
-                            ? BoxDecoration(
-                                color: Colors.grey[50],
-                                backgroundBlendMode: BlendMode.saturation,
-                              )
-                            : BoxDecoration(),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Current Location Details*",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(locationInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              child: Column(
-                                children: <Widget>[
-                                  Column(children: <Widget>[
-                                    Container(
-                                      padding: EdgeInsets.all(4),
-                                      width: MediaQuery.of(context).size.width *
-                                          .95,
-                                      child: RichText(
-                                          text: TextSpan(
-                                              style: highlightSubTextStyle,
-                                              children: <TextSpan>[
-                                            TextSpan(
-                                                text: pressUseCurrentLocation),
-                                            TextSpan(
-                                                text: whyLocationIsRequired),
-                                          ])),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: <Widget>[
-                                        latField,
-                                        lonField,
-                                      ],
-                                    ),
-                                    verticalSpacer,
-                                  ]),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      clearBtn,
-                                      Container(
-                                        width: rowWidth * .58,
-                                        child: RaisedButton(
-                                            elevation: 10,
-                                            color: btnColor,
-                                            splashColor: highlightColor,
-                                            textColor: Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                                side: BorderSide(
-                                                    color: btnColor)),
-                                            child: Text(
-                                              userCurrentLoc,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            onPressed: () {
-                                              if (widget.isManager) {
-                                                return;
-                                              } else {
-                                                useCurrLocation();
-                                              }
-                                            }),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        foregroundDecoration: widget.isManager
-                            ? BoxDecoration(
-                                color: Colors.grey[50],
-                                backgroundBlendMode: BlendMode.saturation,
-                              )
-                            : BoxDecoration(),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Address",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(addressInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              child: Column(
-                                children: <Widget>[
-                                  adrsField1,
-                                  landmarkField2,
-                                  localityField,
-                                  cityField,
-                                  stateField,
-                                  pinField,
-                                  countryField,
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      //THIS CONTAINER
-                      // Container(
-                      //   margin: EdgeInsets.all(5),
-                      //   padding: EdgeInsets.all(0),
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.grey[50],
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   // padding: EdgeInsets.all(5.0),
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: <Widget>[
-                      //       Column(
-                      //         children: <Widget>[
-                      //           Container(
-                      //             //padding: EdgeInsets.only(left: 5),
-                      //             decoration: darkContainer,
-                      //             child: Theme(
-                      //               data: ThemeData(
-                      //                 unselectedWidgetColor: Colors.white,
-                      //                 accentColor: Colors.grey[50],
-                      //               ),
-                      //               child: CustomExpansionTile(
-                      //                 //key: PageStorageKey(this.widget.headerTitle),
-                      //                 initiallyExpanded: false,
-                      //                 title: Row(
-                      //                   children: <Widget>[
-                      //                     Text(
-                      //                       "Assign an Admin",
-                      //                       style: TextStyle(
-                      //                           color: Colors.white,
-                      //                           fontSize: 15),
-                      //                     ),
-                      //                     SizedBox(width: 5),
-                      //                   ],
-                      //                 ),
-                      //                 // trailing: IconButton(
-                      //                 //   icon: Icon(Icons.add_circle,
-                      //                 //       color: highlightColor, size: 40),
-                      //                 //   onPressed: () {
-                      //                 //     addNewAdminRow();
-                      //                 //   },
-                      //                 // ),
-                      //                 backgroundColor: Colors.blueGrey[500],
-                      //                 children: <Widget>[
-                      //                   new Container(
-                      //                     width: MediaQuery.of(context)
-                      //                             .size
-                      //                             .width *
-                      //                         .94,
-                      //                     decoration: darkContainer,
-                      //                     padding: EdgeInsets.all(2.0),
-                      //                     child: Row(
-                      //                       children: <Widget>[
-                      //                         Expanded(
-                      //                           child: Text(adminInfoStr,
-                      //                               style: buttonXSmlTextStyle),
-                      //                         ),
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           //Add Admins list
-                      //           Column(
-                      //             children: <Widget>[
-                      //               Container(
-                      //                 margin: EdgeInsets.all(4),
-                      //                 padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
-                      //                 height:
-                      //                     MediaQuery.of(context).size.width *
-                      //                         .18,
-                      //                 decoration: BoxDecoration(
-                      //                     border:
-                      //                         Border.all(color: borderColor),
-                      //                     color: Colors.white,
-                      //                     shape: BoxShape.rectangle,
-                      //                     borderRadius: BorderRadius.all(
-                      //                         Radius.circular(5.0))),
-                      //                 child: Row(
-                      //                   // mainAxisAlignment: MainAxisAlignment.end,
-                      //                   children: <Widget>[
-                      //                     Expanded(
-                      //                       child: adminInputField,
-                      //                     ),
-                      //                     Container(
-                      //                       padding:
-                      //                           EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      //                       width: MediaQuery.of(context)
-                      //                               .size
-                      //                               .width *
-                      //                           .1,
-                      //                       height: MediaQuery.of(context)
-                      //                               .size
-                      //                               .width *
-                      //                           .1,
-                      //                       child: IconButton(
-                      //                           padding: EdgeInsets.all(0),
-                      //                           icon: Icon(Icons.person_add,
-                      //                               color: highlightColor,
-                      //                               size: 38),
-                      //                           onPressed: () {
-                      //                             if (_adminItemController
-                      //                                         .text ==
-                      //                                     null ||
-                      //                                 _adminItemController
-                      //                                     .text.isEmpty) {
-                      //                               Utils.showMyFlushbar(
-                      //                                   context,
-                      //                                   Icons.info_outline,
-                      //                                   Duration(
-                      //                                     seconds: 4,
-                      //                                   ),
-                      //                                   "Something Missing ..",
-                      //                                   "Please enter Phone number !!");
-                      //                             } else {
-                      //                               bool result = adminPhoneKey
-                      //                                   .currentState
-                      //                                   .validate();
-                      //                               if (result) {
-                      //                                 _addNewAdminRow();
-                      //                                 _adminItemController
-                      //                                     .text = "";
-                      //                               } else {
-                      //                                 Utils.showMyFlushbar(
-                      //                                     context,
-                      //                                     Icons.info_outline,
-                      //                                     Duration(
-                      //                                       seconds: 5,
-                      //                                     ),
-                      //                                     "Oops!! Seems like the phone number is not valid",
-                      //                                     "Please check and try again !!");
-                      //                               }
-                      //                             }
-                      //                           }),
-                      //                     ),
-                      //                   ],
-                      //                 ),
-                      //               ),
-                      //               ListView.builder(
-                      //                 shrinkWrap: true,
-                      //                 //scrollDirection: Axis.vertical,
-                      //                 itemBuilder:
-                      //                     (BuildContext context, int index) {
-                      //                   return new Column(
-                      //                       children: adminsList
-                      //                           .map(_buildServiceItem)
-                      //                           .toList());
-                      //                 },
-                      //                 itemCount: 1,
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-
-                      // SizedBox(
-                      //   height: 7,
-                      // ),
-                      //THIS CONTAINER
-                      // Container(
-                      //   margin: EdgeInsets.all(5),
-                      //   padding: EdgeInsets.all(0),
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.white,
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   // padding: EdgeInsets.all(5.0),
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: <Widget>[
-                      //       Column(
-                      //         children: <Widget>[
-                      //           Container(
-                      //             //padding: EdgeInsets.only(left: 5),
-                      //             decoration: darkContainer,
-                      //             child: Theme(
-                      //               data: ThemeData(
-                      //                 unselectedWidgetColor: Colors.white,
-                      //                 accentColor: Colors.grey[50],
-                      //               ),
-                      //               child: CustomExpansionTile(
-                      //                 //key: PageStorageKey(this.widget.headerTitle),
-                      //                 initiallyExpanded: false,
-                      //                 title: Row(
-                      //                   children: <Widget>[
-                      //                     Text(
-                      //                       "Add a Manager",
-                      //                       style: TextStyle(
-                      //                           color: Colors.white,
-                      //                           fontSize: 15),
-                      //                     ),
-                      //                     SizedBox(width: 5),
-                      //                   ],
-                      //                 ),
-                      //                 backgroundColor: Colors.blueGrey[500],
-
-                      //                 children: <Widget>[
-                      //                   new Container(
-                      //                     width: MediaQuery.of(context)
-                      //                             .size
-                      //                             .width *
-                      //                         .94,
-                      //                     decoration: darkContainer,
-                      //                     padding: EdgeInsets.all(2.0),
-                      //                     child: Row(
-                      //                       children: <Widget>[
-                      //                         Expanded(
-                      //                           child: Text(contactInfoStr,
-                      //                               style: buttonXSmlTextStyle),
-                      //                         ),
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Container(
-                      //             color: Colors.grey[100],
-                      //             padding:
-                      //                 const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                      //             child: Row(
-                      //               mainAxisAlignment: MainAxisAlignment.end,
-                      //               children: <Widget>[
-                      //                 // Expanded(
-                      //                 //   child: roleType,
-                      //                 // ),
-                      //                 Container(
-                      //                   child: IconButton(
-                      //                     icon: Icon(Icons.person_add,
-                      //                         color: highlightColor, size: 40),
-                      //                     onPressed: () {
-                      //                       _addNewContactRow();
-                      //                     },
-                      //                   ),
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //           ),
-                      //           (_msg != null)
-                      //               ? Text(
-                      //                   _msg,
-                      //                   style: errorTextStyle,
-                      //                 )
-                      //               : Container(),
-                      //           if (!Utils.isNullOrEmpty(contactList))
-                      //             Column(children: contactRowWidgets),
-                      //           // Expanded(
-                      //           //   child: ListView.builder(
-                      //           //       itemCount: contactList.length,
-                      //           //       itemBuilder:
-                      //           //           (BuildContext context, int index) {
-                      //           //         return Column(
-                      //           //             children: contactList
-                      //           //                 .map(buildContactItem)
-                      //           //                 .toList());
-                      //           //       }),
-                      //           // ),
-                      //           // Column(
-                      //           //   children: <Widget>[
-                      //           //     new Expanded(
-                      //           //       child: ListView.builder(
-                      //           //         //  controller: _childScrollController,
-                      //           //         reverse: true,
-                      //           //         shrinkWrap: true,
-                      //           //         // itemExtent: itemSize,
-                      //           //         //scrollDirection: Axis.vertical,
-                      //           //         itemBuilder:
-                      //           //             (BuildContext context, int index) {
-                      //           //           return ContactRow(
-                      //           //             contact: contactList[index],
-                      //           //             entity: entity,
-                      //           //             list: contactList,
-                      //           //           );
-                      //           //         },
-                      //           //         itemCount: contactList.length,
-                      //           //       ),
-                      //           //     ),
-                      //           //   ],
-                      //           // ),
-                      //           //
-                      //         ],
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-
-                      Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        foregroundDecoration: widget.isManager
-                            ? BoxDecoration(
-                                color: Colors.grey[50],
-                                backgroundBlendMode: BlendMode.saturation,
-                              )
-                            : BoxDecoration(),
-                        // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
+                              if (isBookable)
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -3878,37 +2852,1062 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       alignment: Alignment.centerLeft,
                                       padding:
                                           EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      width: rowWidth * .4,
-                                      child: FlatButton(
-                                          visualDensity: VisualDensity.compact,
-                                          padding: EdgeInsets.all(0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Text('Public',
-                                                  style:
-                                                      TextStyle(fontSize: 14)),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .1,
-                                                // height: MediaQuery.of(context)
-                                                //         .size
-                                                //         .height *
-                                                //     .02,
-                                                child: Icon(
-                                                  Icons.info,
-                                                  color: Colors.blueGrey[600],
-                                                  size: 17,
+                                      width: rowWidth * .8,
+                                      // child: MaterialButton(
+                                      //     visualDensity:
+                                      //         VisualDensity.compact,
+                                      //     padding: EdgeInsets.all(0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Container(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                        'Allow in-person visit from Customers',
+                                                        style: TextStyle(
+                                                            fontSize: 14)),
+                                                    // SizedBox(
+                                                    //   width: rowWidth * .1,
+                                                    //   child: Icon(
+                                                    //     Icons.info,
+                                                    //     color: Colors
+                                                    //         .blueGrey[600],
+                                                    //     size: 17,
+                                                    //   ),
+                                                    // ),
+                                                  ],
                                                 ),
+                                                Container(
+                                                  width: rowWidth * .7,
+                                                  child: Text(
+                                                      ADMIN_INFO_OFFLINE_MODE,
+                                                      style: TextStyle(
+                                                          fontSize: 10)),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // onPressed: () {
+                                      //   if (!_isVideoExpanded) {
+                                      //     setState(() {
+                                      //       _isVideoExpanded = true;
+                                      //       _videoMargin =
+                                      //           EdgeInsets.fromLTRB(
+                                      //               0, 0, 0, 5);
+                                      //       _videoWidth =
+                                      //           MediaQuery.of(context)
+                                      //                   .size
+                                      //                   .width *
+                                      //               .9;
+                                      //       _videoText = AutoSizeText(
+                                      //           videoInfo,
+                                      //           minFontSize: 8,
+                                      //           maxFontSize: 14,
+                                      //           style:
+                                      //               textBotSheetTextStyle);
+
+                                      //       _videoHeight = 60;
+                                      //     });
+                                      //   } else {
+                                      //     setState(() {
+                                      //       _isVideoExpanded = false;
+                                      //       _videoWidth = 0;
+                                      //       _videoHeight = 0;
+                                      //     });
+                                      //   }
+                                      // }),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .08,
+                                      width: MediaQuery.of(context).size.width *
+                                          .2,
+                                      child: Transform.scale(
+                                        scale: .7,
+                                        alignment: Alignment.centerRight,
+                                        child: Switch(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          value: isOfflineEnabled,
+
+                                          onChanged: (value) {
+                                            if (widget.isManager) {
+                                              return;
+                                            } else {
+                                              isOfflineEnabled = value;
+                                              entity.allowWalkinAppointment =
+                                                  value;
+                                              if (value) {
+                                                String msg =
+                                                    validateFieldsForOfflineConsultation();
+                                                if (Utils.isNotNullOrEmpty(
+                                                    msg)) {
+                                                  // if (whatsappPhoneKey
+                                                  //         .currentState !=
+                                                  //     null) {
+                                                  //   whatsappPhoneKey
+                                                  //       .currentState
+                                                  //       .validate();
+                                                  // }
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 6,
+                                                      ),
+                                                      msg,
+                                                      "");
+                                                  isOfflineEnabled = !value;
+                                                  entity.allowWalkinAppointment =
+                                                      !value;
+                                                }
+                                              } else {
+                                                if (!isOnlineEnabled &&
+                                                    !isOfflineEnabled) {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 6,
+                                                      ),
+                                                      onlineOfflineMsg,
+                                                      "");
+                                                  isOfflineEnabled = !value;
+                                                  entity.allowWalkinAppointment =
+                                                      !value;
+                                                }
+                                              }
+
+                                              setState(() {});
+                                            }
+                                          },
+                                          // activeTrackColor: Colors.green,
+                                          activeColor: Colors.green,
+                                          inactiveThumbColor: Colors.grey[300],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                          AnimatedContainer(
+                            // Use the properties stored in the State class.
+                            margin: _videoMargin,
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            width: _videoWidth,
+                            height: _videoHeight,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              border: Border.all(color: Colors.blueGrey),
+                              borderRadius: _borderRadius,
+                            ),
+                            // Define how long the animation should take.
+                            duration: Duration(seconds: 1),
+                            // Provide an optional curve to make the animation feel smoother.
+                            curve: Curves.easeInOutCirc,
+                            child: Center(child: _videoText),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    if (isBookable)
+                      Container(
+                        width: MediaQuery.of(context).size.width * .9,
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: borderColor),
+                            color: Colors.grey[50],
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        foregroundDecoration: widget.isManager
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
+                        // padding: EdgeInsets.all(5.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                Container(
+                                  decoration: darkContainer,
+                                  child: Theme(
+                                    data: ThemeData(
+                                      unselectedWidgetColor: Colors.white,
+                                      accentColor: Colors.grey[50],
+                                    ),
+                                    child: CustomExpansionTile(
+                                      //key: PageStorageKey(this.widget.headerTitle),
+                                      initiallyExpanded: false,
+                                      title: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            "Booking Details",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15),
+                                          ),
+                                          SizedBox(width: 5),
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.blueGrey[500],
+
+                                      children: <Widget>[
+                                        new Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .94,
+                                          decoration: darkContainer,
+                                          padding: EdgeInsets.all(2.0),
+                                          child: Expanded(
+                                            child: Text(basicInfoStr,
+                                                style: buttonXSmlTextStyle),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(
+                                      left: 5.0, right: 5, bottom: 5),
+                                  child: Column(
+                                    children: <Widget>[
+                                      whatsappPhone,
+                                      opensTimeField,
+                                      closeTimeField,
+                                      breakSartTimeField,
+                                      breakEndTimeField,
+                                      daysClosedField,
+                                      slotDuration,
+                                      advBookingInDays,
+                                      maxpeopleInASlot,
+                                      maxTokenPerDay,
+                                      //maxTokenPerSlotInDay,
+                                      // maxPeopleInAToken,
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(0),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      foregroundDecoration: widget.isManager
+                          ? BoxDecoration(
+                              color: Colors.grey[50],
+                              backgroundBlendMode: BlendMode.saturation,
+                            )
+                          : BoxDecoration(),
+                      //padding: EdgeInsets.all(5.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          "Payment Details",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.blueGrey[500],
+
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(paymentInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 5.0, right: 5),
+                            child: Column(
+                              children: <Widget>[
+                                upiIdField,
+                                //  upiPhone,
+                                // upiQrCodeField,
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(0),
+                      foregroundDecoration: widget.isManager
+                          ? BoxDecoration(
+                              color: Colors.grey[50],
+                              backgroundBlendMode: BlendMode.saturation,
+                            )
+                          : BoxDecoration(),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          "Offer Details",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.blueGrey[500],
+
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(offerInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5),
+                                child: Column(
+                                  children: <Widget>[
+                                    messageField,
+                                    couponField,
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(child: startDateField),
+                                        Expanded(child: endDateField),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .3,
+                                            child: FlatButton(
+                                              //elevation: 20,
+                                              color: Colors.transparent,
+                                              splashColor: highlightColor,
+                                              textColor: btnColor,
+                                              shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color: btnColor)),
+                                              child: Text(
+                                                'Clear',
+                                                textAlign: TextAlign.center,
                                               ),
-                                            ],
+                                              onPressed: clearOfferDetail,
+                                            )),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(0),
+                      foregroundDecoration: widget.isManager
+                          ? BoxDecoration(
+                              color: Colors.grey[50],
+                              backgroundBlendMode: BlendMode.saturation,
+                            )
+                          : BoxDecoration(),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      //padding: EdgeInsets.all(5.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          "Current Location Details*",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.blueGrey[500],
+
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(locationInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 5.0, right: 5),
+                            child: Column(
+                              children: <Widget>[
+                                Column(children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.all(4),
+                                    width:
+                                        MediaQuery.of(context).size.width * .95,
+                                    child: RichText(
+                                        text: TextSpan(
+                                            style: highlightSubTextStyle,
+                                            children: <TextSpan>[
+                                          TextSpan(
+                                              text: pressUseCurrentLocation),
+                                          TextSpan(text: whyLocationIsRequired),
+                                        ])),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      latField,
+                                      lonField,
+                                    ],
+                                  ),
+                                  verticalSpacer,
+                                ]),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    clearBtn,
+                                    Container(
+                                      width: rowWidth * .58,
+                                      child: RaisedButton(
+                                          elevation: 10,
+                                          color: btnColor,
+                                          splashColor: highlightColor,
+                                          textColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                              side:
+                                                  BorderSide(color: btnColor)),
+                                          child: Text(
+                                            userCurrentLoc,
+                                            textAlign: TextAlign.center,
                                           ),
                                           onPressed: () {
-                                            if (!_isExpanded) {
+                                            if (widget.isManager) {
+                                              return;
+                                            } else {
+                                              useCurrLocation();
+                                            }
+                                          }),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+
+                    Container(
+                      margin: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(0),
+                      foregroundDecoration: widget.isManager
+                          ? BoxDecoration(
+                              color: Colors.grey[50],
+                              backgroundBlendMode: BlendMode.saturation,
+                            )
+                          : BoxDecoration(),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      //padding: EdgeInsets.all(5.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          "Address",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.blueGrey[500],
+
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(addressInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 5.0, right: 5),
+                            child: Column(
+                              children: <Widget>[
+                                adrsField1,
+                                landmarkField2,
+                                localityField,
+                                cityField,
+                                stateField,
+                                pinField,
+                                countryField,
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    //THIS CONTAINER
+                    // Container(
+                    //   margin: EdgeInsets.all(5),
+                    //   padding: EdgeInsets.all(0),
+                    //   decoration: BoxDecoration(
+                    //       border: Border.all(color: containerColor),
+                    //       color: Colors.grey[50],
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius:
+                    //           BorderRadius.all(Radius.circular(5.0))),
+                    //   // padding: EdgeInsets.all(5.0),
+                    //   child: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: <Widget>[
+                    //       Column(
+                    //         children: <Widget>[
+                    //           Container(
+                    //             //padding: EdgeInsets.only(left: 5),
+                    //             decoration: darkContainer,
+                    //             child: Theme(
+                    //               data: ThemeData(
+                    //                 unselectedWidgetColor: Colors.white,
+                    //                 accentColor: Colors.grey[50],
+                    //               ),
+                    //               child: CustomExpansionTile(
+                    //                 //key: PageStorageKey(this.widget.headerTitle),
+                    //                 initiallyExpanded: false,
+                    //                 title: Row(
+                    //                   children: <Widget>[
+                    //                     Text(
+                    //                       "Assign an Admin",
+                    //                       style: TextStyle(
+                    //                           color: Colors.white,
+                    //                           fontSize: 15),
+                    //                     ),
+                    //                     SizedBox(width: 5),
+                    //                   ],
+                    //                 ),
+                    //                 // trailing: IconButton(
+                    //                 //   icon: Icon(Icons.add_circle,
+                    //                 //       color: highlightColor, size: 40),
+                    //                 //   onPressed: () {
+                    //                 //     addNewAdminRow();
+                    //                 //   },
+                    //                 // ),
+                    //                 backgroundColor: Colors.blueGrey[500],
+                    //                 children: <Widget>[
+                    //                   new Container(
+                    //                     width: MediaQuery.of(context)
+                    //                             .size
+                    //                             .width *
+                    //                         .94,
+                    //                     decoration: darkContainer,
+                    //                     padding: EdgeInsets.all(2.0),
+                    //                     child: Row(
+                    //                       children: <Widget>[
+                    //                         Expanded(
+                    //                           child: Text(adminInfoStr,
+                    //                               style: buttonXSmlTextStyle),
+                    //                         ),
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ),
+                    //           //Add Admins list
+                    //           Column(
+                    //             children: <Widget>[
+                    //               Container(
+                    //                 margin: EdgeInsets.all(4),
+                    //                 padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
+                    //                 height:
+                    //                     MediaQuery.of(context).size.width *
+                    //                         .18,
+                    //                 decoration: BoxDecoration(
+                    //                     border:
+                    //                         Border.all(color: borderColor),
+                    //                     color: Colors.white,
+                    //                     shape: BoxShape.rectangle,
+                    //                     borderRadius: BorderRadius.all(
+                    //                         Radius.circular(5.0))),
+                    //                 child: Row(
+                    //                   // mainAxisAlignment: MainAxisAlignment.end,
+                    //                   children: <Widget>[
+                    //                     Expanded(
+                    //                       child: adminInputField,
+                    //                     ),
+                    //                     Container(
+                    //                       padding:
+                    //                           EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    //                       width: MediaQuery.of(context)
+                    //                               .size
+                    //                               .width *
+                    //                           .1,
+                    //                       height: MediaQuery.of(context)
+                    //                               .size
+                    //                               .width *
+                    //                           .1,
+                    //                       child: IconButton(
+                    //                           padding: EdgeInsets.all(0),
+                    //                           icon: Icon(Icons.person_add,
+                    //                               color: highlightColor,
+                    //                               size: 38),
+                    //                           onPressed: () {
+                    //                             if (_adminItemController
+                    //                                         .text ==
+                    //                                     null ||
+                    //                                 _adminItemController
+                    //                                     .text.isEmpty) {
+                    //                               Utils.showMyFlushbar(
+                    //                                   context,
+                    //                                   Icons.info_outline,
+                    //                                   Duration(
+                    //                                     seconds: 4,
+                    //                                   ),
+                    //                                   "Something Missing ..",
+                    //                                   "Please enter Phone number !!");
+                    //                             } else {
+                    //                               bool result = adminPhoneKey
+                    //                                   .currentState
+                    //                                   .validate();
+                    //                               if (result) {
+                    //                                 _addNewAdminRow();
+                    //                                 _adminItemController
+                    //                                     .text = "";
+                    //                               } else {
+                    //                                 Utils.showMyFlushbar(
+                    //                                     context,
+                    //                                     Icons.info_outline,
+                    //                                     Duration(
+                    //                                       seconds: 5,
+                    //                                     ),
+                    //                                     "Oops!! Seems like the phone number is not valid",
+                    //                                     "Please check and try again !!");
+                    //                               }
+                    //                             }
+                    //                           }),
+                    //                     ),
+                    //                   ],
+                    //                 ),
+                    //               ),
+                    //               ListView.builder(
+                    //                 shrinkWrap: true,
+                    //                 //scrollDirection: Axis.vertical,
+                    //                 itemBuilder:
+                    //                     (BuildContext context, int index) {
+                    //                   return new Column(
+                    //                       children: adminsList
+                    //                           .map(_buildServiceItem)
+                    //                           .toList());
+                    //                 },
+                    //                 itemCount: 1,
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+
+                    // SizedBox(
+                    //   height: 7,
+                    // ),
+                    //THIS CONTAINER
+                    // Container(
+                    //   margin: EdgeInsets.all(5),
+                    //   padding: EdgeInsets.all(0),
+                    //   decoration: BoxDecoration(
+                    //       border: Border.all(color: containerColor),
+                    //       color: Colors.white,
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius:
+                    //           BorderRadius.all(Radius.circular(5.0))),
+                    //   // padding: EdgeInsets.all(5.0),
+                    //   child: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: <Widget>[
+                    //       Column(
+                    //         children: <Widget>[
+                    //           Container(
+                    //             //padding: EdgeInsets.only(left: 5),
+                    //             decoration: darkContainer,
+                    //             child: Theme(
+                    //               data: ThemeData(
+                    //                 unselectedWidgetColor: Colors.white,
+                    //                 accentColor: Colors.grey[50],
+                    //               ),
+                    //               child: CustomExpansionTile(
+                    //                 //key: PageStorageKey(this.widget.headerTitle),
+                    //                 initiallyExpanded: false,
+                    //                 title: Row(
+                    //                   children: <Widget>[
+                    //                     Text(
+                    //                       "Add a Manager",
+                    //                       style: TextStyle(
+                    //                           color: Colors.white,
+                    //                           fontSize: 15),
+                    //                     ),
+                    //                     SizedBox(width: 5),
+                    //                   ],
+                    //                 ),
+                    //                 backgroundColor: Colors.blueGrey[500],
+
+                    //                 children: <Widget>[
+                    //                   new Container(
+                    //                     width: MediaQuery.of(context)
+                    //                             .size
+                    //                             .width *
+                    //                         .94,
+                    //                     decoration: darkContainer,
+                    //                     padding: EdgeInsets.all(2.0),
+                    //                     child: Row(
+                    //                       children: <Widget>[
+                    //                         Expanded(
+                    //                           child: Text(contactInfoStr,
+                    //                               style: buttonXSmlTextStyle),
+                    //                         ),
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ),
+                    //           Container(
+                    //             color: Colors.grey[100],
+                    //             padding:
+                    //                 const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                    //             child: Row(
+                    //               mainAxisAlignment: MainAxisAlignment.end,
+                    //               children: <Widget>[
+                    //                 // Expanded(
+                    //                 //   child: roleType,
+                    //                 // ),
+                    //                 Container(
+                    //                   child: IconButton(
+                    //                     icon: Icon(Icons.person_add,
+                    //                         color: highlightColor, size: 40),
+                    //                     onPressed: () {
+                    //                       _addNewContactRow();
+                    //                     },
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //           (_msg != null)
+                    //               ? Text(
+                    //                   _msg,
+                    //                   style: errorTextStyle,
+                    //                 )
+                    //               : Container(),
+                    //           if (!Utils.isNullOrEmpty(contactList))
+                    //             Column(children: contactRowWidgets),
+                    //           // Expanded(
+                    //           //   child: ListView.builder(
+                    //           //       itemCount: contactList.length,
+                    //           //       itemBuilder:
+                    //           //           (BuildContext context, int index) {
+                    //           //         return Column(
+                    //           //             children: contactList
+                    //           //                 .map(buildContactItem)
+                    //           //                 .toList());
+                    //           //       }),
+                    //           // ),
+                    //           // Column(
+                    //           //   children: <Widget>[
+                    //           //     new Expanded(
+                    //           //       child: ListView.builder(
+                    //           //         //  controller: _childScrollController,
+                    //           //         reverse: true,
+                    //           //         shrinkWrap: true,
+                    //           //         // itemExtent: itemSize,
+                    //           //         //scrollDirection: Axis.vertical,
+                    //           //         itemBuilder:
+                    //           //             (BuildContext context, int index) {
+                    //           //           return ContactRow(
+                    //           //             contact: contactList[index],
+                    //           //             entity: entity,
+                    //           //             list: contactList,
+                    //           //           );
+                    //           //         },
+                    //           //         itemCount: contactList.length,
+                    //           //       ),
+                    //           //     ),
+                    //           //   ],
+                    //           // ),
+                    //           //
+                    //         ],
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+
+                    Container(
+                      width: MediaQuery.of(context).size.width * .9,
+                      margin: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(0),
+                      foregroundDecoration: widget.isManager
+                          ? BoxDecoration(
+                              color: Colors.grey[50],
+                              backgroundBlendMode: BlendMode.saturation,
+                            )
+                          : BoxDecoration(),
+                      // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    width: rowWidth * .4,
+                                    child: FlatButton(
+                                        visualDensity: VisualDensity.compact,
+                                        padding: EdgeInsets.all(0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Text('Public',
+                                                style: TextStyle(fontSize: 14)),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .1,
+                                              // height: MediaQuery.of(context)
+                                              //         .size
+                                              //         .height *
+                                              //     .02,
+                                              child: Icon(
+                                                Icons.info,
+                                                color: Colors.blueGrey[600],
+                                                size: 17,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onPressed: () {
+                                          if (!_isExpanded) {
+                                            setState(() {
+                                              _publicExpandClick = true;
+                                              _isExpanded = true;
+                                              _margin = EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 8);
+                                              _width = MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .9;
+                                              _text = AutoSizeText(publicInfo,
+                                                  minFontSize: 8,
+                                                  maxFontSize: 14,
+                                                  style: textBotSheetTextStyle);
+
+                                              _height = 60;
+                                            });
+                                          } else {
+                                            //if bookable info is being shown
+                                            if (_publicExpandClick) {
+                                              setState(() {
+                                                _width = 0;
+                                                _height = 0;
+                                                _isExpanded = false;
+                                                _publicExpandClick = false;
+                                              });
+                                            } else {
                                               setState(() {
                                                 _publicExpandClick = true;
+                                                _activeExpandClick = false;
+
                                                 _isExpanded = true;
                                                 _margin = EdgeInsets.fromLTRB(
                                                     0, 0, 0, 8);
@@ -3924,110 +3923,103 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
                                                 _height = 60;
                                               });
-                                            } else {
-                                              //if bookable info is being shown
-                                              if (_publicExpandClick) {
-                                                setState(() {
-                                                  _width = 0;
-                                                  _height = 0;
-                                                  _isExpanded = false;
-                                                  _publicExpandClick = false;
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  _publicExpandClick = true;
-                                                  _activeExpandClick = false;
-
-                                                  _isExpanded = true;
-                                                  _margin = EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 8);
-                                                  _width =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _text = AutoSizeText(
-                                                      publicInfo,
-                                                      minFontSize: 8,
-                                                      maxFontSize: 14,
-                                                      style:
-                                                          textBotSheetTextStyle);
-
-                                                  _height = 60;
-                                                });
-                                              }
                                             }
-                                          }),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .06,
-                                      width: MediaQuery.of(context).size.width *
-                                          .2,
-                                      child: Transform.scale(
-                                        scale: .7,
-                                        alignment: Alignment.centerRight,
-                                        child: Switch(
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          value: isPublic,
+                                          }
+                                        }),
+                                  ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        .06,
+                                    width:
+                                        MediaQuery.of(context).size.width * .2,
+                                    child: Transform.scale(
+                                      scale: .7,
+                                      alignment: Alignment.centerRight,
+                                      child: Switch(
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        value: isPublic,
 
-                                          onChanged: (value) {
-                                            if (widget.isManager) {
-                                              return;
-                                            } else {
-                                              setState(() {
-                                                isPublic = value;
-                                                entity.isPublic = value;
-                                                print(isPublic);
-                                                //}
-                                              });
-                                            }
-                                          },
-                                          // activeTrackColor: Colors.green,
-                                          activeColor: Colors.green,
-                                          inactiveThumbColor: Colors.grey[300],
-                                        ),
+                                        onChanged: (value) {
+                                          if (widget.isManager) {
+                                            return;
+                                          } else {
+                                            setState(() {
+                                              isPublic = value;
+                                              entity.isPublic = value;
+                                              print(isPublic);
+                                              //}
+                                            });
+                                          }
+                                        },
+                                        // activeTrackColor: Colors.green,
+                                        activeColor: Colors.green,
+                                        inactiveThumbColor: Colors.grey[300],
                                       ),
                                     ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      width: rowWidth * .4,
-                                      child: FlatButton(
-                                        visualDensity: VisualDensity.compact,
-                                        padding: EdgeInsets.all(0),
-                                        child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Text('Active',
-                                                  style:
-                                                      TextStyle(fontSize: 14)),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .1,
-                                                // height: MediaQuery.of(context)
-                                                //         .size
-                                                //         .height *
-                                                //     .02,
-                                                child: Icon(Icons.info,
-                                                    color: Colors.blueGrey[600],
-                                                    size: 17),
-                                              ),
-                                            ]),
-                                        onPressed: () {
-                                          if (!_isExpanded) {
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    width: rowWidth * .4,
+                                    child: FlatButton(
+                                      visualDensity: VisualDensity.compact,
+                                      padding: EdgeInsets.all(0),
+                                      child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Text('Active',
+                                                style: TextStyle(fontSize: 14)),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .1,
+                                              // height: MediaQuery.of(context)
+                                              //         .size
+                                              //         .height *
+                                              //     .02,
+                                              child: Icon(Icons.info,
+                                                  color: Colors.blueGrey[600],
+                                                  size: 17),
+                                            ),
+                                          ]),
+                                      onPressed: () {
+                                        if (!_isExpanded) {
+                                          setState(() {
+                                            _activeExpandClick = true;
+                                            _isExpanded = true;
+                                            _margin =
+                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
+                                            _width = MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .9;
+                                            _text = AutoSizeText(activeDef,
+                                                minFontSize: 8,
+                                                maxFontSize: 14,
+                                                style: textBotSheetTextStyle);
+
+                                            _height = 60;
+                                          });
+                                        } else {
+                                          //if bookable info is being shown
+                                          if (_activeExpandClick) {
                                             setState(() {
+                                              _width = 0;
+                                              _height = 0;
+                                              _isExpanded = false;
+                                              _activeExpandClick = false;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              _publicExpandClick = false;
                                               _activeExpandClick = true;
                                               _isExpanded = true;
                                               _margin = EdgeInsets.fromLTRB(
@@ -4043,483 +4035,447 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
                                               _height = 60;
                                             });
-                                          } else {
-                                            //if bookable info is being shown
-                                            if (_activeExpandClick) {
-                                              setState(() {
-                                                _width = 0;
-                                                _height = 0;
-                                                _isExpanded = false;
-                                                _activeExpandClick = false;
-                                              });
-                                            } else {
-                                              setState(() {
-                                                _publicExpandClick = false;
-                                                _activeExpandClick = true;
-                                                _isExpanded = true;
-                                                _margin = EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 8);
-                                                _width = MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .9;
-                                                _text = AutoSizeText(activeDef,
-                                                    minFontSize: 8,
-                                                    maxFontSize: 14,
-                                                    style:
-                                                        textBotSheetTextStyle);
-
-                                                _height = 60;
-                                              });
-                                            }
                                           }
-                                        },
-                                      ),
+                                        }
+                                      },
                                     ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .06,
-                                      width: MediaQuery.of(context).size.width *
-                                          .2,
-                                      child: Transform.scale(
-                                        scale: .7,
-                                        alignment: Alignment.centerRight,
-                                        child: Switch(
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          value: isActive,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              if (widget.isManager) {
-                                                return;
-                                              } else {
-                                                if (value) {
-                                                  isActiveValidation = true;
-                                                  bool retVal = false;
-                                                  bool locValid = false;
-                                                  if (validateAllFields())
-                                                    retVal = true;
-                                                  if (validateLatLon())
-                                                    locValid = true;
+                                  ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        .06,
+                                    width:
+                                        MediaQuery.of(context).size.width * .2,
+                                    child: Transform.scale(
+                                      scale: .7,
+                                      alignment: Alignment.centerRight,
+                                      child: Switch(
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        value: isActive,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            if (widget.isManager) {
+                                              return;
+                                            } else {
+                                              if (value) {
+                                                isActiveValidation = true;
+                                                bool retVal = false;
+                                                bool locValid = false;
+                                                if (validateAllFields())
+                                                  retVal = true;
+                                                if (validateLatLon())
+                                                  locValid = true;
 
-                                                  if (!locValid || !retVal) {
-                                                    if (!locValid) {
-                                                      Utils.showMyFlushbar(
-                                                          context,
-                                                          Icons.info_outline,
-                                                          Duration(
-                                                            seconds: 6,
-                                                          ),
-                                                          shouldSetLocation,
-                                                          pressUseCurrentLocation);
-                                                    } else if (!retVal) {
-                                                      //Show flushbar with info that fields has invalid data
-                                                      Utils.showMyFlushbar(
-                                                          context,
-                                                          Icons.info_outline,
-                                                          Duration(
-                                                            seconds: 6,
-                                                          ),
-                                                          "Missing Information!!",
-                                                          'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
-                                                    }
-                                                  } else {
-                                                    isActiveValidation = false;
-                                                    isActive = value;
-                                                    entity.isActive = value;
-                                                    print(isActive);
+                                                if (!locValid || !retVal) {
+                                                  if (!locValid) {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info_outline,
+                                                        Duration(
+                                                          seconds: 6,
+                                                        ),
+                                                        shouldSetLocation,
+                                                        pressUseCurrentLocation);
+                                                  } else if (!retVal) {
+                                                    //Show flushbar with info that fields has invalid data
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info_outline,
+                                                        Duration(
+                                                          seconds: 6,
+                                                        ),
+                                                        "Missing Information!!",
+                                                        'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
                                                   }
                                                 } else {
-                                                  isActive = value;
                                                   isActiveValidation = false;
+                                                  isActive = value;
                                                   entity.isActive = value;
                                                   print(isActive);
                                                 }
+                                              } else {
+                                                isActive = value;
+                                                isActiveValidation = false;
+                                                entity.isActive = value;
+                                                print(isActive);
                                               }
-                                            });
-                                          },
-                                          // activeTrackColor: Colors.green,
-                                          activeColor: Colors.green,
-                                          inactiveThumbColor: Colors.grey[300],
-                                        ),
+                                            }
+                                          });
+                                        },
+                                        // activeTrackColor: Colors.green,
+                                        activeColor: Colors.green,
+                                        inactiveThumbColor: Colors.grey[300],
                                       ),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                            AnimatedContainer(
-                              padding: EdgeInsets.all(5),
-                              margin: EdgeInsets.all(5),
-                              // Use the properties stored in the State class.
-                              width: _width,
-                              height: _height,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: Border.all(color: Colors.blueGrey),
-                                borderRadius: _borderRadius,
-                              ),
-                              // Define how long the animation should take.
-                              duration: Duration(seconds: 1),
-                              // Provide an optional curve to make the animation feel smoother.
-                              curve: Curves.easeInOutCirc,
-                              child: Center(child: _text),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(
-                        height: 7,
-                      ),
-
-                      Builder(
-                        builder: (context) => Card(
-                          elevation: 8,
-                          child: GestureDetector(
-                            onTap: () {
-                              if (widget.isManager) {
-                                return;
-                              } else {
-                                print("FlushbarStatus-------");
-                                processSaveWithTimer();
-                              }
-                            },
-                            child: Container(
-                              foregroundDecoration: widget.isManager
-                                  ? BoxDecoration(
-                                      color: Colors.grey[50],
-                                      backgroundBlendMode: BlendMode.saturation,
-                                    )
-                                  : BoxDecoration(),
-                              padding: EdgeInsets.zero,
-                              margin: EdgeInsets.zero,
-                              height: 40,
-                              decoration: new BoxDecoration(
-                                  gradient: new LinearGradient(
-                                      colors: [
-                                        Colors.cyan[400],
-                                        Colors.cyan[700]
-                                      ],
-                                      begin: const FractionalOffset(0.0, 0.0),
-                                      end: const FractionalOffset(1.0, 0.0),
-                                      stops: [0.0, 1.0],
-                                      tileMode: TileMode.clamp),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5))),
-                              // width: MediaQuery.of(context).size.width * .35,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.save,
-                                    size: 25,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    'Save',
-                                    style: buttonMedTextStyle,
-                                  ),
+                                    ),
+                                  )
                                 ],
                               ),
-                            ),
+                            ],
                           ),
-                        ),
+                          AnimatedContainer(
+                            padding: EdgeInsets.all(5),
+                            margin: EdgeInsets.all(5),
+                            // Use the properties stored in the State class.
+                            width: _width,
+                            height: _height,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              border: Border.all(color: Colors.blueGrey),
+                              borderRadius: _borderRadius,
+                            ),
+                            // Define how long the animation should take.
+                            duration: Duration(seconds: 1),
+                            // Provide an optional curve to make the animation feel smoother.
+                            curve: Curves.easeInOutCirc,
+                            child: Center(child: _text),
+                          ),
+                        ],
                       ),
+                    ),
 
-                      Builder(
-                        builder: (context) => Container(
-                            margin: EdgeInsets.fromLTRB(6, 15, 6, 15),
-                            height: 40,
+                    SizedBox(
+                      height: 7,
+                    ),
+
+                    Builder(
+                      builder: (context) => Card(
+                        elevation: 8,
+                        child: GestureDetector(
+                          onTap: () {
+                            if (widget.isManager) {
+                              return;
+                            } else {
+                              print("FlushbarStatus-------");
+                              processSaveWithTimer();
+                            }
+                          },
+                          child: Container(
                             foregroundDecoration: widget.isManager
                                 ? BoxDecoration(
                                     color: Colors.grey[50],
                                     backgroundBlendMode: BlendMode.saturation,
                                   )
                                 : BoxDecoration(),
+                            padding: EdgeInsets.zero,
+                            margin: EdgeInsets.zero,
+                            height: 40,
                             decoration: new BoxDecoration(
-                                border: Border.all(color: Colors.teal[200]),
+                                gradient: new LinearGradient(
+                                    colors: [
+                                      Colors.cyan[400],
+                                      Colors.cyan[700]
+                                    ],
+                                    begin: const FractionalOffset(0.0, 0.0),
+                                    end: const FractionalOffset(1.0, 0.0),
+                                    stops: [0.0, 1.0],
+                                    tileMode: TileMode.clamp),
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(5))),
-                            //width: MediaQuery.of(context).size.width * .35,
-                            child: MaterialButton(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text(
-                                      'Delete',
-                                      style: TextStyle(
-                                        color: btnColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'Montserrat',
-                                        letterSpacing: 1.3,
-
-                                        fontSize: 17,
-                                        //height: 2,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Delete this entity and all places/amenities/services',
-                                      style: TextStyle(
-                                        color: btnColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'Montserrat',
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                  ],
+                            // width: MediaQuery.of(context).size.width * .35,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.save,
+                                  size: 25,
+                                  color: Colors.white,
                                 ),
-                                onPressed: () {
-                                  if (widget.isManager) {
-                                    return;
-                                  } else {
-                                    String _errorMessage;
-                                    showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (BuildContext context) {
-                                          return StatefulBuilder(
-                                              builder: (_, setState) {
-                                            return new AlertDialog(
-                                              backgroundColor: Colors.grey[200],
-                                              // titleTextStyle: inputTextStyle,
-                                              elevation: 10.0,
-                                              content: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  RichText(
-                                                    text: TextSpan(
-                                                        style:
-                                                            lightSubTextStyle,
-                                                        children: <TextSpan>[
-                                                          TextSpan(
-                                                              text: "Enter "),
-                                                          TextSpan(
-                                                              text: "DELETE ",
-                                                              style:
-                                                                  errorTextStyle),
-                                                          TextSpan(
-                                                              text:
-                                                                  "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
-                                                        ]),
-                                                  ),
-                                                  new Row(
-                                                    children: <Widget>[
-                                                      new Expanded(
-                                                        child: new TextField(
-                                                          style: inputTextStyle,
-                                                          textCapitalization:
-                                                              TextCapitalization
-                                                                  .characters,
-                                                          controller:
-                                                              _txtController,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText:
-                                                                'eg. delete',
-                                                            enabledBorder: UnderlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .grey)),
-                                                            focusedBorder: UnderlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .orange)),
-                                                          ),
-                                                          onEditingComplete:
-                                                              () {
-                                                            print(_txtController
-                                                                .text);
-                                                          },
-                                                          onChanged: (value) {
-                                                            if (value
-                                                                    .toUpperCase() ==
-                                                                "DELETE"
-                                                                    .toUpperCase())
-                                                              setState(() {
-                                                                _delEnabled =
-                                                                    true;
-                                                                _errorMessage =
-                                                                    null;
-                                                              });
-                                                            else
-                                                              setState(() {
-                                                                _errorMessage =
-                                                                    "You have to enter DELETE to proceed.";
-                                                              });
-                                                          },
-                                                          autofocus: false,
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  (_errorMessage != null
-                                                      ? Text(
-                                                          _errorMessage,
-                                                          style: errorTextStyle,
-                                                        )
-                                                      : Container()),
-                                                ],
-                                              ),
-
-                                              contentPadding:
-                                                  EdgeInsets.all(10),
-                                              actions: <Widget>[
-                                                MaterialButton(
-                                                  color: Colors.white,
-                                                  elevation: 0,
-                                                  shape: RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                          color: Colors
-                                                              .blueGrey[500]),
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5.0))),
-                                                  onPressed: () {
-                                                    Navigator.of(_).pop(false);
-                                                  },
-                                                  splashColor: (_delEnabled)
-                                                      ? highlightColor
-                                                      : Colors.blueGrey[200],
-                                                  child: Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .3,
-                                                    alignment: Alignment.center,
-                                                    child: Text("Cancel",
-                                                        style: TextStyle(
-                                                            color: btnColor)),
-                                                  ),
-                                                ),
-                                                MaterialButton(
-                                                  color: (_delEnabled)
-                                                      ? btnColor
-                                                      : Colors.blueGrey[200],
-                                                  elevation:
-                                                      (_delEnabled) ? 20 : 0,
-                                                  onPressed: () {
-                                                    if (_delEnabled) {
-                                                      Navigator.of(_).pop(true);
-                                                    } else {
-                                                      setState(() {
-                                                        _errorMessage =
-                                                            "You have to enter DELETE to proceed.";
-                                                      });
-                                                    }
-                                                  },
-                                                  splashColor: (_delEnabled)
-                                                      ? highlightColor
-                                                      : Colors.blueGrey[200],
-                                                  child: Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .3,
-                                                    alignment: Alignment.center,
-                                                    child: Text("Delete",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white)),
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          });
-                                        }).then((returnVal) {
-                                      if (returnVal != null) {
-                                        if (returnVal) {
-                                          _gs
-                                              .removeEntity(entity.entityId)
-                                              .then((value) {
-                                            if (value) {
-                                              Navigator.pop(context);
-                                              Navigator.of(context).push(
-                                                  PageAnimation.createRoute(
-                                                      ManageEntityListPage()));
-                                            } else {
-                                              //Entity not deleted.
-                                              Utils.showMyFlushbar(
-                                                  context,
-                                                  Icons.error,
-                                                  Duration(seconds: 5),
-                                                  'Could not Delete this place',
-                                                  "Please try again.",
-                                                  Colors.red);
-                                            }
-                                          }).catchError((error) {
-                                            ErrorsUtil.handleDeleteEntityErrors(
-                                                context, error);
-                                          });
-                                        }
-                                      }
-                                    });
-                                  }
-                                })),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  'Save',
+                                  style: buttonMedTextStyle,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+
+                    Builder(
+                      builder: (context) => Container(
+                          margin: EdgeInsets.fromLTRB(6, 15, 6, 15),
+                          height: 40,
+                          foregroundDecoration: widget.isManager
+                              ? BoxDecoration(
+                                  color: Colors.grey[50],
+                                  backgroundBlendMode: BlendMode.saturation,
+                                )
+                              : BoxDecoration(),
+                          decoration: new BoxDecoration(
+                              border: Border.all(color: Colors.teal[200]),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                          //width: MediaQuery.of(context).size.width * .35,
+                          child: MaterialButton(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    'Delete',
+                                    style: TextStyle(
+                                      color: btnColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Montserrat',
+                                      letterSpacing: 1.3,
+
+                                      fontSize: 17,
+                                      //height: 2,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Delete this entity and all places/amenities/services',
+                                    style: TextStyle(
+                                      color: btnColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              onPressed: () {
+                                if (widget.isManager) {
+                                  return;
+                                } else {
+                                  String _errorMessage;
+                                  showDialog(
+                                      context: context,
+                                      barrierDismissible: true,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                            builder: (_, setState) {
+                                          return new AlertDialog(
+                                            backgroundColor: Colors.grey[200],
+                                            // titleTextStyle: inputTextStyle,
+                                            elevation: 10.0,
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                RichText(
+                                                  text: TextSpan(
+                                                      style: lightSubTextStyle,
+                                                      children: <TextSpan>[
+                                                        TextSpan(
+                                                            text: "Enter "),
+                                                        TextSpan(
+                                                            text: "DELETE ",
+                                                            style:
+                                                                errorTextStyle),
+                                                        TextSpan(
+                                                            text:
+                                                                "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
+                                                      ]),
+                                                ),
+                                                new Row(
+                                                  children: <Widget>[
+                                                    new Expanded(
+                                                      child: new TextField(
+                                                        style: inputTextStyle,
+                                                        textCapitalization:
+                                                            TextCapitalization
+                                                                .characters,
+                                                        controller:
+                                                            _txtController,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              'eg. delete',
+                                                          enabledBorder:
+                                                              UnderlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.grey)),
+                                                          focusedBorder:
+                                                              UnderlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.orange)),
+                                                        ),
+                                                        onEditingComplete: () {
+                                                          print(_txtController
+                                                              .text);
+                                                        },
+                                                        onChanged: (value) {
+                                                          if (value
+                                                                  .toUpperCase() ==
+                                                              "DELETE"
+                                                                  .toUpperCase())
+                                                            setState(() {
+                                                              _delEnabled =
+                                                                  true;
+                                                              _errorMessage =
+                                                                  null;
+                                                            });
+                                                          else
+                                                            setState(() {
+                                                              _errorMessage =
+                                                                  "You have to enter DELETE to proceed.";
+                                                            });
+                                                        },
+                                                        autofocus: false,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                (_errorMessage != null
+                                                    ? Text(
+                                                        _errorMessage,
+                                                        style: errorTextStyle,
+                                                      )
+                                                    : Container()),
+                                              ],
+                                            ),
+
+                                            contentPadding: EdgeInsets.all(10),
+                                            actions: <Widget>[
+                                              MaterialButton(
+                                                color: Colors.white,
+                                                elevation: 0,
+                                                shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        color: Colors
+                                                            .blueGrey[500]),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5.0))),
+                                                onPressed: () {
+                                                  Navigator.of(_).pop(false);
+                                                },
+                                                splashColor: (_delEnabled)
+                                                    ? highlightColor
+                                                    : Colors.blueGrey[200],
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .3,
+                                                  alignment: Alignment.center,
+                                                  child: Text("Cancel",
+                                                      style: TextStyle(
+                                                          color: btnColor)),
+                                                ),
+                                              ),
+                                              MaterialButton(
+                                                color: (_delEnabled)
+                                                    ? btnColor
+                                                    : Colors.blueGrey[200],
+                                                elevation:
+                                                    (_delEnabled) ? 20 : 0,
+                                                onPressed: () {
+                                                  if (_delEnabled) {
+                                                    Navigator.of(_).pop(true);
+                                                  } else {
+                                                    setState(() {
+                                                      _errorMessage =
+                                                          "You have to enter DELETE to proceed.";
+                                                    });
+                                                  }
+                                                },
+                                                splashColor: (_delEnabled)
+                                                    ? highlightColor
+                                                    : Colors.blueGrey[200],
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .3,
+                                                  alignment: Alignment.center,
+                                                  child: Text("Delete",
+                                                      style: TextStyle(
+                                                          color: Colors.white)),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        });
+                                      }).then((returnVal) {
+                                    if (returnVal != null) {
+                                      if (returnVal) {
+                                        _gs
+                                            .removeEntity(entity.entityId)
+                                            .then((value) {
+                                          if (value) {
+                                            Navigator.pop(context);
+                                            Navigator.of(context).push(
+                                                PageAnimation.createRoute(
+                                                    ManageEntityListPage()));
+                                          } else {
+                                            //Entity not deleted.
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.error,
+                                                Duration(seconds: 5),
+                                                'Could not Delete this place',
+                                                "Please try again.",
+                                                Colors.red);
+                                          }
+                                        }).catchError((error) {
+                                          ErrorsUtil.handleDeleteEntityErrors(
+                                              context, error);
+                                        });
+                                      }
+                                    }
+                                  });
+                                }
+                              })),
+                    ),
+                  ],
                 ),
               ),
             ),
-            // bottomNavigationBar: CustomBottomBar(barIndex: 0),
           ),
-          onWillPop: () async {
-            backPressed();
-            return false;
-          },
+          // bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
+        onWillPop: () async {
+          backPressed();
+          return false;
+        },
       );
     } else
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: highlightColor,
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  print("going back");
-                  //    backPressed();
-                  Navigator.of(context).pop();
-                },
-              ),
-              title: Text(Utils.getEntityTypeDisplayName(entity.type),
-                  style: whiteBoldTextStyle1),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[],
+            flexibleSpace: Container(
+              decoration: gradientBackground,
             ),
-
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
+            leading: IconButton(
+              padding: EdgeInsets.all(0),
+              alignment: Alignment.center,
+              highlightColor: highlightColor,
+              icon: Icon(Icons.arrow_back),
+              color: Colors.white,
+              onPressed: () {
+                print("going back");
+                //    backPressed();
+                Navigator.of(context).pop();
+              },
             ),
-            //drawer: CustomDrawer(),
-            //bottomNavigationBar: CustomBottomBar(barIndex: 0),
+            title: Text(Utils.getEntityTypeDisplayName(entity.type),
+                style: whiteBoldTextStyle1),
           ),
-          onWillPop: () async {
-            Navigator.of(context).pop();
-            return false;
-          },
+
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
+        onWillPop: () async {
+          Navigator.of(context).pop();
+          return false;
+        },
       );
   }
 }

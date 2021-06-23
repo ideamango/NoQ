@@ -995,405 +995,396 @@ class _ShowUserApplicationDetailsState
   Widget build(BuildContext context) {
     if (initCompleted) {
       // notesController.text = widget.bookingApplication.notes;
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              backRoute: (widget.backRoute != null)
-                  ? widget.backRoute
-                  : UserHomePage(),
-              titleTxt: "Application Details",
-            ),
-            body: Stack(children: [
-              Center(
-                child: Column(
-                  children: <Widget>[
-                    Expanded(child: _buildItem(widget.bookingApplication)),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     // if (!widget.isAdmin)
-                    //     if (widget.bookingApplication.status !=
-                    //             ApplicationStatus.CANCELLED &&
-                    //         widget.bookingApplication.status !=
-                    //             ApplicationStatus.REJECTED &&
-                    //         widget.bookingApplication.status !=
-                    //             ApplicationStatus.COMPLETED)
-                    //       Container(
-                    //         width: MediaQuery.of(context).size.width * .9,
-                    //         margin: EdgeInsets.only(bottom: 15),
-                    //         child: MaterialButton(
-                    //             elevation: 8,
-                    //             color: Colors.yellow[800],
-                    //             onPressed: () {
-                    //               showApplicationStatusDialog(
-                    //                       context,
-                    //                       "Cancel Application",
-                    //                       'Do you want to Cancel this Application?',
-                    //                       cancelDialogMsg,
-                    //                       'Cancel Application')
-                    //                   .then((remarks) {
-                    //                 //Update application status change on server.
-                    //                 if (Utils.isNotNullOrEmpty(remarks)) {
-                    //                   _gs
-                    //                       .getApplicationService()
-                    //                       .withDrawApplication(
-                    //                           widget.bookingApplication.id,
-                    //                           remarks)
-                    //                       .then((value) {
-                    //                     widget.bookingApplication
-                    //                         .notesOnCancellation = remarks;
-                    //                     setState(() {
-                    //                       widget.bookingApplication.status =
-                    //                           ApplicationStatus.CANCELLED;
-                    //                     });
-
-                    //                     Utils.showMyFlushbar(
-                    //                         context,
-                    //                         Icons.check,
-                    //                         Duration(seconds: 4),
-                    //                         "Application Cancelled!!",
-                    //                         "",
-                    //                         successGreenSnackBar);
-                    //                   });
-                    //                 }
-                    //               });
-                    //             },
-                    //             child: Row(
-                    //                 mainAxisAlignment: MainAxisAlignment.center,
-                    //                 children: [
-                    //                   Text(
-                    //                     "Cancel Application",
-                    //                     style: TextStyle(
-                    //                       fontSize: 15,
-                    //                       color: Colors.white,
-                    //                     ),
-                    //                   ),
-                    //                   SizedBox(
-                    //                     width: 2,
-                    //                   ),
-                    //                   Icon(
-                    //                     Icons.block,
-                    //                     color: Colors.white,
-                    //                   )
-                    //                 ])),
-                    //       ),
-                    //     // if (widget.isAdmin && metaEntity != null)
-                    //     //   Container(
-                    //     //     padding: EdgeInsets.all(0),
-                    //     //     child: Row(
-                    //     //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //     //       children: [
-                    //     //         RaisedButton(
-                    //     //             elevation: 8,
-                    //     //             color: Colors.purple,
-                    //     //             onPressed: () {
-                    //     //               widget.bookingApplication.notesOnApproval =
-                    //     //                   notesController.text;
-                    //     //               _gs
-                    //     //                   .getApplicationService()
-                    //     //                   .updateApplicationStatus(
-                    //     //                       widget.bookingApplication.id,
-                    //     //                       ApplicationStatus.COMPLETED,
-                    //     //                       listOfControllers[widget
-                    //     //                               .bookingApplication.id]
-                    //     //                           .text,
-                    //     //                       metaEntity,
-                    //     //                       widget.bookingApplication
-                    //     //                           .preferredSlotTiming)
-                    //     //                   .then((value) {
-                    //     //                 if (value) {
-                    //     //                   setState(() {
-                    //     //                     widget.bookingApplication.status =
-                    //     //                         ApplicationStatus.COMPLETED;
-                    //     //                   });
-                    //     //                   Utils.showMyFlushbar(
-                    //     //                       context,
-                    //     //                       Icons.check,
-                    //     //                       Duration(seconds: 4),
-                    //     //                       "Application Saved!!",
-                    //     //                       "",
-                    //     //                       successGreenSnackBar);
-                    //     //                 } else {
-                    //     //                   print(
-                    //     //                       "Could not update application status");
-                    //     //                   Utils.showMyFlushbar(
-                    //     //                       context,
-                    //     //                       Icons.info,
-                    //     //                       Duration(seconds: 4),
-                    //     //                       "Oops! Application could not be saved!!",
-                    //     //                       "");
-                    //     //                 }
-                    //     //               });
-
-                    //     //               print("Complete");
-                    //     //             },
-                    //     //             child: Row(children: [
-                    //     //               // Text(
-                    //     //               //   "Complete",
-                    //     //               //   style: TextStyle(
-                    //     //               //     color: Colors.white,
-                    //     //               //   ),
-                    //     //               // ),
-                    //     //               // SizedBox(
-                    //     //               //   width: 2,
-                    //     //               // ),
-                    //     //               Icon(
-                    //     //                 Icons.thumb_up,
-                    //     //                 color: Colors.white,
-                    //     //               )
-                    //     //             ])),
-                    //     //         RaisedButton(
-                    //     //             elevation: 8,
-                    //     //             color: Colors.green[400],
-                    //     //             onPressed: () {
-                    //     //               widget.bookingApplication.notesOnApproval =
-                    //     //                   notesController.text;
-                    //     //               _gs
-                    //     //                   .getApplicationService()
-                    //     //                   .updateApplicationStatus(
-                    //     //                       widget.bookingApplication.id,
-                    //     //                       ApplicationStatus.APPROVED,
-                    //     //                       listOfControllers[widget
-                    //     //                               .bookingApplication.id]
-                    //     //                           .text,
-                    //     //                       metaEntity,
-                    //     //                       widget.bookingApplication
-                    //     //                           .preferredSlotTiming)
-                    //     //                   .then((value) {
-                    //     //                 if (value) {
-                    //     //                   setState(() {
-                    //     //                     widget.bookingApplication.status =
-                    //     //                         ApplicationStatus.APPROVED;
-                    //     //                   });
-                    //     //                   Utils.showMyFlushbar(
-                    //     //                       context,
-                    //     //                       Icons.check,
-                    //     //                       Duration(seconds: 4),
-                    //     //                       "Application Saved!!",
-                    //     //                       "",
-                    //     //                       successGreenSnackBar);
-                    //     //                 } else {
-                    //     //                   print(
-                    //     //                       "Could not update application status");
-                    //     //                   Utils.showMyFlushbar(
-                    //     //                       context,
-                    //     //                       Icons.info,
-                    //     //                       Duration(seconds: 4),
-                    //     //                       "Oops! Application could not be saved!!",
-                    //     //                       "");
-                    //     //                 }
-                    //     //               });
-
-                    //     //               print("Approved");
-                    //     //             },
-                    //     //             child: Row(children: [
-                    //     //               // Text(
-                    //     //               //   "Approve",
-                    //     //               //   style: TextStyle(
-                    //     //               //     color: Colors.white,
-                    //     //               //   ),
-                    //     //               // ),
-                    //     //               // SizedBox(
-                    //     //               //   width: 2,
-                    //     //               // ),
-                    //     //               Icon(
-                    //     //                 Icons.check_circle,
-                    //     //                 color: Colors.white,
-                    //     //               )
-                    //     //             ])),
-                    //     //         RaisedButton(
-                    //     //           color: Colors.yellow[700],
-                    //     //           onPressed: () {
-                    //     //             widget.bookingApplication
-                    //     //                     .notesOnPuttingOnHold =
-                    //     //                 notesController.text;
-
-                    //     //             _gs
-                    //     //                 .getApplicationService()
-                    //     //                 .updateApplicationStatus(
-                    //     //                     widget.bookingApplication.id,
-                    //     //                     ApplicationStatus.ONHOLD,
-                    //     //                     listOfControllers[
-                    //     //                             widget.bookingApplication.id]
-                    //     //                         .text,
-                    //     //                     metaEntity,
-                    //     //                     widget.bookingApplication
-                    //     //                         .preferredSlotTiming)
-                    //     //                 .then((value) {
-                    //     //               if (value) {
-                    //     //                 setState(() {
-                    //     //                   widget.bookingApplication.status =
-                    //     //                       ApplicationStatus.ONHOLD;
-                    //     //                 });
-
-                    //     //                 Utils.showMyFlushbar(
-                    //     //                     context,
-                    //     //                     Icons.check,
-                    //     //                     Duration(seconds: 4),
-                    //     //                     "Application Saved!!",
-                    //     //                     "",
-                    //     //                     successGreenSnackBar);
-                    //     //               } else {
-                    //     //                 print(
-                    //     //                     "Could not update application status");
-                    //     //                 Utils.showMyFlushbar(
-                    //     //                     context,
-                    //     //                     Icons.info,
-                    //     //                     Duration(seconds: 4),
-                    //     //                     "Oops! Application could not be saved!!",
-                    //     //                     "");
-                    //     //               }
-                    //     //             });
-                    //     //             print("On-Hold done");
-                    //     //           },
-                    //     //           child: Row(children: [
-                    //     //             // Text(
-                    //     //             //   "On-Hold",
-                    //     //             //   style: TextStyle(
-                    //     //             //     color: Colors.white,
-                    //     //             //   ),
-                    //     //             //   // style: buttonTextStyle,
-                    //     //             // ),
-                    //     //             // SizedBox(
-                    //     //             //   width: 2,
-                    //     //             // ),
-                    //     //             Icon(
-                    //     //               Icons.pan_tool_rounded,
-                    //     //               color: Colors.white,
-                    //     //             )
-                    //     //           ]),
-                    //     //         ),
-                    //     //         RaisedButton(
-                    //     //           color: Colors.red,
-                    //     //           onPressed: () {
-                    //     //             widget.bookingApplication.notesOnRejection =
-                    //     //                 notesController.text;
-
-                    //     //             _gs
-                    //     //                 .getApplicationService()
-                    //     //                 .updateApplicationStatus(
-                    //     //                     widget.bookingApplication.id,
-                    //     //                     ApplicationStatus.REJECTED,
-                    //     //                     listOfControllers[
-                    //     //                             widget.bookingApplication.id]
-                    //     //                         .text,
-                    //     //                     metaEntity,
-                    //     //                     widget.bookingApplication
-                    //     //                         .preferredSlotTiming)
-                    //     //                 .then((value) {
-                    //     //               if (value) {
-                    //     //                 setState(() {
-                    //     //                   widget.bookingApplication.status =
-                    //     //                       ApplicationStatus.REJECTED;
-                    //     //                 });
-
-                    //     //                 Utils.showMyFlushbar(
-                    //     //                     context,
-                    //     //                     Icons.check,
-                    //     //                     Duration(seconds: 4),
-                    //     //                     "Application Saved!!",
-                    //     //                     "",
-                    //     //                     successGreenSnackBar);
-                    //     //               } else {
-                    //     //                 print(
-                    //     //                     "Could not update application status");
-                    //     //                 Utils.showMyFlushbar(
-                    //     //                     context,
-                    //     //                     Icons.info,
-                    //     //                     Duration(seconds: 4),
-                    //     //                     "Oops! Application could not be saved!!",
-                    //     //                     "");
-                    //     //               }
-                    //     //             });
-                    //     //             print("On-Hold done");
-                    //     //           },
-                    //     //           child: Row(children: [
-                    //     //             // Text(
-                    //     //             //   "Reject",
-                    //     //             //   style: TextStyle(
-                    //     //             //     color: Colors.white,
-                    //     //             //   ),
-                    //     //             // ),
-                    //     //             // SizedBox(
-                    //     //             //   width: 2,
-                    //     //             // ),
-                    //     //             Icon(
-                    //     //               Icons.cancel_rounded,
-                    //     //               color: Colors.white,
-                    //     //             )
-                    //     //           ]),
-                    //     //         ),
-                    //     //       ],
-                    //     //     ),
-                    //     //   )
-                    //   ],
-                    // )
-                  ],
-                ),
-              ),
-              if (showLoading)
-                Center(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    color: Colors.black.withOpacity(.5),
-                    // decoration: BoxDecoration(
-                    //   color: Colors.white,
-                    //   backgroundBlendMode: BlendMode.saturation,
-                    // ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          color: Colors.transparent,
-                          padding: EdgeInsets.all(12),
-                          width: MediaQuery.of(context).size.width * .15,
-                          height: MediaQuery.of(context).size.width * .15,
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.black,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
-                            strokeWidth: 2,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
-            ]),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            backRoute:
+                (widget.backRoute != null) ? widget.backRoute : UserHomePage(),
+            titleTxt: "Application Details",
           ),
-          onWillPop: () async {
-            return true;
-          },
-        ),
-      );
-    } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: new WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: "Applicant Details",
-            ),
-            body: Center(
+          body: Stack(children: [
+            Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  showCircularProgress(),
+                  Expanded(child: _buildItem(widget.bookingApplication)),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     // if (!widget.isAdmin)
+                  //     if (widget.bookingApplication.status !=
+                  //             ApplicationStatus.CANCELLED &&
+                  //         widget.bookingApplication.status !=
+                  //             ApplicationStatus.REJECTED &&
+                  //         widget.bookingApplication.status !=
+                  //             ApplicationStatus.COMPLETED)
+                  //       Container(
+                  //         width: MediaQuery.of(context).size.width * .9,
+                  //         margin: EdgeInsets.only(bottom: 15),
+                  //         child: MaterialButton(
+                  //             elevation: 8,
+                  //             color: Colors.yellow[800],
+                  //             onPressed: () {
+                  //               showApplicationStatusDialog(
+                  //                       context,
+                  //                       "Cancel Application",
+                  //                       'Do you want to Cancel this Application?',
+                  //                       cancelDialogMsg,
+                  //                       'Cancel Application')
+                  //                   .then((remarks) {
+                  //                 //Update application status change on server.
+                  //                 if (Utils.isNotNullOrEmpty(remarks)) {
+                  //                   _gs
+                  //                       .getApplicationService()
+                  //                       .withDrawApplication(
+                  //                           widget.bookingApplication.id,
+                  //                           remarks)
+                  //                       .then((value) {
+                  //                     widget.bookingApplication
+                  //                         .notesOnCancellation = remarks;
+                  //                     setState(() {
+                  //                       widget.bookingApplication.status =
+                  //                           ApplicationStatus.CANCELLED;
+                  //                     });
+
+                  //                     Utils.showMyFlushbar(
+                  //                         context,
+                  //                         Icons.check,
+                  //                         Duration(seconds: 4),
+                  //                         "Application Cancelled!!",
+                  //                         "",
+                  //                         successGreenSnackBar);
+                  //                   });
+                  //                 }
+                  //               });
+                  //             },
+                  //             child: Row(
+                  //                 mainAxisAlignment: MainAxisAlignment.center,
+                  //                 children: [
+                  //                   Text(
+                  //                     "Cancel Application",
+                  //                     style: TextStyle(
+                  //                       fontSize: 15,
+                  //                       color: Colors.white,
+                  //                     ),
+                  //                   ),
+                  //                   SizedBox(
+                  //                     width: 2,
+                  //                   ),
+                  //                   Icon(
+                  //                     Icons.block,
+                  //                     color: Colors.white,
+                  //                   )
+                  //                 ])),
+                  //       ),
+                  //     // if (widget.isAdmin && metaEntity != null)
+                  //     //   Container(
+                  //     //     padding: EdgeInsets.all(0),
+                  //     //     child: Row(
+                  //     //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //     //       children: [
+                  //     //         RaisedButton(
+                  //     //             elevation: 8,
+                  //     //             color: Colors.purple,
+                  //     //             onPressed: () {
+                  //     //               widget.bookingApplication.notesOnApproval =
+                  //     //                   notesController.text;
+                  //     //               _gs
+                  //     //                   .getApplicationService()
+                  //     //                   .updateApplicationStatus(
+                  //     //                       widget.bookingApplication.id,
+                  //     //                       ApplicationStatus.COMPLETED,
+                  //     //                       listOfControllers[widget
+                  //     //                               .bookingApplication.id]
+                  //     //                           .text,
+                  //     //                       metaEntity,
+                  //     //                       widget.bookingApplication
+                  //     //                           .preferredSlotTiming)
+                  //     //                   .then((value) {
+                  //     //                 if (value) {
+                  //     //                   setState(() {
+                  //     //                     widget.bookingApplication.status =
+                  //     //                         ApplicationStatus.COMPLETED;
+                  //     //                   });
+                  //     //                   Utils.showMyFlushbar(
+                  //     //                       context,
+                  //     //                       Icons.check,
+                  //     //                       Duration(seconds: 4),
+                  //     //                       "Application Saved!!",
+                  //     //                       "",
+                  //     //                       successGreenSnackBar);
+                  //     //                 } else {
+                  //     //                   print(
+                  //     //                       "Could not update application status");
+                  //     //                   Utils.showMyFlushbar(
+                  //     //                       context,
+                  //     //                       Icons.info,
+                  //     //                       Duration(seconds: 4),
+                  //     //                       "Oops! Application could not be saved!!",
+                  //     //                       "");
+                  //     //                 }
+                  //     //               });
+
+                  //     //               print("Complete");
+                  //     //             },
+                  //     //             child: Row(children: [
+                  //     //               // Text(
+                  //     //               //   "Complete",
+                  //     //               //   style: TextStyle(
+                  //     //               //     color: Colors.white,
+                  //     //               //   ),
+                  //     //               // ),
+                  //     //               // SizedBox(
+                  //     //               //   width: 2,
+                  //     //               // ),
+                  //     //               Icon(
+                  //     //                 Icons.thumb_up,
+                  //     //                 color: Colors.white,
+                  //     //               )
+                  //     //             ])),
+                  //     //         RaisedButton(
+                  //     //             elevation: 8,
+                  //     //             color: Colors.green[400],
+                  //     //             onPressed: () {
+                  //     //               widget.bookingApplication.notesOnApproval =
+                  //     //                   notesController.text;
+                  //     //               _gs
+                  //     //                   .getApplicationService()
+                  //     //                   .updateApplicationStatus(
+                  //     //                       widget.bookingApplication.id,
+                  //     //                       ApplicationStatus.APPROVED,
+                  //     //                       listOfControllers[widget
+                  //     //                               .bookingApplication.id]
+                  //     //                           .text,
+                  //     //                       metaEntity,
+                  //     //                       widget.bookingApplication
+                  //     //                           .preferredSlotTiming)
+                  //     //                   .then((value) {
+                  //     //                 if (value) {
+                  //     //                   setState(() {
+                  //     //                     widget.bookingApplication.status =
+                  //     //                         ApplicationStatus.APPROVED;
+                  //     //                   });
+                  //     //                   Utils.showMyFlushbar(
+                  //     //                       context,
+                  //     //                       Icons.check,
+                  //     //                       Duration(seconds: 4),
+                  //     //                       "Application Saved!!",
+                  //     //                       "",
+                  //     //                       successGreenSnackBar);
+                  //     //                 } else {
+                  //     //                   print(
+                  //     //                       "Could not update application status");
+                  //     //                   Utils.showMyFlushbar(
+                  //     //                       context,
+                  //     //                       Icons.info,
+                  //     //                       Duration(seconds: 4),
+                  //     //                       "Oops! Application could not be saved!!",
+                  //     //                       "");
+                  //     //                 }
+                  //     //               });
+
+                  //     //               print("Approved");
+                  //     //             },
+                  //     //             child: Row(children: [
+                  //     //               // Text(
+                  //     //               //   "Approve",
+                  //     //               //   style: TextStyle(
+                  //     //               //     color: Colors.white,
+                  //     //               //   ),
+                  //     //               // ),
+                  //     //               // SizedBox(
+                  //     //               //   width: 2,
+                  //     //               // ),
+                  //     //               Icon(
+                  //     //                 Icons.check_circle,
+                  //     //                 color: Colors.white,
+                  //     //               )
+                  //     //             ])),
+                  //     //         RaisedButton(
+                  //     //           color: Colors.yellow[700],
+                  //     //           onPressed: () {
+                  //     //             widget.bookingApplication
+                  //     //                     .notesOnPuttingOnHold =
+                  //     //                 notesController.text;
+
+                  //     //             _gs
+                  //     //                 .getApplicationService()
+                  //     //                 .updateApplicationStatus(
+                  //     //                     widget.bookingApplication.id,
+                  //     //                     ApplicationStatus.ONHOLD,
+                  //     //                     listOfControllers[
+                  //     //                             widget.bookingApplication.id]
+                  //     //                         .text,
+                  //     //                     metaEntity,
+                  //     //                     widget.bookingApplication
+                  //     //                         .preferredSlotTiming)
+                  //     //                 .then((value) {
+                  //     //               if (value) {
+                  //     //                 setState(() {
+                  //     //                   widget.bookingApplication.status =
+                  //     //                       ApplicationStatus.ONHOLD;
+                  //     //                 });
+
+                  //     //                 Utils.showMyFlushbar(
+                  //     //                     context,
+                  //     //                     Icons.check,
+                  //     //                     Duration(seconds: 4),
+                  //     //                     "Application Saved!!",
+                  //     //                     "",
+                  //     //                     successGreenSnackBar);
+                  //     //               } else {
+                  //     //                 print(
+                  //     //                     "Could not update application status");
+                  //     //                 Utils.showMyFlushbar(
+                  //     //                     context,
+                  //     //                     Icons.info,
+                  //     //                     Duration(seconds: 4),
+                  //     //                     "Oops! Application could not be saved!!",
+                  //     //                     "");
+                  //     //               }
+                  //     //             });
+                  //     //             print("On-Hold done");
+                  //     //           },
+                  //     //           child: Row(children: [
+                  //     //             // Text(
+                  //     //             //   "On-Hold",
+                  //     //             //   style: TextStyle(
+                  //     //             //     color: Colors.white,
+                  //     //             //   ),
+                  //     //             //   // style: buttonTextStyle,
+                  //     //             // ),
+                  //     //             // SizedBox(
+                  //     //             //   width: 2,
+                  //     //             // ),
+                  //     //             Icon(
+                  //     //               Icons.pan_tool_rounded,
+                  //     //               color: Colors.white,
+                  //     //             )
+                  //     //           ]),
+                  //     //         ),
+                  //     //         RaisedButton(
+                  //     //           color: Colors.red,
+                  //     //           onPressed: () {
+                  //     //             widget.bookingApplication.notesOnRejection =
+                  //     //                 notesController.text;
+
+                  //     //             _gs
+                  //     //                 .getApplicationService()
+                  //     //                 .updateApplicationStatus(
+                  //     //                     widget.bookingApplication.id,
+                  //     //                     ApplicationStatus.REJECTED,
+                  //     //                     listOfControllers[
+                  //     //                             widget.bookingApplication.id]
+                  //     //                         .text,
+                  //     //                     metaEntity,
+                  //     //                     widget.bookingApplication
+                  //     //                         .preferredSlotTiming)
+                  //     //                 .then((value) {
+                  //     //               if (value) {
+                  //     //                 setState(() {
+                  //     //                   widget.bookingApplication.status =
+                  //     //                       ApplicationStatus.REJECTED;
+                  //     //                 });
+
+                  //     //                 Utils.showMyFlushbar(
+                  //     //                     context,
+                  //     //                     Icons.check,
+                  //     //                     Duration(seconds: 4),
+                  //     //                     "Application Saved!!",
+                  //     //                     "",
+                  //     //                     successGreenSnackBar);
+                  //     //               } else {
+                  //     //                 print(
+                  //     //                     "Could not update application status");
+                  //     //                 Utils.showMyFlushbar(
+                  //     //                     context,
+                  //     //                     Icons.info,
+                  //     //                     Duration(seconds: 4),
+                  //     //                     "Oops! Application could not be saved!!",
+                  //     //                     "");
+                  //     //               }
+                  //     //             });
+                  //     //             print("On-Hold done");
+                  //     //           },
+                  //     //           child: Row(children: [
+                  //     //             // Text(
+                  //     //             //   "Reject",
+                  //     //             //   style: TextStyle(
+                  //     //             //     color: Colors.white,
+                  //     //             //   ),
+                  //     //             // ),
+                  //     //             // SizedBox(
+                  //     //             //   width: 2,
+                  //     //             // ),
+                  //     //             Icon(
+                  //     //               Icons.cancel_rounded,
+                  //     //               color: Colors.white,
+                  //     //             )
+                  //     //           ]),
+                  //     //         ),
+                  //     //       ],
+                  //     //     ),
+                  //     //   )
+                  //   ],
+                  // )
                 ],
               ),
             ),
-          ),
-          onWillPop: () async {
-            return true;
-          },
+            if (showLoading)
+              Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  color: Colors.black.withOpacity(.5),
+                  // decoration: BoxDecoration(
+                  //   color: Colors.white,
+                  //   backgroundBlendMode: BlendMode.saturation,
+                  // ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        color: Colors.transparent,
+                        padding: EdgeInsets.all(12),
+                        width: MediaQuery.of(context).size.width * .15,
+                        height: MediaQuery.of(context).size.width * .15,
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.black,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                          strokeWidth: 2,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+          ]),
         ),
+        onWillPop: () async {
+          return true;
+        },
+      );
+    } else {
+      return new WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: "Applicant Details",
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+        ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

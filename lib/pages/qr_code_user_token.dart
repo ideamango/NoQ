@@ -394,79 +394,71 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
   Widget build(BuildContext context) {
     if (initCompleted) {
       // notesController.text = widget.bookingApplication.notes;
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              titleTxt: "Booking Token Details",
-              backRoute: UserHomePage(),
-            ),
-            body: Center(
-              child: Container(
-                // decoration: BoxDecoration(
-                //     border: Border.all(color: borderColor, width: 1),
-                //     color: Colors.white,
-                //     shape: BoxShape.rectangle,
-                //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                margin: EdgeInsets.all(8),
-                padding: EdgeInsets.all(0),
-                //  color: Colors.cyan[100],
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    (listOfTokens.length != 0)
-                        ? ListView.builder(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            scrollDirection: Axis.vertical,
-                            physics: ClampingScrollPhysics(),
-                            reverse: true,
-                            shrinkWrap: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Column(
-                                children: [
-                                  buildTokenCard(listOfTokens[index]),
-                                ],
-                              );
-                            },
-                            itemCount: listOfTokens.length,
-                          )
-                        : Container(height: 0),
-                  ],
-                ),
-              ),
-            ),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            titleTxt: "Booking Token Details",
+            backRoute: UserHomePage(),
           ),
-          onWillPop: () async {
-            return true;
-          },
-        ),
-      );
-    } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: new WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: "Applicant Details",
-            ),
-            body: Center(
+          body: Center(
+            child: Container(
+              // decoration: BoxDecoration(
+              //     border: Border.all(color: borderColor, width: 1),
+              //     color: Colors.white,
+              //     shape: BoxShape.rectangle,
+              //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              margin: EdgeInsets.all(8),
+              padding: EdgeInsets.all(0),
+              //  color: Colors.cyan[100],
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  showCircularProgress(),
+                  (listOfTokens.length != 0)
+                      ? ListView.builder(
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          scrollDirection: Axis.vertical,
+                          physics: ClampingScrollPhysics(),
+                          reverse: true,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Column(
+                              children: [
+                                buildTokenCard(listOfTokens[index]),
+                              ],
+                            );
+                          },
+                          itemCount: listOfTokens.length,
+                        )
+                      : Container(height: 0),
                 ],
               ),
             ),
           ),
-          onWillPop: () async {
-            return true;
-          },
         ),
+        onWillPop: () async {
+          return true;
+        },
+      );
+    } else {
+      return new WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: "Applicant Details",
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+        ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

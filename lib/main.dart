@@ -39,7 +39,35 @@ class MyHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Firebase.initializeApp();
-    return MaterialApp(debugShowCheckedModeBanner: false, home: MyApp());
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        routes: <String, WidgetBuilder>{
+          '/dashboard': (BuildContext context) => UserHomePage(
+                dontShowUpdate: false,
+              ),
+          '/loginpage': (BuildContext context) => LoginPage(),
+        },
+        theme: ThemeData(
+          brightness: Brightness.light,
+          primaryColor: Colors.teal[900],
+          accentColor: Colors.indigoAccent,
+          unselectedWidgetColor: Colors.teal,
+
+          // Define the default font family..
+          fontFamily: 'Monsterrat',
+          // Define the default TextTheme. Use this to specify the default
+          // text styling for headlines, titles, bodies of text, and more.
+          textTheme: TextTheme(
+            headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+            subtitle1: TextStyle(
+                color: Colors.indigo,
+                fontSize: 36.0,
+                fontStyle: FontStyle.italic),
+            bodyText1: TextStyle(
+                color: Colors.indigo, fontSize: 14.0, fontFamily: 'Monsterrat'),
+          ),
+        ),
+        home: MyApp());
   }
 }
 
@@ -111,37 +139,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: <String, WidgetBuilder>{
-        '/dashboard': (BuildContext context) => UserHomePage(
-              dontShowUpdate: false,
-            ),
-        '/loginpage': (BuildContext context) => LoginPage(),
-      },
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: Colors.teal[900],
-        accentColor: Colors.indigoAccent,
-        unselectedWidgetColor: Colors.teal,
-
-        // Define the default font family..
-        fontFamily: 'Monsterrat',
-        // Define the default TextTheme. Use this to specify the default
-        // text styling for headlines, titles, bodies of text, and more.
-        textTheme: TextTheme(
-          headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          subtitle1: TextStyle(
-              color: Colors.indigo,
-              fontSize: 36.0,
-              fontStyle: FontStyle.italic),
-          bodyText1: TextStyle(
-              color: Colors.indigo, fontSize: 14.0, fontFamily: 'Monsterrat'),
-        ),
-      ),
-      home: SplashScreen(),
-      // home: AuthService().handleAuth(),
-    );
+    return SplashScreen()
+        // home: AuthService().handleAuth(),
+        ;
   }
 }
 

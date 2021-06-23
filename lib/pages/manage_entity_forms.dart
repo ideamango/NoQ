@@ -146,545 +146,527 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
   @override
   Widget build(BuildContext context) {
     if (initCompleted) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            drawer: CustomDrawer(
-              phone: _gs.getCurrentUser().ph,
+      return WillPopScope(
+        child: Scaffold(
+          drawer: CustomDrawer(
+            phone: _gs.getCurrentUser().ph,
+          ),
+          appBar: AppBar(
+            // key: _appBarKey,
+            title: Text(
+              "Manage Application Forms",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+              overflow: TextOverflow.ellipsis,
             ),
-            appBar: AppBar(
-              // key: _appBarKey,
-              title: Text(
-                "Manage Application Forms",
-                style: TextStyle(color: Colors.white, fontSize: 16),
-                overflow: TextOverflow.ellipsis,
-              ),
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                  padding: EdgeInsets.all(0),
-                  alignment: Alignment.center,
-                  highlightColor: Colors.orange[300],
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.white,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    if (widget.backRoute != null)
-                      Navigator.of(context)
-                          .push(PageAnimation.createRoute(widget.backRoute));
-                  }),
+            flexibleSpace: Container(
+              decoration: gradientBackground,
+            ),
+            leading: IconButton(
+                padding: EdgeInsets.all(0),
+                alignment: Alignment.center,
+                highlightColor: Colors.orange[300],
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  if (widget.backRoute != null)
+                    Navigator.of(context)
+                        .push(PageAnimation.createRoute(widget.backRoute));
+                }),
 
-              actions: <Widget>[],
-              // leading: Builder(
-              //   builder: (BuildContext context) {
-              //     return IconButton(
-              //       color: Colors.white,
-              //       icon: Icon(Icons.more_vert),
-              //       onPressed: () => Scaffold.of(context).openDrawer(),
-              //     );
-              //   },
-              // ),
-            ),
-            body: Padding(
-              padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
-              child: Stack(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    child: new Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        RichText(
-                          text: TextSpan(
-                            style: TextStyle(
-                              color: Colors.blueGrey[700],
-                              fontFamily: 'Roboto',
-                              letterSpacing: 0.5,
-                              fontSize: 12.0,
-                            ),
-                            children: <TextSpan>[
-                              TextSpan(text: "Add from the following "),
-                              TextSpan(
-                                text: 'Sample Application Forms',
-                                style: new TextStyle(
-                                    color: Colors.blueGrey[900],
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    decorationColor: primaryDarkColor),
-                              ),
-                              TextSpan(
-                                  text:
-                                      " which you want to enable for your place. User will be able to select the Form and submit the request after selecting the time-slot."),
-                            ],
+            actions: <Widget>[],
+            // leading: Builder(
+            //   builder: (BuildContext context) {
+            //     return IconButton(
+            //       color: Colors.white,
+            //       icon: Icon(Icons.more_vert),
+            //       onPressed: () => Scaffold.of(context).openDrawer(),
+            //     );
+            //   },
+            // ),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+            child: Stack(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            color: Colors.blueGrey[700],
+                            fontFamily: 'Roboto',
+                            letterSpacing: 0.5,
+                            fontSize: 12.0,
                           ),
+                          children: <TextSpan>[
+                            TextSpan(text: "Add from the following "),
+                            TextSpan(
+                              text: 'Sample Application Forms',
+                              style: new TextStyle(
+                                  color: Colors.blueGrey[900],
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  decorationColor: primaryDarkColor),
+                            ),
+                            TextSpan(
+                                text:
+                                    " which you want to enable for your place. User will be able to select the Form and submit the request after selecting the time-slot."),
+                          ],
                         ),
-                        Expanded(
-                          child: (!Utils.isNullOrEmpty(checkBoxListTileModel))
-                              ? ListView.builder(
-                                  // scrollDirection: Axis.horizontal,
-                                  itemCount: checkBoxListTileModel.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return new Card(
-                                      elevation: 2,
-                                      color: Colors.cyan[100],
-                                      margin:
-                                          new EdgeInsets.fromLTRB(0, 5, 0, 5),
-                                      child: Column(
-                                        children: <Widget>[
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Container(
-                                                margin:
-                                                    EdgeInsets.only(left: 5),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .08,
-                                                child: IconButton(
-                                                  padding: EdgeInsets.zero,
-                                                  icon: Icon(
-                                                    Icons.add_circle,
-                                                    color: widget.isReadOnly
-                                                        ? Colors.grey[700]
-                                                        : Colors.cyan[700],
-                                                    size: 30,
-                                                  ),
-                                                  onPressed: () {
-                                                    if (widget.isReadOnly) {
+                      ),
+                      Expanded(
+                        child: (!Utils.isNullOrEmpty(checkBoxListTileModel))
+                            ? ListView.builder(
+                                // scrollDirection: Axis.horizontal,
+                                itemCount: checkBoxListTileModel.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return new Card(
+                                    elevation: 2,
+                                    color: Colors.cyan[100],
+                                    margin: new EdgeInsets.fromLTRB(0, 5, 0, 5),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(left: 5),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .08,
+                                              child: IconButton(
+                                                padding: EdgeInsets.zero,
+                                                icon: Icon(
+                                                  Icons.add_circle,
+                                                  color: widget.isReadOnly
+                                                      ? Colors.grey[700]
+                                                      : Colors.cyan[700],
+                                                  size: 30,
+                                                ),
+                                                onPressed: () {
+                                                  if (widget.isReadOnly) {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info,
+                                                        Duration(seconds: 3),
+                                                        "$noEditPermission Forms",
+                                                        "");
+                                                    return;
+                                                  } else {
+                                                    checkBoxListTileModel[index]
+                                                        .isCheck = true;
+
+                                                    bool isFormAlreadyAdded =
+                                                        false;
+
+                                                    for (MetaForm metaForm
+                                                        in selectedForms) {
+                                                      String origFormId =
+                                                          metaForm.id
+                                                              .split('#')[0];
+                                                      if (checkBoxListTileModel[
+                                                                  index]
+                                                              .form
+                                                              .id ==
+                                                          origFormId) {
+                                                        isFormAlreadyAdded =
+                                                            true;
+                                                      }
+                                                    }
+                                                    if (isFormAlreadyAdded) {
                                                       Utils.showMyFlushbar(
                                                           context,
                                                           Icons.info,
                                                           Duration(seconds: 3),
-                                                          "$noEditPermission Forms",
+                                                          "This Booking Form is already added.",
                                                           "");
-                                                      return;
                                                     } else {
-                                                      checkBoxListTileModel[
-                                                              index]
-                                                          .isCheck = true;
+                                                      _gs
+                                                          .getApplicationService()
+                                                          .getBookingForm(
+                                                              checkBoxListTileModel[
+                                                                      index]
+                                                                  .form
+                                                                  .id)
+                                                          .then((value) {
+                                                        BookingForm
+                                                            bookingForm = value;
 
-                                                      bool isFormAlreadyAdded =
-                                                          false;
+                                                        BookingForm cloneForm =
+                                                            bookingForm.clone();
 
-                                                      for (MetaForm metaForm
-                                                          in selectedForms) {
-                                                        String origFormId =
-                                                            metaForm.id
-                                                                .split('#')[0];
-                                                        if (checkBoxListTileModel[
-                                                                    index]
-                                                                .form
-                                                                .id ==
-                                                            origFormId) {
-                                                          isFormAlreadyAdded =
-                                                              true;
-                                                        }
-                                                      }
-                                                      if (isFormAlreadyAdded) {
-                                                        Utils.showMyFlushbar(
-                                                            context,
-                                                            Icons.info,
-                                                            Duration(
-                                                                seconds: 3),
-                                                            "This Booking Form is already added.",
-                                                            "");
-                                                      } else {
-                                                        _gs
-                                                            .getApplicationService()
-                                                            .getBookingForm(
-                                                                checkBoxListTileModel[
-                                                                        index]
-                                                                    .form
-                                                                    .id)
-                                                            .then((value) {
-                                                          BookingForm
-                                                              bookingForm =
-                                                              value;
+                                                        newlyAddedForms
+                                                            .add(cloneForm);
 
-                                                          BookingForm
-                                                              cloneForm =
-                                                              bookingForm
-                                                                  .clone();
-
-                                                          newlyAddedForms
-                                                              .add(cloneForm);
-
-                                                          setState(() {
-                                                            selectedForms.add(
-                                                                cloneForm
-                                                                    .getMetaForm());
-                                                          });
+                                                        setState(() {
+                                                          selectedForms.add(
+                                                              cloneForm
+                                                                  .getMetaForm());
                                                         });
+                                                      });
 
-                                                        // selectedForms.add(
-                                                        //     checkBoxListTileModel[
-                                                        //             index]
-                                                        //         .form);
+                                                      // selectedForms.add(
+                                                      //     checkBoxListTileModel[
+                                                      //             index]
+                                                      //         .form);
 
-                                                      }
                                                     }
-                                                  },
-                                                ),
+                                                  }
+                                                },
                                               ),
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .68,
-                                                child: AutoSizeText(
-                                                  checkBoxListTileModel[index]
-                                                      .form
-                                                      .name,
-                                                  minFontSize: 9,
-                                                  maxFontSize: 13,
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      letterSpacing: 0.5),
-                                                ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .68,
+                                              child: AutoSizeText(
+                                                checkBoxListTileModel[index]
+                                                    .form
+                                                    .name,
+                                                minFontSize: 9,
+                                                maxFontSize: 13,
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w400,
+                                                    letterSpacing: 0.5),
                                               ),
-                                              Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 5),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .08,
-                                                child: IconButton(
-                                                  padding: EdgeInsets.zero,
-                                                  icon: Icon(
-                                                    Icons.preview,
-                                                    color: primaryIcon,
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.of(context).push(
-                                                        PageAnimation
-                                                            .createRoute(
-                                                                EntityForm(
-                                                      bookingFormId:
-                                                          checkBoxListTileModel[
-                                                                  index]
-                                                              .form
-                                                              .id,
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(right: 5),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .08,
+                                              child: IconButton(
+                                                padding: EdgeInsets.zero,
+                                                icon: Icon(
+                                                  Icons.preview,
+                                                  color: primaryIcon,
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context).push(
+                                                      PageAnimation.createRoute(
+                                                          EntityForm(
+                                                    bookingFormId:
+                                                        checkBoxListTileModel[
+                                                                index]
+                                                            .form
+                                                            .id,
+                                                    metaEntity:
+                                                        widget.metaEntity,
+                                                    preferredSlotTime: widget
+                                                        .preferredSlotTime,
+                                                    backRoute:
+                                                        ManageEntityForms(
+                                                      isFullPermission: widget
+                                                          .isFullPermission,
                                                       metaEntity:
                                                           widget.metaEntity,
                                                       preferredSlotTime: widget
                                                           .preferredSlotTime,
                                                       backRoute:
-                                                          ManageEntityForms(
-                                                        isFullPermission: widget
-                                                            .isFullPermission,
-                                                        metaEntity:
-                                                            widget.metaEntity,
-                                                        preferredSlotTime: widget
-                                                            .preferredSlotTime,
-                                                        backRoute:
-                                                            widget.backRoute,
-                                                        isReadOnly:
-                                                            widget.isReadOnly,
-                                                      ),
-                                                    )));
-                                                  },
-                                                ),
+                                                          widget.backRoute,
+                                                      isReadOnly:
+                                                          widget.isReadOnly,
+                                                    ),
+                                                  )));
+                                                },
                                               ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  })
-                              : Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "No Application Templates.!!",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontFamily: 'RalewayRegular',
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                        ),
-                        Container(
-                          foregroundDecoration: widget.isReadOnly
-                              ? BoxDecoration(
-                                  color: Colors.grey[50],
-                                  backgroundBlendMode: BlendMode.saturation,
-                                )
-                              : BoxDecoration(),
-                          decoration: BoxDecoration(
-                              color: Colors.cyan[100],
-                              border: Border.all(color: Colors.grey[400]),
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(4.0),
-                                  topRight: Radius.circular(4.0))),
-                          width: MediaQuery.of(context).size.width * .92,
-                          padding: EdgeInsets.all(8),
-                          child: RichText(
-                            text: TextSpan(
-                              style: TextStyle(
-                                color: Colors.blueGrey[700],
-                                fontFamily: 'RalewayRegular',
-                                letterSpacing: 0.5,
-                                fontSize: 12.0,
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: 'Application forms added',
-                                  style: new TextStyle(
-                                      color: Colors.blueGrey[900],
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      decorationColor: primaryDarkColor),
-                                ),
-                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                })
+                            : Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "No Application Templates.!!",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontFamily: 'RalewayRegular',
+                                      fontWeight: FontWeight.bold),
+                                )),
+                      ),
+                      Container(
+                        foregroundDecoration: widget.isReadOnly
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
+                        decoration: BoxDecoration(
+                            color: Colors.cyan[100],
+                            border: Border.all(color: Colors.grey[400]),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(4.0),
+                                topRight: Radius.circular(4.0))),
+                        width: MediaQuery.of(context).size.width * .92,
+                        padding: EdgeInsets.all(8),
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              color: Colors.blueGrey[700],
+                              fontFamily: 'RalewayRegular',
+                              letterSpacing: 0.5,
+                              fontSize: 12.0,
                             ),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: 'Application forms added',
+                                style: new TextStyle(
+                                    color: Colors.blueGrey[900],
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    decorationColor: primaryDarkColor),
+                              ),
+                            ],
                           ),
                         ),
-                        Expanded(
-                            child: Container(
-                          width: MediaQuery.of(context).size.width * .92,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[400]),
-                              color: Colors.white,
-                              shape: BoxShape.rectangle,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(2.0))),
-                          child: (!Utils.isNullOrEmpty(selectedForms))
-                              ? ListView.builder(
+                      ),
+                      Expanded(
+                          child: Container(
+                        width: MediaQuery.of(context).size.width * .92,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[400]),
+                            color: Colors.white,
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(2.0))),
+                        child: (!Utils.isNullOrEmpty(selectedForms))
+                            ? ListView.builder(
 
-                                  // scrollDirection: Axis.horizontal,
-                                  itemCount: selectedForms.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return new Container(
-                                      foregroundDecoration: widget.isReadOnly
-                                          ? BoxDecoration(
-                                              color: Colors.grey[50],
-                                              backgroundBlendMode:
-                                                  BlendMode.saturation,
-                                            )
-                                          : BoxDecoration(),
-                                      padding: EdgeInsets.zero,
-                                      margin: EdgeInsets.zero,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Container(
-                                            padding:
-                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                            margin: EdgeInsets.zero,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    IconButton(
-                                                      alignment:
-                                                          Alignment.topCenter,
-                                                      icon: Icon(
-                                                        Icons.remove_circle,
-                                                        color: Colors.cyan[700],
-                                                        size: 30,
-                                                      ),
-                                                      onPressed: () {
-                                                        if (widget.isReadOnly) {
-                                                          Utils.showMyFlushbar(
-                                                              context,
-                                                              Icons.info,
-                                                              Duration(
-                                                                  seconds: 3),
-                                                              "$noEditPermission Forms",
-                                                              "");
-                                                          return;
+                                // scrollDirection: Axis.horizontal,
+                                itemCount: selectedForms.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return new Container(
+                                    foregroundDecoration: widget.isReadOnly
+                                        ? BoxDecoration(
+                                            color: Colors.grey[50],
+                                            backgroundBlendMode:
+                                                BlendMode.saturation,
+                                          )
+                                        : BoxDecoration(),
+                                    padding: EdgeInsets.zero,
+                                    margin: EdgeInsets.zero,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                          margin: EdgeInsets.zero,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  IconButton(
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    icon: Icon(
+                                                      Icons.remove_circle,
+                                                      color: Colors.cyan[700],
+                                                      size: 30,
+                                                    ),
+                                                    onPressed: () {
+                                                      if (widget.isReadOnly) {
+                                                        Utils.showMyFlushbar(
+                                                            context,
+                                                            Icons.info,
+                                                            Duration(
+                                                                seconds: 3),
+                                                            "$noEditPermission Forms",
+                                                            "");
+                                                        return;
+                                                      }
+
+                                                      //If the form being deleted is newly added just delete it
+                                                      // else if its old form of entity delete the ref from entity.forms
+                                                      int indexToBeRemoved;
+
+                                                      for (int i = 0;
+                                                          i <
+                                                              newlyAddedForms
+                                                                  .length;
+                                                          i++) {
+                                                        if (newlyAddedForms[i]
+                                                                .id ==
+                                                            selectedForms[index]
+                                                                .id) {
+                                                          indexToBeRemoved = i;
+                                                          break;
                                                         }
+                                                      }
 
-                                                        //If the form being deleted is newly added just delete it
-                                                        // else if its old form of entity delete the ref from entity.forms
-                                                        int indexToBeRemoved;
+                                                      if (indexToBeRemoved !=
+                                                          null)
+                                                        newlyAddedForms.removeAt(
+                                                            indexToBeRemoved);
+                                                      else {
+                                                        int indexToBeRemovedForEntityForms;
 
                                                         for (int i = 0;
                                                             i <
-                                                                newlyAddedForms
+                                                                entity.forms
                                                                     .length;
                                                             i++) {
-                                                          if (newlyAddedForms[i]
+                                                          if (entity.forms[i]
                                                                   .id ==
                                                               selectedForms[
                                                                       index]
                                                                   .id) {
-                                                            indexToBeRemoved =
+                                                            indexToBeRemovedForEntityForms =
                                                                 i;
                                                             break;
                                                           }
                                                         }
 
-                                                        if (indexToBeRemoved !=
-                                                            null)
-                                                          newlyAddedForms.removeAt(
-                                                              indexToBeRemoved);
-                                                        else {
-                                                          int indexToBeRemovedForEntityForms;
-
-                                                          for (int i = 0;
-                                                              i <
-                                                                  entity.forms
-                                                                      .length;
-                                                              i++) {
-                                                            if (entity.forms[i]
-                                                                    .id ==
-                                                                selectedForms[
-                                                                        index]
-                                                                    .id) {
-                                                              indexToBeRemovedForEntityForms =
-                                                                  i;
-                                                              break;
-                                                            }
-                                                          }
-
-                                                          if (indexToBeRemovedForEntityForms !=
-                                                              null) {
-                                                            entityDeletedForms.add(
-                                                                selectedForms[
-                                                                        index]
-                                                                    .id);
-                                                          }
-                                                        }
-                                                        selectedForms
-                                                            .removeAt(index);
-
-                                                        print(selectedForms
-                                                            .length);
-                                                        setState(() {});
-                                                      },
-                                                    ),
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          margin: EdgeInsets
-                                                              .fromLTRB(
-                                                                  10, 10, 0, 0),
-                                                          child: Text(
-                                                            selectedForms[index]
-                                                                .name,
-                                                            style: TextStyle(
-                                                                fontSize: 15,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                letterSpacing:
-                                                                    0.5),
-                                                          ),
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            Checkbox(
-                                                              visualDensity:
-                                                                  VisualDensity
-                                                                      .compact,
-                                                              value: selectedForms[
-                                                                              index]
-                                                                          .autoApproved ==
-                                                                      null
-                                                                  ? false
-                                                                  : selectedForms[
+                                                        if (indexToBeRemovedForEntityForms !=
+                                                            null) {
+                                                          entityDeletedForms
+                                                              .add(
+                                                                  selectedForms[
                                                                           index]
-                                                                      .autoApproved,
-                                                              onChanged:
-                                                                  (value) {
-                                                                if (widget
-                                                                    .isReadOnly) {
-                                                                  Utils.showMyFlushbar(
-                                                                      context,
-                                                                      Icons
-                                                                          .info,
-                                                                      Duration(
-                                                                          seconds:
-                                                                              4),
-                                                                      "Only Admin/Manager can modify the details.",
-                                                                      "");
-                                                                } else {
+                                                                      .id);
+                                                        }
+                                                      }
+                                                      selectedForms
+                                                          .removeAt(index);
+
+                                                      print(
+                                                          selectedForms.length);
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Container(
+                                                        margin:
+                                                            EdgeInsets.fromLTRB(
+                                                                10, 10, 0, 0),
+                                                        child: Text(
+                                                          selectedForms[index]
+                                                              .name,
+                                                          style: TextStyle(
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              letterSpacing:
+                                                                  0.5),
+                                                        ),
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Checkbox(
+                                                            visualDensity:
+                                                                VisualDensity
+                                                                    .compact,
+                                                            value: selectedForms[
+                                                                            index]
+                                                                        .autoApproved ==
+                                                                    null
+                                                                ? false
+                                                                : selectedForms[
+                                                                        index]
+                                                                    .autoApproved,
+                                                            onChanged: (value) {
+                                                              if (widget
+                                                                  .isReadOnly) {
+                                                                Utils.showMyFlushbar(
+                                                                    context,
+                                                                    Icons.info,
+                                                                    Duration(
+                                                                        seconds:
+                                                                            4),
+                                                                    "Only Admin/Manager can modify the details.",
+                                                                    "");
+                                                              } else {
 //Update entity forms or newlyAddedForms
-                                                                  bool
-                                                                      isFormNew =
-                                                                      false;
-                                                                  for (int i =
-                                                                          0;
-                                                                      i <
-                                                                          newlyAddedForms
-                                                                              .length;
-                                                                      i++) {
-                                                                    if (newlyAddedForms[i]
-                                                                            .id ==
+                                                                bool isFormNew =
+                                                                    false;
+                                                                for (int i = 0;
+                                                                    i <
+                                                                        newlyAddedForms
+                                                                            .length;
+                                                                    i++) {
+                                                                  if (newlyAddedForms[
+                                                                              i]
+                                                                          .id ==
+                                                                      selectedForms[
+                                                                              index]
+                                                                          .id) {
+                                                                    newlyAddedForms[i]
+                                                                            .autoApproved =
+                                                                        value;
+                                                                    isFormNew =
+                                                                        true;
+                                                                    break;
+                                                                  }
+                                                                }
+                                                                if (!isFormNew) {
+                                                                  for (var form
+                                                                      in entity
+                                                                          .forms) {
+                                                                    if (form.id ==
                                                                         selectedForms[index]
                                                                             .id) {
-                                                                      newlyAddedForms[i]
+                                                                      selectedForms[index]
                                                                               .autoApproved =
                                                                           value;
-                                                                      isFormNew =
-                                                                          true;
-                                                                      break;
+                                                                      entityModifiedForms.add(
+                                                                          selectedForms[
+                                                                              index]);
                                                                     }
                                                                   }
-                                                                  if (!isFormNew) {
-                                                                    for (var form
-                                                                        in entity
-                                                                            .forms) {
-                                                                      if (form.id ==
-                                                                          selectedForms[index]
-                                                                              .id) {
-                                                                        selectedForms[index].autoApproved =
-                                                                            value;
-                                                                        entityModifiedForms
-                                                                            .add(selectedForms[index]);
-                                                                      }
-                                                                    }
-                                                                  }
-                                                                  setState(() {
-                                                                    selectedForms[
-                                                                            index]
-                                                                        .autoApproved = value;
-                                                                  });
                                                                 }
-                                                              },
-                                                              activeColor:
-                                                                  primaryIcon,
-                                                              checkColor:
-                                                                  primaryAccentColor,
+                                                                setState(() {
+                                                                  selectedForms[
+                                                                          index]
+                                                                      .autoApproved = value;
+                                                                });
+                                                              }
+                                                            },
+                                                            activeColor:
+                                                                primaryIcon,
+                                                            checkColor:
+                                                                primaryAccentColor,
+                                                          ),
+                                                          Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .66,
+                                                            child: Text(
+                                                              "Automatically issue Token when user submits the request.",
+                                                              style: TextStyle(
+                                                                  fontSize: 11),
                                                             ),
-                                                            Container(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  .66,
-                                                              child: Text(
-                                                                "Automatically issue Token when user submits the request.",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        11),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                                //TODO Phase2 - dont delete
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              //TODO Phase2 - dont delete
 //                                             IconButton(
 //                                               icon: Icon(
 //                                                 Icons.preview,
@@ -713,186 +695,123 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
 //                                                 )));
 //                                               },
 //                                             ),
-                                              ],
-                                            ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                    );
-                                  })
-                              : Container(
-                                  width: MediaQuery.of(context).size.width * .9,
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "No Forms added for your place!",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontFamily: 'RalewayRegular',
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                        )),
-                        Container(
-                          foregroundDecoration: widget.isReadOnly
-                              ? BoxDecoration(
-                                  color: Colors.grey[50],
-                                  backgroundBlendMode: BlendMode.saturation,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                })
+                            : Container(
+                                width: MediaQuery.of(context).size.width * .9,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "No Forms added for your place!",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontFamily: 'RalewayRegular',
+                                      fontWeight: FontWeight.bold),
+                                )),
+                      )),
+                      Container(
+                        foregroundDecoration: widget.isReadOnly
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
+                        width: MediaQuery.of(context).size.width * .92,
+                        child: MaterialButton(
+                            color: btnColor,
+                            elevation: 5,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Save Changes ",
+                                  style: btnTextStyle,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Icon(
+                                  Icons.save,
+                                  color: Colors.white,
                                 )
-                              : BoxDecoration(),
-                          width: MediaQuery.of(context).size.width * .92,
-                          child: MaterialButton(
-                              color: btnColor,
-                              elevation: 5,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Save Changes ",
-                                    style: btnTextStyle,
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Icon(
-                                    Icons.save,
-                                    color: Colors.white,
-                                  )
-                                ],
-                              ),
-                              splashColor: highlightColor,
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[500]),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0))),
-                              onPressed: () async {
-                                //Save Entity with updated changes.
-                                if (widget.isReadOnly) {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.info,
-                                      Duration(seconds: 3),
-                                      "$noEditPermission Forms",
-                                      "");
-                                  return;
-                                } else {
-                                  setState(() {
-                                    showLoading = true;
-                                  });
+                              ],
+                            ),
+                            splashColor: highlightColor,
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.blueGrey[500]),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0))),
+                            onPressed: () async {
+                              //Save Entity with updated changes.
+                              if (widget.isReadOnly) {
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.info,
+                                    Duration(seconds: 3),
+                                    "$noEditPermission Forms",
+                                    "");
+                                return;
+                              } else {
+                                setState(() {
+                                  showLoading = true;
+                                });
 
-                                  if (entity.forms == null) entity.forms = [];
-                                  bool entityModified = false;
-                                  //If all pre existing forms for entity are deleted.
-                                  if (Utils.isNullOrEmpty(selectedForms) &&
-                                      (!Utils.isNullOrEmpty(entity.forms))) {
-                                    entity.forms.clear();
-                                    _gs.putEntity(entity, true).then((value) {
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.check,
-                                          Duration(seconds: 2),
-                                          "Saved Application Form Successfully!",
-                                          "",
-                                          successGreenSnackBar);
-                                      setState(() {
-                                        showLoading = false;
-                                      });
-                                      // Navigator.of(context).pop();
-                                      if (widget.backRoute != null)
-                                        Navigator.of(context).push(
-                                            PageAnimation.createRoute(
-                                                widget.backRoute));
+                                if (entity.forms == null) entity.forms = [];
+                                bool entityModified = false;
+                                //If all pre existing forms for entity are deleted.
+                                if (Utils.isNullOrEmpty(selectedForms) &&
+                                    (!Utils.isNullOrEmpty(entity.forms))) {
+                                  entity.forms.clear();
+                                  _gs.putEntity(entity, true).then((value) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.check,
+                                        Duration(seconds: 2),
+                                        "Saved Application Form Successfully!",
+                                        "",
+                                        successGreenSnackBar);
+                                    setState(() {
+                                      showLoading = false;
                                     });
-                                  } else {
-                                    //Check if any existing forms in entity are modified
-                                    for (int i = 0;
-                                        i < entityModifiedForms.length;
-                                        i++) {
-                                      for (int j = 0;
-                                          j < entity.forms.length;
-                                          j++) {
-                                        if (entity.forms[j].id ==
-                                            entityModifiedForms[i].id) {
-                                          entity.forms[j].autoApproved =
-                                              entityModifiedForms[i]
-                                                  .autoApproved;
-                                          entityModified = true;
-                                          BookingForm bf = await _gs
-                                              .getApplicationService()
-                                              .getBookingForm(
-                                                  entity.forms[j].id);
-                                          bf.autoApproved =
-                                              entityModifiedForms[i]
-                                                  .autoApproved;
-                                          bool isFormSaved = await _gs
-                                              .getApplicationService()
-                                              .saveBookingForm(bf);
-
-                                          if (!isFormSaved) {
-                                            Utils.showMyFlushbar(
-                                                context,
-                                                Icons.info,
-                                                Duration(seconds: 5),
-                                                "Oho..Could not save the Application Form changes.",
-                                                "Please try again.");
-                                            setState(() {
-                                              showLoading = false;
-                                            });
-                                          }
-                                        }
-                                      }
-
-                                      entityModified = true;
-                                    }
-                                    //Check if any existing forms in entity are deleted
-                                    if (!Utils.isNullOrEmpty(
-                                        entityDeletedForms)) {
-                                      for (int i = 0;
-                                          i < entityDeletedForms.length;
-                                          i++) {
-                                        entity.forms.removeWhere((element) =>
-                                            element.id ==
-                                            entityDeletedForms[i]);
+                                    // Navigator.of(context).pop();
+                                    if (widget.backRoute != null)
+                                      Navigator.of(context).push(
+                                          PageAnimation.createRoute(
+                                              widget.backRoute));
+                                  });
+                                } else {
+                                  //Check if any existing forms in entity are modified
+                                  for (int i = 0;
+                                      i < entityModifiedForms.length;
+                                      i++) {
+                                    for (int j = 0;
+                                        j < entity.forms.length;
+                                        j++) {
+                                      if (entity.forms[j].id ==
+                                          entityModifiedForms[i].id) {
+                                        entity.forms[j].autoApproved =
+                                            entityModifiedForms[i].autoApproved;
                                         entityModified = true;
-                                      }
-                                    }
-                                    if (!Utils.isNullOrEmpty(
-                                        entityModifiedForms)) {
-                                      for (int i = 0;
-                                          i < entityModifiedForms.length;
-                                          i++) {
-                                        for (var form in entity.forms) {
-                                          if (form.id ==
-                                              entityModifiedForms[i].id) {
-                                            form.autoApproved =
-                                                entityModifiedForms[i]
-                                                    .autoApproved;
-                                          }
-                                        }
-
-                                        entityModified = true;
-                                      }
-                                    }
-
-                                    //Check if any newly added forms are there
-                                    if (!Utils.isNullOrEmpty(newlyAddedForms)) {
-                                      for (int i = 0;
-                                          i < newlyAddedForms.length;
-                                          i++) {
+                                        BookingForm bf = await _gs
+                                            .getApplicationService()
+                                            .getBookingForm(entity.forms[j].id);
+                                        bf.autoApproved =
+                                            entityModifiedForms[i].autoApproved;
                                         bool isFormSaved = await _gs
                                             .getApplicationService()
-                                            .saveBookingForm(
-                                                newlyAddedForms[i]);
+                                            .saveBookingForm(bf);
 
-                                        if (isFormSaved) {
-                                          entity.forms.add(
-                                              newlyAddedForms[i].getMetaForm());
-                                          entityModified = true;
-                                        } else {
+                                        if (!isFormSaved) {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.info,
                                               Duration(seconds: 5),
-                                              "Oho..Could not add the Application Form.",
+                                              "Oho..Could not save the Application Form changes.",
                                               "Please try again.");
                                           setState(() {
                                             showLoading = false;
@@ -900,120 +819,173 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                         }
                                       }
                                     }
+
+                                    entityModified = true;
                                   }
-                                  //SAVE Entity
-                                  if (entityModified) {
-                                    _gs.putEntity(entity, true).then((value) {
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.check,
-                                          Duration(seconds: 2),
-                                          "Saved Application Forms.",
-                                          "",
-                                          successGreenSnackBar,
-                                          Colors.white,
-                                          true);
-                                      setState(() {
-                                        showLoading = false;
-                                      });
-                                      Future.delayed(Duration(seconds: 2))
-                                          .then((value) {
-                                        // Navigator.of(context).pop();
-                                        if (widget.backRoute != null)
-                                          Navigator.of(context).push(
-                                              PageAnimation.createRoute(
-                                                  widget.backRoute));
-                                      });
-                                    });
+                                  //Check if any existing forms in entity are deleted
+                                  if (!Utils.isNullOrEmpty(
+                                      entityDeletedForms)) {
+                                    for (int i = 0;
+                                        i < entityDeletedForms.length;
+                                        i++) {
+                                      entity.forms.removeWhere((element) =>
+                                          element.id == entityDeletedForms[i]);
+                                      entityModified = true;
+                                    }
+                                  }
+                                  if (!Utils.isNullOrEmpty(
+                                      entityModifiedForms)) {
+                                    for (int i = 0;
+                                        i < entityModifiedForms.length;
+                                        i++) {
+                                      for (var form in entity.forms) {
+                                        if (form.id ==
+                                            entityModifiedForms[i].id) {
+                                          form.autoApproved =
+                                              entityModifiedForms[i]
+                                                  .autoApproved;
+                                        }
+                                      }
+
+                                      entityModified = true;
+                                    }
+                                  }
+
+                                  //Check if any newly added forms are there
+                                  if (!Utils.isNullOrEmpty(newlyAddedForms)) {
+                                    for (int i = 0;
+                                        i < newlyAddedForms.length;
+                                        i++) {
+                                      bool isFormSaved = await _gs
+                                          .getApplicationService()
+                                          .saveBookingForm(newlyAddedForms[i]);
+
+                                      if (isFormSaved) {
+                                        entity.forms.add(
+                                            newlyAddedForms[i].getMetaForm());
+                                        entityModified = true;
+                                      } else {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            "Oho..Could not add the Application Form.",
+                                            "Please try again.");
+                                        setState(() {
+                                          showLoading = false;
+                                        });
+                                      }
+                                    }
                                   }
                                 }
-                              }),
-                        )
-                      ],
-                    ),
+                                //SAVE Entity
+                                if (entityModified) {
+                                  _gs.putEntity(entity, true).then((value) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.check,
+                                        Duration(seconds: 2),
+                                        "Saved Application Forms.",
+                                        "",
+                                        successGreenSnackBar,
+                                        Colors.white,
+                                        true);
+                                    setState(() {
+                                      showLoading = false;
+                                    });
+                                    Future.delayed(Duration(seconds: 2))
+                                        .then((value) {
+                                      // Navigator.of(context).pop();
+                                      if (widget.backRoute != null)
+                                        Navigator.of(context).push(
+                                            PageAnimation.createRoute(
+                                                widget.backRoute));
+                                    });
+                                  });
+                                }
+                              }
+                            }),
+                      )
+                    ],
                   ),
-                  if (showLoading)
-                    Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 10.0, bottom: 10),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          color: Colors.black.withOpacity(.5),
-                          // decoration: BoxDecoration(
-                          //   color: Colors.white,
-                          //   backgroundBlendMode: BlendMode.saturation,
-                          // ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                color: Colors.transparent,
-                                padding: EdgeInsets.all(12),
-                                width: MediaQuery.of(context).size.width * .15,
-                                height: MediaQuery.of(context).size.width * .15,
-                                child: CircularProgressIndicator(
-                                  backgroundColor: Colors.black,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            ],
-                          ),
+                ),
+                if (showLoading)
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 10),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        color: Colors.black.withOpacity(.5),
+                        // decoration: BoxDecoration(
+                        //   color: Colors.white,
+                        //   backgroundBlendMode: BlendMode.saturation,
+                        // ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              color: Colors.transparent,
+                              padding: EdgeInsets.all(12),
+                              width: MediaQuery.of(context).size.width * .15,
+                              height: MediaQuery.of(context).size.width * .15,
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.black,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                                strokeWidth: 2,
+                              ),
+                            )
+                          ],
                         ),
                       ),
-                    )
-                ],
-              ),
+                    ),
+                  )
+              ],
             ),
           ),
-          onWillPop: () async {
-            return true;
-          },
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: highlightColor,
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  print("going back");
-                  Navigator.of(context).pop();
-                },
-              ),
-              title: Text("Booking Request Form",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[],
+            flexibleSpace: Container(
+              decoration: gradientBackground,
             ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
+            leading: IconButton(
+              padding: EdgeInsets.all(0),
+              alignment: Alignment.center,
+              highlightColor: highlightColor,
+              icon: Icon(Icons.arrow_back),
+              color: Colors.white,
+              onPressed: () {
+                print("going back");
+                Navigator.of(context).pop();
+              },
             ),
-            //drawer: CustomDrawer(),
-            //bottomNavigationBar: CustomBottomBar(barIndex: 0),
+            title: Text("Booking Request Form",
+                style: TextStyle(color: Colors.white, fontSize: 16)),
           ),
-          onWillPop: () async {
-            return true;
-          },
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

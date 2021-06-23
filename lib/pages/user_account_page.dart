@@ -1062,333 +1062,432 @@ class _UserAccountPageState extends State<UserAccountPage>
     String inviteSubject = "Invite friends via..";
     String title = "My Account";
     if (_initCompleted) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: title,
-            ),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height * .72,
-                  child: Scrollbar(
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width * .036),
-                      child: Column(
-                        //  mainAxisSize: MainAxisSize.max,
-                        // mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          //verticalSpacer,
-                          Card(
-                            margin: EdgeInsets.zero,
-                            elevation: 20,
-                            child: Container(
-                              color: Colors.transparent,
-                              height: MediaQuery.of(context).size.height * .15,
-                              width: MediaQuery.of(context).size.width * .95,
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        .07,
-                                    width:
-                                        MediaQuery.of(context).size.width * .25,
-                                    child: Image(
-                                      image:
-                                          AssetImage('assets/user_account.png'),
-                                    ),
+      return WillPopScope(
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: title,
+          ),
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height * .72,
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * .036),
+                    child: Column(
+                      //  mainAxisSize: MainAxisSize.max,
+                      // mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        //verticalSpacer,
+                        Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 20,
+                          child: Container(
+                            color: Colors.transparent,
+                            height: MediaQuery.of(context).size.height * .15,
+                            width: MediaQuery.of(context).size.width * .95,
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .07,
+                                  width:
+                                      MediaQuery.of(context).size.width * .25,
+                                  child: Image(
+                                    image:
+                                        AssetImage('assets/user_account.png'),
                                   ),
-                                  horizontalSpacer,
-                                  RichText(
-                                      text: TextSpan(
-                                          style: userAccountHeadingTextStyle,
-                                          children: <TextSpan>[
-                                        TextSpan(text: userAccountHeadingTxt),
-                                        TextSpan(text: "\n"),
-                                        TextSpan(
-                                          text: _gs.getCurrentUser() != null
-                                              ? _gs.getCurrentUser().ph
-                                              : "",
-                                        )
-                                      ])),
-                                ],
-                              ),
+                                ),
+                                horizontalSpacer,
+                                RichText(
+                                    text: TextSpan(
+                                        style: userAccountHeadingTextStyle,
+                                        children: <TextSpan>[
+                                      TextSpan(text: userAccountHeadingTxt),
+                                      TextSpan(text: "\n"),
+                                      TextSpan(
+                                        text: _gs.getCurrentUser() != null
+                                            ? _gs.getCurrentUser().ph
+                                            : "",
+                                      )
+                                    ])),
+                              ],
                             ),
                           ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * .03,
-                          ),
-                          Card(
-                            margin: EdgeInsets.zero,
-                            elevation: 20,
-                            child: Container(
-                                padding: EdgeInsets.all(5),
-                                width: MediaQuery.of(context).size.width * .95,
-                                decoration: BoxDecoration(
-                                    // border: Border.all(color: containerColor),
-                                    color: Colors.grey[50],
-                                    shape: BoxShape.rectangle,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5.0))),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .43,
-                                      child: MaterialButton(
-                                          color: btnColor,
-                                          textColor: Colors.white,
-                                          splashColor: highlightColor,
-                                          onPressed: () {
-                                            openPlayStoreAndRate();
-                                            Utils.showMyFlushbar(
-                                                context,
-                                                Icons.help_outline,
-                                                Duration(seconds: 3),
-                                                "Thanks!!",
-                                                ratingMsg);
-                                          },
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Icon(Icons.star),
-                                                horizontalSpacer,
-                                                Text(
-                                                  ' Rate the app',
-                                                  style:
-                                                      TextStyle(fontSize: 12),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ])),
-                                    ),
-                                    horizontalSpacer,
-                                    Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .43,
-                                      child: MaterialButton(
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * .03,
+                        ),
+                        Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 20,
+                          child: Container(
+                              padding: EdgeInsets.all(5),
+                              width: MediaQuery.of(context).size.width * .95,
+                              decoration: BoxDecoration(
+                                  // border: Border.all(color: containerColor),
+                                  color: Colors.grey[50],
+                                  shape: BoxShape.rectangle,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0))),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .43,
+                                    child: MaterialButton(
                                         color: btnColor,
                                         textColor: Colors.white,
                                         splashColor: highlightColor,
-                                        onPressed: inviteText.isEmpty
-                                            ? null
-                                            : () {
-                                                // A builder is used to retrieve the context immediately
-                                                // surrounding the RaisedButton.
-                                                //
-                                                // The context's `findRenderObject` returns the first
-                                                // RenderObject in its descendent tree when it's not
-                                                // a RenderObjectWidget. The RaisedButton's RenderObject
-                                                // has its position and size after it's built.
-                                                final RenderBox box =
-                                                    context.findRenderObject();
-
-                                                Utils.generateLinkAndShare(
-                                                    null,
-                                                    appShareHeading,
-                                                    appShareMessage,
-                                                    _gs
-                                                        .getConfigurations()
-                                                        .packageName,
-                                                    _gs
-                                                        .getConfigurations()
-                                                        .iOSAppId);
-                                              },
+                                        onPressed: () {
+                                          openPlayStoreAndRate();
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.help_outline,
+                                              Duration(seconds: 3),
+                                              "Thanks!!",
+                                              ratingMsg);
+                                        },
                                         child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: <Widget>[
-                                              Icon(Icons.share),
+                                              Icon(Icons.star),
                                               horizontalSpacer,
                                               Text(
-                                                'Invite friends',
+                                                ' Rate the app',
                                                 style: TextStyle(fontSize: 12),
                                                 textAlign: TextAlign.center,
                                               ),
-                                            ]),
-                                      ),
+                                            ])),
+                                  ),
+                                  horizontalSpacer,
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .43,
+                                    child: MaterialButton(
+                                      color: btnColor,
+                                      textColor: Colors.white,
+                                      splashColor: highlightColor,
+                                      onPressed: inviteText.isEmpty
+                                          ? null
+                                          : () {
+                                              // A builder is used to retrieve the context immediately
+                                              // surrounding the RaisedButton.
+                                              //
+                                              // The context's `findRenderObject` returns the first
+                                              // RenderObject in its descendent tree when it's not
+                                              // a RenderObjectWidget. The RaisedButton's RenderObject
+                                              // has its position and size after it's built.
+                                              final RenderBox box =
+                                                  context.findRenderObject();
+
+                                              Utils.generateLinkAndShare(
+                                                  null,
+                                                  appShareHeading,
+                                                  appShareMessage,
+                                                  _gs
+                                                      .getConfigurations()
+                                                      .packageName,
+                                                  _gs
+                                                      .getConfigurations()
+                                                      .iOSAppId);
+                                            },
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(Icons.share),
+                                            horizontalSpacer,
+                                            Text(
+                                              'Invite friends',
+                                              style: TextStyle(fontSize: 12),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ]),
                                     ),
-                                  ],
-                                )),
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * .03,
-                          ),
-                          Card(
-                            margin: EdgeInsets.zero,
-                            elevation: 20,
-                            child: Theme(
-                              data: ThemeData(
-                                unselectedWidgetColor: Colors.grey[600],
-                                accentColor: btnColor,
+                                  ),
+                                ],
+                              )),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * .03,
+                        ),
+                        Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 20,
+                          child: Theme(
+                            data: ThemeData(
+                              unselectedWidgetColor: Colors.grey[600],
+                              accentColor: btnColor,
+                            ),
+                            child: ExpansionTile(
+                              //key: PageStorageKey(this.widget.headerTitle),
+                              initiallyExpanded: keepExpandedAppls,
+                              title: Text(
+                                "My Applications",
+                                style: TextStyle(
+                                    color: Colors.blueGrey[700], fontSize: 17),
                               ),
-                              child: ExpansionTile(
-                                //key: PageStorageKey(this.widget.headerTitle),
-                                initiallyExpanded: keepExpandedAppls,
-                                title: Text(
-                                  "My Applications",
-                                  style: TextStyle(
-                                      color: Colors.blueGrey[700],
-                                      fontSize: 17),
-                                ),
-                                backgroundColor: Colors.white,
-                                leading: Icon(
-                                  Icons.app_registration,
-                                  color: primaryIcon,
-                                ),
-                                onExpansionChanged: (value) {
-                                  if (value) {
+                              backgroundColor: Colors.white,
+                              leading: Icon(
+                                Icons.app_registration,
+                                color: primaryIcon,
+                              ),
+                              onExpansionChanged: (value) {
+                                if (value) {
+                                  setState(() {
+                                    showLoadingAppls = true;
+                                  });
+
+                                  _gs
+                                      .getApplicationService()
+                                      .getApplications(
+                                          null,
+                                          null,
+                                          null,
+                                          _gs.getCurrentUser().ph,
+                                          null,
+                                          null,
+                                          null,
+                                          "timeOfSubmission",
+                                          true,
+                                          null,
+                                          null,
+                                          3)
+                                      .then((value) {
+                                    _listOfApplications = value;
+                                    if (Utils.isNullOrEmpty(
+                                        _listOfApplications)) {
+                                      noAppls = true;
+                                    }
                                     setState(() {
-                                      showLoadingAppls = true;
+                                      showLoadingAppls = false;
                                     });
+                                  });
+                                }
+                              },
 
-                                    _gs
-                                        .getApplicationService()
-                                        .getApplications(
-                                            null,
-                                            null,
-                                            null,
-                                            _gs.getCurrentUser().ph,
-                                            null,
-                                            null,
-                                            null,
-                                            "timeOfSubmission",
-                                            true,
-                                            null,
-                                            null,
-                                            3)
-                                        .then((value) {
-                                      _listOfApplications = value;
-                                      if (Utils.isNullOrEmpty(
-                                          _listOfApplications)) {
-                                        noAppls = true;
-                                      }
-                                      setState(() {
-                                        showLoadingAppls = false;
-                                      });
-                                    });
-                                  }
-                                },
-
-                                children: <Widget>[
-                                  if (!Utils.isNullOrEmpty(_listOfApplications))
-                                    ListView.builder(
-                                      padding: EdgeInsets.all(
-                                          MediaQuery.of(context).size.width *
-                                              .026),
-                                      scrollDirection: Axis.vertical,
-                                      controller: _childScrollControllerAppls,
-                                      physics: ClampingScrollPhysics(),
-                                      reverse: false,
+                              children: <Widget>[
+                                if (!Utils.isNullOrEmpty(_listOfApplications))
+                                  ListView.builder(
+                                    padding: EdgeInsets.all(
+                                        MediaQuery.of(context).size.width *
+                                            .026),
+                                    scrollDirection: Axis.vertical,
+                                    controller: _childScrollControllerAppls,
+                                    physics: ClampingScrollPhysics(),
+                                    reverse: false,
+                                    shrinkWrap: true,
+                                    //itemExtent: itemSize,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        //margin: EdgeInsets.only(bottom: 5),
+                                        child: UserApplicationsList(
+                                          ba: _listOfApplications[index].item1,
+                                        ),
+                                      );
+                                    },
+                                    itemCount: _listOfApplications.length,
+                                  ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    if (Utils.isNotNullOrEmpty(
+                                        loadMoreApplicationsMsg))
+                                      Row(
+                                        children: [
+                                          Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 10, bottom: 15),
+                                              child: AutoSizeText(
+                                                loadMoreApplicationsMsg,
+                                                minFontSize: 11,
+                                                maxFontSize: 17,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                ),
+                                              ))
+                                        ],
+                                      ),
+                                    if (Utils.isStrNullOrEmpty(
+                                            loadMoreApplicationsMsg) &&
+                                        !noAppls)
+                                      Container(
+                                        margin: EdgeInsets.all(10),
+                                        child: MaterialButton(
+                                          shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                  color: Colors.blueGrey),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(3.0))),
+                                          child: Column(
+                                            children: [
+                                              Text('Show more Applications',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.blue)),
+                                            ],
+                                          ),
+                                          onPressed: () {
+                                            loadMoreApplications();
+                                          },
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                if (showLoadingAppls) showCircularProgress(),
+                                if (!showLoadingAppls &&
+                                    Utils.isNullOrEmpty(_listOfApplications))
+                                  _emptyStorePage(
+                                      "No Applications yet.. ", bookNowMsg),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * .03,
+                        ),
+                        Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 20,
+                          child: Theme(
+                            data: ThemeData(
+                              unselectedWidgetColor: Colors.grey[600],
+                              accentColor: btnColor,
+                            ),
+                            child: ExpansionTile(
+                              //key: PageStorageKey(this.widget.headerTitle),
+                              initiallyExpanded: true,
+                              title: Text(
+                                "Upcoming Bookings",
+                                style: TextStyle(
+                                    color: Colors.blueGrey[700], fontSize: 17),
+                              ),
+                              backgroundColor: Colors.white,
+                              leading: Icon(
+                                Icons.date_range,
+                                color: primaryIcon,
+                              ),
+                              children: <Widget>[
+                                if (_upcomingBkgStatus == 'Success')
+                                  Scrollbar(
+                                    child: ListView.builder(
                                       shrinkWrap: true,
-                                      //itemExtent: itemSize,
+                                      scrollDirection: Axis.vertical,
+                                      physics: ClampingScrollPhysics(),
                                       itemBuilder:
                                           (BuildContext context, int index) {
                                         return Container(
-                                          //margin: EdgeInsets.only(bottom: 5),
-                                          child: UserApplicationsList(
-                                            ba: _listOfApplications[index]
-                                                .item1,
-                                          ),
-                                        );
+                                            child: _buildItem(
+                                                _newBookingsList[index],
+                                                _newBookingsList,
+                                                index)
+
+                                            //children: <Widget>[firstRow, secondRow],
+                                            );
                                       },
-                                      itemCount: _listOfApplications.length,
+                                      itemCount: _newBookingsList.length,
                                     ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      if (Utils.isNotNullOrEmpty(
-                                          loadMoreApplicationsMsg))
-                                        Row(
-                                          children: [
-                                            Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 10, bottom: 15),
-                                                child: AutoSizeText(
-                                                  loadMoreApplicationsMsg,
-                                                  minFontSize: 11,
-                                                  maxFontSize: 17,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                  ),
-                                                ))
-                                          ],
-                                        ),
-                                      if (Utils.isStrNullOrEmpty(
-                                              loadMoreApplicationsMsg) &&
-                                          !noAppls)
-                                        Container(
-                                          margin: EdgeInsets.all(10),
-                                          child: MaterialButton(
-                                            shape: RoundedRectangleBorder(
-                                                side: BorderSide(
-                                                    color: Colors.blueGrey),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(3.0))),
-                                            child: Column(
-                                              children: [
-                                                Text('Show more Applications',
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        color: Colors.blue)),
-                                              ],
-                                            ),
-                                            onPressed: () {
-                                              loadMoreApplications();
-                                            },
-                                          ),
-                                        ),
-                                    ],
                                   ),
-                                  if (showLoadingAppls) showCircularProgress(),
-                                  if (!showLoadingAppls &&
-                                      Utils.isNullOrEmpty(_listOfApplications))
-                                    _emptyStorePage(
-                                        "No Applications yet.. ", bookNowMsg),
-                                ],
-                              ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    if (Utils.isNotNullOrEmpty(
+                                        loadUpcomingTokensMsg))
+                                      Row(
+                                        children: [
+                                          Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 10, bottom: 15),
+                                              child: AutoSizeText(
+                                                loadUpcomingTokensMsg,
+                                                minFontSize: 11,
+                                                maxFontSize: 17,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                ),
+                                              ))
+                                        ],
+                                      ),
+                                    if (Utils.isStrNullOrEmpty(
+                                            loadUpcomingTokensMsg) &&
+                                        _upcomingBkgStatus != 'NoBookings' &&
+                                        !noUpcomingTokens)
+                                      Container(
+                                        margin: EdgeInsets.all(10),
+                                        child: MaterialButton(
+                                          shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                  color: Colors.blueGrey),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(3.0))),
+                                          child: Column(
+                                            children: [
+                                              Text('Show more Tokens',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.blue)),
+                                            ],
+                                          ),
+                                          onPressed: () {
+                                            loadMoreUpcomingTokens();
+                                          },
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                if (_upcomingBkgStatus == 'NoBookings')
+                                  _emptyStorePage(
+                                      "No bookings yet.. ", bookNowMsg),
+                                if (_upcomingBkgStatus == 'Loading')
+                                  showCircularProgress(),
+                              ],
                             ),
                           ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * .03,
-                          ),
-                          Card(
-                            margin: EdgeInsets.zero,
-                            elevation: 20,
-                            child: Theme(
-                              data: ThemeData(
-                                unselectedWidgetColor: Colors.grey[600],
-                                accentColor: btnColor,
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * .03,
+                        ),
+                        Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 20,
+                          child: Theme(
+                            data: ThemeData(
+                              unselectedWidgetColor: Colors.grey[600],
+                              accentColor: btnColor,
+                            ),
+                            child: ExpansionTile(
+                              initiallyExpanded: false,
+                              title: Text(
+                                "Past Bookings",
+                                style: TextStyle(
+                                    color: Colors.blueGrey[700], fontSize: 17),
                               ),
-                              child: ExpansionTile(
-                                //key: PageStorageKey(this.widget.headerTitle),
-                                initiallyExpanded: true,
-                                title: Text(
-                                  "Upcoming Bookings",
-                                  style: TextStyle(
-                                      color: Colors.blueGrey[700],
-                                      fontSize: 17),
-                                ),
-                                backgroundColor: Colors.white,
-                                leading: Icon(
-                                  Icons.date_range,
-                                  color: primaryIcon,
-                                ),
-                                children: <Widget>[
-                                  if (_upcomingBkgStatus == 'Success')
-                                    Scrollbar(
-                                      child: ListView.builder(
+                              backgroundColor: Colors.white,
+                              leading: Icon(
+                                Icons.access_time,
+                                color: primaryIcon,
+                              ),
+                              onExpansionChanged: (value) {
+                                if (value) {
+                                  _loadInitialPastBookings();
+                                }
+                              },
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    if (_pastBkgStatus == "Success")
+                                      ListView.builder(
                                         shrinkWrap: true,
                                         scrollDirection: Axis.vertical,
                                         physics: ClampingScrollPhysics(),
@@ -1396,250 +1495,134 @@ class _UserAccountPageState extends State<UserAccountPage>
                                             (BuildContext context, int index) {
                                           return Container(
                                               child: _buildItem(
-                                                  _newBookingsList[index],
-                                                  _newBookingsList,
-                                                  index)
-
-                                              //children: <Widget>[firstRow, secondRow],
-                                              );
+                                                  _pastBookingsList[index],
+                                                  _pastBookingsList,
+                                                  index));
                                         },
-                                        itemCount: _newBookingsList.length,
+                                        itemCount: _pastBookingsList.length,
                                       ),
-                                    ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      if (Utils.isNotNullOrEmpty(
-                                          loadUpcomingTokensMsg))
-                                        Row(
-                                          children: [
-                                            Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 10, bottom: 15),
-                                                child: AutoSizeText(
-                                                  loadUpcomingTokensMsg,
-                                                  minFontSize: 11,
-                                                  maxFontSize: 17,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                  ),
-                                                ))
-                                          ],
-                                        ),
-                                      if (Utils.isStrNullOrEmpty(
-                                              loadUpcomingTokensMsg) &&
-                                          _upcomingBkgStatus != 'NoBookings' &&
-                                          !noUpcomingTokens)
-                                        Container(
-                                          margin: EdgeInsets.all(10),
-                                          child: MaterialButton(
-                                            shape: RoundedRectangleBorder(
-                                                side: BorderSide(
-                                                    color: Colors.blueGrey),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(3.0))),
-                                            child: Column(
-                                              children: [
-                                                Text('Show more Tokens',
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        if (Utils.isNotNullOrEmpty(
+                                            loadPastTokensMsg))
+                                          Row(
+                                            children: [
+                                              Container(
+                                                  margin: EdgeInsets.only(
+                                                      top: 10, bottom: 15),
+                                                  child: AutoSizeText(
+                                                    loadPastTokensMsg,
+                                                    minFontSize: 9,
+                                                    maxFontSize: 17,
                                                     style: TextStyle(
-                                                        fontSize: 15,
-                                                        color: Colors.blue)),
-                                              ],
-                                            ),
-                                            onPressed: () {
-                                              loadMoreUpcomingTokens();
-                                            },
+                                                      color: Colors.black,
+                                                    ),
+                                                  ))
+                                            ],
                                           ),
-                                        ),
-                                    ],
-                                  ),
-                                  if (_upcomingBkgStatus == 'NoBookings')
-                                    _emptyStorePage(
-                                        "No bookings yet.. ", bookNowMsg),
-                                  if (_upcomingBkgStatus == 'Loading')
-                                    showCircularProgress(),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * .03,
-                          ),
-                          Card(
-                            margin: EdgeInsets.zero,
-                            elevation: 20,
-                            child: Theme(
-                              data: ThemeData(
-                                unselectedWidgetColor: Colors.grey[600],
-                                accentColor: btnColor,
-                              ),
-                              child: ExpansionTile(
-                                initiallyExpanded: false,
-                                title: Text(
-                                  "Past Bookings",
-                                  style: TextStyle(
-                                      color: Colors.blueGrey[700],
-                                      fontSize: 17),
-                                ),
-                                backgroundColor: Colors.white,
-                                leading: Icon(
-                                  Icons.access_time,
-                                  color: primaryIcon,
-                                ),
-                                onExpansionChanged: (value) {
-                                  if (value) {
-                                    _loadInitialPastBookings();
-                                  }
-                                },
-                                children: <Widget>[
-                                  Column(
-                                    children: <Widget>[
-                                      if (_pastBkgStatus == "Success")
-                                        ListView.builder(
-                                          shrinkWrap: true,
-                                          scrollDirection: Axis.vertical,
-                                          physics: ClampingScrollPhysics(),
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Container(
-                                                child: _buildItem(
-                                                    _pastBookingsList[index],
-                                                    _pastBookingsList,
-                                                    index));
-                                          },
-                                          itemCount: _pastBookingsList.length,
-                                        ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          if (Utils.isNotNullOrEmpty(
-                                              loadPastTokensMsg))
-                                            Row(
-                                              children: [
-                                                Container(
-                                                    margin: EdgeInsets.only(
-                                                        top: 10, bottom: 15),
-                                                    child: AutoSizeText(
-                                                      loadPastTokensMsg,
-                                                      minFontSize: 9,
-                                                      maxFontSize: 17,
+                                        if (Utils.isStrNullOrEmpty(
+                                                loadPastTokensMsg) &&
+                                            _pastBkgStatus == 'Success' &&
+                                            !noPastTokens)
+                                          Container(
+                                            margin: EdgeInsets.all(10),
+                                            child: MaterialButton(
+                                              shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color: Colors.blueGrey),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              3.0))),
+                                              child: Column(
+                                                children: [
+                                                  Text('Show more Tokens',
                                                       style: TextStyle(
-                                                        color: Colors.black,
-                                                      ),
-                                                    ))
-                                              ],
-                                            ),
-                                          if (Utils.isStrNullOrEmpty(
-                                                  loadPastTokensMsg) &&
-                                              _pastBkgStatus == 'Success' &&
-                                              !noPastTokens)
-                                            Container(
-                                              margin: EdgeInsets.all(10),
-                                              child: MaterialButton(
-                                                shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color: Colors.blueGrey),
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                3.0))),
-                                                child: Column(
-                                                  children: [
-                                                    Text('Show more Tokens',
-                                                        style: TextStyle(
-                                                            fontSize: 15,
-                                                            color:
-                                                                Colors.blue)),
-                                                  ],
-                                                ),
-                                                onPressed: () {
-                                                  loadMorePastTokens();
-                                                },
+                                                          fontSize: 15,
+                                                          color: Colors.blue)),
+                                                ],
                                               ),
+                                              onPressed: () {
+                                                loadMorePastTokens();
+                                              },
                                             ),
-                                        ],
-                                      ),
-                                      if (_pastBkgStatus == 'NoBookings')
-                                        _emptyStorePage("No bookings in past..",
-                                            bookNowMsg),
-                                      if (_pastBkgStatus == 'Loading')
-                                        showCircularProgress(),
-                                    ],
-                                  )
-                                ],
-                              ),
+                                          ),
+                                      ],
+                                    ),
+                                    if (_pastBkgStatus == 'NoBookings')
+                                      _emptyStorePage(
+                                          "No bookings in past..", bookNowMsg),
+                                    if (_pastBkgStatus == 'Loading')
+                                      showCircularProgress(),
+                                  ],
+                                )
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                Container(
-                  // padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  height: MediaQuery.of(context).size.height * .05,
-                  width: MediaQuery.of(context).size.width * .95,
-                  child: MaterialButton(
-                      color: btnColor,
-                      textColor: Colors.white,
-                      splashColor: highlightColor,
-                      onPressed: () {
-                        Utils.logout(context);
-                      },
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(Icons.exit_to_app),
-                            Text(
-                              '  Logout',
-                              textAlign: TextAlign.center,
-                            ),
-                          ])),
-                ),
-              ],
-            ),
-            bottomNavigationBar: CustomBottomBar(
-              barIndex: 3,
-            ),
+              ),
+              Container(
+                // padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                height: MediaQuery.of(context).size.height * .05,
+                width: MediaQuery.of(context).size.width * .95,
+                child: MaterialButton(
+                    color: btnColor,
+                    textColor: Colors.white,
+                    splashColor: highlightColor,
+                    onPressed: () {
+                      Utils.logout(context);
+                    },
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.exit_to_app),
+                          Text(
+                            '  Logout',
+                            textAlign: TextAlign.center,
+                          ),
+                        ])),
+              ),
+            ],
           ),
-          onWillPop: () async {
-            Navigator.of(context)
-                .push(PageAnimation.createRoute(UserHomePage()));
-            return false;
-          },
+          bottomNavigationBar: CustomBottomBar(
+            barIndex: 3,
+          ),
         ),
+        onWillPop: () async {
+          Navigator.of(context).push(PageAnimation.createRoute(UserHomePage()));
+          return false;
+        },
       );
     } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: title,
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
-            ),
-            bottomNavigationBar: CustomBottomBar(
-              barIndex: 3,
+      return WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: title,
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
             ),
           ),
-          onWillPop: () async {
-            return true;
-          },
+          bottomNavigationBar: CustomBottomBar(
+            barIndex: 3,
+          ),
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

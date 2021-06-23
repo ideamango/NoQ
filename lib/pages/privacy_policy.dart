@@ -22,66 +22,61 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(),
-      home: WillPopScope(
-        child: Scaffold(
-          appBar: AppBar(
-            actions: <Widget>[],
-            flexibleSpace: Container(
-              decoration: gradientBackground,
-            ),
-            leading: IconButton(
-              padding: EdgeInsets.all(0),
-              alignment: Alignment.center,
-              highlightColor: highlightColor,
-              icon: Icon(Icons.arrow_back),
-              color: Colors.white,
-              onPressed: () {
-                print("going back");
-                User value = FirebaseAuth.instance.currentUser;
-                if (value == null) {
-                  print("No user");
-                  Navigator.of(context)
-                      .push(PageAnimation.createRoute(LoginPage()));
-                } else {
-                  print("Go to dashboard");
-                  Navigator.of(context)
-                      .push(PageAnimation.createRoute(UserHomePage()));
-                }
-              },
-            ),
-            title: Text(
-              "Privacy Policy",
-              style: drawerdefaultTextStyle,
-              overflow: TextOverflow.ellipsis,
-            ),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          actions: <Widget>[],
+          flexibleSpace: Container(
+            decoration: gradientBackground,
           ),
-          body: SingleChildScrollView(
-            padding: EdgeInsets.all(16),
-            physics: BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                Container(
-                    padding: EdgeInsets.all(0),
-                    height: MediaQuery.of(context).size.height * .3,
-                    child: Image.asset('assets/privacy.png')),
-                RichText(
-                  text: TextSpan(
-                      style: highlightSubTextStyle,
-                      children: <TextSpan>[
-                        TextSpan(text: privacyPolicy),
-                      ]),
-                ),
-              ],
-            ),
+          leading: IconButton(
+            padding: EdgeInsets.all(0),
+            alignment: Alignment.center,
+            highlightColor: highlightColor,
+            icon: Icon(Icons.arrow_back),
+            color: Colors.white,
+            onPressed: () {
+              print("going back");
+              User value = FirebaseAuth.instance.currentUser;
+              if (value == null) {
+                print("No user");
+                Navigator.of(context)
+                    .push(PageAnimation.createRoute(LoginPage()));
+              } else {
+                print("Go to dashboard");
+                Navigator.of(context)
+                    .push(PageAnimation.createRoute(UserHomePage()));
+              }
+            },
+          ),
+          title: Text(
+            "Privacy Policy",
+            style: drawerdefaultTextStyle,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        onWillPop: () async {
-          return true;
-        },
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(16),
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              Container(
+                  padding: EdgeInsets.all(0),
+                  height: MediaQuery.of(context).size.height * .3,
+                  child: Image.asset('assets/privacy.png')),
+              RichText(
+                text:
+                    TextSpan(style: highlightSubTextStyle, children: <TextSpan>[
+                  TextSpan(text: privacyPolicy),
+                ]),
+              ),
+            ],
+          ),
+        ),
       ),
+      onWillPop: () async {
+        return true;
+      },
     );
   }
 }

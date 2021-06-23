@@ -40,46 +40,38 @@ class _TemplatePageState extends State<TemplatePage> {
   @override
   Widget build(BuildContext context) {
     if (initCompleted) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: Scaffold(
+      return Scaffold(
+        appBar: CustomAppBarWithBackButton(
+          backRoute: UserHomePage(),
+          titleTxt: "New Page Title",
+        ),
+        body: Center(
+          child: Column(children: <Widget>[
+            Card(
+              child: Text('New Card'),
+            ),
+          ]),
+        ),
+      );
+    } else {
+      return new WillPopScope(
+        child: Scaffold(
           appBar: CustomAppBarWithBackButton(
             backRoute: UserHomePage(),
             titleTxt: "New Page Title",
           ),
           body: Center(
-            child: Column(children: <Widget>[
-              Card(
-                child: Text('New Card'),
-              ),
-            ]),
-          ),
-        ),
-      );
-    } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: new WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: "New Page Title",
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
             ),
           ),
-          onWillPop: () async {
-            return true;
-          },
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

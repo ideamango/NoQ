@@ -731,127 +731,119 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     print(_searchText);
     print(_entityType);
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: <String, WidgetBuilder>{
-        '/childSearch': (BuildContext context) => SearchChildEntityPage(),
-        '/mainSearch': (BuildContext context) => SearchEntityPage(),
-      },
-      theme: ThemeData.light().copyWith(),
-      home: new WillPopScope(
-        child: Scaffold(
-            key: key,
-            resizeToAvoidBottomInset: false,
-            appBar: (!initCompleted)
-                ? CustomAppBar(
-                    titleTxt: "Search",
-                  )
-                : AppBar(
-                    actions: <Widget>[],
-                    flexibleSpace: Container(
-                      decoration: gradientBackground,
+    return new WillPopScope(
+      child: Scaffold(
+          key: key,
+          resizeToAvoidBottomInset: false,
+          appBar: (!initCompleted)
+              ? CustomAppBar(
+                  titleTxt: "Search",
+                )
+              : AppBar(
+                  actions: <Widget>[],
+                  flexibleSpace: Container(
+                    decoration: gradientBackground,
+                  ),
+                  leading: IconButton(
+                      padding: EdgeInsets.all(0),
+                      alignment: Alignment.center,
+                      highlightColor: Colors.orange[300],
+                      icon: Icon(Icons.arrow_back),
+                      color: Colors.white,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UserHomePage()));
+                      }),
+                  title: Text(
+                    title,
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  )),
+          body: (!initCompleted)
+              ? Center(
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(
+                        10,
+                        MediaQuery.of(context).size.width * .5,
+                        10,
+                        MediaQuery.of(context).size.width * .5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        showCircularProgress(),
+                      ],
                     ),
-                    leading: IconButton(
-                        padding: EdgeInsets.all(0),
-                        alignment: Alignment.center,
-                        highlightColor: Colors.orange[300],
-                        icon: Icon(Icons.arrow_back),
-                        color: Colors.white,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UserHomePage()));
-                        }),
-                    title: Text(
-                      title,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                      overflow: TextOverflow.ellipsis,
-                    )),
-            body: (!initCompleted)
-                ? Center(
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(
-                          10,
-                          MediaQuery.of(context).size.width * .5,
-                          10,
-                          MediaQuery.of(context).size.width * .5),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          showCircularProgress(),
-                        ],
-                      ),
-                    ),
-                  )
-                : ((_isSearching == "initial" &&
-                        _searchText.isEmpty &&
-                        _entityType == null)
-                    ? Column(
-                        children: <Widget>[
-                          filterBar,
-                          (!Utils.isNullOrEmpty(_pastSearches))
-                              ? Expanded(
-                                  child: ListView.builder(
-                                      controller: _selectCategoryBtnController,
-                                      itemCount: 1,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return Container(
-                                          margin: EdgeInsets.fromLTRB(
-                                              10, 0, 10, 50),
-                                          child: new Column(
-                                            children: showPastSearches(),
-                                          ),
-                                        );
-                                      }),
-                                )
-                              : _emptySearchPage(),
-                        ],
-                      )
-                    : Stack(
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              filterBar,
-                              (_isSearching == "done")
-                                  ? ((_stores.length == 0)
-                                      ? _emptySearchPage()
-                                      : Expanded(child: _listSearchResults()))
-                                  //Else could be one when isSearching is 'searching', show circular progress.
-                                  : Center(
-                                      child: Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                .35,
-                                        alignment: Alignment.bottomCenter,
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              showCircularProgress(),
-                                            ],
-                                          ),
+                  ),
+                )
+              : ((_isSearching == "initial" &&
+                      _searchText.isEmpty &&
+                      _entityType == null)
+                  ? Column(
+                      children: <Widget>[
+                        filterBar,
+                        (!Utils.isNullOrEmpty(_pastSearches))
+                            ? Expanded(
+                                child: ListView.builder(
+                                    controller: _selectCategoryBtnController,
+                                    itemCount: 1,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        margin:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 50),
+                                        child: new Column(
+                                          children: showPastSearches(),
+                                        ),
+                                      );
+                                    }),
+                              )
+                            : _emptySearchPage(),
+                      ],
+                    )
+                  : Stack(
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            filterBar,
+                            (_isSearching == "done")
+                                ? ((_stores.length == 0)
+                                    ? _emptySearchPage()
+                                    : Expanded(child: _listSearchResults()))
+                                //Else could be one when isSearching is 'searching', show circular progress.
+                                : Center(
+                                    child: Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .35,
+                                      alignment: Alignment.bottomCenter,
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            showCircularProgress(),
+                                          ],
                                         ),
                                       ),
                                     ),
-                            ],
-                          ),
-                        ],
-                      )),
-            // drawer: CustomDrawer(),
-            floatingActionButton: showMyFloatingActionButton(),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            bottomNavigationBar: CustomBottomBar(barIndex: 1)
+                                  ),
+                          ],
+                        ),
+                      ],
+                    )),
+          // drawer: CustomDrawer(),
+          floatingActionButton: showMyFloatingActionButton(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          bottomNavigationBar: CustomBottomBar(barIndex: 1)
 
-            // drawer: CustomDrawer(),
-            ),
-        onWillPop: willPopCallback,
-      ),
+          // drawer: CustomDrawer(),
+          ),
+      onWillPop: willPopCallback,
     );
     // else {
     //   print("Came in isSearching");

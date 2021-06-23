@@ -2145,172 +2145,164 @@ class _ApplicationsListState extends State<ApplicationsList> {
   @override
   Widget build(BuildContext context) {
     if (initCompleted) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                widget.titleText,
-                style: drawerdefaultTextStyle,
-              ),
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                  padding: EdgeInsets.all(0),
-                  alignment: Alignment.center,
-                  highlightColor: Colors.orange[300],
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.white,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  }),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              widget.titleText,
+              style: drawerdefaultTextStyle,
             ),
-            body: Stack(
-              children: [
-                Center(
-                  child: Column(
-                    children: <Widget>[
-                      (!Utils.isNullOrEmpty(listOfBa))
-                          ? Expanded(
-                              child: ListView.builder(
-                                itemCount: listOfBa.length,
-                                reverse: false,
-                                controller: _childScrollControllerAppls,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    margin: EdgeInsets.fromLTRB(10, 8, 10, 8),
-                                    child: new Column(
-                                      children: [
-                                        _buildItem(listOfBa[index].item1),
-                                        if (index == listOfBa.length - 1)
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              if (Utils.isNotNullOrEmpty(
-                                                  loadMoreMsg))
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                        margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                10, 10, 10, 18),
-                                                        child: Text(
-                                                          loadMoreMsg,
+            flexibleSpace: Container(
+              decoration: gradientBackground,
+            ),
+            leading: IconButton(
+                padding: EdgeInsets.all(0),
+                alignment: Alignment.center,
+                highlightColor: Colors.orange[300],
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+          ),
+          body: Stack(
+            children: [
+              Center(
+                child: Column(
+                  children: <Widget>[
+                    (!Utils.isNullOrEmpty(listOfBa))
+                        ? Expanded(
+                            child: ListView.builder(
+                              itemCount: listOfBa.length,
+                              reverse: false,
+                              controller: _childScrollControllerAppls,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  margin: EdgeInsets.fromLTRB(10, 8, 10, 8),
+                                  child: new Column(
+                                    children: [
+                                      _buildItem(listOfBa[index].item1),
+                                      if (index == listOfBa.length - 1)
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            if (Utils.isNotNullOrEmpty(
+                                                loadMoreMsg))
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                      margin:
+                                                          EdgeInsets.fromLTRB(
+                                                              10, 10, 10, 18),
+                                                      child: Text(
+                                                        loadMoreMsg,
+                                                        style: TextStyle(
+                                                            color: btnColor,
+                                                            fontSize: 17),
+                                                      ))
+                                                ],
+                                              ),
+                                            if (!Utils.isNotNullOrEmpty(
+                                                loadMoreMsg))
+                                              Container(
+                                                margin: EdgeInsets.all(10),
+                                                child: MaterialButton(
+                                                  shape: RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          color: btnColor),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  3.0))),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                          'Show more Applications',
                                                           style: TextStyle(
-                                                              color: btnColor,
-                                                              fontSize: 17),
-                                                        ))
-                                                  ],
-                                                ),
-                                              if (!Utils.isNotNullOrEmpty(
-                                                  loadMoreMsg))
-                                                Container(
-                                                  margin: EdgeInsets.all(10),
-                                                  child: MaterialButton(
-                                                    shape: RoundedRectangleBorder(
-                                                        side: BorderSide(
-                                                            color: btnColor),
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    3.0))),
-                                                    child: Column(
-                                                      children: [
-                                                        Text(
-                                                            'Show more Applications',
-                                                            style: TextStyle(
-                                                                fontSize: 15,
-                                                                color: Colors
-                                                                    .blue)),
-                                                      ],
-                                                    ),
-                                                    onPressed: () {
-                                                      loadMoreApplications();
-                                                    },
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.blue)),
+                                                    ],
                                                   ),
+                                                  onPressed: () {
+                                                    loadMoreApplications();
+                                                  },
                                                 ),
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          : _emptyPage(),
-                    ],
-                  ),
+                                              ),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        : _emptyPage(),
+                  ],
                 ),
-                if (showLoading)
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 10.0, bottom: 10),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        color: Colors.black.withOpacity(.5),
-                        // decoration: BoxDecoration(
-                        //   color: Colors.white,
-                        //   backgroundBlendMode: BlendMode.saturation,
-                        // ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              color: Colors.transparent,
-                              padding: EdgeInsets.all(12),
-                              width: MediaQuery.of(context).size.width * .15,
-                              height: MediaQuery.of(context).size.width * .15,
-                              child: CircularProgressIndicator(
-                                backgroundColor: Colors.black,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                                strokeWidth: 2,
-                              ),
-                            )
-                          ],
-                        ),
+              ),
+              if (showLoading)
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 10),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      color: Colors.black.withOpacity(.5),
+                      // decoration: BoxDecoration(
+                      //   color: Colors.white,
+                      //   backgroundBlendMode: BlendMode.saturation,
+                      // ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            color: Colors.transparent,
+                            padding: EdgeInsets.all(12),
+                            width: MediaQuery.of(context).size.width * .15,
+                            height: MediaQuery.of(context).size.width * .15,
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.black,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                              strokeWidth: 2,
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                  )
+                  ),
+                )
+            ],
+          ),
+        ),
+        onWillPop: () async {
+          return true;
+        },
+      );
+    } else {
+      return new WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: widget.titleText,
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
               ],
             ),
           ),
-          onWillPop: () async {
-            return true;
-          },
         ),
-      );
-    } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: new WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: widget.titleText,
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
-            ),
-          ),
-          onWillPop: () async {
-            return true;
-          },
-        ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

@@ -365,382 +365,363 @@ class _UserHomePageState extends State<UserHomePage>
           ),
         ));
       } else {
-        return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData.light().copyWith(),
-            home: WillPopScope(
-              child: Scaffold(
-                resizeToAvoidBottomInset: false,
-                appBar: CustomAppBar(
-                  titleTxt: title,
-                ),
-                body: Scrollbar(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width * .036),
-                    child: Column(
-                      children: <Widget>[
-                        Card(
-                          margin: EdgeInsets.zero,
-                          elevation: 20,
-                          child: Container(
-                            height: MediaQuery.of(context).size.height * .37,
-                            padding: EdgeInsets.all(5),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return WillPopScope(
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: CustomAppBar(
+              titleTxt: title,
+            ),
+            body: Scrollbar(
+              child: SingleChildScrollView(
+                padding:
+                    EdgeInsets.all(MediaQuery.of(context).size.width * .036),
+                child: Column(
+                  children: <Widget>[
+                    Card(
+                      margin: EdgeInsets.zero,
+                      elevation: 20,
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * .37,
+                        padding: EdgeInsets.all(5),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Column(
                               children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    CarouselSlider(
-                                      options: CarouselOptions(
+                                CarouselSlider(
+                                  options: CarouselOptions(
+                                    height: MediaQuery.of(context).size.height *
+                                        .255,
+                                    autoPlay: true,
+                                    autoPlayInterval: Duration(seconds: 3),
+                                    autoPlayAnimationDuration:
+                                        Duration(milliseconds: 800),
+                                    autoPlayCurve: Curves.easeIn,
+                                    pauseAutoPlayOnTouch: true,
+                                    aspectRatio: 2.0,
+                                    onPageChanged:
+                                        (index, carouselPageChangedReason) {
+                                      setState(() {
+                                        _currentIndex = index;
+                                      });
+                                    },
+                                  ),
+                                  items: cardList.map((card) {
+                                    return Builder(
+                                        builder: (BuildContext context) {
+                                      return Container(
                                         height:
                                             MediaQuery.of(context).size.height *
-                                                .255,
-                                        autoPlay: true,
-                                        autoPlayInterval: Duration(seconds: 3),
-                                        autoPlayAnimationDuration:
-                                            Duration(milliseconds: 800),
-                                        autoPlayCurve: Curves.easeIn,
-                                        pauseAutoPlayOnTouch: true,
-                                        aspectRatio: 2.0,
-                                        onPageChanged:
-                                            (index, carouselPageChangedReason) {
-                                          setState(() {
-                                            _currentIndex = index;
-                                          });
-                                        },
-                                      ),
-                                      items: cardList.map((card) {
-                                        return Builder(
-                                            builder: (BuildContext context) {
-                                          return Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
                                                 0.4,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            child: Card(
-                                              color: primaryAccentColor,
-                                              child: card,
-                                            ),
-                                          );
-                                        });
-                                      }).toList(),
-                                    ),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: Card(
+                                          color: primaryAccentColor,
+                                          child: card,
+                                        ),
+                                      );
+                                    });
+                                  }).toList(),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: map<Widget>(cardList,
-                                              (index, url) {
-                                            return Container(
-                                              width: 7.0,
-                                              height: 7.0,
-                                              margin: EdgeInsets.symmetric(
-                                                  vertical: 2.0,
-                                                  horizontal: 2.0),
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: _currentIndex == index
-                                                    ? highlightColor
-                                                    : Colors.grey,
-                                              ),
-                                            );
-                                          }),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Text(homeScreenMsgTxt2,
-                                        style: homeMsgStyle2),
-                                    Text(
-                                      homeScreenMsgTxt3,
-                                      style: homeMsgStyle3,
+                                      children:
+                                          map<Widget>(cardList, (index, url) {
+                                        return Container(
+                                          width: 7.0,
+                                          height: 7.0,
+                                          margin: EdgeInsets.symmetric(
+                                              vertical: 2.0, horizontal: 2.0),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: _currentIndex == index
+                                                ? highlightColor
+                                                : Colors.grey,
+                                          ),
+                                        );
+                                      }),
                                     ),
                                   ],
                                 )
                               ],
                             ),
-                          ),
-                          //child: Image.asset('assets/noq_home.png'),
-                        ),
-                        verticalSpacer,
-                        // Card(
-                        //     child: Container(
-                        //   decoration: BoxDecoration(
-                        //       border: Border.all(color: borderColor),
-                        //       color: Colors.white,
-                        //       shape: BoxShape.rectangle,
-                        //       borderRadius:
-                        //           BorderRadius.all(Radius.circular(5.0))),
-                        //   child: ListView(
-                        //     children: [Text("Donation Text")],
-                        //   ),
-                        // )),
-                        // verticalSpacer,
-                        if (isDonationEnabled)
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                            padding: EdgeInsets.zero,
-                            child: Card(
-                              margin: EdgeInsets.zero,
-                              elevation: 20,
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                      PageAnimation.createRoute(UPIPaymentPage(
-                                          upiId: upiId,
-                                          upiQrCodeImgPath: upiQrImgPath,
-                                          backRoute: UserHomePage(),
-                                          isDonation: true)));
-                                },
-                                child: Image(
-                                  fit: BoxFit.fitWidth,
-                                  image: AssetImage('assets/donate.png'),
-                                ),
-                              ),
-                            ),
-                          ),
-                        verticalSpacer,
-                        Card(
-                          margin: EdgeInsets.zero,
-                          elevation: 20,
-                          child: Theme(
-                            data: ThemeData(
-                              unselectedWidgetColor: Colors.grey[600],
-                              accentColor: btnColor,
-                            ),
-                            child: ExpansionTile(
-                              //key: PageStorageKey(this.widget.headerTitle),
-                              initiallyExpanded: true,
-                              title: Text(
-                                "Upcoming Bookings",
-                                style: TextStyle(
-                                    color: Colors.blueGrey[700], fontSize: 17),
-                              ),
-                              backgroundColor: Colors.white,
-                              leading: Icon(
-                                Icons.date_range,
-                                color: primaryIcon,
-                              ),
+                            Column(
                               children: <Widget>[
-                                if (_upcomingBkgStatus == 'Success')
-                                  Scrollbar(
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.vertical,
-                                      physics: ClampingScrollPhysics(),
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return Container(
-                                            child: _buildItem(
-                                                _newBookingsList[index],
-                                                _newBookingsList,
-                                                index)
-
-                                            //children: <Widget>[firstRow, secondRow],
-                                            );
-                                      },
-                                      itemCount: _newBookingsList.length,
-                                    ),
-                                  ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    if (Utils.isNotNullOrEmpty(
-                                        loadUpcomingTokensMsg))
-                                      Row(
-                                        children: [
-                                          Container(
-                                              margin: EdgeInsets.only(
-                                                  top: 10, bottom: 15),
-                                              child: AutoSizeText(
-                                                loadUpcomingTokensMsg,
-                                                minFontSize: 11,
-                                                maxFontSize: 17,
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  //fontWeight: FontWeight.bold,
-                                                ),
-                                              ))
-                                        ],
-                                      ),
-                                    if (!Utils.isNotNullOrEmpty(
-                                            loadUpcomingTokensMsg) &&
-                                        _upcomingBkgStatus != 'NoBookings' &&
-                                        !noUpcomingTokens)
-                                      Container(
-                                        margin: EdgeInsets.all(10),
-                                        child: MaterialButton(
-                                          shape: RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                  color: Colors.blueGrey),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(3.0))),
-                                          child: Column(
-                                            children: [
-                                              Text('Show more Tokens',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.blue)),
-                                            ],
-                                          ),
-                                          onPressed: () {
-                                            loadMoreUpcomingTokens();
-                                          },
-                                        ),
-                                      ),
-                                  ],
+                                Text(homeScreenMsgTxt2, style: homeMsgStyle2),
+                                Text(
+                                  homeScreenMsgTxt3,
+                                  style: homeMsgStyle3,
                                 ),
-                                if (_upcomingBkgStatus == 'NoBookings')
-                                  _emptyStorePage(
-                                      "No bookings yet.. ", bookNowMsg),
-                                if (_upcomingBkgStatus == 'Loading')
-                                  showCircularProgress(),
                               ],
-                            ),
-                          ),
-                        ),
-
-                        verticalSpacer,
-
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                //User clicked on show how, lets show them.
-                                print("Showing how to book time-slot");
-                                Navigator.of(context).push(
-                                    PageAnimation.createRoute(
-                                        HowToRegForBusiness()));
-                              },
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin: EdgeInsets.zero,
-                                padding: EdgeInsets.all(0),
-                                alignment: Alignment.topLeft,
-                                child: Image(
-                                  image: AssetImage(
-                                      'assets/how_to_register_business.png'),
-                                ),
-                              ),
-                            ),
-                            verticalSpacer,
-                            GestureDetector(
-                              onTap: () {
-                                //User clicked on show how, lets show them.
-                                print("Showing how to book time-slot");
-                                Navigator.of(context).push(
-                                    PageAnimation.createRoute(
-                                        HowToRegForUsers()));
-                              },
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin: EdgeInsets.zero,
-                                padding: EdgeInsets.all(0),
-                                alignment: Alignment.topLeft,
-                                child: Image(
-                                  image:
-                                      AssetImage('assets/how_to_book_slot.png'),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              height: MediaQuery.of(context).size.height * .06,
-                            ),
+                            )
                           ],
                         ),
-                        if (_gs?.getCurrentUser()?.ph == '+919999999999')
-                          Container(
-                            height: 30,
-                            width: 60,
-                            child: MaterialButton(
-                              color: btnColor,
-                              onPressed: () {
-                                print("testing");
-                                DBTest().dbCall();
-                                print("testing updated");
-                              },
-                              child: Text("Run test"),
+                      ),
+                      //child: Image.asset('assets/noq_home.png'),
+                    ),
+                    verticalSpacer,
+                    // Card(
+                    //     child: Container(
+                    //   decoration: BoxDecoration(
+                    //       border: Border.all(color: borderColor),
+                    //       color: Colors.white,
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius:
+                    //           BorderRadius.all(Radius.circular(5.0))),
+                    //   child: ListView(
+                    //     children: [Text("Donation Text")],
+                    //   ),
+                    // )),
+                    // verticalSpacer,
+                    if (isDonationEnabled)
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        padding: EdgeInsets.zero,
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 20,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(UPIPaymentPage(
+                                      upiId: upiId,
+                                      upiQrCodeImgPath: upiQrImgPath,
+                                      backRoute: UserHomePage(),
+                                      isDonation: true)));
+                            },
+                            child: Image(
+                              fit: BoxFit.fitWidth,
+                              image: AssetImage('assets/donate.png'),
                             ),
                           ),
+                        ),
+                      ),
+                    verticalSpacer,
+                    Card(
+                      margin: EdgeInsets.zero,
+                      elevation: 20,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.grey[600],
+                          accentColor: btnColor,
+                        ),
+                        child: ExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: true,
+                          title: Text(
+                            "Upcoming Bookings",
+                            style: TextStyle(
+                                color: Colors.blueGrey[700], fontSize: 17),
+                          ),
+                          backgroundColor: Colors.white,
+                          leading: Icon(
+                            Icons.date_range,
+                            color: primaryIcon,
+                          ),
+                          children: <Widget>[
+                            if (_upcomingBkgStatus == 'Success')
+                              Scrollbar(
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  physics: ClampingScrollPhysics(),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(
+                                        child: _buildItem(
+                                            _newBookingsList[index],
+                                            _newBookingsList,
+                                            index)
+
+                                        //children: <Widget>[firstRow, secondRow],
+                                        );
+                                  },
+                                  itemCount: _newBookingsList.length,
+                                ),
+                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                if (Utils.isNotNullOrEmpty(
+                                    loadUpcomingTokensMsg))
+                                  Row(
+                                    children: [
+                                      Container(
+                                          margin: EdgeInsets.only(
+                                              top: 10, bottom: 15),
+                                          child: AutoSizeText(
+                                            loadUpcomingTokensMsg,
+                                            minFontSize: 11,
+                                            maxFontSize: 17,
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              //fontWeight: FontWeight.bold,
+                                            ),
+                                          ))
+                                    ],
+                                  ),
+                                if (!Utils.isNotNullOrEmpty(
+                                        loadUpcomingTokensMsg) &&
+                                    _upcomingBkgStatus != 'NoBookings' &&
+                                    !noUpcomingTokens)
+                                  Container(
+                                    margin: EdgeInsets.all(10),
+                                    child: MaterialButton(
+                                      shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                              color: Colors.blueGrey),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(3.0))),
+                                      child: Column(
+                                        children: [
+                                          Text('Show more Tokens',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.blue)),
+                                        ],
+                                      ),
+                                      onPressed: () {
+                                        loadMoreUpcomingTokens();
+                                      },
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            if (_upcomingBkgStatus == 'NoBookings')
+                              _emptyStorePage("No bookings yet.. ", bookNowMsg),
+                            if (_upcomingBkgStatus == 'Loading')
+                              showCircularProgress(),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    verticalSpacer,
+
+                    Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            //User clicked on show how, lets show them.
+                            print("Showing how to book time-slot");
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(
+                                    HowToRegForBusiness()));
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.zero,
+                            padding: EdgeInsets.all(0),
+                            alignment: Alignment.topLeft,
+                            child: Image(
+                              image: AssetImage(
+                                  'assets/how_to_register_business.png'),
+                            ),
+                          ),
+                        ),
+                        verticalSpacer,
+                        GestureDetector(
+                          onTap: () {
+                            //User clicked on show how, lets show them.
+                            print("Showing how to book time-slot");
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(HowToRegForUsers()));
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.zero,
+                            padding: EdgeInsets.all(0),
+                            alignment: Alignment.topLeft,
+                            child: Image(
+                              image: AssetImage('assets/how_to_book_slot.png'),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: MediaQuery.of(context).size.height * .06,
+                        ),
                       ],
                     ),
-                  ),
-                ),
-                floatingActionButton: SizedBox(
-                  height: 45,
-                  child: new FloatingActionButton(
-                      splashColor: highlightColor,
-                      elevation: 30.0,
-                      child: ImageIcon(
-                        AssetImage('assets/qrcode.png'),
-                        size: 25,
-                        color: primaryIcon,
+                    if (_gs?.getCurrentUser()?.ph == '+919999999999')
+                      Container(
+                        height: 30,
+                        width: 60,
+                        child: MaterialButton(
+                          color: btnColor,
+                          onPressed: () {
+                            print("testing");
+                            DBTest().dbCall();
+                            print("testing updated");
+                          },
+                          child: Text("Run test"),
+                        ),
                       ),
-                      backgroundColor: primaryAccentColor,
-                      onPressed: () {
-                        QrCodeScanner.scan(context);
-                      }),
-                ),
-                floatingActionButtonLocation:
-                    FloatingActionButtonLocation.centerDocked,
-                drawer: CustomDrawer(
-                    phone: _gs.getCurrentUser() != null
-                        ? _gs.getCurrentUser().ph
-                        : ""),
-                bottomNavigationBar: CustomBottomBar(
-                  barIndex: 0,
+                  ],
                 ),
               ),
-              onWillPop: onWillPop,
             ),
-            routes: <String, WidgetBuilder>{
-              '/DLink': (BuildContext context) => new SearchEntityPage(),
-            });
+            floatingActionButton: SizedBox(
+              height: 45,
+              child: new FloatingActionButton(
+                  splashColor: highlightColor,
+                  elevation: 30.0,
+                  child: ImageIcon(
+                    AssetImage('assets/qrcode.png'),
+                    size: 25,
+                    color: primaryIcon,
+                  ),
+                  backgroundColor: primaryAccentColor,
+                  onPressed: () {
+                    QrCodeScanner.scan(context);
+                  }),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            drawer: CustomDrawer(
+                phone: _gs.getCurrentUser() != null
+                    ? _gs.getCurrentUser().ph
+                    : ""),
+            bottomNavigationBar: CustomBottomBar(
+              barIndex: 0,
+            ),
+          ),
+          onWillPop: onWillPop,
+        );
       }
     } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              appBar: CustomAppBar(
-                titleTxt: "Home Page",
-              ),
-              body: Center(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(
-                      10,
-                      MediaQuery.of(context).size.width * .5,
-                      10,
-                      MediaQuery.of(context).size.width * .5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      showCircularProgress(),
-                    ],
-                  ),
+      return WillPopScope(
+        child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: CustomAppBar(
+              titleTxt: "Home Page",
+            ),
+            body: Center(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(
+                    10,
+                    MediaQuery.of(context).size.width * .5,
+                    10,
+                    MediaQuery.of(context).size.width * .5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    showCircularProgress(),
+                  ],
                 ),
               ),
+            ),
 
-              //drawer: CustomDrawer(),
-              bottomNavigationBar: CustomBottomBar(barIndex: 0)),
-          onWillPop: () async {
-            return true;
-          },
-        ),
+            //drawer: CustomDrawer(),
+            bottomNavigationBar: CustomBottomBar(barIndex: 0)),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

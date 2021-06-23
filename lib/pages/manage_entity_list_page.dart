@@ -223,116 +223,108 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
     });
     String title = pageTitleManageEntityList;
     if (_initCompleted) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: new WillPopScope(
-          child: Scaffold(
-            key: manageEntityListPagekey,
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: title,
-            ),
-            body: Center(
-              child: Column(
-                children: <Widget>[
-                  Card(
-                    elevation: 8,
-                    margin:
-                        EdgeInsets.all(MediaQuery.of(context).size.width * .03),
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: highlightColor),
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: InkWell(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(" Add a new Place",
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.blueGrey[700])),
-                            horizontalSpacer,
-                            Icon(Icons.add_circle,
-                                color: highlightColor, size: 40),
-                          ],
-                        ),
-                        onTap: () {
-                          print("Tappped");
-                          showCategorySheet();
+      return new WillPopScope(
+        child: Scaffold(
+          key: manageEntityListPagekey,
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: title,
+          ),
+          body: Center(
+            child: Column(
+              children: <Widget>[
+                Card(
+                  elevation: 8,
+                  margin:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * .03),
+                  child: Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: highlightColor),
+                        color: Colors.white,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: InkWell(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(" Add a new Place",
+                              style: TextStyle(
+                                  fontSize: 18, color: Colors.blueGrey[700])),
+                          horizontalSpacer,
+                          Icon(Icons.add_circle,
+                              color: highlightColor, size: 40),
+                        ],
+                      ),
+                      onTap: () {
+                        print("Tappped");
+                        showCategorySheet();
+                      },
+                    ),
+                  ),
+                ),
+                if (!Utils.isNullOrEmpty(metaEntitiesList))
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * .026),
+                        controller: _scrollController,
+                        reverse: true,
+                        shrinkWrap: true,
+                        //itemExtent: itemSize,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 5),
+                            child: EntityRow(
+                              entity: metaEntitiesList[index],
+                            ),
+                          );
                         },
+                        itemCount: metaEntitiesList.length,
                       ),
                     ),
                   ),
-                  if (!Utils.isNullOrEmpty(metaEntitiesList))
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: ListView.builder(
-                          padding: EdgeInsets.all(
-                              MediaQuery.of(context).size.width * .026),
-                          controller: _scrollController,
-                          reverse: true,
-                          shrinkWrap: true,
-                          //itemExtent: itemSize,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              margin: EdgeInsets.only(bottom: 5),
-                              child: EntityRow(
-                                entity: metaEntitiesList[index],
-                              ),
-                            );
-                          },
-                          itemCount: metaEntitiesList.length,
-                        ),
-                      ),
-                    ),
-                  verticalSpacer,
-                  verticalSpacer,
-                ],
-              ),
+                verticalSpacer,
+                verticalSpacer,
+              ],
             ),
           ),
-          onWillPop: () async {
-            if (bottomSheetController != null) {
-              bottomSheetController.close();
-              bottomSheetController = null;
-              return false;
-            } else {
-              //Navigator.of(context).pop();
-              Navigator.of(context)
-                  .push(PageAnimation.createRoute(UserHomePage()));
-              return false;
-            }
-          },
         ),
+        onWillPop: () async {
+          if (bottomSheetController != null) {
+            bottomSheetController.close();
+            bottomSheetController = null;
+            return false;
+          } else {
+            //Navigator.of(context).pop();
+            Navigator.of(context)
+                .push(PageAnimation.createRoute(UserHomePage()));
+            return false;
+          }
+        },
       );
     } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: new WillPopScope(
-          child: Scaffold(
-            key: manageEntityListPagekey,
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: title,
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
+      return new WillPopScope(
+        child: Scaffold(
+          key: manageEntityListPagekey,
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: title,
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
             ),
           ),
-          onWillPop: () async {
-            return true;
-          },
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

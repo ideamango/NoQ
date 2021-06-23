@@ -237,130 +237,121 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 
     String title = "Manage child Places";
     if (_initCompleted) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Add a child Place',
-        //theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            key: manageChildEntityListPagekey,
-            appBar: CustomAppBarWithBackButton(
-              backRoute: ManageEntityListPage(),
-              titleTxt: title,
-            ),
-            body: Center(
-              child: Column(
-                children: <Widget>[
-                  Card(
-                    elevation: 20,
-                    margin:
-                        EdgeInsets.all(MediaQuery.of(context).size.width * .03),
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: borderColor),
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: InkWell(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(" Add a new Place",
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.blueGrey[700])),
-                            horizontalSpacer,
-                            Icon(Icons.add_circle,
-                                color: highlightColor, size: 40),
-                          ],
-                        ),
-                        onTap: () {
-                          print("Tappped");
-                          if (!widget.isReadOnly) {
-                            showCategorySheet();
-                          } else {
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.info,
-                                Duration(seconds: 5),
-                                '$noEditPermission the child places',
-                                '');
-                          }
+      return WillPopScope(
+        child: Scaffold(
+          key: manageChildEntityListPagekey,
+          appBar: CustomAppBarWithBackButton(
+            backRoute: ManageEntityListPage(),
+            titleTxt: title,
+          ),
+          body: Center(
+            child: Column(
+              children: <Widget>[
+                Card(
+                  elevation: 20,
+                  margin:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * .03),
+                  child: Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: borderColor),
+                        color: Colors.white,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: InkWell(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(" Add a new Place",
+                              style: TextStyle(
+                                  fontSize: 18, color: Colors.blueGrey[700])),
+                          horizontalSpacer,
+                          Icon(Icons.add_circle,
+                              color: highlightColor, size: 40),
+                        ],
+                      ),
+                      onTap: () {
+                        print("Tappped");
+                        if (!widget.isReadOnly) {
+                          showCategorySheet();
+                        } else {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info,
+                              Duration(seconds: 5),
+                              '$noEditPermission the child places',
+                              '');
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                if (!Utils.isNullOrEmpty(servicesList))
+                  new Expanded(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * .026),
+                        controller: _childScrollController,
+                        reverse: true,
+                        shrinkWrap: true,
+                        itemExtent: itemSize,
+                        //scrollDirection: Axis.vertical,
+                        itemBuilder: (BuildContext context, int index) {
+                          // itemSize = MediaQuery.of(context).size.height * .21;
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 5),
+                            child: ChildEntityRow(
+                                childEntity: servicesList[index]),
+                          );
                         },
+                        itemCount: servicesList.length,
                       ),
                     ),
                   ),
-                  if (!Utils.isNullOrEmpty(servicesList))
-                    new Expanded(
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: ListView.builder(
-                          padding: EdgeInsets.all(
-                              MediaQuery.of(context).size.width * .026),
-                          controller: _childScrollController,
-                          reverse: true,
-                          shrinkWrap: true,
-                          itemExtent: itemSize,
-                          //scrollDirection: Axis.vertical,
-                          itemBuilder: (BuildContext context, int index) {
-                            // itemSize = MediaQuery.of(context).size.height * .21;
-                            return Container(
-                              margin: EdgeInsets.only(bottom: 5),
-                              child: ChildEntityRow(
-                                  childEntity: servicesList[index]),
-                            );
-                          },
-                          itemCount: servicesList.length,
-                        ),
-                      ),
-                    ),
-                  verticalSpacer,
-                  verticalSpacer,
-                ],
-              ),
+                verticalSpacer,
+                verticalSpacer,
+              ],
             ),
           ),
-          onWillPop: () async {
-            if (childBottomSheetController != null) {
-              childBottomSheetController.close();
-              childBottomSheetController = null;
-              return false;
-            } else {
-              //Navigator.of(context).pop();
-              Navigator.of(context)
-                  .push(PageAnimation.createRoute(ManageEntityListPage()));
-              return false;
-            }
-          },
         ),
+        onWillPop: () async {
+          if (childBottomSheetController != null) {
+            childBottomSheetController.close();
+            childBottomSheetController = null;
+            return false;
+          } else {
+            //Navigator.of(context).pop();
+            Navigator.of(context)
+                .push(PageAnimation.createRoute(ManageEntityListPage()));
+            return false;
+          }
+        },
       );
     } else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            key: manageChildEntityListPagekey,
-            appBar: CustomAppBarWithBackButton(
-              backRoute: ManageEntityListPage(),
-              titleTxt: title,
-            ),
-
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
-            ),
-            //drawer: CustomDrawer(),
-            // bottomNavigationBar: CustomBottomBar(barIndex: 0),
+      return WillPopScope(
+        child: Scaffold(
+          key: manageChildEntityListPagekey,
+          appBar: CustomAppBarWithBackButton(
+            backRoute: ManageEntityListPage(),
+            titleTxt: title,
           ),
-          onWillPop: () async {
-            return true;
-          },
+
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          // bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

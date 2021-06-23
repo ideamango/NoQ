@@ -106,30 +106,26 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
     if (_initCompleted)
       return _contentWidget();
     else
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBar(
-              titleTxt: "Generate QR",
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  // Padding(padding: EdgeInsets.only(top: 20.0)),
-                  showCircularProgress()
-                ],
-              ),
-            ),
-            //drawer: CustomDrawer(),
-            // bottomNavigationBar: CustomBottomBar(barIndex: 1),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBar(
+            titleTxt: "Generate QR",
           ),
-          onWillPop: () async {
-            return true;
-          },
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // Padding(padding: EdgeInsets.only(top: 20.0)),
+                showCircularProgress()
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          // bottomNavigationBar: CustomBottomBar(barIndex: 1),
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
   }
 
@@ -193,120 +189,115 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
     //  MediaQuery.of(context).size.height -
     //     MediaQuery.of(context).viewInsets.bottom;
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      // title: 'Add child entities',
-      theme: ThemeData.light().copyWith(),
-      home: WillPopScope(
-        child: Scaffold(
-          appBar:
-              CustomAppBarWithBackButton(titleTxt: "QR Code", backRoute: route),
-          body: Center(
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
-                  height: MediaQuery.of(context).size.height * .12,
-                  child: Text(
-                    QRMessageInToken,
-                    style: TextStyle(
-                        color: Colors.blueGrey[700],
-                        fontSize: 16,
-                        height: 1.5,
-                        // fontWeight: FontWeight.bold,
-                        fontFamily: 'RalewayRegular'),
-                  ),
+    return WillPopScope(
+      child: Scaffold(
+        appBar:
+            CustomAppBarWithBackButton(titleTxt: "QR Code", backRoute: route),
+        body: Center(
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
+                height: MediaQuery.of(context).size.height * .12,
+                child: Text(
+                  QRMessageInToken,
+                  style: TextStyle(
+                      color: Colors.blueGrey[700],
+                      fontSize: 16,
+                      height: 1.5,
+                      // fontWeight: FontWeight.bold,
+                      fontFamily: 'RalewayRegular'),
                 ),
-                Card(
-                  elevation: 8,
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 20),
-                    padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-                    color: Colors.white,
-                    width: MediaQuery.of(context).size.width * .8,
-                    height: MediaQuery.of(context).size.height * .65,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                          child: Center(
-                            child: RepaintBoundary(
-                              key: globalKey,
-                              child: Container(
-                                alignment: Alignment.center,
-                                color: Colors.white,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    QrImage(
-                                      data: _dataString,
-                                      size: MediaQuery.of(context).size.height *
-                                          .32,
-                                      errorStateBuilder: (cxt, err) {
-                                        return Container(
-                                          child: Center(
-                                            child: Text(
-                                              "Uh oh! Something went wrong!! May be the text is too long. Try again.",
-                                              textAlign: TextAlign.center,
-                                            ),
+              ),
+              Card(
+                elevation: 8,
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+                  color: Colors.white,
+                  width: MediaQuery.of(context).size.width * .8,
+                  height: MediaQuery.of(context).size.height * .65,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Center(
+                          child: RepaintBoundary(
+                            key: globalKey,
+                            child: Container(
+                              alignment: Alignment.center,
+                              color: Colors.white,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  QrImage(
+                                    data: _dataString,
+                                    size: MediaQuery.of(context).size.height *
+                                        .32,
+                                    errorStateBuilder: (cxt, err) {
+                                      return Container(
+                                        child: Center(
+                                          child: Text(
+                                            "Uh oh! Something went wrong!! May be the text is too long. Try again.",
+                                            textAlign: TextAlign.center,
                                           ),
-                                        );
-                                      },
-                                    ),
-                                    (Platform.isIOS)
-                                        ? Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .15,
-                                            margin: EdgeInsets.fromLTRB(
-                                                20, 10, 10, 0),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(msgTitle + '\n'),
-                                                Text(msgBody),
-                                              ],
-                                            ),
-                                          )
-                                        : Container(height: 0),
-                                  ],
-                                ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  (Platform.isIOS)
+                                      ? Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .15,
+                                          margin: EdgeInsets.fromLTRB(
+                                              20, 10, 10, 0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(msgTitle + '\n'),
+                                              Text(msgBody),
+                                            ],
+                                          ),
+                                        )
+                                      : Container(height: 0),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.all(10),
-                          child: MaterialButton(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.blueGrey[400]),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            color: btnColor,
-                            child: Container(
-                                margin: EdgeInsets.all(10),
-                                child: Text("Share QR Code",
-                                    style: TextStyle(color: Colors.white))),
-                            onPressed: () {
-                              _shareContent();
-                            },
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        child: MaterialButton(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blueGrey[400]),
+                            borderRadius: BorderRadius.circular(5),
                           ),
+                          color: btnColor,
+                          child: Container(
+                              margin: EdgeInsets.all(10),
+                              child: Text("Share QR Code",
+                                  style: TextStyle(color: Colors.white))),
+                          onPressed: () {
+                            _shareContent();
+                          },
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        onWillPop: () async {
-          return true;
-        },
       ),
+      onWillPop: () async {
+        return true;
+      },
     );
   }
 }

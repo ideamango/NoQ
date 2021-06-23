@@ -270,75 +270,71 @@ class _FavsListPageState extends State<FavsListPage>
     print("Font size" + fontSize.toString());
 // build widget only after init has completed, till then show progress indicator.
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(),
-      home: WillPopScope(
-        child: Scaffold(
-          key: key,
-          appBar: (!initCompleted)
-              ? CustomAppBar(
-                  titleTxt: "My Favourites",
-                )
-              : AppBar(
-                  actions: <Widget>[],
-                  flexibleSpace: Container(
-                    decoration: gradientBackground,
-                  ),
-                  leading: IconButton(
-                      padding: EdgeInsets.all(0),
-                      alignment: Alignment.center,
-                      highlightColor: Colors.orange[300],
-                      icon: Icon(Icons.arrow_back),
-                      color: Colors.white,
-                      onPressed: () {
-                        //  Navigator.of(context).pop();
-                        Navigator.of(context)
-                            .push(PageAnimation.createRoute(UserHomePage()));
-                      }),
-                  title: Text(
-                    "My Favourites",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
-                  )),
-          body: (!initCompleted)
-              ? Center(
+    return WillPopScope(
+      child: Scaffold(
+        key: key,
+        appBar: (!initCompleted)
+            ? CustomAppBar(
+                titleTxt: "My Favourites",
+              )
+            : AppBar(
+                actions: <Widget>[],
+                flexibleSpace: Container(
+                  decoration: gradientBackground,
+                ),
+                leading: IconButton(
+                    padding: EdgeInsets.all(0),
+                    alignment: Alignment.center,
+                    highlightColor: Colors.orange[300],
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.white,
+                    onPressed: () {
+                      //  Navigator.of(context).pop();
+                      Navigator.of(context)
+                          .push(PageAnimation.createRoute(UserHomePage()));
+                    }),
+                title: Text(
+                  "My Favourites",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                )),
+        body: (!initCompleted)
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    showCircularProgress(),
+                  ],
+                ),
+              )
+            : Center(
+                child: Container(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      showCircularProgress(),
+                      (!Utils.isNullOrEmpty(_stores))
+                          ? Expanded(
+                              child: ListView.builder(
+                                  itemCount: 1,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(
+                                      margin:
+                                          EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                      child: new Column(
+                                        children: showFavourites(),
+                                      ),
+                                    );
+                                  }),
+                            )
+                          : _emptyFavsPage(),
                     ],
                   ),
-                )
-              : Center(
-                  child: Container(
-                    child: Column(
-                      children: <Widget>[
-                        (!Utils.isNullOrEmpty(_stores))
-                            ? Expanded(
-                                child: ListView.builder(
-                                    itemCount: 1,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                        child: new Column(
-                                          children: showFavourites(),
-                                        ),
-                                      );
-                                    }),
-                              )
-                            : _emptyFavsPage(),
-                      ],
-                    ),
-                  ),
                 ),
-          //drawer: CustomDrawer(),
-          bottomNavigationBar: CustomBottomBar(barIndex: 2),
-        ),
-        onWillPop: willPopCallback,
+              ),
+        //drawer: CustomDrawer(),
+        bottomNavigationBar: CustomBottomBar(barIndex: 2),
       ),
+      onWillPop: willPopCallback,
     );
   }
 

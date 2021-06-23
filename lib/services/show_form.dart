@@ -1426,384 +1426,374 @@ class _EntityFormState extends State<EntityForm> {
   @override
   Widget build(BuildContext context) {
     if (_initCompleted)
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: highlightColor,
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  print("going back");
-
-                  //Show flush bar to notify user
-                  // if (flushStatus != "Showing") {
-                  //   flush = Flushbar<bool>(
-                  //     //padding: EdgeInsets.zero,
-                  //     margin: EdgeInsets.zero,
-                  //     flushbarPosition: FlushbarPosition.BOTTOM,
-                  //     flushbarStyle: FlushbarStyle.GROUNDED,
-                  //     reverseAnimationCurve: Curves.decelerate,
-                  //     forwardAnimationCurve: Curves.easeInToLinear,
-                  //     backgroundColor: Colors.cyan[200],
-                  //     boxShadows: [
-                  //       BoxShadow(
-                  //           color: Colors.cyan,
-                  //           offset: Offset(0.0, 2.0),
-                  //           blurRadius: 3.0)
-                  //     ],
-                  //     isDismissible: true,
-                  //     //duration: Duration(seconds: 4),
-                  //     icon: Icon(
-                  //       Icons.cancel,
-                  //       color: Colors.blueGrey[90],
-                  //     ),
-                  //     showProgressIndicator: true,
-                  //     progressIndicatorBackgroundColor: Colors.blueGrey[900],
-                  //     progressIndicatorValueColor:
-                  //         new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
-                  //     routeBlur: 10.0,
-                  //     titleText: Text(
-                  //       "Are you sure you want to leave this page?",
-                  //       style: TextStyle(
-                  //           fontWeight: FontWeight.bold,
-                  //           fontSize: 16.0,
-                  //           color: Colors.blueGrey[700],
-                  //           fontFamily: "ShadowsIntoLightTwo"),
-                  //     ),
-                  //     messageText: Text(
-                  //       "The changes you made might be lost, if not saved.",
-                  //       style: TextStyle(
-                  //           fontSize: 12.0,
-                  //           color: Colors.blueGrey[800],
-                  //           fontFamily: "ShadowsIntoLightTwo"),
-                  //     ),
-
-                  //     mainButton: Column(
-                  //       children: <Widget>[
-                  //         FlatButton(
-                  //           padding: EdgeInsets.all(0),
-                  //           onPressed: () {
-                  //             flushStatus = "Empty";
-                  //             flush.dismiss(false); // result = true
-                  //           },
-                  //           child: Text(
-                  //             "No",
-                  //             style: TextStyle(
-                  //                 color: Colors.black,
-                  //                 fontWeight: FontWeight.bold),
-                  //           ),
-                  //         ),
-                  //         FlatButton(
-                  //           padding: EdgeInsets.all(0),
-                  //           onPressed: () {
-                  //             flushStatus = "Empty";
-                  //             flush.dismiss(true); // result = true
-                  //           },
-                  //           child: Text(
-                  //             "Yes",
-                  //             style: TextStyle(color: Colors.blueGrey[700]),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   )..onStatusChanged = (FlushbarStatus status) {
-                  //       print("FlushbarStatus-------$status");
-                  //       if (status == FlushbarStatus.IS_APPEARING)
-                  //         flushStatus = "Showing";
-                  //       if (status == FlushbarStatus.DISMISSED)
-                  //         flushStatus = "Empty";
-                  //       print("gfdfgdfg");
-                  //     };
-
-                  //   flush
-                  //     ..show(context).then((result) {
-                  //       _wasButtonClicked = result;
-                  //       flushStatus = "Empty";
-                  //       if (_wasButtonClicked) Navigator.of(context).pop();
-                  //     });
-                  // }
-                  Navigator.of(context).pop();
-                  print("flush already running");
-                },
-              ),
-              title: Text(dummyForm.formName,
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[],
+            flexibleSpace: Container(
+              decoration: gradientBackground,
             ),
-            body: Center(
-              child: SafeArea(
-                child: Form(
-                  key: _bookingFormKey,
-                  child: Column(
-                    children: [
-                      // Container(
-                      //   margin: EdgeInsets.fromLTRB(0, 12, 0, 0),
-                      //   width: MediaQuery.of(context).size.width * .913,
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.grey[50],
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: <Widget>[
-                      //       Column(
-                      //         children: <Widget>[
-                      //           Container(
-                      //             //padding: EdgeInsets.only(left: 5),
-                      //             decoration: darkContainer,
-                      //             child: Theme(
-                      //               data: ThemeData(
-                      //                 unselectedWidgetColor: Colors.white,
-                      //                 accentColor: Colors.grey[50],
-                      //               ),
-                      //               child: CustomExpansionTile(
-                      //                 //key: PageStorageKey(this.widget.headerTitle),
-                      //                 initiallyExpanded: false,
-                      //                 title: Row(
-                      //                   children: <Widget>[
-                      //                     Text(
-                      //                       "Selected Time Slot",
-                      //                       style: TextStyle(
-                      //                           color: Colors.white,
-                      //                           fontSize: 15),
-                      //                     ),
-                      //                     SizedBox(width: 5),
-                      //                   ],
-                      //                 ),
-                      //                 backgroundColor: Colors.blueGrey[500],
+            leading: IconButton(
+              padding: EdgeInsets.all(0),
+              alignment: Alignment.center,
+              highlightColor: highlightColor,
+              icon: Icon(Icons.arrow_back),
+              color: Colors.white,
+              onPressed: () {
+                print("going back");
 
-                      //                 children: <Widget>[
-                      //                   new Container(
-                      //                     width: MediaQuery.of(context)
-                      //                             .size
-                      //                             .width *
-                      //                         .94,
-                      //                     decoration: darkContainer,
-                      //                     padding: EdgeInsets.all(2.0),
-                      //                     child: Row(
-                      //                       children: <Widget>[
-                      //                         Expanded(
-                      //                           child: Text(
-                      //                               "Time of your appointment for this place",
-                      //                               style: buttonXSmlTextStyle),
-                      //                         ),
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Container(
-                      //             padding: EdgeInsets.fromLTRB(5, 8, 5, 5),
-                      //             child: Column(
-                      //               children: <Widget>[
-                      //                 Column(
-                      //                   children: [
-                      //                     Row(
-                      //                       children: [
-                      //                         SizedBox(
-                      //                             // width: cardWidth * .45,
-                      //                             child: Wrap(
-                      //                           children: [
-                      //                             AutoSizeText(
-                      //                               "Requested time-slot :",
-                      //                               //group: labelGroup,
-                      //                               minFontSize: 15,
-                      //                               maxFontSize: 15,
-                      //                               maxLines: 2,
-                      //                               overflow: TextOverflow.clip,
-                      //                               style: fieldLabelTextStyle,
-                      //                             ),
-                      //                           ],
-                      //                         )),
-                      //                         Wrap(children: [
-                      //                           Container(
-                      //                             padding:
-                      //                                 EdgeInsets.only(left: 5),
-                      //                             child: AutoSizeText(
-                      //                                 ((bookingApplication
-                      //                                             .preferredSlotTiming !=
-                      //                                         null)
-                      //                                     ? DateFormat(
-                      //                                             'yyyy-MM-dd – HH:mm')
-                      //                                         .format(bookingApplication
-                      //                                             .preferredSlotTiming)
-                      //                                     : "None"),
-                      //                                 // group: medCondGroup,
-                      //                                 minFontSize: 12,
-                      //                                 maxFontSize: 14,
-                      //                                 maxLines: 1,
-                      //                                 overflow:
-                      //                                     TextOverflow.ellipsis,
-                      //                                 style: TextStyle(
-                      //                                   color: btnColor,
-                      //                                   fontWeight:
-                      //                                       FontWeight.bold,
-                      //                                 )),
-                      //                           ),
-                      //                         ]),
-                      //                       ],
-                      //                     ),
-                      //                     Row(
-                      //                       mainAxisAlignment:
-                      //                           MainAxisAlignment.start,
-                      //                       children: [
-                      //                         AutoSizeText(
-                      //                           "Click to choose another Time-Slot",
-                      //                           // group: labelGroup,
-                      //                           minFontSize: 15,
-                      //                           maxFontSize: 15,
-                      //                           maxLines: 2,
-                      //                           overflow: TextOverflow.clip,
-                      //                           style: fieldLabelTextStyle,
-                      //                         ),
-                      //                         IconButton(
-                      //                             icon: Icon(
-                      //                               Icons.date_range,
-                      //                               color: btnColor,
-                      //                             ),
-                      //                             onPressed: () async {
-                      //                               final result =
-                      //                                   await Navigator.push(
-                      //                                       context,
-                      //                                       MaterialPageRoute(
-                      //                                           builder:
-                      //                                               (context) =>
-                      //                                                   SlotSelectionPage(
-                      //                                                     metaEntity:
-                      //                                                         widget.metaEntity,
-                      //                                                     dateTime:
-                      //                                                         bookingApplication.preferredSlotTiming,
-                      //                                                     forPage:
-                      //                                                         "ApplicationList",
-                      //                                                   )));
+                //Show flush bar to notify user
+                // if (flushStatus != "Showing") {
+                //   flush = Flushbar<bool>(
+                //     //padding: EdgeInsets.zero,
+                //     margin: EdgeInsets.zero,
+                //     flushbarPosition: FlushbarPosition.BOTTOM,
+                //     flushbarStyle: FlushbarStyle.GROUNDED,
+                //     reverseAnimationCurve: Curves.decelerate,
+                //     forwardAnimationCurve: Curves.easeInToLinear,
+                //     backgroundColor: Colors.cyan[200],
+                //     boxShadows: [
+                //       BoxShadow(
+                //           color: Colors.cyan,
+                //           offset: Offset(0.0, 2.0),
+                //           blurRadius: 3.0)
+                //     ],
+                //     isDismissible: true,
+                //     //duration: Duration(seconds: 4),
+                //     icon: Icon(
+                //       Icons.cancel,
+                //       color: Colors.blueGrey[90],
+                //     ),
+                //     showProgressIndicator: true,
+                //     progressIndicatorBackgroundColor: Colors.blueGrey[900],
+                //     progressIndicatorValueColor:
+                //         new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
+                //     routeBlur: 10.0,
+                //     titleText: Text(
+                //       "Are you sure you want to leave this page?",
+                //       style: TextStyle(
+                //           fontWeight: FontWeight.bold,
+                //           fontSize: 16.0,
+                //           color: Colors.blueGrey[700],
+                //           fontFamily: "ShadowsIntoLightTwo"),
+                //     ),
+                //     messageText: Text(
+                //       "The changes you made might be lost, if not saved.",
+                //       style: TextStyle(
+                //           fontSize: 12.0,
+                //           color: Colors.blueGrey[800],
+                //           fontFamily: "ShadowsIntoLightTwo"),
+                //     ),
 
-                      //                               print(result);
-                      //                               setState(() {
-                      //                                 if (result != null)
-                      //                                   bookingApplication
-                      //                                           .preferredSlotTiming =
-                      //                                       result;
-                      //                               });
-                      //                             })
-                      //                       ],
-                      //                     ),
-                      //                   ],
-                      //                 ),
+                //     mainButton: Column(
+                //       children: <Widget>[
+                //         FlatButton(
+                //           padding: EdgeInsets.all(0),
+                //           onPressed: () {
+                //             flushStatus = "Empty";
+                //             flush.dismiss(false); // result = true
+                //           },
+                //           child: Text(
+                //             "No",
+                //             style: TextStyle(
+                //                 color: Colors.black,
+                //                 fontWeight: FontWeight.bold),
+                //           ),
+                //         ),
+                //         FlatButton(
+                //           padding: EdgeInsets.all(0),
+                //           onPressed: () {
+                //             flushStatus = "Empty";
+                //             flush.dismiss(true); // result = true
+                //           },
+                //           child: Text(
+                //             "Yes",
+                //             style: TextStyle(color: Colors.blueGrey[700]),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   )..onStatusChanged = (FlushbarStatus status) {
+                //       print("FlushbarStatus-------$status");
+                //       if (status == FlushbarStatus.IS_APPEARING)
+                //         flushStatus = "Showing";
+                //       if (status == FlushbarStatus.DISMISSED)
+                //         flushStatus = "Empty";
+                //       print("gfdfgdfg");
+                //     };
 
-                      //                 // alternatePhoneField,
-                      //               ],
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      Expanded(
-                        child: ListView.builder(
-                          padding: EdgeInsets.all(
-                              MediaQuery.of(context).size.width * .026),
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            _controllers.add(new TextEditingController());
-                            return Container(
-                              //color: Colors.grey,
-                              //   height: MediaQuery.of(context).size.height * .55,
-                              width: MediaQuery.of(context).size.width * .95,
-                              child: buildChildItem(
-                                  dummyForm.getFormFields()[index],
-                                  index,
-                                  false),
-                            );
-                          },
-                          itemCount: dummyForm.getFormFields().length,
-                        ),
+                //   flush
+                //     ..show(context).then((result) {
+                //       _wasButtonClicked = result;
+                //       flushStatus = "Empty";
+                //       if (_wasButtonClicked) Navigator.of(context).pop();
+                //     });
+                // }
+                Navigator.of(context).pop();
+                print("flush already running");
+              },
+            ),
+            title: Text(dummyForm.formName,
+                style: TextStyle(color: Colors.white, fontSize: 16)),
+          ),
+          body: Center(
+            child: SafeArea(
+              child: Form(
+                key: _bookingFormKey,
+                child: Column(
+                  children: [
+                    // Container(
+                    //   margin: EdgeInsets.fromLTRB(0, 12, 0, 0),
+                    //   width: MediaQuery.of(context).size.width * .913,
+                    //   decoration: BoxDecoration(
+                    //       border: Border.all(color: containerColor),
+                    //       color: Colors.grey[50],
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius:
+                    //           BorderRadius.all(Radius.circular(5.0))),
+                    //   child: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: <Widget>[
+                    //       Column(
+                    //         children: <Widget>[
+                    //           Container(
+                    //             //padding: EdgeInsets.only(left: 5),
+                    //             decoration: darkContainer,
+                    //             child: Theme(
+                    //               data: ThemeData(
+                    //                 unselectedWidgetColor: Colors.white,
+                    //                 accentColor: Colors.grey[50],
+                    //               ),
+                    //               child: CustomExpansionTile(
+                    //                 //key: PageStorageKey(this.widget.headerTitle),
+                    //                 initiallyExpanded: false,
+                    //                 title: Row(
+                    //                   children: <Widget>[
+                    //                     Text(
+                    //                       "Selected Time Slot",
+                    //                       style: TextStyle(
+                    //                           color: Colors.white,
+                    //                           fontSize: 15),
+                    //                     ),
+                    //                     SizedBox(width: 5),
+                    //                   ],
+                    //                 ),
+                    //                 backgroundColor: Colors.blueGrey[500],
+
+                    //                 children: <Widget>[
+                    //                   new Container(
+                    //                     width: MediaQuery.of(context)
+                    //                             .size
+                    //                             .width *
+                    //                         .94,
+                    //                     decoration: darkContainer,
+                    //                     padding: EdgeInsets.all(2.0),
+                    //                     child: Row(
+                    //                       children: <Widget>[
+                    //                         Expanded(
+                    //                           child: Text(
+                    //                               "Time of your appointment for this place",
+                    //                               style: buttonXSmlTextStyle),
+                    //                         ),
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ),
+                    //           Container(
+                    //             padding: EdgeInsets.fromLTRB(5, 8, 5, 5),
+                    //             child: Column(
+                    //               children: <Widget>[
+                    //                 Column(
+                    //                   children: [
+                    //                     Row(
+                    //                       children: [
+                    //                         SizedBox(
+                    //                             // width: cardWidth * .45,
+                    //                             child: Wrap(
+                    //                           children: [
+                    //                             AutoSizeText(
+                    //                               "Requested time-slot :",
+                    //                               //group: labelGroup,
+                    //                               minFontSize: 15,
+                    //                               maxFontSize: 15,
+                    //                               maxLines: 2,
+                    //                               overflow: TextOverflow.clip,
+                    //                               style: fieldLabelTextStyle,
+                    //                             ),
+                    //                           ],
+                    //                         )),
+                    //                         Wrap(children: [
+                    //                           Container(
+                    //                             padding:
+                    //                                 EdgeInsets.only(left: 5),
+                    //                             child: AutoSizeText(
+                    //                                 ((bookingApplication
+                    //                                             .preferredSlotTiming !=
+                    //                                         null)
+                    //                                     ? DateFormat(
+                    //                                             'yyyy-MM-dd – HH:mm')
+                    //                                         .format(bookingApplication
+                    //                                             .preferredSlotTiming)
+                    //                                     : "None"),
+                    //                                 // group: medCondGroup,
+                    //                                 minFontSize: 12,
+                    //                                 maxFontSize: 14,
+                    //                                 maxLines: 1,
+                    //                                 overflow:
+                    //                                     TextOverflow.ellipsis,
+                    //                                 style: TextStyle(
+                    //                                   color: btnColor,
+                    //                                   fontWeight:
+                    //                                       FontWeight.bold,
+                    //                                 )),
+                    //                           ),
+                    //                         ]),
+                    //                       ],
+                    //                     ),
+                    //                     Row(
+                    //                       mainAxisAlignment:
+                    //                           MainAxisAlignment.start,
+                    //                       children: [
+                    //                         AutoSizeText(
+                    //                           "Click to choose another Time-Slot",
+                    //                           // group: labelGroup,
+                    //                           minFontSize: 15,
+                    //                           maxFontSize: 15,
+                    //                           maxLines: 2,
+                    //                           overflow: TextOverflow.clip,
+                    //                           style: fieldLabelTextStyle,
+                    //                         ),
+                    //                         IconButton(
+                    //                             icon: Icon(
+                    //                               Icons.date_range,
+                    //                               color: btnColor,
+                    //                             ),
+                    //                             onPressed: () async {
+                    //                               final result =
+                    //                                   await Navigator.push(
+                    //                                       context,
+                    //                                       MaterialPageRoute(
+                    //                                           builder:
+                    //                                               (context) =>
+                    //                                                   SlotSelectionPage(
+                    //                                                     metaEntity:
+                    //                                                         widget.metaEntity,
+                    //                                                     dateTime:
+                    //                                                         bookingApplication.preferredSlotTiming,
+                    //                                                     forPage:
+                    //                                                         "ApplicationList",
+                    //                                                   )));
+
+                    //                               print(result);
+                    //                               setState(() {
+                    //                                 if (result != null)
+                    //                                   bookingApplication
+                    //                                           .preferredSlotTiming =
+                    //                                       result;
+                    //                               });
+                    //                             })
+                    //                       ],
+                    //                     ),
+                    //                   ],
+                    //                 ),
+
+                    //                 // alternatePhoneField,
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * .026),
+                        shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          _controllers.add(new TextEditingController());
+                          return Container(
+                            //color: Colors.grey,
+                            //   height: MediaQuery.of(context).size.height * .55,
+                            width: MediaQuery.of(context).size.width * .95,
+                            child: buildChildItem(
+                                dummyForm.getFormFields()[index], index, false),
+                          );
+                        },
+                        itemCount: dummyForm.getFormFields().length,
                       ),
-                      RaisedButton(
-                          color: btnColor,
-                          splashColor: highlightColor,
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            // margin: EdgeInsets.all(10),
-                            width: MediaQuery.of(context).size.width * .84,
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  'Save Details & Request Token',
-                                  style: buttonMedTextStyle,
-                                ),
-                              ],
-                            ),
+                    ),
+                    RaisedButton(
+                        color: btnColor,
+                        splashColor: highlightColor,
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          // margin: EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width * .84,
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                'Save Details & Request Token',
+                                style: buttonMedTextStyle,
+                              ),
+                            ],
                           ),
-                          onPressed: () {
-                            print("FlushbarStatus-------");
-                            // processSaveWithTimer();
-                            return;
-                          }),
-                    ],
-                  ),
+                        ),
+                        onPressed: () {
+                          print("FlushbarStatus-------");
+                          // processSaveWithTimer();
+                          return;
+                        }),
+                  ],
                 ),
               ),
             ),
           ),
-          onWillPop: () async {
-            return true;
-          },
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: highlightColor,
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  print("going back");
-                  Navigator.of(context).pop();
-                },
-              ),
-              title: Text("Booking Request Form",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
+      return WillPopScope(
+        child: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[],
+            flexibleSpace: Container(
+              decoration: gradientBackground,
             ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
+            leading: IconButton(
+              padding: EdgeInsets.all(0),
+              alignment: Alignment.center,
+              highlightColor: highlightColor,
+              icon: Icon(Icons.arrow_back),
+              color: Colors.white,
+              onPressed: () {
+                print("going back");
+                Navigator.of(context).pop();
+              },
             ),
-            //drawer: CustomDrawer(),
-            //bottomNavigationBar: CustomBottomBar(barIndex: 0),
+            title: Text("Booking Request Form",
+                style: TextStyle(color: Colors.white, fontSize: 16)),
           ),
-          onWillPop: () async {
-            return true;
-          },
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

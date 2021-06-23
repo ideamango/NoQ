@@ -971,121 +971,199 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
   @override
   Widget build(BuildContext context) {
     if (initCompleted && !loadingData) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-          appBar: CustomAppBarWithBackButton(
-            backRoute: widget.backRoute,
-            titleTxt: "Booking Tokens Overview ",
-          ),
-          body: Center(
-            child: Container(
-              // decoration: verticalBackground,
-              //margin: EdgeInsets.fromLTRB(10, 0, 10, 5),
-              //color: Colors.grey[50],
-              child: Column(
-                children: <Widget>[
-                  Container(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          // pickAnyDate(context).then((value) {
-                          //   if (value != null) {
-                          //     print(value);
-                          //     dateForShowingList = value;
-                          //     setState(() {
-                          //       loadingData = true;
-                          //     });
-                          //     getListOfData(value);
-                          //   }
-                          // });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          width: MediaQuery.of(context).size.width * .45,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(Icons.date_range),
-                              SizedBox(width: 5),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .25,
-                                child: AutoSizeText(
-                                  formattedDateStr,
-                                  minFontSize: 10,
-                                  maxFontSize: 17,
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                      color: btnColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'RalewayRegular'),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * .4,
+      return Scaffold(
+        appBar: CustomAppBarWithBackButton(
+          backRoute: widget.backRoute,
+          titleTxt: "Booking Tokens Overview ",
+        ),
+        body: Center(
+          child: Container(
+            // decoration: verticalBackground,
+            //margin: EdgeInsets.fromLTRB(10, 0, 10, 5),
+            //color: Colors.grey[50],
+            child: Column(
+              children: <Widget>[
+                Container(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        // pickAnyDate(context).then((value) {
+                        //   if (value != null) {
+                        //     print(value);
+                        //     dateForShowingList = value;
+                        //     setState(() {
+                        //       loadingData = true;
+                        //     });
+                        //     getListOfData(value);
+                        //   }
+                        // });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        width: MediaQuery.of(context).size.width * .45,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            IconButton(
-                              icon: Icon(Icons.bar_chart, color: disabledColor),
-                              onPressed: () {
-                                // setState(() {
-                                //   selectedView = SelectedView.bar;
-                                // });
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.list),
-                              onPressed: () {
-                                setState(() {
-                                  selectedView = SelectedView.list;
-                                });
-                              },
+                            Icon(Icons.date_range),
+                            SizedBox(width: 5),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .25,
+                              child: AutoSizeText(
+                                formattedDateStr,
+                                minFontSize: 10,
+                                maxFontSize: 17,
+                                maxLines: 2,
+                                style: TextStyle(
+                                    color: btnColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'RalewayRegular'),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  )),
-                  Container(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * .4,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Container(
-                            decoration: buttonBackground,
-                            //width: MediaQuery.of(context).size.width * .18,
-                            height: MediaQuery.of(context).size.width * .08,
-                            child: FlatButton(
+                          IconButton(
+                            icon: Icon(Icons.bar_chart, color: disabledColor),
+                            onPressed: () {
+                              // setState(() {
+                              //   selectedView = SelectedView.bar;
+                              // });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.list),
+                            onPressed: () {
+                              setState(() {
+                                selectedView = SelectedView.list;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )),
+                Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          decoration: buttonBackground,
+                          //width: MediaQuery.of(context).size.width * .18,
+                          height: MediaQuery.of(context).size.width * .08,
+                          child: FlatButton(
+                            visualDensity: VisualDensity.compact,
+                            color: Colors.transparent,
+                            textColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(color: btnColor),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(100.0))),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.arrow_back_ios,
+                                  size: 15,
+                                ),
+                                Text(
+                                  ' Prev',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              ],
+                            ),
+                            onPressed: () {
+                              selectedDate =
+                                  selectedDate.subtract(Duration(days: 1));
+                              formattedDateStr = DateFormat(dateDisplayFormat)
+                                  .format(selectedDate);
+                              setState(() {
+                                loadingData = true;
+                              });
+                              selectedDateFormat = DateDisplayFormat.date;
+                              prepareData(selectedDate, selectedDateFormat);
+                            },
+                          ),
+                        ),
+
+                        Container(
+                          decoration: buttonBackground,
+                          width: MediaQuery.of(context).size.width * .35,
+                          height: MediaQuery.of(context).size.width * .08,
+                          child: FlatButton(
+                            visualDensity: VisualDensity.compact,
+                            color: Colors.transparent,
+                            textColor: Colors.white,
+                            // shape: RoundedRectangleBorder(
+                            //     side: BorderSide(color: btnColor),
+                            //     borderRadius:
+                            //         BorderRadius.all(Radius.circular(100.0))),
+                            child: Text(
+                              'Select Date',
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            onPressed: () {
+                              //TODO SMITA - fetch data for showdatafordate
+                              pickAnyDate(context).then((value) {
+                                if (value != null) {
+                                  print(value);
+                                  setState(() {
+                                    loadingData = true;
+                                    selectedDate = value;
+                                  });
+                                  selectedDateFormat = DateDisplayFormat.date;
+                                  prepareData(value, selectedDateFormat);
+                                }
+                              });
+                            },
+                          ),
+                        ),
+
+                        Container(
+                          decoration: buttonBackground,
+                          //width: MediaQuery.of(context).size.width * .18,
+                          height: MediaQuery.of(context).size.width * .08,
+                          child: FlatButton(
                               visualDensity: VisualDensity.compact,
+                              // color: (selectedDateFormat ==
+                              //         DateDisplayFormat.date)
+                              //     ? btnColor
+                              //     : Colors.transparent,
                               color: Colors.transparent,
-                              textColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: btnColor),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(100.0))),
+                              textColor:
+                                  (selectedDateFormat == DateDisplayFormat.date)
+                                      ? Colors.white
+                                      : btnColor,
+                              // shape: RoundedRectangleBorder(
+                              //     borderRadius: BorderRadius.all(
+                              //         Radius.circular(100.0))),
                               child: Row(
                                 children: [
-                                  Icon(
-                                    Icons.arrow_back_ios,
-                                    size: 15,
-                                  ),
                                   Text(
-                                    ' Prev',
+                                    'Next ',
                                     style: TextStyle(fontSize: 15),
                                   ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 15,
+                                  )
                                 ],
                               ),
                               onPressed: () {
+                                //TODO SMITA - fetch data for showdatafordate
+                                // pickAnyDate(context).then((value) {
+                                //   if (value != null) {
+                                //     print(value);
                                 selectedDate =
-                                    selectedDate.subtract(Duration(days: 1));
+                                    selectedDate.add(Duration(days: 1));
                                 formattedDateStr = DateFormat(dateDisplayFormat)
                                     .format(selectedDate);
                                 setState(() {
@@ -1093,220 +1171,133 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                                 });
                                 selectedDateFormat = DateDisplayFormat.date;
                                 prepareData(selectedDate, selectedDateFormat);
-                              },
-                            ),
-                          ),
-
-                          Container(
-                            decoration: buttonBackground,
-                            width: MediaQuery.of(context).size.width * .35,
-                            height: MediaQuery.of(context).size.width * .08,
-                            child: FlatButton(
-                              visualDensity: VisualDensity.compact,
-                              color: Colors.transparent,
-                              textColor: Colors.white,
-                              // shape: RoundedRectangleBorder(
-                              //     side: BorderSide(color: btnColor),
-                              //     borderRadius:
-                              //         BorderRadius.all(Radius.circular(100.0))),
-                              child: Text(
-                                'Select Date',
-                                style: TextStyle(fontSize: 15),
+                              }
+                              // });
+                              // },
                               ),
-                              onPressed: () {
-                                //TODO SMITA - fetch data for showdatafordate
-                                pickAnyDate(context).then((value) {
-                                  if (value != null) {
-                                    print(value);
-                                    setState(() {
-                                      loadingData = true;
-                                      selectedDate = value;
-                                    });
-                                    selectedDateFormat = DateDisplayFormat.date;
-                                    prepareData(value, selectedDateFormat);
-                                  }
-                                });
-                              },
-                            ),
-                          ),
+                        ),
 
-                          Container(
-                            decoration: buttonBackground,
-                            //width: MediaQuery.of(context).size.width * .18,
-                            height: MediaQuery.of(context).size.width * .08,
-                            child: FlatButton(
-                                visualDensity: VisualDensity.compact,
-                                // color: (selectedDateFormat ==
-                                //         DateDisplayFormat.date)
-                                //     ? btnColor
-                                //     : Colors.transparent,
-                                color: Colors.transparent,
-                                textColor: (selectedDateFormat ==
-                                        DateDisplayFormat.date)
-                                    ? Colors.white
-                                    : btnColor,
-                                // shape: RoundedRectangleBorder(
-                                //     borderRadius: BorderRadius.all(
-                                //         Radius.circular(100.0))),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Next ',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 15,
-                                    )
-                                  ],
-                                ),
-                                onPressed: () {
-                                  //TODO SMITA - fetch data for showdatafordate
-                                  // pickAnyDate(context).then((value) {
-                                  //   if (value != null) {
-                                  //     print(value);
-                                  selectedDate =
-                                      selectedDate.add(Duration(days: 1));
-                                  formattedDateStr =
-                                      DateFormat(dateDisplayFormat)
-                                          .format(selectedDate);
-                                  setState(() {
-                                    loadingData = true;
-                                  });
-                                  selectedDateFormat = DateDisplayFormat.date;
-                                  prepareData(selectedDate, selectedDateFormat);
-                                }
-                                // });
-                                // },
-                                ),
-                          ),
+                        //TODO Phase2 - Show data for month and year
 
-                          //TODO Phase2 - Show data for month and year
+                        // SizedBox(
+                        //   // width: MediaQuery.of(context).size.width * .18,
+                        //   height: MediaQuery.of(context).size.width * .08,
+                        //   child: FlatButton(
+                        //     visualDensity: VisualDensity.compact,
+                        //     color: (selectedDateFormat ==
+                        //             DateDisplayFormat.month)
+                        //         ? btnColor
+                        //         : Colors.transparent,
+                        //     textColor: (selectedDateFormat ==
+                        //             DateDisplayFormat.month)
+                        //         ? Colors.white
+                        //         : btnColor,
+                        //     shape: RoundedRectangleBorder(
+                        //         side: BorderSide(color: btnColor),
+                        //         borderRadius:
+                        //             BorderRadius.all(Radius.circular(100.0))),
+                        //     child: Text(
+                        //       'Month',
+                        //       style: TextStyle(fontSize: 11),
+                        //     ),
+                        //     onPressed: () {
+                        //       showMonthPicker(
+                        //               context: context,
+                        //               firstDate: DateTime(
+                        //                   DateTime.now().year - 2, 12),
+                        //               lastDate: DateTime(
+                        //                   DateTime.now().year + 1, 12),
+                        //               initialDate: dateForShowingList)
+                        //           .then((value) => setState(() {
+                        //                 print(value);
+                        //                 if (value != null) {
+                        //                   setState(() {
+                        //                     loadingData = true;
+                        //                   });
+                        //                   selectedDateFormat =
+                        //                       DateDisplayFormat.month;
+                        //                   prepareData(
+                        //                       value, selectedDateFormat);
 
-                          // SizedBox(
-                          //   // width: MediaQuery.of(context).size.width * .18,
-                          //   height: MediaQuery.of(context).size.width * .08,
-                          //   child: FlatButton(
-                          //     visualDensity: VisualDensity.compact,
-                          //     color: (selectedDateFormat ==
-                          //             DateDisplayFormat.month)
-                          //         ? btnColor
-                          //         : Colors.transparent,
-                          //     textColor: (selectedDateFormat ==
-                          //             DateDisplayFormat.month)
-                          //         ? Colors.white
-                          //         : btnColor,
-                          //     shape: RoundedRectangleBorder(
-                          //         side: BorderSide(color: btnColor),
-                          //         borderRadius:
-                          //             BorderRadius.all(Radius.circular(100.0))),
-                          //     child: Text(
-                          //       'Month',
-                          //       style: TextStyle(fontSize: 11),
-                          //     ),
-                          //     onPressed: () {
-                          //       showMonthPicker(
-                          //               context: context,
-                          //               firstDate: DateTime(
-                          //                   DateTime.now().year - 2, 12),
-                          //               lastDate: DateTime(
-                          //                   DateTime.now().year + 1, 12),
-                          //               initialDate: dateForShowingList)
-                          //           .then((value) => setState(() {
-                          //                 print(value);
-                          //                 if (value != null) {
-                          //                   setState(() {
-                          //                     loadingData = true;
-                          //                   });
-                          //                   selectedDateFormat =
-                          //                       DateDisplayFormat.month;
-                          //                   prepareData(
-                          //                       value, selectedDateFormat);
+                        //                   //fetch data for the month (check getListOfData)
+                        //                 }
+                        //                 // selectedDate = date;
+                        //               }));
+                        //     },
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   // width: MediaQuery.of(context).size.width * .18,
+                        //   height: MediaQuery.of(context).size.width * .08,
+                        //   child: FlatButton(
+                        //     visualDensity: VisualDensity.compact,
+                        //     padding: EdgeInsets.zero,
+                        //     color:
+                        //         (selectedDateFormat == DateDisplayFormat.year)
+                        //             ? btnColor
+                        //             : Colors.transparent,
+                        //     textColor:
+                        //         (selectedDateFormat == DateDisplayFormat.year)
+                        //             ? Colors.white
+                        //             : btnColor,
+                        //     shape: RoundedRectangleBorder(
+                        //         side: BorderSide(color: btnColor),
+                        //         borderRadius:
+                        //             BorderRadius.all(Radius.circular(100.0))),
+                        //     child: Text(
+                        //       'Year',
+                        //       style: TextStyle(fontSize: 11),
+                        //     ),
+                        //     onPressed: () {
+                        //       //TODO SMITA - fetch data for year showdatafordate
+                        //       pickAnyYear(context, dateForShowingList)
+                        //           .then((value) {
+                        //         if (value != null) {
+                        //           print(value);
+                        //           setState(() {
+                        //             loadingData = true;
+                        //           });
+                        //           selectedDateFormat = DateDisplayFormat.year;
+                        //           prepareData(value, selectedDateFormat);
+                        //         }
+                        //       });
+                        //     },
+                        //   ),
+                        // ),
+                      ],
+                    )),
+                SizedBox(
+                  height: 10,
+                ),
+                //(!Utils.isNullOrEmpty(list)) ? showListOfData : _emptyPage(),
 
-                          //                   //fetch data for the month (check getListOfData)
-                          //                 }
-                          //                 // selectedDate = date;
-                          //               }));
-                          //     },
-                          //   ),
-                          // ),
-                          // SizedBox(
-                          //   // width: MediaQuery.of(context).size.width * .18,
-                          //   height: MediaQuery.of(context).size.width * .08,
-                          //   child: FlatButton(
-                          //     visualDensity: VisualDensity.compact,
-                          //     padding: EdgeInsets.zero,
-                          //     color:
-                          //         (selectedDateFormat == DateDisplayFormat.year)
-                          //             ? btnColor
-                          //             : Colors.transparent,
-                          //     textColor:
-                          //         (selectedDateFormat == DateDisplayFormat.year)
-                          //             ? Colors.white
-                          //             : btnColor,
-                          //     shape: RoundedRectangleBorder(
-                          //         side: BorderSide(color: btnColor),
-                          //         borderRadius:
-                          //             BorderRadius.all(Radius.circular(100.0))),
-                          //     child: Text(
-                          //       'Year',
-                          //       style: TextStyle(fontSize: 11),
-                          //     ),
-                          //     onPressed: () {
-                          //       //TODO SMITA - fetch data for year showdatafordate
-                          //       pickAnyYear(context, dateForShowingList)
-                          //           .then((value) {
-                          //         if (value != null) {
-                          //           print(value);
-                          //           setState(() {
-                          //             loadingData = true;
-                          //           });
-                          //           selectedDateFormat = DateDisplayFormat.year;
-                          //           prepareData(value, selectedDateFormat);
-                          //         }
-                          //       });
-                          //     },
-                          //   ),
-                          // ),
-                        ],
-                      )),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  //(!Utils.isNullOrEmpty(list)) ? showListOfData : _emptyPage(),
-
-                  (selectedView == SelectedView.list)
-                      ? listWidget
-                      : barChartWidget,
-                ],
-              ),
+                (selectedView == SelectedView.list)
+                    ? listWidget
+                    : barChartWidget,
+              ],
             ),
           ),
         ),
       );
     } else if (!initCompleted || loadingData) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: new WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: "Booking Tokens Overview ",
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
+      return new WillPopScope(
+        child: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: "Booking Tokens Overview ",
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
             ),
           ),
-          onWillPop: () async {
-            return true;
-          },
         ),
+        onWillPop: () async {
+          return true;
+        },
       );
     }
   }

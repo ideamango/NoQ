@@ -21,66 +21,61 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(),
-      home: WillPopScope(
-        child: Scaffold(
-          appBar: AppBar(
-            actions: <Widget>[],
-            flexibleSpace: Container(
-              decoration: gradientBackground,
-            ),
-            leading: IconButton(
-              padding: EdgeInsets.all(0),
-              alignment: Alignment.center,
-              highlightColor: highlightColor,
-              icon: Icon(Icons.arrow_back),
-              color: Colors.white,
-              onPressed: () {
-                print("going back");
-                User value = FirebaseAuth.instance.currentUser;
-                if (value == null) {
-                  print("No user");
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()));
-                } else {
-                  print("Go to dashboard");
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => UserHomePage()));
-                }
-              },
-            ),
-            title: Text(
-              "Terms of Use",
-              style: drawerdefaultTextStyle,
-              overflow: TextOverflow.ellipsis,
-            ),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          actions: <Widget>[],
+          flexibleSpace: Container(
+            decoration: gradientBackground,
           ),
-          body: SingleChildScrollView(
-            padding: EdgeInsets.all(16),
-            physics: BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                Container(
-                    padding: EdgeInsets.all(0),
-                    height: MediaQuery.of(context).size.height * .3,
-                    child: Image.asset('assets/terms.png')),
-                RichText(
-                  text: TextSpan(
-                      style: highlightSubTextStyle,
-                      children: <TextSpan>[
-                        TextSpan(text: agreement),
-                      ]),
-                ),
-              ],
-            ),
+          leading: IconButton(
+            padding: EdgeInsets.all(0),
+            alignment: Alignment.center,
+            highlightColor: highlightColor,
+            icon: Icon(Icons.arrow_back),
+            color: Colors.white,
+            onPressed: () {
+              print("going back");
+              User value = FirebaseAuth.instance.currentUser;
+              if (value == null) {
+                print("No user");
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
+              } else {
+                print("Go to dashboard");
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => UserHomePage()));
+              }
+            },
+          ),
+          title: Text(
+            "Terms of Use",
+            style: drawerdefaultTextStyle,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        onWillPop: () async {
-          return true;
-        },
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(16),
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              Container(
+                  padding: EdgeInsets.all(0),
+                  height: MediaQuery.of(context).size.height * .3,
+                  child: Image.asset('assets/terms.png')),
+              RichText(
+                text:
+                    TextSpan(style: highlightSubTextStyle, children: <TextSpan>[
+                  TextSpan(text: agreement),
+                ]),
+              ),
+            ],
+          ),
+        ),
       ),
+      onWillPop: () async {
+        return true;
+      },
     );
   }
 }

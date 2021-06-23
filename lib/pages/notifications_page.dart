@@ -55,48 +55,8 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
 
   Widget _emptyPage() {
     String title = "Notifications";
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(),
-      home: WillPopScope(
-        child: Scaffold(
-          drawer: CustomDrawer(
-            phone: _state.getCurrentUser().ph,
-          ),
-          appBar: CustomAppBar(
-            titleTxt: title,
-          ),
-          body: Center(
-            child: Container(
-                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'No Notifications yet!!',
-                      style: highlightTextStyle,
-                    ),
-                    Text('Be Safe | Save Time.', style: highlightSubTextStyle),
-                  ],
-                )),
-          ),
-          // bottomNavigationBar: CustomBottomBar(
-          //   barIndex: 0,
-          // ),
-        ),
-        onWillPop: () async {
-          return true;
-        },
-      ),
-    );
-  }
-
-  Widget _buildNotificationPage() {
-    String title = "My Notifications";
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(),
-      home: Scaffold(
+    return WillPopScope(
+      child: Scaffold(
         drawer: CustomDrawer(
           phone: _state.getCurrentUser().ph,
         ),
@@ -105,22 +65,54 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
         ),
         body: Center(
           child: Container(
-            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: ListView.builder(
-                itemCount: _bookings.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    child: new Column(
-                        children: _bookings.map(_buildItem).toList()),
-                    //children: <Widget>[firstRow, secondRow],
-                  );
-                }),
-          ),
+              margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'No Notifications yet!!',
+                    style: highlightTextStyle,
+                  ),
+                  Text('Be Safe | Save Time.', style: highlightSubTextStyle),
+                ],
+              )),
         ),
         // bottomNavigationBar: CustomBottomBar(
-        //   barIndex: 3,
+        //   barIndex: 0,
         // ),
       ),
+      onWillPop: () async {
+        return true;
+      },
+    );
+  }
+
+  Widget _buildNotificationPage() {
+    String title = "My Notifications";
+    return Scaffold(
+      drawer: CustomDrawer(
+        phone: _state.getCurrentUser().ph,
+      ),
+      appBar: CustomAppBar(
+        titleTxt: title,
+      ),
+      body: Center(
+        child: Container(
+          margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: ListView.builder(
+              itemCount: _bookings.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  child:
+                      new Column(children: _bookings.map(_buildItem).toList()),
+                  //children: <Widget>[firstRow, secondRow],
+                );
+              }),
+        ),
+      ),
+      // bottomNavigationBar: CustomBottomBar(
+      //   barIndex: 3,
+      // ),
     );
   }
 
