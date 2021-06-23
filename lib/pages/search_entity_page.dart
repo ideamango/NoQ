@@ -1072,10 +1072,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       placeDetailsSheetController = null;
       return false;
     } else {
-      Navigator.of(context).pop();
+      //  Navigator.of(context).pop();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => UserHomePage()));
-      // return false;
+      return false;
     }
   }
 

@@ -1597,7 +1597,8 @@ class _UserAccountPageState extends State<UserAccountPage>
           ),
         ),
         onWillPop: () async {
-          Navigator.of(context).push(PageAnimation.createRoute(UserHomePage()));
+          Navigator.of(context).push(new MaterialPageRoute(
+              builder: (BuildContext context) => UserHomePage()));
           return false;
         },
       );

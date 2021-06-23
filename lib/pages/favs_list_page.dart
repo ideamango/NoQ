@@ -259,7 +259,8 @@ class _FavsListPageState extends State<FavsListPage>
       return false;
     } else {
       Navigator.of(context).pop();
-      Navigator.of(context).push(PageAnimation.createRoute(UserHomePage()));
+      Navigator.of(context).push(new MaterialPageRoute(
+          builder: (BuildContext context) => UserHomePage()));
       return false;
     }
   }

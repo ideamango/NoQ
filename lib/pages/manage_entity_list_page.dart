@@ -298,9 +298,9 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
             bottomSheetController = null;
             return false;
           } else {
-            //Navigator.of(context).pop();
-            Navigator.of(context)
-                .push(PageAnimation.createRoute(UserHomePage()));
+            Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
+            Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => UserHomePage()));
             return false;
           }
         },

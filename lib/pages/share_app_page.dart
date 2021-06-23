@@ -131,7 +131,10 @@ class _ShareAppPageState extends State<ShareAppPage> {
         // ),
       ),
       onWillPop: () async {
-        return true;
+        Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
+        Navigator.of(context).push(new MaterialPageRoute(
+            builder: (BuildContext context) => UserHomePage()));
+        return false;
       },
     );
   }

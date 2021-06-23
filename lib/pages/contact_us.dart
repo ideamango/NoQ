@@ -95,6 +95,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
     if (!initCompleted) {
       return WillPopScope(
         child: Scaffold(
+          resizeToAvoidBottomInset: true,
           appBar: CustomAppBar(
             titleTxt: "Contact Us",
           ),
@@ -110,8 +111,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
           //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
         onWillPop: () async {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => UserHomePage()));
+          Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
+          Navigator.of(context).push(new MaterialPageRoute(
+              builder: (BuildContext context) => UserHomePage()));
           return false;
         },
       );
@@ -172,12 +174,14 @@ class _ContactUsPageState extends State<ContactUsPage> {
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
               //  icon: const Icon(Icons.person),
-              labelText: 'What\s this about?',
+              labelStyle: TextStyle(fontSize: 16),
+              labelText: 'What\'s this about?',
             ),
             child: new DropdownButtonHideUnderline(
               child: new DropdownButton(
                 hint: new Text(
                   'Select',
+                  style: TextStyle(fontSize: 18),
                 ),
                 value: _reasonType,
                 isDense: true,
@@ -212,7 +216,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
       String title = "Contact Us";
       return WillPopScope(
         child: Scaffold(
-          //  resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: true,
           drawer: CustomDrawer(
             phone: _state.getCurrentUser().ph,
           ),
@@ -308,8 +312,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
                               TextField(
                                 autofocus: false,
                                 controller: _msgController,
+
                                 decoration: InputDecoration(
                                   labelText: 'Enter your message here..',
+                                  labelStyle: TextStyle(fontSize: 18),
                                   enabledBorder: OutlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.grey)),
@@ -322,7 +328,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 //validator: validateText,
                                 keyboardType: TextInputType.multiline,
                                 maxLength: null,
-                                maxLines: 3,
+                                maxLines: null,
                                 onChanged: (value) {
                                   if (_msgController.text?.length != 0)
                                     setState(() {
@@ -330,8 +336,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                     });
                                   setState(() {
                                     _mailSecLine = _msgController.text;
-                                    _mailBody =
-                                        _mailFirstline + "\n" + _mailSecLine;
+                                    _mailBody = (_mailFirstline != null)
+                                        ? _mailFirstline + "\n" + _mailSecLine
+                                        : _mailSecLine;
                                   });
                                 },
                               ),
@@ -475,7 +482,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
           // ),
         ),
         onWillPop: () async {
-          return true;
+          Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
+          Navigator.of(context).push(new MaterialPageRoute(
+              builder: (BuildContext context) => UserHomePage()));
+          return false;
         },
       );
     }

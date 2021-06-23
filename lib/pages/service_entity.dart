@@ -42,6 +42,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
   bool hideAll = false;
   bool isAdmin = false;
   bool readOnly;
+  bool entityExistsOnServer = false;
   @override
   void initState() {
     super.initState();
@@ -65,6 +66,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
         parentEntity = value.item1;
         _gs.getEntity(_metaEntity.entityId).then((value) {
           entity = value.item1;
+          entityExistsOnServer = value.item2;
           if (this.mounted) {
             setState(() {
               _initCompleted = true;
@@ -289,15 +291,25 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                   "$noViewPermission Employees!!",
                                   contactAdmin);
                             } else {
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(ManageEmployeePage(
-                                metaEntity: _metaEntity,
-                                backRoute: ManageChildEntityListPage(
-                                  entity: parentEntity,
-                                ),
-                                defaultDate: null,
-                                isManager: isManager,
-                              )));
+                              if (!entityExistsOnServer) {
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.info_outline,
+                                    Duration(seconds: 4),
+                                    "First, enter basic details of the place",
+                                    "");
+                              } else {
+                                Navigator.of(context).push(
+                                    PageAnimation.createRoute(
+                                        ManageEmployeePage(
+                                  metaEntity: _metaEntity,
+                                  backRoute: ManageChildEntityListPage(
+                                    entity: parentEntity,
+                                  ),
+                                  defaultDate: null,
+                                  isManager: isManager,
+                                )));
+                              }
                             }
                           },
                           child: Container(
@@ -305,6 +317,12 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                             padding: EdgeInsets.all(0),
                             width: MediaQuery.of(context).size.width * .21,
                             height: MediaQuery.of(context).size.width * .21,
+                            foregroundDecoration: !entityExistsOnServer
+                                ? BoxDecoration(
+                                    color: Colors.grey[50],
+                                    backgroundBlendMode: BlendMode.saturation,
+                                  )
+                                : BoxDecoration(),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -346,18 +364,27 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 "$noViewPermission forms!!",
                                 contactAdmin);
                           } else {
-                            print("To Add details page");
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(ManageEntityForms(
-                              // forms: _metaEntity.forms,
-                              metaEntity: _metaEntity,
-                              preferredSlotTime: null,
-                              isFullPermission: !readOnly,
-                              backRoute: ManageChildEntityListPage(
-                                entity: parentEntity,
-                              ),
-                              isReadOnly: readOnly,
-                            )));
+                            if (!entityExistsOnServer) {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.info_outline,
+                                  Duration(seconds: 4),
+                                  "First, enter basic details of the place",
+                                  "");
+                            } else {
+                              print("To Add details page");
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(ManageEntityForms(
+                                // forms: _metaEntity.forms,
+                                metaEntity: _metaEntity,
+                                preferredSlotTime: null,
+                                isFullPermission: !readOnly,
+                                backRoute: ManageChildEntityListPage(
+                                  entity: parentEntity,
+                                ),
+                                isReadOnly: readOnly,
+                              )));
+                            }
                           }
                         },
                         child: Container(
@@ -365,6 +392,12 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                           padding: EdgeInsets.all(2),
                           width: MediaQuery.of(context).size.width * .21,
                           height: MediaQuery.of(context).size.width * .21,
+                          foregroundDecoration: !entityExistsOnServer
+                              ? BoxDecoration(
+                                  color: Colors.grey[50],
+                                  backgroundBlendMode: BlendMode.saturation,
+                                )
+                              : BoxDecoration(),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -406,38 +439,47 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 "$noViewPermission Applications!!",
                                 contactAdmin);
                           } else {
-                            if (!Utils.isNullOrEmpty(entity.forms)) {
-                              // if (entity.forms.length > 1) {
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(
-                                      BookingFormSelection(
-                                entityId: entity.entityId,
-                                entity: entity,
-                                preferredSlotTime: null,
-                                isFullAccess: isAdmin || isManager,
-                                forUser: false,
-                                backRoute: ManageChildEntityListPage(
-                                  entity: parentEntity,
-                                ),
-                                isOnlineToken: null,
-                              )));
-                              // } else {
-                              //   Navigator.of(context).push(
-                              //       PageAnimation.createRoute(OverviewPage(
-                              //     bookingFormId: _metaEntity.forms[0].id,
-                              //     bookingFormName: _metaEntity.forms[0].name,
-                              //     entityId: _metaEntity.entityId,
-                              //     metaEntity: _metaEntity,
-                              //     isExec: isExec,
-                              //   )));
-                              // }
-                            } else {
+                            if (!entityExistsOnServer) {
                               Utils.showMyFlushbar(
                                   context,
                                   Icons.info_outline,
-                                  Duration(seconds: 5),
-                                  "No Booking Forms found for your place!",
-                                  "Click FORMS to manage Forms.");
+                                  Duration(seconds: 4),
+                                  "First, enter basic details of the place",
+                                  "");
+                            } else {
+                              if (!Utils.isNullOrEmpty(entity.forms)) {
+                                // if (entity.forms.length > 1) {
+                                Navigator.of(context).push(
+                                    PageAnimation.createRoute(
+                                        BookingFormSelection(
+                                  entityId: entity.entityId,
+                                  entity: entity,
+                                  preferredSlotTime: null,
+                                  isFullAccess: isAdmin || isManager,
+                                  forUser: false,
+                                  backRoute: ManageChildEntityListPage(
+                                    entity: parentEntity,
+                                  ),
+                                  isOnlineToken: null,
+                                )));
+                                // } else {
+                                //   Navigator.of(context).push(
+                                //       PageAnimation.createRoute(OverviewPage(
+                                //     bookingFormId: _metaEntity.forms[0].id,
+                                //     bookingFormName: _metaEntity.forms[0].name,
+                                //     entityId: _metaEntity.entityId,
+                                //     metaEntity: _metaEntity,
+                                //     isExec: isExec,
+                                //   )));
+                                // }
+                              } else {
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.info_outline,
+                                    Duration(seconds: 5),
+                                    "No Booking Forms found for your place!",
+                                    "Click FORMS to manage Forms.");
+                              }
                             }
                           }
                         },
@@ -446,6 +488,12 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                           padding: EdgeInsets.all(0),
                           width: MediaQuery.of(context).size.width * .21,
                           height: MediaQuery.of(context).size.width * .21,
+                          foregroundDecoration: !entityExistsOnServer
+                              ? BoxDecoration(
+                                  color: Colors.grey[50],
+                                  backgroundBlendMode: BlendMode.saturation,
+                                )
+                              : BoxDecoration(),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -486,24 +534,34 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 "$noViewPermission Booking Tokens!",
                                 contactAdmin);
                           } else {
-                            if (_metaEntity.isBookable) {
-                              print("To child list page");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(EntityTokenListPage(
-                                metaEntity: _metaEntity,
-                                backRoute: ManageChildEntityListPage(
-                                  entity: parentEntity,
-                                ),
-                                defaultDate: null,
-                                isReadOnly: isExec,
-                              )));
-                            } else
+                            if (!entityExistsOnServer) {
                               Utils.showMyFlushbar(
                                   context,
                                   Icons.info_outline,
-                                  Duration(seconds: 5),
-                                  "It seems this place is not marked as Bookable.",
-                                  "Go to Entity Details page and make this Bookable.");
+                                  Duration(seconds: 4),
+                                  "First, enter basic details of the place",
+                                  "");
+                            } else {
+                              if (_metaEntity.isBookable) {
+                                print("To child list page");
+                                Navigator.of(context).push(
+                                    PageAnimation.createRoute(
+                                        EntityTokenListPage(
+                                  metaEntity: _metaEntity,
+                                  backRoute: ManageChildEntityListPage(
+                                    entity: parentEntity,
+                                  ),
+                                  defaultDate: null,
+                                  isReadOnly: isExec,
+                                )));
+                              } else
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.info_outline,
+                                    Duration(seconds: 5),
+                                    "It seems this place is not marked as Bookable.",
+                                    "Go to Entity Details page and make this Bookable.");
+                            }
                           }
                         },
                         child: Container(
@@ -511,6 +569,12 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                           padding: EdgeInsets.all(0),
                           width: MediaQuery.of(context).size.width * .21,
                           height: MediaQuery.of(context).size.width * .21,
+                          foregroundDecoration: !entityExistsOnServer
+                              ? BoxDecoration(
+                                  color: Colors.grey[50],
+                                  backgroundBlendMode: BlendMode.saturation,
+                                )
+                              : BoxDecoration(),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [

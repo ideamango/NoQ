@@ -65,32 +65,32 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       switch (index) {
         case 0:
           {
-            Navigator.of(context)
-                .push(PageNoAnimation.createRoute(UserHomePage()));
+            Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => new UserHomePage()));
           }
           break;
         case 1:
           {
             // Navigator.push(context,
             //  MaterialPageRoute(builder: (context) => UserHomePage()));
-            Navigator.of(context)
-                .push(PageNoAnimation.createRoute(SearchEntityPage()));
+            Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => SearchEntityPage()));
           }
           break;
         case 2:
           {
             //  Navigator.push(context,
             //   MaterialPageRoute(builder: (context) => UserHomePage()));
-            Navigator.of(context)
-                .push(PageNoAnimation.createRoute(FavsListPage()));
+            Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => FavsListPage()));
           }
           break;
         case 3:
           {
             // Navigator.push(context,
             //   MaterialPageRoute(builder: (context) => UserHomePage()));
-            Navigator.of(context)
-                .push(PageNoAnimation.createRoute(UserAccountPage()));
+            Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => UserAccountPage()));
           }
           break;
 

@@ -97,7 +97,7 @@ class _UserHomePageState extends State<UserHomePage>
   String loadUpcomingTokensMsg;
   bool dontShowUpdate;
   bool noUpcomingTokens = false;
-
+  GlobalKey<ScaffoldState> _drawerKey = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -684,6 +684,7 @@ class _UserHomePageState extends State<UserHomePage>
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             drawer: CustomDrawer(
+                key: _drawerKey,
                 phone: _gs.getCurrentUser() != null
                     ? _gs.getCurrentUser().ph
                     : ""),
@@ -727,59 +728,60 @@ class _UserHomePageState extends State<UserHomePage>
   }
 
   Future<bool> onWillPop() {
-    DateTime now = DateTime.now();
-    if (currentBackPressTime == null) {
-      currentBackPressTime = now;
-    } else if (now.difference(currentBackPressTime) < Duration(seconds: 2)) {
-      Flushbar(
-        padding: EdgeInsets.fromLTRB(4, 8, 8, 4),
-        margin: EdgeInsets.zero,
-        flushbarPosition: FlushbarPosition.TOP,
-        flushbarStyle: FlushbarStyle.FLOATING,
-        reverseAnimationCurve: Curves.decelerate,
-        forwardAnimationCurve: Curves.easeInToLinear,
-        backgroundColor: Colors.amber,
-        boxShadows: [
-          BoxShadow(
-              color: primaryAccentColor,
-              offset: Offset(0.0, 2.0),
-              blurRadius: 3.0)
-        ],
-        isDismissible: false,
-        duration: Duration(seconds: 5),
-        icon: Icon(
-          Icons.info,
-          //color: fontcolor,
-          size: 35,
-        ),
-        //   showProgressIndicator: showFlushBar,
-        //  progressIndicatorBackgroundColor: barcolor,
-        // progressIndicatorValueColor: animationColor,
-        routeBlur: 1.0,
-        titleText: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            verticalSpacer,
-            Text(
-              "Do you want to exit the app.. SMITA correct this please?",
-              style: TextStyle(
-                  //fontWeight: FontWeight.bold,
-                  fontSize: 15.0,
-                  color: Colors.white,
-                  fontFamily: "Roboto"),
-            ),
-          ],
-        ),
-        messageText: Text(
-          msg,
-          style: TextStyle(
-              fontSize: 12.0, color: borderColor, fontFamily: "Roboto"),
-        ),
-      )..show(context);
-      SystemNavigator.pop();
-      return Future.value(false);
-    }
-    return Future.value(true);
+    // DateTime now = DateTime.now();
+    // if (currentBackPressTime == null) {
+    //   currentBackPressTime = now;
+    // } else if (now.difference(currentBackPressTime) < Duration(seconds: 2)) {
+    //   Flushbar(
+    //     padding: EdgeInsets.fromLTRB(4, 8, 8, 4),
+    //     margin: EdgeInsets.zero,
+    //     flushbarPosition: FlushbarPosition.TOP,
+    //     flushbarStyle: FlushbarStyle.FLOATING,
+    //     reverseAnimationCurve: Curves.decelerate,
+    //     forwardAnimationCurve: Curves.easeInToLinear,
+    //     backgroundColor: Colors.amber,
+    //     boxShadows: [
+    //       BoxShadow(
+    //           color: primaryAccentColor,
+    //           offset: Offset(0.0, 2.0),
+    //           blurRadius: 3.0)
+    //     ],
+    //     isDismissible: false,
+    //     duration: Duration(seconds: 5),
+    //     icon: Icon(
+    //       Icons.info,
+    //       //color: fontcolor,
+    //       size: 35,
+    //     ),
+    //     //   showProgressIndicator: showFlushBar,
+    //     //  progressIndicatorBackgroundColor: barcolor,
+    //     // progressIndicatorValueColor: animationColor,
+    //     routeBlur: 1.0,
+    //     titleText: Column(
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: <Widget>[
+    //         verticalSpacer,
+    //         Text(
+    //           "Do you want to exit the app.. SMITA correct this please?",
+    //           style: TextStyle(
+    //               //fontWeight: FontWeight.bold,
+    //               fontSize: 15.0,
+    //               color: Colors.white,
+    //               fontFamily: "Roboto"),
+    //         ),
+    //       ],
+    //     ),
+    //     messageText: Text(
+    //       msg,
+    //       style: TextStyle(
+    //           fontSize: 12.0, color: borderColor, fontFamily: "Roboto"),
+    //     ),
+    //   )..show(context);
+    //
+    //   return Future.value(false);
+    // }
+    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    return Future.value(false);
   }
 
   void showShoppingList(UserToken booking) {
