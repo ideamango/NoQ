@@ -2984,12 +2984,8 @@ class DBTest {
 
     bf.addField(doseNumber);
 
-    FormInputFieldNumber cowinSecrete = FormInputFieldNumber(
-        "COWIN Secrete Code",
-        true,
-        "This is last four digit of REF ID on the COWIN app",
-        0001,
-        9999);
+    FormInputFieldInt cowinSecrete = FormInputFieldInt("COWIN Secrete Code",
+        true, "This is last four digit of REF ID on the COWIN app", 0001, 9999);
 
     bf.addField(cowinSecrete);
 

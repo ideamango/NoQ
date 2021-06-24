@@ -123,6 +123,8 @@ class BookingForm {
     for (Map<String, dynamic> value in fieldsJson) {
       if (value["type"] == EnumToString.convertToString(FieldType.TEXT)) {
         values.add(FormInputFieldText.fromJson(value));
+      } else if (value["type"] == EnumToString.convertToString(FieldType.INT)) {
+        values.add(FormInputFieldInt.fromJson(value));
       } else if (value["type"] ==
           EnumToString.convertToString(FieldType.NUMBER)) {
         values.add(FormInputFieldNumber.fromJson(value));
@@ -207,6 +209,52 @@ class FormInputFieldText extends Field {
     field.isMeta = json["isMeta"];
     field.response = json['response'];
     field.isEmail = json['isEmail'];
+
+    return field;
+  }
+}
+
+class FormInputFieldInt extends Field {
+  int maxValue;
+  int minValue;
+
+  double response;
+
+  FormInputFieldInt(String label, bool isMandatory, String infoMessage,
+      int minValue, int maxValue) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.minValue = minValue;
+    this.infoMessage = infoMessage;
+    this.maxValue = maxValue;
+    this.type = FieldType.INT; //"NUMBER";
+  }
+
+  Map<String, dynamic> toJson() => {
+        'key': key,
+        'id': id,
+        'label': label,
+        'isMeta': isMeta,
+        'isMandatory': isMandatory,
+        "infoMessage": infoMessage,
+        'minValue': minValue,
+        'maxValue': maxValue,
+        'type': EnumToString.convertToString(type),
+        'response': response
+      };
+
+  static FormInputFieldInt fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    FormInputFieldInt field = FormInputFieldInt(
+        json['label'],
+        json['isMandatory'],
+        json['infoMessage'],
+        json['minValue'],
+        json['maxValue']);
+    field.isMeta = json['isMeta'];
+    field.id = json['id'];
+    field.response = json['response'];
+    field.key = json["key"];
 
     return field;
   }
