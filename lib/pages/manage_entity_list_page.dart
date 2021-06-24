@@ -181,42 +181,6 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final subEntityType = new FormField(
-    //   builder: (FormFieldState state) {
-    //     return InputDecorator(
-    //       decoration: InputDecoration(
-    //         enabledBorder: InputBorder.none,
-    //         focusedBorder: InputBorder.none,
-    //         labelText: 'Type of Place',
-    //       ),
-    //       child: new DropdownButtonHideUnderline(
-    //         child: new DropdownButton(
-    //           hint: new Text("Select Type of Place"),
-    //           value: _entityType,
-    //           isDense: true,
-    //           onChanged: (newValue) {
-    //             setState(() {
-    //               _entityType = newValue;
-    //               state.didChange(newValue);
-    //             });
-    //           },
-    //           items: entityTypes.map((type) {
-    //             return DropdownMenuItem(
-    //               value: type,
-    //               child: new Text(
-    //                 type.toString(),
-    //                 style: textInputTextStyle,
-    //               ),
-    //             );
-    //           }).toList(),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    //   onSaved: (String value) {
-    //     _entityType = value;
-    //   },
-    // );
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients)
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -278,7 +242,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                           return Container(
                             margin: EdgeInsets.only(bottom: 5),
                             child: EntityRow(
-                              entity: metaEntitiesList[index],
+                              metaEntity: metaEntitiesList[index],
                             ),
                           );
                         },
