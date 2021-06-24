@@ -2960,7 +2960,7 @@ class DBTest {
 
     FormInputFieldOptionsWithAttachments preferredVaccine =
         FormInputFieldOptionsWithAttachments(
-            "Please select your preferred vaccine",
+            "Preferred vaccine",
             true,
             "You will be alloted the time-slot based on the availability of Vaccine selected by you",
             [Value('COVISHIELD'), Value('COVAXIN')],
