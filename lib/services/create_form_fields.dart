@@ -864,6 +864,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         break;
       case FieldType.NUMBER:
         {
+          FormInputFieldNumber numberField = field;
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
@@ -915,7 +916,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(field.infoMessage,
+                                    child: Text(numberField.infoMessage,
                                         style: buttonXSmlTextStyle),
                                   ),
                                 ],
@@ -935,17 +936,36 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               obscureText: false,
                               maxLines: 1,
                               minLines: 1,
-                              validator: validateText,
                               style: textInputTextStyle,
                               keyboardType: TextInputType.number,
                               controller: listOfFieldControllers[field.label],
                               decoration: CommonStyle.textFieldStyle(
-                                  labelTextStr: field.label,
-                                  hintTextStr: field.label),
+                                  labelTextStr: numberField.label,
+                                  hintTextStr: numberField.label),
+                              validator: (value) {
+                                if (Utils.isNotNullOrEmpty(
+                                    validateText(value))) {
+                                  if (int.tryParse(value) != null) {
+                                    return null;
+                                  } else
+                                    return "Enter a valid number";
+                                }
+                                if ((validateField) &&
+                                    numberField.isMandatory &&
+                                    Utils.isStrNullOrEmpty(value)) {
+                                  return "Enter a valid number";
+                                }
+                                return null;
+                              },
                               onChanged: (String value) {
+                                //SMITA
+                                numberField.response = double.tryParse(value);
+
                                 print(value);
                               },
                               onSaved: (String value) {
+                                //SMITA:TODO
+                                numberField.response = double.tryParse(value);
                                 print(value);
                               },
                             ),
