@@ -557,6 +557,11 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                             .start,
                                                     children: [
                                                       Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .74,
                                                         margin:
                                                             EdgeInsets.fromLTRB(
                                                                 10, 10, 0, 0),
@@ -901,6 +906,10 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                             PageAnimation.createRoute(
                                                 widget.backRoute));
                                     });
+                                  });
+                                } else {
+                                  setState(() {
+                                    showLoading = false;
                                   });
                                 }
                               }
