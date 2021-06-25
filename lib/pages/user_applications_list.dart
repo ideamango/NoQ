@@ -1228,6 +1228,48 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
             );
           }
           break;
+        case FieldType.INT:
+          {
+            FormInputFieldNumber newfield = field;
+            fieldWidget = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  //width: cardWidth * .12,
+                  child: AutoSizeText(
+                    newfield.label,
+                    group: labelGroup,
+                    minFontSize: 10,
+                    maxFontSize: 11,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                      color: Colors.blueGrey[700],
+                    ),
+                  ),
+                ),
+                horizontalSpacer,
+                SizedBox(
+                  //  width: cardWidth * .4,
+                  //height: cardHeight * .1,
+                  child: AutoSizeText(
+                    newfield.response.toString(),
+                    group: responseGroup,
+                    minFontSize: 12,
+                    maxFontSize: 14,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.indigo[900],
+                        // fontWeight: FontWeight.bold,
+                        fontFamily: 'Roboto'),
+                  ),
+                ),
+              ],
+            );
+          }
+          break;
         case FieldType.PHONE:
           {
             FormInputFieldPhone newfield = field;

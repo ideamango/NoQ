@@ -218,7 +218,7 @@ class FormInputFieldInt extends Field {
   int maxValue;
   int minValue;
 
-  double response;
+  int response;
 
   FormInputFieldInt(String label, bool isMandatory, String infoMessage,
       int minValue, int maxValue) {

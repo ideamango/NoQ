@@ -109,6 +109,9 @@ class BookingApplication {
       } else if (f.type == FieldType.NUMBER) {
         FormInputFieldNumber t = f;
         map[t.key] = t.response;
+      } else if (f.type == FieldType.INT) {
+        FormInputFieldInt t = f;
+        map[t.key] = t.response;
       } else if (f.type == FieldType.OPTIONS) {
         FormInputFieldOptions t = f;
         List<String> fieldValueIds = [];

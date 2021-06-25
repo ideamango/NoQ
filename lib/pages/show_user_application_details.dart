@@ -356,6 +356,44 @@ class _ShowUserApplicationDetailsState
                 (newfield.response.toString());
           }
           break;
+        case FieldType.INT:
+          {
+            FormInputFieldNumber newfield = field;
+            fieldWidget = SizedBox(
+              width: MediaQuery.of(context).size.width * .3,
+              height: MediaQuery.of(context).size.height * .08,
+              child: TextField(
+                controller: listOfControllers[field.label],
+                readOnly: true,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.indigo[900],
+                ),
+                decoration: InputDecoration(
+                  labelText: newfield.label,
+                  labelStyle: TextStyle(
+                      fontSize: 13,
+                      color: Colors.blueGrey[500],
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'RalewayRegular'),
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey)),
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.orange)),
+                  // enabledBorder: OutlineInputBorder(
+                  //     borderSide: BorderSide(color: Colors.grey)),
+                  // focusedBorder: OutlineInputBorder(
+                  //     borderSide: BorderSide(color: Colors.orange)),
+                  // errorText:
+                  //     _validate ? 'Please enter your message' : null,
+                ),
+                // keyboardType: TextInputType.text,
+              ),
+            );
+            listOfControllers[field.label].text =
+                (newfield.response.toString());
+          }
+          break;
         case FieldType.PHONE:
           {
             FormInputFieldPhone newfield = field;

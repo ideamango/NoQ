@@ -491,6 +491,48 @@ class _ApplicationsListState extends State<ApplicationsList> {
             );
           }
           break;
+        case FieldType.INT:
+          {
+            FormInputFieldInt newfield = field;
+            fieldWidget = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  //width: cardWidth * .12,
+                  child: AutoSizeText(
+                    newfield.label,
+                    group: labelGroup,
+                    minFontSize: 9,
+                    maxFontSize: 11,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: Colors.blueGrey[700],
+                        fontFamily: 'RalewayRegular'),
+                  ),
+                ),
+                horizontalSpacer,
+                SizedBox(
+                  //  width: cardWidth * .4,
+                  //height: cardHeight * .1,
+                  child: AutoSizeText(
+                    newfield.response.toString(),
+                    group: responseGroup,
+                    minFontSize: 12,
+                    maxFontSize: 14,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.indigo[900],
+                        // fontWeight: FontWeight.bold,
+                        fontFamily: 'Roboto'),
+                  ),
+                ),
+              ],
+            );
+          }
+          break;
         case FieldType.NUMBER:
           {
             FormInputFieldNumber newfield = field;

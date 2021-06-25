@@ -945,7 +945,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               validator: (value) {
                                 if (Utils.isNotNullOrEmpty(
                                     validateText(value))) {
-                                  if (int.tryParse(value) != null) {
+                                  if (double.tryParse(value) != null) {
                                     return null;
                                   } else
                                     return "Enter a valid number";
@@ -958,13 +958,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                 return null;
                               },
                               onChanged: (String value) {
-                                //SMITA
                                 numberField.response = double.tryParse(value);
 
                                 print(value);
                               },
                               onSaved: (String value) {
-                                //SMITA:TODO
                                 numberField.response = double.tryParse(value);
                                 print(value);
                               },
@@ -978,6 +976,123 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           );
         }
         break;
+      case FieldType.INT:
+        {
+          FormInputFieldInt intField = field;
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.only(left: 5),
+                      decoration: darkContainer,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
+                        ),
+                        child: CustomExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: false,
+                          title: Row(
+                            children: <Widget>[
+                              Container(
+                                width: MediaQuery.of(context).size.width * .8,
+                                child: AutoSizeText(
+                                  (field.isMandatory)
+                                      ? field.label + ' (mandatory)'
+                                      : field.label + ' (optional)',
+                                  maxLines: null,
+                                  minFontSize: 11,
+                                  maxFontSize: 14,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 5),
+                            ],
+                          ),
+                          backgroundColor: Colors.blueGrey[500],
+
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width * .94,
+                              color: containerColor,
+                              padding: EdgeInsets.only(left: 7),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(intField.infoMessage,
+                                        style: buttonXSmlTextStyle),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            child: TextFormField(
+                              obscureText: false,
+                              maxLines: 1,
+                              minLines: 1,
+                              style: textInputTextStyle,
+                              keyboardType: TextInputType.number,
+                              controller: listOfFieldControllers[field.label],
+                              decoration: CommonStyle.textFieldStyle(
+                                  labelTextStr: intField.label,
+                                  hintTextStr: intField.label),
+                              validator: (value) {
+                                if (Utils.isNotNullOrEmpty(
+                                    validateText(value))) {
+                                  if (int.tryParse(value) != null) {
+                                    return null;
+                                  } else
+                                    return "Enter a valid number";
+                                }
+                                if ((validateField) &&
+                                    intField.isMandatory &&
+                                    Utils.isStrNullOrEmpty(value)) {
+                                  return "Enter a valid number";
+                                }
+                                return null;
+                              },
+                              onChanged: (String value) {
+                                //SMITA
+                                intField.response = int.tryParse(value);
+
+                                print(value);
+                              },
+                              onSaved: (String value) {
+                                //SMITA:TODO
+                                intField.response = int.tryParse(value);
+                                print(value);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ]),
+          );
+        }
+        break;
+
       case FieldType.OPTIONS:
         {
           FormInputFieldOptions newOptionsField = field;
