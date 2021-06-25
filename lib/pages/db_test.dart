@@ -2992,7 +2992,8 @@ class DBTest {
     FormInputFieldAttachment payment = FormInputFieldAttachment(
         "Payment receipt (if applicable)",
         false,
-        "Please attach image of payment made");
+        "Please attach image of payment made (you can take screenshot and attach)");
+    payment.paymentProofRequired = true;
 
     bf.addField(payment);
 
@@ -3225,6 +3226,14 @@ class DBTest {
         "Please attach Doctor's prescription, if you have (optional)");
 
     doctorConsultationForm.addField(medicalPrescription);
+
+    FormInputFieldAttachment payment = FormInputFieldAttachment(
+        "Payment receipt",
+        true,
+        "Please attach image of payment made (you can take screenshot and attach)");
+    payment.paymentProofRequired = true;
+
+    doctorConsultationForm.addField(payment);
 
     FormInputFieldText specialNotes = FormInputFieldText(
         "Special notes",

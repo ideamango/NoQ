@@ -376,6 +376,7 @@ class FormInputFieldOptions extends Field {
 class FormInputFieldAttachment extends Field {
   List<String> responseFilePaths;
   int maxAttachments = 2;
+  bool paymentProofRequired = false;
 
   FormInputFieldAttachment(
     String label,
@@ -397,8 +398,10 @@ class FormInputFieldAttachment extends Field {
         "infoMessage": infoMessage,
         'type': EnumToString.convertToString(type),
         'responseFilePaths': responseFilePaths,
-        'maxAttachments': maxAttachments
+        'maxAttachments': maxAttachments,
+        'paymentProofRequired': paymentProofRequired
       };
+
   static List<String> convertToPathValuesFromJson(List<dynamic> valuesJson) {
     List<String> values = [];
     if (valuesJson == null) return values;
@@ -419,6 +422,7 @@ class FormInputFieldAttachment extends Field {
         convertToPathValuesFromJson(json['responseFilePaths']);
     field.maxAttachments = json['maxAttachments'];
     field.key = json["key"];
+    field.paymentProofRequired = json['paymentProofRequired'];
 
     return field;
   }
@@ -512,6 +516,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
 
   List<String> responseFilePaths;
   int maxAttachments = 2;
+  bool paymentProofRequired = false;
 
   FormInputFieldOptionsWithAttachments(String label, bool isMandatory,
       String infoMessage, List<Value> options, bool isMultiSelect) {
@@ -536,7 +541,8 @@ class FormInputFieldOptionsWithAttachments extends Field {
         'responseValues': convertValuesToJson(responseValues),
         'responseFilePaths': responseFilePaths,
         'maxAttachments': maxAttachments,
-        'defaultValueIndex': defaultValueIndex
+        'defaultValueIndex': defaultValueIndex,
+        'paymentProofRequired': paymentProofRequired
       };
 
   static FormInputFieldOptionsWithAttachments fromJson(
@@ -557,11 +563,12 @@ class FormInputFieldOptionsWithAttachments extends Field {
     field.maxAttachments = json['maxAttachments'];
     field.key = json["key"];
     field.defaultValueIndex = json["defaultValueIndex"];
+    field.paymentProofRequired = json["paymentProofRequired"];
     return field;
   }
 
   static List<Value> convertToValuesFromJson(List<dynamic> valuesJson) {
-    List<Value> values = new List<Value>();
+    List<Value> values = [];
     if (valuesJson == null) return values;
 
     for (Map<String, dynamic> json in valuesJson) {
@@ -571,7 +578,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
   }
 
   static List<String> convertToStringsFromJson(List<dynamic> valuesJson) {
-    List<String> strs = new List<String>();
+    List<String> strs = [];
     if (valuesJson == null) return strs;
 
     for (String str in valuesJson) {
@@ -581,7 +588,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
   }
 
   List<dynamic> convertValuesToJson(List<Value> options) {
-    List<dynamic> usersJson = new List<dynamic>();
+    List<dynamic> usersJson = [];
     if (options == null) return usersJson;
     for (Value val in options) {
       usersJson.add(val.toJson());
