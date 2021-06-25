@@ -1,6 +1,7 @@
 enum FieldType {
   TEXT,
-  NUMBER,
+  INT,
+  NUMBER, //for double
   OPTIONS,
   ATTACHMENT,
   DATETIME,
