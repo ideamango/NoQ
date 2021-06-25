@@ -617,8 +617,14 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
               ),
             )),
         onWillPop: () async {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => UserHomePage()));
+          if (widget.backRoute != null) {
+            Navigator.of(context).pop();
+            Navigator.of(context).push(widget.backRoute);
+          } else {
+            Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
+            Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => UserHomePage()));
+          }
           return false;
         },
       );
@@ -639,8 +645,14 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
           ),
         ),
         onWillPop: () async {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => UserHomePage()));
+          if (widget.backRoute != null) {
+            Navigator.of(context).pop();
+            Navigator.of(context).push(widget.backRoute);
+          } else {
+            Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
+            Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => UserHomePage()));
+          }
           return false;
         },
       );
