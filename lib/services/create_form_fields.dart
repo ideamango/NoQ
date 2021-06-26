@@ -1354,6 +1354,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                 onPressed: () {
                                   if (Utils.isNotNullOrEmpty(
                                       widget.metaEntity.upiId)) {
+                                    Navigator.pop(context);
                                     Navigator.of(context).push(
                                         PageAnimation.createRoute(
                                             UPIPaymentPage(
