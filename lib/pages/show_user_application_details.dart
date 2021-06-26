@@ -358,7 +358,7 @@ class _ShowUserApplicationDetailsState
           break;
         case FieldType.INT:
           {
-            FormInputFieldNumber newfield = field;
+            FormInputFieldInt newfield = field;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
               height: MediaQuery.of(context).size.height * .08,

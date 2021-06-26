@@ -509,16 +509,24 @@ class GlobalState {
             b.parent.dateTime.millisecondsSinceEpoch)
         ? -1
         : 1);
-    //CASE:1
+    //CASE:1 - When number of Bokkings we are trying is already in the GS collection.
+    // So no Server call. Get from GS
     if (newBookings.length >= startNum + takeCount - 1) {
       //e.g. total items are 10, start num is 6 and take count is 5
+      //e.g. total items are 15, start num is 6 and take count is 5
+
       List<UserToken> list = [];
       list.addAll(newBookings.getRange(startNum - 1, startNum + takeCount - 1));
       return list;
     }
-    //CASE:2
-    else if (newBookings.length > startNum &&
+    //CASE:2 - Few bookings can be fetched from GS collection  and all from given range are not in GS collection,
+    // So some are fetched from Server.
+    else if (newBookings.length >= startNum &&
         newBookings.length < startNum + takeCount - 1) {
+      //e.g. total items are 1, start num is 1 and take count is 3
+      //e.g. total items are 10, start num is 6 and take count is 8
+      //e.g. total items are 10, start num is 1 and take count is 11
+
       List<UserToken> uts = [];
       uts.addAll(newBookings.getRange(startNum - 1, newBookings.length));
 
@@ -565,8 +573,10 @@ class GlobalState {
       }
       return uts;
     }
-    //CASE:3
+    //CASE:3 - Requested range for tokens starts just after the length of GS collection
+    // All items to be fetched from Server.
     else if (startNum == newBookings.length + 1) {
+      //e.g. total items are 10, start num is 11 and take count is 3
       //this is first time scenario where start num = 1 and no items will be there in the newBookings
       //also this will be usual load more scenario from server when user reaches to the last item in the list
       List<UserToken> uts = [];

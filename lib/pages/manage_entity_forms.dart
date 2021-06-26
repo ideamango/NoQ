@@ -956,7 +956,11 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
           ),
         ),
         onWillPop: () async {
-          return true;
+          Navigator.of(context).pop();
+          if (widget.backRoute != null)
+            Navigator.of(context)
+                .push(PageAnimation.createRoute(widget.backRoute));
+          return false;
         },
       );
     } else {
@@ -993,7 +997,9 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
           //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
         onWillPop: () async {
-          return true;
+          print("going back");
+          Navigator.of(context).pop();
+          return false;
         },
       );
     }

@@ -139,7 +139,17 @@ class _UserAccountPageState extends State<UserAccountPage>
 
   Future<void> _loadInitialPastBookings() async {
     _pastBkgStatus = 'Loading';
-    _pastBookingsList = await _gs.getPastBookings(1, 3);
+    try {
+      _pastBookingsList = await _gs.getPastBookings(1, 3);
+    } catch (e) {
+      print(e.toString());
+      Utils.showMyFlushbar(
+          context,
+          Icons.error,
+          Duration(seconds: 5),
+          "Oops..this is unexpected!!",
+          "Please restart the app and try again.");
+    }
     if (_pastBookingsList != null) {
       if (_pastBookingsList.length != 0) {
         _pastBkgStatus = 'Success';
