@@ -1,3 +1,4 @@
+import 'package:LESSs/pages/search_entity_page.dart';
 import 'package:LESSs/utils.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';

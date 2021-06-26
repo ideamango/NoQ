@@ -1879,7 +1879,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     return Stack(
       alignment: AlignmentDirectional.topEnd,
       children: [
-        Image.file(image),
+        (imageUrl.contains('https://'))
+            ? Image.network(imageUrl)
+            : Image.file(image),
         IconButton(
           alignment: Alignment.topRight,
           padding: EdgeInsets.zero,
@@ -2063,9 +2065,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 print(_gs.getCurrentUser().id);
                 print(fileName);
 
-                // String targetFileName =
-                //     '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
-                String targetFileName = "X+$i";
+                String targetFileName =
+                    '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
                 String targetPath =
                     await uploadFilesToServer(path, targetFileName);
                 print(targetPath);
@@ -2125,23 +2126,24 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                     _dateFormatted,
                     time)
                 .then((value) {
+              Navigator.pop(context);
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => SearchEntityPage()));
             });
           } else {
-            //The application could not be submitted, Show appropriate msg to User.
-            setState(() {
-              showLoading = false;
-            });
+            //The application is not auto-approved, its submitted for review,
+            // Show appropriate msg to User.
+
             showMessageDialog(
                     context,
                     "Request submitted successfully!",
                     'Your Application is submitted successfully for the review.\n ',
                     'Ok')
-                .then((value) => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchEntityPage())));
+                .then((value) {
+              Navigator.pop(context);
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => SearchEntityPage()));
+            });
           }
         }).catchError((error) {
           setState(() {
