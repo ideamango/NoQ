@@ -128,6 +128,8 @@ String donationMsg1 =
 String fillMandatoryInfo =
     'Please provide all mandatory information and try again.';
 //UPI Payment Page Strings - End
+String acceptPaymentInFormMsgMain = "Sumant-TODO -Please pay here";
+String acceptPaymentInFormMsgSub = "Sumant-TODO";
 String whatsappMessageToPlaceOwner = "Hey there! My LESSs Token number is ";
 String whatsappVideoToPlaceOwner_1 = "Hey there! My LESSs Token number is ";
 String whatsappVideoToUser_1 = "Hey there! Your LESSs Token number is ";

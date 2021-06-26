@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:LESSs/widget/page_animation.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:upi_pay/upi_pay.dart';
@@ -619,7 +620,8 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
         onWillPop: () async {
           if (widget.backRoute != null) {
             Navigator.of(context).pop();
-            Navigator.of(context).push(widget.backRoute);
+            Navigator.of(context)
+                .push(PageAnimation.createRoute(widget.backRoute));
           } else {
             Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
             Navigator.of(context).push(new MaterialPageRoute(
@@ -647,7 +649,8 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
         onWillPop: () async {
           if (widget.backRoute != null) {
             Navigator.of(context).pop();
-            Navigator.of(context).push(widget.backRoute);
+            Navigator.of(context)
+                .push(PageAnimation.createRoute(widget.backRoute));
           } else {
             Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
             Navigator.of(context).push(new MaterialPageRoute(

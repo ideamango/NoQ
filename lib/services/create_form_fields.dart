@@ -6,6 +6,8 @@ import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/db/exceptions/invalid_slottime_exception.dart';
 import 'package:LESSs/pages/search_entity_page.dart';
 import 'package:LESSs/pages/token_alert.dart';
+import 'package:LESSs/pages/upi_payment_page.dart';
+import 'package:LESSs/widget/page_animation.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -1282,114 +1284,221 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 ),
                 Container(
                   padding: EdgeInsets.only(left: 5.0, right: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
                     children: [
-                      (Utils.isNullOrEmpty(attsField.responseFilePaths))
-                          ? Container(
-                              child: Text(
-                              "No Image Selected",
-                              style: TextStyle(
-                                  color:
-                                      (validateField && attsField.isMandatory)
-                                          ? Colors.red
-                                          : Colors.black),
-                            ))
-                          : Container(
-                              width: MediaQuery.of(context).size.width * .6,
-                              child: ListView.builder(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * .03),
-                                //  controller: _childScrollController,
-                                scrollDirection: Axis.vertical,
+                      if (attsField.paymentProofRequired)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            (Utils.isNullOrEmpty(attsField.responseFilePaths))
+                                ? Container(
+                                    child: Text(
+                                    acceptPaymentInFormMsgMain,
+                                    style: TextStyle(
+                                        color: (validateField &&
+                                                attsField.isMandatory)
+                                            ? Colors.red
+                                            : Colors.black),
+                                  ))
+                                : Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .6,
+                                    child: ListView.builder(
+                                      padding: EdgeInsets.all(
+                                          MediaQuery.of(context).size.width *
+                                              .03),
+                                      //  controller: _childScrollController,
+                                      scrollDirection: Axis.vertical,
 
-                                shrinkWrap: true,
-                                //   itemExtent: itemSize,
-                                //scrollDirection: Axis.vertical,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    margin: EdgeInsets.symmetric(vertical: 3),
-                                    decoration: BoxDecoration(
-                                        border:
-                                            Border.all(color: containerColor),
-                                        color: Colors.grey[50],
-                                        shape: BoxShape.rectangle,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5.0))),
-                                    padding: EdgeInsets.all(5),
-                                    child: showImageList(
+                                      shrinkWrap: true,
+                                      //   itemExtent: itemSize,
+                                      //scrollDirection: Axis.vertical,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Container(
+                                          margin:
+                                              EdgeInsets.symmetric(vertical: 3),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: containerColor),
+                                              color: Colors.grey[50],
+                                              shape: BoxShape.rectangle,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5.0))),
+                                          padding: EdgeInsets.all(5),
+                                          child: showImageList(
+                                              context,
+                                              attsField
+                                                  .responseFilePaths[index],
+                                              attsField.responseFilePaths),
+                                        );
+                                      },
+                                      itemCount:
+                                          attsField.responseFilePaths.length,
+                                    ),
+                                  ),
+                            Container(
+                              alignment: Alignment.bottomCenter,
+                              child: IconButton(
+                                padding: EdgeInsets.all(0),
+                                alignment: Alignment.center,
+                                highlightColor: Colors.orange[300],
+                                icon: ImageIcon(
+                                  AssetImage('assets/rupee_icon.png'),
+                                  size: 16,
+                                  color: (Utils.isNotNullOrEmpty(
+                                          widget.metaEntity.upiId)
+                                      ? btnColor
+                                      : Colors.blueGrey[400]),
+                                ),
+                                onPressed: () {
+                                  if (Utils.isNotNullOrEmpty(
+                                      widget.metaEntity.upiId)) {
+                                    Navigator.of(context).push(
+                                        PageAnimation.createRoute(
+                                            UPIPaymentPage(
+                                                upiId: widget.metaEntity.upiId,
+                                                upiQrCodeImgPath: null,
+                                                backRoute: CreateFormFields(
+                                                  bookingFormId:
+                                                      widget.bookingFormId,
+                                                  metaEntity: widget.metaEntity,
+                                                  preferredSlotTime:
+                                                      widget.preferredSlotTime,
+                                                  isOnlineToken:
+                                                      widget.isOnlineToken,
+                                                  backRoute: widget.backRoute,
+                                                ),
+                                                isDonation: false)));
+                                  } else {
+                                    Utils.showMyFlushbar(
                                         context,
-                                        attsField.responseFilePaths[index],
-                                        attsField.responseFilePaths),
-                                  );
+                                        Icons.info_outline,
+                                        Duration(
+                                          seconds: 5,
+                                        ),
+                                        "Couldn't find UPI payment information for this place.",
+                                        "");
+                                  }
                                 },
-                                itemCount: attsField.responseFilePaths.length,
                               ),
                             ),
-                      Container(
-                        alignment: Alignment.bottomCenter,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: Icon(
-                                  Icons.camera_alt_rounded,
-                                  color: primaryDarkColor,
-                                ),
-                                onPressed: () {
-                                  if (attsField.responseFilePaths.length <
-                                      attsField.maxAttachments) {
-                                    captureImage(false).then((value) {
-                                      if (value != null) {
-                                        // _medCondsProofimages.add(value);
-                                        attsField.responseFilePaths
-                                            .add(value.path);
-                                      }
-                                      setState(() {});
-                                    });
-                                  } else {
-                                    Utils.showMyFlushbar(
-                                        context,
-                                        Icons.info,
-                                        Duration(
-                                          seconds: 5,
-                                        ),
-                                        "Only ${attsField.maxAttachments} files at max could be attached.",
-                                        '');
-                                  }
-                                }),
-                            IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: Icon(
-                                  Icons.attach_file,
-                                  color: primaryDarkColor,
-                                ),
-                                onPressed: () {
-                                  if (attsField.responseFilePaths.length <
-                                      attsField.maxAttachments) {
-                                    captureImage(true).then((value) {
-                                      if (value != null) {
-                                        // _medCondsProofimages.add(value);
-                                        attsField.responseFilePaths
-                                            .add(value.path);
-                                      }
-                                      setState(() {});
-                                    });
-                                  } else {
-                                    Utils.showMyFlushbar(
-                                        context,
-                                        Icons.info,
-                                        Duration(
-                                          seconds: 5,
-                                        ),
-                                        "Only ${attsField.maxAttachments} files at max could be attached.",
-                                        '');
-                                  }
-                                }),
                           ],
                         ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          (Utils.isNullOrEmpty(attsField.responseFilePaths))
+                              ? Container(
+                                  child: Text(
+                                  "No Image Selected",
+                                  style: TextStyle(
+                                      color: (validateField &&
+                                              attsField.isMandatory)
+                                          ? Colors.red
+                                          : Colors.black),
+                                ))
+                              : Container(
+                                  width: MediaQuery.of(context).size.width * .6,
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.all(
+                                        MediaQuery.of(context).size.width *
+                                            .03),
+                                    //  controller: _childScrollController,
+                                    scrollDirection: Axis.vertical,
+
+                                    shrinkWrap: true,
+                                    //   itemExtent: itemSize,
+                                    //scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 3),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: containerColor),
+                                            color: Colors.grey[50],
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5.0))),
+                                        padding: EdgeInsets.all(5),
+                                        child: showImageList(
+                                            context,
+                                            attsField.responseFilePaths[index],
+                                            attsField.responseFilePaths),
+                                      );
+                                    },
+                                    itemCount:
+                                        attsField.responseFilePaths.length,
+                                  ),
+                                ),
+                          Container(
+                            alignment: Alignment.bottomCenter,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: Icon(
+                                      Icons.camera_alt_rounded,
+                                      color: primaryDarkColor,
+                                    ),
+                                    onPressed: () {
+                                      if (attsField.responseFilePaths.length <
+                                          attsField.maxAttachments) {
+                                        captureImage(false).then((value) {
+                                          if (value != null) {
+                                            // _medCondsProofimages.add(value);
+                                            attsField.responseFilePaths
+                                                .add(value.path);
+                                          }
+                                          setState(() {});
+                                        });
+                                      } else {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(
+                                              seconds: 5,
+                                            ),
+                                            "Only ${attsField.maxAttachments} files at max could be attached.",
+                                            '');
+                                      }
+                                    }),
+                                IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: Icon(
+                                      Icons.attach_file,
+                                      color: primaryDarkColor,
+                                    ),
+                                    onPressed: () {
+                                      if (attsField.responseFilePaths.length <
+                                          attsField.maxAttachments) {
+                                        captureImage(true).then((value) {
+                                          if (value != null) {
+                                            // _medCondsProofimages.add(value);
+                                            attsField.responseFilePaths
+                                                .add(value.path);
+                                          }
+                                          setState(() {});
+                                        });
+                                      } else {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(
+                                              seconds: 5,
+                                            ),
+                                            "Only ${attsField.maxAttachments} files at max could be attached.",
+                                            '');
+                                      }
+                                    }),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -1804,7 +1913,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       String localPath, String targetFileName) async {
     File localImage = File(localPath);
 
-    Reference ref = _gs.firebaseStorage.ref().child('$targetFileName');
+    print("Target file name " + targetFileName);
+
+    Reference ref = _gs.firebaseStorage.ref().child('uploads/$targetFileName');
 
     await ref.putFile(localImage);
 
@@ -1904,9 +2015,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 String fileName = pathfile.basename(path);
                 print(fileName);
 
-                String targetFileName =
-                    '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
-
+                // String targetFileName =
+                //     '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
+                String targetFileName = "Y+$i";
                 String targetPath =
                     await uploadFilesToServer(path, targetFileName);
                 print(targetPath);
@@ -1945,9 +2056,15 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 String fileName = pathfile.basename(path);
                 print(fileName);
 
-                String targetFileName =
-                    '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
+                print(bookingApplication.id);
+                print((listOfFields[i] as FormInputFieldOptionsWithAttachments)
+                    .id);
+                print(_gs.getCurrentUser().id);
+                print(fileName);
 
+                // String targetFileName =
+                //     '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
+                String targetFileName = "X+$i";
                 String targetPath =
                     await uploadFilesToServer(path, targetFileName);
                 print(targetPath);
@@ -2098,6 +2215,100 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     });
   }
 
+  goingBack() {
+    print("going back");
+
+    //Show flush bar to notify user
+    if (flushStatus != "Showing") {
+      flush = Flushbar<bool>(
+        //padding: EdgeInsets.zero,
+        margin: EdgeInsets.zero,
+        flushbarPosition: FlushbarPosition.BOTTOM,
+        flushbarStyle: FlushbarStyle.GROUNDED,
+        reverseAnimationCurve: Curves.decelerate,
+        forwardAnimationCurve: Curves.easeInToLinear,
+        backgroundColor: Colors.cyan[200],
+        boxShadows: [
+          BoxShadow(
+              color: Colors.cyan, offset: Offset(0.0, 2.0), blurRadius: 3.0)
+        ],
+        isDismissible: true,
+        //duration: Duration(seconds: 4),
+        icon: Icon(
+          Icons.cancel,
+          color: Colors.blueGrey[90],
+        ),
+        showProgressIndicator: true,
+        progressIndicatorBackgroundColor: Colors.blueGrey[900],
+        progressIndicatorValueColor:
+            new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
+        routeBlur: 10.0,
+        titleText: Text(
+          "Are you sure you want to leave this page?",
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16.0,
+              color: Colors.blueGrey[700],
+              fontFamily: "ShadowsIntoLightTwo"),
+        ),
+        messageText: Text(
+          "The changes you made might be lost, if not saved.",
+          style: TextStyle(
+              fontSize: 12.0,
+              color: Colors.blueGrey[800],
+              fontFamily: "ShadowsIntoLightTwo"),
+        ),
+
+        mainButton: Column(
+          children: <Widget>[
+            FlatButton(
+              padding: EdgeInsets.all(0),
+              onPressed: () {
+                flushStatus = "Empty";
+                flush.dismiss(false); // result = true
+              },
+              child: Text(
+                "No",
+                style:
+                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+            ),
+            FlatButton(
+              padding: EdgeInsets.all(0),
+              onPressed: () {
+                flushStatus = "Empty";
+                flush.dismiss(true); // result = true
+              },
+              child: Text(
+                "Yes",
+                style: TextStyle(color: Colors.blueGrey[700]),
+              ),
+            ),
+          ],
+        ),
+      );
+      // ..onStatusChanged = (FlushbarStatus status) {
+      //     print("FlushbarStatus-------$status");
+      //     if (status == FlushbarStatus.IS_APPEARING)
+      //       flushStatus = "Showing";
+      //     if (status == FlushbarStatus.DISMISSED)
+      //       flushStatus = "Empty";
+      //     print("gfdfgdfg");
+      //   };
+
+      flush
+        ..show(context).then((result) {
+          _wasButtonClicked = result;
+          flushStatus = "Empty";
+          if (_wasButtonClicked) {
+            Navigator.of(context).pop();
+          }
+        });
+    }
+
+    print("flush already running");
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_initCompleted)
@@ -2115,98 +2326,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               icon: Icon(Icons.arrow_back),
               color: Colors.white,
               onPressed: () {
-                print("going back");
-
-                //Show flush bar to notify user
-                if (flushStatus != "Showing") {
-                  flush = Flushbar<bool>(
-                    //padding: EdgeInsets.zero,
-                    margin: EdgeInsets.zero,
-                    flushbarPosition: FlushbarPosition.BOTTOM,
-                    flushbarStyle: FlushbarStyle.GROUNDED,
-                    reverseAnimationCurve: Curves.decelerate,
-                    forwardAnimationCurve: Curves.easeInToLinear,
-                    backgroundColor: Colors.cyan[200],
-                    boxShadows: [
-                      BoxShadow(
-                          color: Colors.cyan,
-                          offset: Offset(0.0, 2.0),
-                          blurRadius: 3.0)
-                    ],
-                    isDismissible: true,
-                    //duration: Duration(seconds: 4),
-                    icon: Icon(
-                      Icons.cancel,
-                      color: Colors.blueGrey[90],
-                    ),
-                    showProgressIndicator: true,
-                    progressIndicatorBackgroundColor: Colors.blueGrey[900],
-                    progressIndicatorValueColor:
-                        new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
-                    routeBlur: 10.0,
-                    titleText: Text(
-                      "Are you sure you want to leave this page?",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                          color: Colors.blueGrey[700],
-                          fontFamily: "ShadowsIntoLightTwo"),
-                    ),
-                    messageText: Text(
-                      "The changes you made might be lost, if not saved.",
-                      style: TextStyle(
-                          fontSize: 12.0,
-                          color: Colors.blueGrey[800],
-                          fontFamily: "ShadowsIntoLightTwo"),
-                    ),
-
-                    mainButton: Column(
-                      children: <Widget>[
-                        FlatButton(
-                          padding: EdgeInsets.all(0),
-                          onPressed: () {
-                            flushStatus = "Empty";
-                            flush.dismiss(false); // result = true
-                          },
-                          child: Text(
-                            "No",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        FlatButton(
-                          padding: EdgeInsets.all(0),
-                          onPressed: () {
-                            flushStatus = "Empty";
-                            flush.dismiss(true); // result = true
-                          },
-                          child: Text(
-                            "Yes",
-                            style: TextStyle(color: Colors.blueGrey[700]),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                  // ..onStatusChanged = (FlushbarStatus status) {
-                  //     print("FlushbarStatus-------$status");
-                  //     if (status == FlushbarStatus.IS_APPEARING)
-                  //       flushStatus = "Showing";
-                  //     if (status == FlushbarStatus.DISMISSED)
-                  //       flushStatus = "Empty";
-                  //     print("gfdfgdfg");
-                  //   };
-
-                  flush
-                    ..show(context).then((result) {
-                      _wasButtonClicked = result;
-                      flushStatus = "Empty";
-                      if (_wasButtonClicked) Navigator.of(context).pop();
-                    });
-                }
-
-                print("flush already running");
+                goingBack();
               },
             ),
             title: Text(dummyForm.formName,
@@ -2521,7 +2641,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           ),
         ),
         onWillPop: () async {
-          return true;
+          goingBack();
+          return false;
         },
       );
     else {
@@ -2558,7 +2679,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
         onWillPop: () async {
-          return true;
+          goingBack();
+          return false;
         },
       );
     }
