@@ -427,7 +427,9 @@ class FormInputFieldAttachment extends Field {
         convertToPathValuesFromJson(json['responseFilePaths']);
     field.maxAttachments = json['maxAttachments'];
     field.key = json["key"];
-    field.paymentProofRequired = json['paymentProofRequired'];
+    field.paymentProofRequired = json['paymentProofRequired'] != null
+        ? json['paymentProofRequired']
+        : false;
 
     return field;
   }
@@ -568,7 +570,9 @@ class FormInputFieldOptionsWithAttachments extends Field {
     field.maxAttachments = json['maxAttachments'];
     field.key = json["key"];
     field.defaultValueIndex = json["defaultValueIndex"];
-    field.paymentProofRequired = json["paymentProofRequired"];
+    field.paymentProofRequired = json["paymentProofRequired"] != null
+        ? json["paymentProofRequired"]
+        : false;
     return field;
   }
 
