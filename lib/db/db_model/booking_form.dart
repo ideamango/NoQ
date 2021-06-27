@@ -217,7 +217,8 @@ class FormInputFieldText extends Field {
 class FormInputFieldInt extends Field {
   int maxValue;
   int minValue;
-
+  int maxLength;
+  int minLength;
   int response;
 
   FormInputFieldInt(String label, bool isMandatory, String infoMessage,
@@ -240,7 +241,9 @@ class FormInputFieldInt extends Field {
         'minValue': minValue,
         'maxValue': maxValue,
         'type': EnumToString.convertToString(type),
-        'response': response
+        'response': response,
+        'maxLength': maxLength,
+        'minLength': minLength
       };
 
   static FormInputFieldInt fromJson(Map<String, dynamic> json) {
@@ -255,6 +258,8 @@ class FormInputFieldInt extends Field {
     field.id = json['id'];
     field.response = json['response'];
     field.key = json["key"];
+    field.minLength = json['minLength'];
+    field.maxLength = json['maxLength'];
 
     return field;
   }
