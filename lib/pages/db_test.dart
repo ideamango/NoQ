@@ -2958,26 +2958,24 @@ class DBTest {
 
     bf.addField(phoneField);
 
-    FormInputFieldOptionsWithAttachments preferredVaccine =
-        FormInputFieldOptionsWithAttachments(
-            "Preferred vaccine",
-            true,
-            "You will be alloted the time-slot based on the availability of Vaccine selected by you",
-            [Value('COVISHIELD'), Value('COVAXIN')],
-            false);
+    FormInputFieldOptions preferredVaccine = FormInputFieldOptions(
+        "Preferred vaccine",
+        true,
+        "You will be alloted the time-slot based on the availability of Vaccine selected by you",
+        [Value('COVISHIELD'), Value('COVAXIN')],
+        false);
 
     preferredVaccine.isMeta = true;
     preferredVaccine.defaultValueIndex = 0;
 
     bf.addField(preferredVaccine);
 
-    FormInputFieldOptionsWithAttachments doseNumber =
-        FormInputFieldOptionsWithAttachments(
-            "Dose number",
-            true,
-            "You will be alloted the time-slot based on the availability of Vaccine selected by you",
-            [Value('Dose 1'), Value('Dose 2')],
-            false);
+    FormInputFieldOptions doseNumber = FormInputFieldOptions(
+        "Dose number",
+        true,
+        "You will be alloted the time-slot based on the availability of Vaccine selected by you",
+        [Value('Dose 1'), Value('Dose 2')],
+        false);
 
     doseNumber.isMeta = true;
     doseNumber.defaultValueIndex = 0;
@@ -3229,7 +3227,7 @@ class DBTest {
 
     FormInputFieldAttachment payment = FormInputFieldAttachment(
         "Payment receipt",
-        true,
+        false,
         "Please attach image of payment made (you can take screenshot and attach)");
     payment.paymentProofRequired = true;
 
