@@ -1008,11 +1008,12 @@ class GlobalState {
         //_configureLocalTimeZone();
 
         localNotification = new FlutterLocalNotificationsPlugin();
-        //var androidInitialize = new AndroidInitializationSettings("icon"); //this is not working hence trying below way of setting the icon
+        var androidInitialize = new AndroidInitializationSettings(
+            "ic_launcher"); //this is not working hence trying below way of setting the icon
         //https://nitishk72.medium.com/flutter-local-notification-1e43a353877b
         //https://pub.dev/packages/flutter_local_notifications#custom-notification-icons-and-sounds
-        var androidInitialize =
-            new AndroidInitializationSettings("@mipmap/ic_launcher");
+        // var androidInitialize =
+        //     new AndroidInitializationSettings("@mipmap/ic_launcher");
         var iOSInitialize = new IOSInitializationSettings();
         var initializationSettings = new InitializationSettings(
             android: androidInitialize, iOS: iOSInitialize);
