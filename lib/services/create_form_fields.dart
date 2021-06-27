@@ -4,6 +4,7 @@ import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/db/exceptions/invalid_slottime_exception.dart';
+import 'package:LESSs/pages/contact_us.dart';
 import 'package:LESSs/pages/search_entity_page.dart';
 import 'package:LESSs/pages/token_alert.dart';
 import 'package:LESSs/pages/upi_payment_page.dart';
@@ -81,6 +82,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       new ScrollController(initialScrollOffset: 0);
   int _radioBookingPref = -1;
   bool showLoading = false;
+  PersistentBottomSheetController upiPaymentSheetController;
+  final key = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -362,6 +365,71 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       },
     );
     return date;
+  }
+
+  showUpiPage() {
+    upiPaymentSheetController = key.currentState.showBottomSheet<Null>(
+      (context) => Container(
+        color: Colors.cyan[50],
+        height: MediaQuery.of(context).size.height * .8,
+        child: Column(
+          children: <Widget>[
+            Container(
+              color: Colors.cyan[200],
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(0),
+                    width: MediaQuery.of(context).size.width * .1,
+                    height: MediaQuery.of(context).size.width * .1,
+                    child: IconButton(
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.cancel,
+                          color: headerBarColor,
+                        ),
+                        onPressed: () {
+                          upiPaymentSheetController.close();
+                          upiPaymentSheetController = null;
+                          // Navigator.of(context).pop();
+                        }),
+                  ),
+                  Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * .7,
+                      child: Text(
+                        "UPI Payments",
+                        style: TextStyle(
+                            color: Colors.blueGrey[800],
+                            fontFamily: 'RalewayRegular',
+                            fontSize: 19.0),
+                      )),
+                ],
+              ),
+            ),
+            Divider(
+              height: 1,
+              color: primaryDarkColor,
+            ),
+            Expanded(
+              child: UPIPaymentPage(
+                backRoute: null,
+                isDonation: false,
+                upiQrCodeImgPath: widget.metaEntity.upiQRImagePath,
+                upiId: widget.metaEntity.upiId,
+                showMinimum: true,
+              ),
+            ),
+          ],
+        ),
+      ),
+      elevation: 30,
+      clipBehavior: Clip.hardEdge,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.blueGrey[200]),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+    );
   }
 
   String validateText(String value) {
@@ -1053,24 +1121,61 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           maxLines: 1,
                           minLines: 1,
                           style: textInputTextStyle,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           keyboardType: TextInputType.number,
                           controller: listOfFieldControllers[field.label],
                           decoration: CommonStyle.textFieldStyle(
                               labelTextStr: intField.label,
                               hintTextStr: intField.label),
                           validator: (value) {
-                            if (Utils.isNotNullOrEmpty(validateText(value))) {
+                            if (Utils.isNotNullOrEmpty(value)) {
                               if (int.tryParse(value) != null) {
-                                if (value.length > intField.maxLength ||
-                                    value.length < intField.minLength) {
-                                  return "Enter value between";
-                                } else {
-                                  if (int.tryParse(value) > intField.maxValue ||
-                                      int.tryParse(value) < intField.minValue) {
-                                    return "Enter value between $intField.minValue and $intField.maxValue ";
-                                  } else
-                                    return null;
+                                if (intField.maxLength != null) {
+                                  if (value.length > intField.maxLength) {
+                                    String msg1 = (intField.minLength == null)
+                                        ? "of maximum"
+                                        : "of";
+                                    String msg2 = (intField.minLength == null)
+                                        ? ""
+                                        : ((intField.minLength ==
+                                                intField.maxLength)
+                                            ? ""
+                                            : "to ${intField.maxLength}");
+
+                                    return "Number should be $msg1 ${intField.minLength} $msg2 digits ";
+
+                                    // if (intField.minLength != null) {
+                                    //   if (intField.minLength ==
+                                    //       intField.maxLength) {
+                                    //     return "Number should be of ${intField.maxLength} digits";
+                                    //   } else if (value.length <
+                                    //       intField.minLength) {
+                                    //     return "Number should be of ${intField.minLength} to ${intField.maxLength} digits";
+                                    //   }
+                                    // } else {
+                                    //   return "Number should less than ${intField.maxLength} digits";
+                                    // }
+                                  }
                                 }
+                                if (intField.minLength != null) {
+                                  if (value.length < intField.minLength) {
+                                    String msg1 = (intField.maxLength == null)
+                                        ? "of minimum"
+                                        : "of";
+                                    String msg2 = (intField.maxLength == null)
+                                        ? ""
+                                        : ((intField.minLength ==
+                                                intField.maxLength)
+                                            ? ""
+                                            : "to ${intField.maxLength}");
+                                    return "Number should be $msg1 ${intField.minLength} $msg2 digits ";
+                                  }
+                                }
+                                if (int.tryParse(value) > intField.maxValue ||
+                                    int.tryParse(value) < intField.minValue) {
+                                  return "Number should be between ${intField.minValue} and ${intField.maxValue}";
+                                } else
+                                  return null;
                               } else
                                 return "Enter a valid number";
                             }
@@ -1362,35 +1467,36 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                       : Colors.blueGrey[400]),
                                 ),
                                 onPressed: () {
-                                  if (Utils.isNotNullOrEmpty(
-                                      widget.metaEntity.upiId)) {
-                                    Navigator.pop(context);
-                                    Navigator.of(context).push(
-                                        PageAnimation.createRoute(
-                                            UPIPaymentPage(
-                                                upiId: widget.metaEntity.upiId,
-                                                upiQrCodeImgPath: null,
-                                                backRoute: CreateFormFields(
-                                                  bookingFormId:
-                                                      widget.bookingFormId,
-                                                  metaEntity: widget.metaEntity,
-                                                  preferredSlotTime:
-                                                      widget.preferredSlotTime,
-                                                  isOnlineToken:
-                                                      widget.isOnlineToken,
-                                                  backRoute: widget.backRoute,
-                                                ),
-                                                isDonation: false)));
-                                  } else {
-                                    Utils.showMyFlushbar(
-                                        context,
-                                        Icons.info_outline,
-                                        Duration(
-                                          seconds: 5,
-                                        ),
-                                        "Couldn't find UPI payment information for this place.",
-                                        "");
-                                  }
+                                  showUpiPage();
+                                  // if (Utils.isNotNullOrEmpty(
+                                  //     widget.metaEntity.upiId)) {
+                                  //   Navigator.pop(context);
+                                  //   Navigator.of(context).push(
+                                  //       PageAnimation.createRoute(
+                                  //           UPIPaymentPage(
+                                  //               upiId: widget.metaEntity.upiId,
+                                  //               upiQrCodeImgPath: null,
+                                  //               backRoute: CreateFormFields(
+                                  //                 bookingFormId:
+                                  //                     widget.bookingFormId,
+                                  //                 metaEntity: widget.metaEntity,
+                                  //                 preferredSlotTime:
+                                  //                     widget.preferredSlotTime,
+                                  //                 isOnlineToken:
+                                  //                     widget.isOnlineToken,
+                                  //                 backRoute: widget.backRoute,
+                                  //               ),
+                                  //               isDonation: false)));
+                                  // } else {
+                                  //   Utils.showMyFlushbar(
+                                  //       context,
+                                  //       Icons.info_outline,
+                                  //       Duration(
+                                  //         seconds: 5,
+                                  //       ),
+                                  //       "Couldn't find UPI payment information for this place.",
+                                  //       "");
+                                  // }
                                 },
                               ),
                             ),
@@ -1401,14 +1507,17 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         children: [
                           (Utils.isNullOrEmpty(attsField.responseFilePaths))
                               ? Container(
+                                  width: MediaQuery.of(context).size.width * .6,
                                   child: Text(
-                                  "No Image Selected",
-                                  style: TextStyle(
-                                      color: (validateField &&
-                                              attsField.isMandatory)
-                                          ? Colors.red
-                                          : Colors.black),
-                                ))
+                                    (attsField.paymentProofRequired)
+                                        ? acceptPaymentInFormMsgSub
+                                        : "No Image Selected",
+                                    style: TextStyle(
+                                        color: (validateField &&
+                                                attsField.isMandatory)
+                                            ? Colors.red
+                                            : Colors.black),
+                                  ))
                               : Container(
                                   width: MediaQuery.of(context).size.width * .6,
                                   child: ListView.builder(
@@ -2326,338 +2435,358 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   Widget build(BuildContext context) {
     if (_initCompleted)
       return WillPopScope(
-        child: Scaffold(
-          appBar: AppBar(
-            actions: <Widget>[],
-            flexibleSpace: Container(
-              decoration: gradientBackground,
+          child: Scaffold(
+            key: key,
+            appBar: AppBar(
+              actions: <Widget>[],
+              flexibleSpace: Container(
+                decoration: gradientBackground,
+              ),
+              leading: IconButton(
+                padding: EdgeInsets.all(0),
+                alignment: Alignment.center,
+                highlightColor: highlightColor,
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  goingBack();
+                },
+              ),
+              title: Text(dummyForm.formName,
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
-            leading: IconButton(
-              padding: EdgeInsets.all(0),
-              alignment: Alignment.center,
-              highlightColor: highlightColor,
-              icon: Icon(Icons.arrow_back),
-              color: Colors.white,
-              onPressed: () {
-                goingBack();
-              },
-            ),
-            title: Text(dummyForm.formName,
-                style: TextStyle(color: Colors.white, fontSize: 16)),
-          ),
-          body: Center(
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  Form(
-                    key: _bookingFormKey,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.fromLTRB(0, 12, 0, 0),
-                            width: MediaQuery.of(context).size.width * .913,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: containerColor),
-                                color: Colors.grey[50],
-                                shape: BoxShape.rectangle,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    Container(
-                                      //padding: EdgeInsets.only(left: 5),
-                                      decoration: darkContainer,
-                                      child: Theme(
-                                        data: ThemeData(
-                                          unselectedWidgetColor: Colors.white,
-                                          accentColor: Colors.grey[50],
-                                        ),
-                                        child: CustomExpansionTile(
-                                          //key: PageStorageKey(this.widget.headerTitle),
-                                          initiallyExpanded: false,
-                                          title: Row(
+            body: Center(
+              child: SafeArea(
+                child: Stack(
+                  children: [
+                    Form(
+                      key: _bookingFormKey,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0, 12, 0, 0),
+                              width: MediaQuery.of(context).size.width * .913,
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: containerColor),
+                                  color: Colors.grey[50],
+                                  shape: BoxShape.rectangle,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0))),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Column(
+                                    children: <Widget>[
+                                      Container(
+                                        //padding: EdgeInsets.only(left: 5),
+                                        decoration: darkContainer,
+                                        child: Theme(
+                                          data: ThemeData(
+                                            unselectedWidgetColor: Colors.white,
+                                            accentColor: Colors.grey[50],
+                                          ),
+                                          child: CustomExpansionTile(
+                                            //key: PageStorageKey(this.widget.headerTitle),
+                                            initiallyExpanded: false,
+                                            title: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Selected Time Slot",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 15),
+                                                ),
+                                                SizedBox(width: 5),
+                                              ],
+                                            ),
+                                            backgroundColor:
+                                                Colors.blueGrey[500],
+
                                             children: <Widget>[
-                                              Text(
-                                                "Selected Time Slot",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 15),
+                                              new Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .94,
+                                                color: containerColor,
+                                                padding:
+                                                    EdgeInsets.only(left: 7),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                      child: Text(
+                                                          "Time of your appointment for this place",
+                                                          style:
+                                                              buttonXSmlTextStyle),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                              SizedBox(width: 5),
                                             ],
                                           ),
-                                          backgroundColor: Colors.blueGrey[500],
-
+                                        ),
+                                      ),
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(5, 8, 5, 5),
+                                        child: Column(
                                           children: <Widget>[
-                                            new Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .94,
-                                              color: containerColor,
-                                              padding: EdgeInsets.only(left: 7),
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    child: Text(
-                                                        "Time of your appointment for this place",
-                                                        style:
-                                                            buttonXSmlTextStyle),
-                                                  ),
-                                                ],
+                                            Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    SizedBox(
+                                                        // width: cardWidth * .45,
+                                                        child: AutoSizeText(
+                                                      "Requested time-slot :",
+                                                      //group: labelGroup,
+                                                      minFontSize: 15,
+                                                      maxFontSize: 15,
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.clip,
+                                                      style:
+                                                          fieldLabelTextStyle,
+                                                    )),
+                                                    Wrap(children: [
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 5),
+                                                        child: AutoSizeText(
+                                                            ((bookingApplication
+                                                                        .preferredSlotTiming !=
+                                                                    null)
+                                                                ? DateFormat(
+                                                                        'yyyy-MM-dd – HH:mm')
+                                                                    .format(bookingApplication
+                                                                        .preferredSlotTiming)
+                                                                : "None"),
+                                                            // group: medCondGroup,
+                                                            minFontSize: 12,
+                                                            maxFontSize: 14,
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                              color: btnColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            )),
+                                                      ),
+                                                    ]),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    AutoSizeText(
+                                                      "Click to choose another Time-Slot",
+                                                      // group: labelGroup,
+                                                      minFontSize: 15,
+                                                      maxFontSize: 15,
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.clip,
+                                                      style:
+                                                          fieldLabelTextStyle,
+                                                    ),
+                                                    IconButton(
+                                                        icon: Icon(
+                                                          Icons.date_range,
+                                                          color: btnColor,
+                                                        ),
+                                                        onPressed: () async {
+                                                          final result = await Navigator
+                                                              .push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          SlotSelectionPage(
+                                                                            metaEntity:
+                                                                                widget.metaEntity,
+                                                                            dateTime:
+                                                                                bookingApplication.preferredSlotTiming,
+                                                                            forAdmin:
+                                                                                "ApplicationList",
+                                                                            tokenCounter:
+                                                                                null,
+                                                                          )));
+
+                                                          print(result);
+                                                          setState(() {
+                                                            if (result != null)
+                                                              bookingApplication
+                                                                      .preferredSlotTiming =
+                                                                  result;
+                                                          });
+                                                        })
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+
+                                            // alternatePhoneField,
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ListView.builder(
+                              padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width * .026),
+                              shrinkWrap: true,
+                              physics: ClampingScrollPhysics(),
+                              itemBuilder: (BuildContext context, int index) {
+                                _controllers.add(new TextEditingController());
+                                return Container(
+                                  //color: Colors.grey,
+                                  //   height: MediaQuery.of(context).size.height * .55,
+                                  width:
+                                      MediaQuery.of(context).size.width * .95,
+                                  child: buildChildItem(
+                                      dummyForm.getFormFields()[index],
+                                      index,
+                                      false),
+                                );
+                              },
+                              itemCount: dummyForm.getFormFields().length,
+                            ),
+                            Container(
+                              margin: EdgeInsets.fromLTRB(10, 10, 10, 14),
+                              child: Column(
+                                children: [
+                                  //********TODO Phase2 : DONT DELETE *********************
+                                  //       Container(
+                                  //         padding: EdgeInsets.all(0),
+                                  //         height:
+                                  //             MediaQuery.of(context).size.height * .05,
+                                  //         child: Row(
+                                  //           children: [
+                                  //             new Radio(
+                                  //               value: 0,
+                                  //               visualDensity: VisualDensity.compact,
+                                  //               activeColor: Colors.cyan,
+                                  //               groupValue: _radioBookingPref,
+                                  //               onChanged: _handleBookingPrefChange,
+                                  //             ),
+                                  //             new Text(
+                                  //               "Book only if selected Time-Slot is available.",
+                                  //               style: new TextStyle(fontSize: 12.0),
+                                  //             ),
+                                  //           ],
+                                  //         ),
+                                  //       ),
+                                  //       Row(
+                                  //         children: [
+                                  //           new Radio(
+                                  //             value: 1,
+                                  //             visualDensity: VisualDensity.compact,
+                                  //             activeColor: Colors.cyan,
+                                  //             groupValue: _radioBookingPref,
+                                  //             onChanged: _handleBookingPrefChange,
+                                  //           ),
+                                  //           new Text(
+                                  //             "Book next available Time-Slot.",
+                                  //             style: new TextStyle(fontSize: 12.0),
+                                  //           ),
+                                  //         ],
+                                  //       ),
+                                  //********TODO Phase2 : DONT DELETE *********************
+                                  MaterialButton(
+                                      elevation: 8,
+                                      color: btnColor,
+                                      splashColor: highlightColor,
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        // margin: EdgeInsets.all(10),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .84,
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              'Save Details & Request Token',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: 'Montserrat',
+                                                letterSpacing: 1.3,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .04,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.fromLTRB(5, 8, 5, 5),
-                                      child: Column(
-                                        children: <Widget>[
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                      // width: cardWidth * .45,
-                                                      child: AutoSizeText(
-                                                    "Requested time-slot :",
-                                                    //group: labelGroup,
-                                                    minFontSize: 15,
-                                                    maxFontSize: 15,
-                                                    maxLines: 2,
-                                                    overflow: TextOverflow.clip,
-                                                    style: fieldLabelTextStyle,
-                                                  )),
-                                                  Wrap(children: [
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 5),
-                                                      child: AutoSizeText(
-                                                          ((bookingApplication
-                                                                      .preferredSlotTiming !=
-                                                                  null)
-                                                              ? DateFormat(
-                                                                      'yyyy-MM-dd – HH:mm')
-                                                                  .format(bookingApplication
-                                                                      .preferredSlotTiming)
-                                                              : "None"),
-                                                          // group: medCondGroup,
-                                                          minFontSize: 12,
-                                                          maxFontSize: 14,
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                            color: btnColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          )),
-                                                    ),
-                                                  ]),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  AutoSizeText(
-                                                    "Click to choose another Time-Slot",
-                                                    // group: labelGroup,
-                                                    minFontSize: 15,
-                                                    maxFontSize: 15,
-                                                    maxLines: 2,
-                                                    overflow: TextOverflow.clip,
-                                                    style: fieldLabelTextStyle,
-                                                  ),
-                                                  IconButton(
-                                                      icon: Icon(
-                                                        Icons.date_range,
-                                                        color: btnColor,
-                                                      ),
-                                                      onPressed: () async {
-                                                        final result = await Navigator
-                                                            .push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            SlotSelectionPage(
-                                                                              metaEntity: widget.metaEntity,
-                                                                              dateTime: bookingApplication.preferredSlotTiming,
-                                                                              forAdmin: "ApplicationList",
-                                                                              tokenCounter: null,
-                                                                            )));
-
-                                                        print(result);
-                                                        setState(() {
-                                                          if (result != null)
-                                                            bookingApplication
-                                                                    .preferredSlotTiming =
-                                                                result;
-                                                        });
-                                                      })
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-
-                                          // alternatePhoneField,
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          ListView.builder(
-                            padding: EdgeInsets.all(
-                                MediaQuery.of(context).size.width * .026),
-                            shrinkWrap: true,
-                            physics: ClampingScrollPhysics(),
-                            itemBuilder: (BuildContext context, int index) {
-                              _controllers.add(new TextEditingController());
-                              return Container(
-                                //color: Colors.grey,
-                                //   height: MediaQuery.of(context).size.height * .55,
-                                width: MediaQuery.of(context).size.width * .95,
-                                child: buildChildItem(
-                                    dummyForm.getFormFields()[index],
-                                    index,
-                                    false),
-                              );
-                            },
-                            itemCount: dummyForm.getFormFields().length,
-                          ),
-                          Container(
-                            margin: EdgeInsets.fromLTRB(10, 10, 10, 14),
-                            child: Column(
-                              children: [
-                                //********TODO Phase2 : DONT DELETE *********************
-                                //       Container(
-                                //         padding: EdgeInsets.all(0),
-                                //         height:
-                                //             MediaQuery.of(context).size.height * .05,
-                                //         child: Row(
-                                //           children: [
-                                //             new Radio(
-                                //               value: 0,
-                                //               visualDensity: VisualDensity.compact,
-                                //               activeColor: Colors.cyan,
-                                //               groupValue: _radioBookingPref,
-                                //               onChanged: _handleBookingPrefChange,
-                                //             ),
-                                //             new Text(
-                                //               "Book only if selected Time-Slot is available.",
-                                //               style: new TextStyle(fontSize: 12.0),
-                                //             ),
-                                //           ],
-                                //         ),
-                                //       ),
-                                //       Row(
-                                //         children: [
-                                //           new Radio(
-                                //             value: 1,
-                                //             visualDensity: VisualDensity.compact,
-                                //             activeColor: Colors.cyan,
-                                //             groupValue: _radioBookingPref,
-                                //             onChanged: _handleBookingPrefChange,
-                                //           ),
-                                //           new Text(
-                                //             "Book next available Time-Slot.",
-                                //             style: new TextStyle(fontSize: 12.0),
-                                //           ),
-                                //         ],
-                                //       ),
-                                //********TODO Phase2 : DONT DELETE *********************
-                                MaterialButton(
-                                    elevation: 8,
-                                    color: btnColor,
-                                    splashColor: highlightColor,
-                                    child: Container(
-                                      padding: EdgeInsets.all(10),
-                                      // margin: EdgeInsets.all(10),
-                                      width: MediaQuery.of(context).size.width *
-                                          .84,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Text(
-                                            'Save Details & Request Token',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: 'Montserrat',
-                                              letterSpacing: 1.3,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .04,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      print("FlushbarStatus-------");
-                                      processSaveWithTimer();
-                                    }),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (showLoading)
-                    Center(
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        color: Colors.black.withOpacity(.7),
-                        // decoration: BoxDecoration(
-                        //   color: Colors.white,
-                        //   backgroundBlendMode: BlendMode.saturation,
-                        // ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text("Processing the Application..",
-                                style: TextStyle(
-                                    color: Colors.amber, fontSize: 15)),
-                            Container(
-                              color: Colors.transparent,
-                              padding: EdgeInsets.all(12),
-                              width: MediaQuery.of(context).size.width * .15,
-                              height: MediaQuery.of(context).size.width * .15,
-                              child: CircularProgressIndicator(
-                                backgroundColor: Colors.black,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                                strokeWidth: 2,
+                                      onPressed: () {
+                                        print("FlushbarStatus-------");
+                                        processSaveWithTimer();
+                                      }),
+                                ],
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
                     ),
-                ],
+                    if (showLoading)
+                      Center(
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          color: Colors.black.withOpacity(.7),
+                          // decoration: BoxDecoration(
+                          //   color: Colors.white,
+                          //   backgroundBlendMode: BlendMode.saturation,
+                          // ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text("Processing the Application..",
+                                  style: TextStyle(
+                                      color: Colors.amber, fontSize: 15)),
+                              Container(
+                                color: Colors.transparent,
+                                padding: EdgeInsets.all(12),
+                                width: MediaQuery.of(context).size.width * .15,
+                                height: MediaQuery.of(context).size.width * .15,
+                                child: CircularProgressIndicator(
+                                  backgroundColor: Colors.black,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        onWillPop: () async {
-          goingBack();
-          return false;
-        },
-      );
+          onWillPop: () async {
+            if (upiPaymentSheetController != null) {
+              upiPaymentSheetController.close();
+              upiPaymentSheetController = null;
+            } else {
+              goingBack();
+            }
+            return false;
+          });
     else {
       return WillPopScope(
         child: Scaffold(
@@ -2692,7 +2821,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
         onWillPop: () async {
-          goingBack();
+          Navigator.of(context).pop();
           return false;
         },
       );

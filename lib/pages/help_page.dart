@@ -237,17 +237,15 @@ class _HelpPageState extends State<HelpPage> {
                                               color: Colors.orange[700]),
                                           recognizer: new TapGestureRecognizer()
                                             ..onTap = () {
-                                              //TODO: Smita- add payments options google pay  etc
-                                              // launch(
-                                              //     'https://docs.flutter.io/flutter/services/UrlLauncher-class.html');
                                               Navigator.of(context).push(
                                                   PageAnimation.createRoute(
                                                       UPIPaymentPage(
-                                                          upiId: upiId,
-                                                          upiQrCodeImgPath:
-                                                              upiQrImgPath,
-                                                          backRoute: HelpPage(),
-                                                          isDonation: true)));
+                                                upiId: upiId,
+                                                upiQrCodeImgPath: upiQrImgPath,
+                                                backRoute: HelpPage(),
+                                                isDonation: true,
+                                                showMinimum: false,
+                                              )));
                                             },
                                         ),
                                       ])),

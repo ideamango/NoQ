@@ -776,18 +776,22 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                     Utils.showMyFlushbar(
                                         context,
                                         Icons.check,
-                                        Duration(seconds: 2),
+                                        Duration(seconds: 3),
                                         "Saved Application Form Successfully!",
                                         "",
                                         successGreenSnackBar);
                                     setState(() {
                                       showLoading = false;
                                     });
+
                                     // Navigator.of(context).pop();
-                                    if (widget.backRoute != null)
-                                      Navigator.of(context).push(
-                                          PageAnimation.createRoute(
-                                              widget.backRoute));
+                                    Future.delayed(Duration(seconds: 2))
+                                        .then((value) {
+                                      if (widget.backRoute != null)
+                                        Navigator.of(context).push(
+                                            PageAnimation.createRoute(
+                                                widget.backRoute));
+                                    });
                                   });
                                 } else {
                                   //Check if any existing forms in entity are modified

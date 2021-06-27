@@ -34,12 +34,14 @@ class UPIPaymentPage extends StatefulWidget {
   final String upiQrCodeImgPath;
   final dynamic backRoute;
   final bool isDonation;
+  final bool showMinimum;
   UPIPaymentPage(
       {Key key,
       @required this.upiId,
       @required this.upiQrCodeImgPath,
       @required this.backRoute,
-      @required this.isDonation})
+      @required this.isDonation,
+      @required this.showMinimum})
       : super(key: key);
 
   @override
@@ -243,22 +245,26 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     if (initCompleted) {
       return WillPopScope(
         child: Scaffold(
-            drawer: CustomDrawer(
-              phone: _gs.getCurrentUser().ph != null
-                  ? _gs.getCurrentUser().ph
-                  : "",
-            ),
-            appBar: CustomAppBarWithBackButton(
-              backRoute: widget.backRoute,
-              titleTxt: title,
-            ),
+            drawer: widget.showMinimum
+                ? null
+                : CustomDrawer(
+                    phone: _gs.getCurrentUser().ph != null
+                        ? _gs.getCurrentUser().ph
+                        : "",
+                  ),
+            appBar: widget.showMinimum
+                ? null
+                : CustomAppBarWithBackButton(
+                    backRoute: widget.backRoute,
+                    titleTxt: title,
+                  ),
             body: Container(
               // height: MediaQuery.of(context).size.height,
               padding: EdgeInsets.symmetric(horizontal: 12),
               child: SingleChildScrollView(
                 physics: ScrollPhysics(),
                 child: Container(
-                  height: MediaQuery.of(context).size.height * .9,
+                  height: MediaQuery.of(context).size.height * .88,
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -618,15 +624,16 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
               ),
             )),
         onWillPop: () async {
-          if (widget.backRoute != null) {
-            Navigator.of(context).pop();
-            Navigator.of(context)
-                .push(PageAnimation.createRoute(widget.backRoute));
-          } else {
-            Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
-            Navigator.of(context).push(new MaterialPageRoute(
-                builder: (BuildContext context) => UserHomePage()));
-          }
+          Navigator.of(context).pop();
+          // if (widget.backRoute != null) {
+          //   Navigator.of(context).pop();
+          //   Navigator.of(context)
+          //       .push(PageAnimation.createRoute(widget.backRoute));
+          // } else {
+          //   Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
+          //   Navigator.of(context).push(new MaterialPageRoute(
+          //       builder: (BuildContext context) => UserHomePage()));
+          // }
           return false;
         },
       );
@@ -647,15 +654,16 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
           ),
         ),
         onWillPop: () async {
-          if (widget.backRoute != null) {
-            Navigator.of(context).pop();
-            Navigator.of(context)
-                .push(PageAnimation.createRoute(widget.backRoute));
-          } else {
-            Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
-            Navigator.of(context).push(new MaterialPageRoute(
-                builder: (BuildContext context) => UserHomePage()));
-          }
+          // if (widget.backRoute != null) {
+          //   Navigator.of(context).pop();
+          //   Navigator.of(context)
+          //       .push(PageAnimation.createRoute(widget.backRoute));
+          // } else {
+          //   Navigator.of(context).popUntil(ModalRoute.withName('/dashboard'));
+          //   Navigator.of(context).push(new MaterialPageRoute(
+          //       builder: (BuildContext context) => UserHomePage()));
+          // }
+          Navigator.of(context).pop();
           return false;
         },
       );
