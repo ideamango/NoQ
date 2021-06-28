@@ -112,7 +112,19 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
 
   loadPaymentApps() {
     UpiPay.getInstalledUpiApplications().then((value) {
-      _appsFuture = value;
+      List<ApplicationMeta> dummy = [];
+      dummy.addAll(value);
+      dummy.addAll(value);
+      dummy.addAll(value);
+      dummy.addAll(value);
+      dummy.addAll(value);
+      dummy.addAll(value);
+      dummy.addAll(value);
+      dummy.addAll(value);
+      dummy.addAll(value);
+
+      _appsFuture = dummy;
+
       setState(() {
         showPaymentApps = true;
       });
@@ -126,39 +138,39 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
   String _amountError;
 
   final _upiAddressController = TextEditingController();
-  final _amountController = TextEditingController();
+  //final _amountController = TextEditingController();
 
   bool _isUpiEditable = false;
   List<ApplicationMeta> _appsFuture;
 
   @override
   void dispose() {
-    _amountController.dispose();
+    // _amountController.dispose();
     _upiAddressController.dispose();
     super.dispose();
   }
 
   Future<void> _onTap(ApplicationMeta app) async {
-    final err = _validateAmount(_amountController.text);
-    if (err != null) {
-      setState(() {
-        _amountError = err;
-      });
+    // final err = _validateAmount(_amountController.text);
+    // if (err != null) {
+    //   setState(() {
+    //     _amountError = err;
+    //   });
 
-      Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6), err,
-          "Please enter correct amount and try again.", Colors.red);
-      return;
-    }
-    setState(() {
-      _amountError = null;
-    });
+    //   Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6), err,
+    //       "Please enter correct amount and try again.", Colors.red);
+    //   return;
+    // }
+    // setState(() {
+    //   _amountError = null;
+    // });
     print(_upiAddressController.text);
 
     final transactionRef = Random.secure().nextInt(1 << 32).toString();
     print("Starting transaction with id $transactionRef");
 
     final response = await UpiPay.initiateTransaction(
-      amount: _amountController.text,
+      amount: "0",
       app: app.upiApplication,
       receiverName: 'LESSs',
       receiverUpiAddress: _upiAddressController.text,
@@ -259,12 +271,11 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                     titleTxt: title,
                   ),
             body: Container(
-              // height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height * .88,
               padding: EdgeInsets.symmetric(horizontal: 12),
-              child: SingleChildScrollView(
-                physics: ScrollPhysics(),
-                child: Container(
-                  height: MediaQuery.of(context).size.height * .88,
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  physics: ScrollPhysics(),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -535,52 +546,54 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                           showPaymentApps &&
                           !Utils.isNullOrEmpty(_appsFuture) &&
                           !showLoading)
-                        Expanded(
-                          child: Container(
-                            // height: MediaQuery.of(context).size.height * .54,
-                            margin: EdgeInsets.all(8),
-                            child: GridView.count(
-                              crossAxisCount: 2,
-                              shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              // physics: NeverScrollableScrollPhysics(),
-                              mainAxisSpacing: 8,
-                              crossAxisSpacing: 8,
-                              childAspectRatio: 1.6,
-                              // physics: NeverScrollableScrollPhysics(),
-                              children: _appsFuture
-                                  .map((it) => Material(
-                                        key: ObjectKey(it.upiApplication),
-                                        // color: Colors.grey[200],
-                                        child: InkWell(
-                                          onTap: () => _onTap(it),
-                                          child: Card(
-                                            elevation: 3,
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Image.memory(
-                                                  it.icon,
-                                                  width: 64,
-                                                  height: 64,
-                                                ),
-                                                Container(
-                                                  margin:
-                                                      EdgeInsets.only(top: 4),
-                                                  child: Text(
-                                                    it.upiApplication
-                                                        .getAppName(),
-                                                  ),
-                                                ),
-                                              ],
+                        Container(
+                          // height: MediaQuery.of(context).size.height * .54,
+                          margin: EdgeInsets.all(0),
+                          child: ListView.builder(
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * .022),
+                            scrollDirection: Axis.vertical,
+                            physics: ClampingScrollPhysics(),
+                            reverse: false,
+                            shrinkWrap: true,
+                            //itemExtent: itemSize,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Material(
+                                key: ObjectKey(
+                                    _appsFuture[index].upiApplication),
+                                // color: Colors.grey[200],
+                                child: InkWell(
+                                  onTap: () => _onTap(_appsFuture[index]),
+                                  child: Card(
+                                    elevation: 3,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Image.memory(
+                                            _appsFuture[index].icon,
+                                            width: 64,
+                                            height: 64,
+                                          ),
+                                          Container(
+                                            // margin: EdgeInsets.only(bottom: 9),
+                                            child: Text(
+                                              _appsFuture[index]
+                                                  .upiApplication
+                                                  .getAppName(),
                                             ),
                                           ),
-                                        ),
-                                      ))
-                                  .toList(),
-                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            itemCount: _appsFuture.length,
                           ),
                         ),
                       if (!Platform.isIOS &&
