@@ -118,24 +118,24 @@ class Item5_BookSlots extends StatelessWidget {
   }
 }
 
-class Item6_Token extends StatelessWidget {
-  const Item6_Token({Key key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/screen_token.png',
-            height: MediaQuery.of(context).size.height * .7,
-            fit: BoxFit.cover,
-          )
-        ],
-      ),
-    );
-  }
-}
+// class Item6_Token extends StatelessWidget {
+//   const Item6_Token({Key key}) : super(key: key);
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: <Widget>[
+//           Image.asset(
+//             'assets/screen_token.png',
+//             height: MediaQuery.of(context).size.height * .7,
+//             fit: BoxFit.cover,
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class Item7_Done extends StatelessWidget {
   const Item7_Done({Key key}) : super(key: key);

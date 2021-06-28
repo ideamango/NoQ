@@ -543,7 +543,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                               crossAxisCount: 2,
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
-                              physics: NeverScrollableScrollPhysics(),
+                              // physics: NeverScrollableScrollPhysics(),
                               mainAxisSpacing: 8,
                               crossAxisSpacing: 8,
                               childAspectRatio: 1.6,

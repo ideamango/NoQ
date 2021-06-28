@@ -116,7 +116,7 @@ flutter:
     - restaurant.png
     - sportsCenter.png
     - gym.png
-    - hospital.png  
+
     - search_home.png
     - user_account.png
     - notFound1.png
@@ -133,7 +133,7 @@ flutter:
     - screen_search.png
     - screen_view_list.png
     - screen_view_slots.png
-    - screen_token.png
+   # - screen_token.png
     - bscreen_register.png
     - bscreen_place_list.png
     - bscreen_add_new_place.png
@@ -154,9 +154,6 @@ flutter:
     - terms.png
     - contactus.png
     - donate.png
-    - DonateMoney_small.png
-    - collaborate.png
-    - DonateMoney_small.png
     - bigpiq_upi.jpg
     - rupee_icon.png
     
