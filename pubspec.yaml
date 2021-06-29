@@ -55,6 +55,7 @@ dependencies:
   eventify: ^0.1.4
   package_info: ^2.0.0
   flutter_local_notifications: 5.0.0+1
+  #flutter_local_notifications: ^6.0.0
   flutter_native_timezone: ^1.0.4
   app_review: 2.1.1+1
   auto_size_text: ^2.1.0
@@ -92,7 +93,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:    
-    - logo_icon.png
+    #- logo_icon.png
     - sukoon_subheading.png
     - background.png   
     - ticket.jpg
@@ -117,7 +118,7 @@ flutter:
     - sportsCenter.png
     - gym.png
 
-    - search_home.png
+   # - search_home.png
     - user_account.png
     - notFound1.png
     - notFound2.png
@@ -128,18 +129,18 @@ flutter:
     - offers_icon.png    
     - how_to_book_slot.png
     - how_to_register_business.png
-    - screen_login2.png    
-    - screen_homepage.png
-    - screen_search.png
-    - screen_view_list.png
-    - screen_view_slots.png
+   # - screen_login2.png    
+   # - screen_homepage.png
+   # - screen_search.png
+   # - screen_view_list.png
+   # - screen_view_slots.png
    # - screen_token.png
-    - bscreen_register.png
-    - bscreen_place_list.png
-    - bscreen_add_new_place.png
-    - bscreen_fill_details_general.png
-    - bscreen_fill_details_offer.png
-    - bscreen_fill_details_save.png
+    # - bscreen_register.png
+    # - bscreen_place_list.png
+    # - bscreen_add_new_place.png
+    # - bscreen_fill_details_general.png
+    # - bscreen_fill_details_offer.png
+    # - bscreen_fill_details_save.png
     - well_done.png
     - calling_codes.json
     - bigpiq_gpay.jpg 

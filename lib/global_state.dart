@@ -1009,7 +1009,7 @@ class GlobalState {
 
         localNotification = new FlutterLocalNotificationsPlugin();
         var androidInitialize = new AndroidInitializationSettings(
-            "ic_launcher"); //this is not working hence trying below way of setting the icon
+            "@drawable/ic_launcher"); //this is not working hence trying below way of setting the icon
         //https://nitishk72.medium.com/flutter-local-notification-1e43a353877b
         //https://pub.dev/packages/flutter_local_notifications#custom-notification-icons-and-sounds
         // var androidInitialize =
