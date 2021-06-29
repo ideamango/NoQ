@@ -71,21 +71,20 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     getGlobalState().then((gs) {
       _gs = gs;
 
-      if (Platform.isAndroid) {
-        _upiAddressController.text = widget.upiId;
-      }
-      if (Platform.isIOS) {
-        //TODO: show the QR code and the UPI ID for IOS users to make the payment
-        _upiAddressController.text = widget.upiId;
-      }
-      Future.delayed(Duration(seconds: 2)).then((value) {
-        setState(() {
-          showLoading = false;
-          loadPaymentApps();
+      _upiAddressController.text = widget.upiId;
+
+      //TODO: show the QR code and the UPI ID for IOS users to make the payment
+      _upiAddressController.text = widget.upiId;
+      if (!Platform.isIOS) {
+        Future.delayed(Duration(seconds: 2)).then((value) {
+          setState(() {
+            showLoading = false;
+            loadPaymentApps();
+          });
         });
-      });
+      }
       setState(() {
-        showLoading = true;
+        showLoading = (Platform.isIOS) ? false : true;
         initCompleted = true;
       });
     });
@@ -321,40 +320,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                             ]),
                       ),
                     //Phase3 - DO NOT DELETE
-                    // Container(
-                    //   height: MediaQuery.of(context).size.height * .07,
-                    //   margin: EdgeInsets.only(top: 5),
-                    //   child: Row(
-                    //     children: <Widget>[
-                    //       Expanded(
-                    //         child: TextFormField(
-                    //             controller: _amountController,
-                    //             //  readOnly: true,
-                    //             enabled: true,
-                    //             style: TextStyle(
-                    //               fontSize: 14,
-                    //               letterSpacing: 1.5,
-                    //               color: Colors.blueGrey[600],
-                    //             ),
-                    //             keyboardType: TextInputType.number,
-                    //             autovalidateMode:
-                    //                 AutovalidateMode.onUserInteraction,
-                    //             decoration: InputDecoration(
-                    //               hintText: 'Amount in INR',
-                    //               enabledBorder: UnderlineInputBorder(
-                    //                   borderSide:
-                    //                       BorderSide(color: Colors.grey)),
-                    //               focusedBorder: UnderlineInputBorder(
-                    //                   borderSide: BorderSide(
-                    //                       color: Colors.orange)),
-                    //             ),
-                    //             validator: (String val) {
-                    //               return _validateAmount(val);
-                    //             }),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
+
                     // Column(
                     //   mainAxisAlignment: MainAxisAlignment.start,
                     //   children: [
@@ -533,7 +499,52 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                           ),
                         ),
                       ),
-                    //),
+                    Card(
+                      elevation: 3,
+                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          //mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                              child: Text(
+                                'Amount',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.blueGrey),
+                              ),
+                            ),
+                            TextFormField(
+                                controller: _amountController,
+                                //  readOnly: true,
+                                enabled: true,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  letterSpacing: 1.5,
+                                  color: Colors.blueGrey[600],
+                                ),
+                                keyboardType: TextInputType.number,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  hintText: 'Amount in INR',
+                                  enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey)),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.orange)),
+                                ),
+                                validator: (String val) {
+                                  return _validateAmount(val);
+                                }),
+                          ],
+                        ),
+                      ),
+                    ),
+
                     if (!Platform.isIOS &&
                         showPaymentApps &&
                         !Utils.isNullOrEmpty(_appsFuture) &&
@@ -795,16 +806,16 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
 
 String _validateAmount(String value) {
   if (value.isEmpty) {
-    return 'Amount is required for payment.';
+    return 'Amount is required for payment';
   }
   if (double.tryParse(value) == null) {
-    return 'Amount is not a valid number.';
+    return 'Amount is not a valid number';
   }
   if (double.tryParse(value) < 1) {
-    return 'Amount must be greater than 1.';
+    return 'Amount must be greater than 1';
   }
   if (double.tryParse(value) > 100000) {
-    return 'Amount must be less then 1,00,000 since that is the upper limit per UPI transaction.';
+    return 'Amount must be less then 1,00,000 since that is the upper limit per UPI transaction';
   }
 
   return null;
