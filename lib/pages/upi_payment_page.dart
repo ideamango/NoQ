@@ -76,7 +76,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
       //TODO: show the QR code and the UPI ID for IOS users to make the payment
       _upiAddressController.text = widget.upiId;
       if (!Platform.isIOS) {
-        Future.delayed(Duration(seconds: 2)).then((value) {
+        Future.delayed(Duration(seconds: 1)).then((value) {
           setState(() {
             showLoading = false;
             loadPaymentApps();
@@ -111,18 +111,18 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
 
   loadPaymentApps() {
     UpiPay.getInstalledUpiApplications().then((value) {
-      List<ApplicationMeta> dummy = [];
-      dummy.addAll(value);
-      dummy.addAll(value);
-      dummy.addAll(value);
-      dummy.addAll(value);
-      dummy.addAll(value);
-      dummy.addAll(value);
-      dummy.addAll(value);
-      dummy.addAll(value);
-      dummy.addAll(value);
+      // List<ApplicationMeta> dummy = [];
+      // dummy.addAll(value);
+      // dummy.addAll(value);
+      // dummy.addAll(value);
+      // dummy.addAll(value);
+      // dummy.addAll(value);
+      // dummy.addAll(value);
+      // dummy.addAll(value);
+      // dummy.addAll(value);
+      // dummy.addAll(value);
 
-      _appsFuture = dummy;
+      _appsFuture = value;
 
       setState(() {
         showPaymentApps = true;
@@ -184,8 +184,17 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
           Icons.error,
           Duration(seconds: 6),
           "Could not process UPI payment at this time.",
-          "The UPI Id or Amount is incorrect.",
+          "Please check the UPI Id and Amount",
           Colors.red);
+    }
+    if (response.status == UpiTransactionStatus.success) {
+      Utils.showMyFlushbar(
+          context,
+          Icons.check,
+          Duration(seconds: 4),
+          widget.isDonation ? upiDonationSuccess : upiPaySuccess,
+          widget.isDonation ? upiDonationSuccessSub : upiPaySuccessSub,
+          successGreenSnackBar);
     }
   }
 

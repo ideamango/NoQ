@@ -127,6 +127,10 @@ String donationMsg1 =
     "Every bit of encouragement matters. \nDonate as per your comfort.";
 String fillMandatoryInfo =
     'Please provide all mandatory information and try again.';
+String upiPaySuccess = "Payment was Successful";
+String upiPaySuccessSub = "Thank You!";
+String upiDonationSuccess = "Payment towards Donation was Successful";
+String upiDonationSuccessSub = "Thank you for your contribution";
 //UPI Payment Page Strings - End
 String acceptPaymentInFormMsgMain =
     "Make the UPI payment and attach screenshot";
