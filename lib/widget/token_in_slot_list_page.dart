@@ -965,6 +965,7 @@ class _TokensInSlotState extends State<TokensInSlot>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
+                  height: MediaQuery.of(context).size.height * .85,
                   child: Scrollbar(
                       child: SingleChildScrollView(
                     child: Column(
