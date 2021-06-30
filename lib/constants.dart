@@ -133,7 +133,7 @@ String upiDonationSuccess = "Payment towards Donation was Successful";
 String upiDonationSuccessSub = "Thank you for your contribution";
 //UPI Payment Page Strings - End
 String acceptPaymentInFormMsgMain =
-    "Make the UPI payment and attach screenshot";
+    "Make the UPI payment and attach the screenshot";
 String acceptPaymentInFormMsgSub =
     "If already paid, upload the image of receipt";
 String whatsappMessageToPlaceOwner = "Hey there! My LESSs Token number is ";

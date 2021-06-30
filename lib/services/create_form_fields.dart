@@ -1403,55 +1403,67 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            (Utils.isNullOrEmpty(attsField.responseFilePaths))
-                                ? Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * .6,
-                                    child: Text(
-                                      acceptPaymentInFormMsgMain,
-                                      style: TextStyle(
-                                          color: (validateField &&
-                                                  attsField.isMandatory)
-                                              ? Colors.red
-                                              : Colors.black),
-                                    ))
-                                : Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * .6,
-                                    child: ListView.builder(
-                                      padding: EdgeInsets.all(
-                                          MediaQuery.of(context).size.width *
-                                              .03),
-                                      //  controller: _childScrollController,
-                                      scrollDirection: Axis.vertical,
+                            // (Utils.isNullOrEmpty(attsField.responseFilePaths))
+                            //     ? Container(
+                            //         width:
+                            //             MediaQuery.of(context).size.width * .6,
+                            //         child: Text(
+                            //           acceptPaymentInFormMsgMain,
+                            //           style: TextStyle(
+                            //               color: (validateField &&
+                            //                       attsField.isMandatory)
+                            //                   ? Colors.red
+                            //                   : Colors.black),
+                            //         ))
+                            //     : Container(
+                            //         width:
+                            //             MediaQuery.of(context).size.width * .6,
+                            //         child: ListView.builder(
+                            //           padding: EdgeInsets.all(
+                            //               MediaQuery.of(context).size.width *
+                            //                   .03),
+                            //           //  controller: _childScrollController,
+                            //           scrollDirection: Axis.vertical,
 
-                                      shrinkWrap: true,
-                                      //   itemExtent: itemSize,
-                                      //scrollDirection: Axis.vertical,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return Container(
-                                          margin:
-                                              EdgeInsets.symmetric(vertical: 3),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: containerColor),
-                                              color: Colors.grey[50],
-                                              shape: BoxShape.rectangle,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5.0))),
-                                          padding: EdgeInsets.all(5),
-                                          child: showImageList(
-                                              context,
-                                              attsField
-                                                  .responseFilePaths[index],
-                                              attsField.responseFilePaths),
-                                        );
-                                      },
-                                      itemCount:
-                                          attsField.responseFilePaths.length,
-                                    ),
-                                  ),
+                            //           shrinkWrap: true,
+                            //           //   itemExtent: itemSize,
+                            //           //scrollDirection: Axis.vertical,
+                            //           itemBuilder:
+                            //               (BuildContext context, int index) {
+                            //             return Container(
+                            //               margin:
+                            //                   EdgeInsets.symmetric(vertical: 3),
+                            //               decoration: BoxDecoration(
+                            //                   border: Border.all(
+                            //                       color: containerColor),
+                            //                   color: Colors.grey[50],
+                            //                   shape: BoxShape.rectangle,
+                            //                   borderRadius: BorderRadius.all(
+                            //                       Radius.circular(5.0))),
+                            //               padding: EdgeInsets.all(5),
+                            //               child: showImageList(
+                            //                   context,
+                            //                   attsField
+                            //                       .responseFilePaths[index],
+                            //                   attsField.responseFilePaths),
+                            //             );
+                            //           },
+                            //           itemCount:
+                            //               attsField.responseFilePaths.length,
+                            //         ),
+                            //       ),
+                            Container(
+                                width: MediaQuery.of(context).size.width * .6,
+                                child: Text(
+                                  acceptPaymentInFormMsgMain,
+                                  style: TextStyle(
+                                      color: (validateField &&
+                                              attsField.isMandatory &&
+                                              (Utils.isNullOrEmpty(
+                                                  attsField.responseFilePaths)))
+                                          ? Colors.red
+                                          : Colors.black),
+                                )),
                             Container(
                               alignment: Alignment.bottomCenter,
                               child: IconButton(

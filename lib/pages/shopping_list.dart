@@ -257,10 +257,10 @@ class _ShoppingListState extends State<ShoppingList> {
                     if (listOfShoppingItems.length != 0) {
                       print("This list will be shared");
                       var concatenate = StringBuffer();
-                      String heading = "Items List from Sukoon";
+                      String heading = "Items List from LESSs";
                       concatenate.writeln(heading);
                       // concatenate.writeln("x~x~x~x~ LESSs ~x~x~x~x");
-                      concatenate.writeln("Token: " + token.getDisplayName());
+                      concatenate.writeln("Token - " + token.getDisplayName());
                       // concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
                       // concatenate.writeln("Token: " + token.getDisplayName());
                       //  concatenate.writeln('~~~~~~~~~~~~~~~~~~~~~~~~~~');
@@ -284,6 +284,7 @@ class _ShoppingListState extends State<ShoppingList> {
                       String phoneNo = token.parent.entityWhatsApp;
                       if (phoneNo != null) {
                         try {
+                          print(concatenate.toString());
                           launchWhatsApp(
                               message: concatenate.toString(), phone: phoneNo);
                         } catch (error) {

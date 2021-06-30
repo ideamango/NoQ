@@ -283,10 +283,11 @@ class _ShowUserApplicationDetailsState
             FormInputFieldText newfield = field;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
-              height: MediaQuery.of(context).size.height * .08,
+              //  height: MediaQuery.of(context).size.height * .08,
               child: TextField(
                 controller: listOfControllers[field.label],
                 readOnly: true,
+                maxLines: null,
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.indigo[900],
