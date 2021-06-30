@@ -578,6 +578,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                                 child: Card(
                                   elevation: 3,
                                   child: Container(
+                                    padding: EdgeInsets.only(right: 8),
                                     width: MediaQuery.of(context).size.width,
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,

@@ -2176,24 +2176,29 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
               ),
             if (widget.ba.status == ApplicationStatus.CANCELLED)
               Container(
+                  width: MediaQuery.of(context).size.width * .85,
                   margin: EdgeInsets.all(9),
                   child: Row(
                     children: [
-                      Text(
-                        "Reason for Cancellation - ",
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.indigo[900],
-                            //  fontWeight: FontWeight.bold,
-                            fontFamily: 'Roboto'),
+                      Container(
+                        width: MediaQuery.of(context).size.width * .45,
+                        child: Text(
+                          "Reason for Cancellation - ",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.indigo[900],
+                              //  fontWeight: FontWeight.bold,
+                              fontFamily: 'Roboto'),
+                        ),
                       ),
                       Container(
-                          width: MediaQuery.of(context).size.width * .4,
-                          child: Text(
+                          width: MediaQuery.of(context).size.width * .36,
+                          child: AutoSizeText(
                             Utils.isNotNullOrEmpty(
                                     widget.ba.notesOnCancellation)
                                 ? widget.ba.notesOnCancellation
                                 : 'No Comments found.',
+                            maxLines: null,
                             style: TextStyle(color: Colors.black, fontSize: 10),
                           )),
                     ],
