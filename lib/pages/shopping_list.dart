@@ -215,9 +215,9 @@ class _ShoppingListState extends State<ShoppingList> {
       enabled: (widget.isAdmin) ? false : true,
       //cursorWidth: 1,
       style: new TextStyle(
-        // backgroundColor: Colors.white,
-        color: Colors.blueGrey[500],
-      ),
+          // backgroundColor: Colors.white,
+          color: Colors.blueGrey[500],
+          fontSize: 15),
       decoration: new InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 7),
           isDense: true,
@@ -430,7 +430,11 @@ class _ShoppingListState extends State<ShoppingList> {
                               child: Row(
                                 // mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
-                                  Expanded(
+                                  Container(
+                                    height:
+                                        MediaQuery.of(context).size.width * .1,
+                                    width:
+                                        MediaQuery.of(context).size.width * .75,
                                     child: itemField,
                                   ),
                                   Container(
