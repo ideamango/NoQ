@@ -620,7 +620,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                               child: Row(
                                                 children: <Widget>[
                                                   Expanded(
-                                                    child: Text(adminInfoStr,
+                                                    child: Text(contactInfoStr,
                                                         style:
                                                             buttonXSmlTextStyle),
                                                   ),
