@@ -418,7 +418,7 @@ class GlobalState {
   Future<bool> addEmployee(
       String entityId, Employee employee, EntityRole role) async {
     Entity updatedEntity =
-        await _gs.getEntityService().addEmployee(entityId, employee, role);
+        await _gs.getEntityService().upsertEmployee(entityId, employee, role);
     if (updatedEntity != null) {
       putEntity(updatedEntity, false);
       return true;
