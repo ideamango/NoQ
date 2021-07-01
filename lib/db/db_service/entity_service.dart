@@ -1,5 +1,6 @@
 import 'package:LESSs/db/exceptions/cant_remove_admin_with_one_admin_exception.dart';
 import 'package:LESSs/db/exceptions/entity_deletion_denied_child_exists_exception.dart';
+import 'package:LESSs/db/exceptions/existing_user_role_update_exception.dart';
 import 'package:LESSs/db/exceptions/not_admin_parent_entity_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -390,7 +391,7 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<Entity> addEmployee(
+  Future<Entity> upsertEmployee(
       String entityId, Employee employee, EntityRole role) async {
     User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
@@ -432,6 +433,14 @@ class EntityService {
           accessDeniedException = new AccessDeniedException(
               "User is not admin, hence can't add other users");
           throw accessDeniedException;
+        }
+        String strRole = EnumToString.convertToString(role);
+
+        if (ePrivate.roles.containsKey(user.phoneNumber) &&
+            ePrivate.roles[user.phoneNumber] != strRole) {
+          String message =
+              "User already exists in '$strRole' role, please remove the user and add the details with the new Role";
+          throw new ExistingUserRoleUpdateException(message);
         }
 
         DocumentSnapshot usrDoc = await tx.get(userRef);
