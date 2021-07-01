@@ -142,8 +142,8 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                 onPressed: () {
                   Navigator.of(context).pop();
                   if (widget.backRoute != null)
-                    Navigator.of(context)
-                        .push(PageAnimation.createRoute(widget.backRoute));
+                    Navigator.of(context).push(new MaterialPageRoute(
+                        builder: (BuildContext context) => widget.backRoute));
                 }),
 
             actions: <Widget>[],
@@ -360,8 +360,9 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                   } else {
                                     if (dashBoardRoute != null)
                                       Navigator.of(context).push(
-                                          PageAnimation.createRoute(
-                                              dashBoardRoute));
+                                          new MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  dashBoardRoute));
                                   }
                                 }),
                           ],

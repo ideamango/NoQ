@@ -170,8 +170,8 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                 onPressed: () {
                   Navigator.of(context).pop();
                   if (widget.backRoute != null)
-                    Navigator.of(context)
-                        .push(PageAnimation.createRoute(widget.backRoute));
+                    Navigator.of(context).push(new MaterialPageRoute(
+                        builder: (BuildContext context) => widget.backRoute));
                 }),
 
             actions: <Widget>[],
@@ -353,31 +353,36 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                 ),
                                                 onPressed: () {
                                                   Navigator.of(context).push(
-                                                      PageAnimation.createRoute(
-                                                          EntityForm(
-                                                    bookingFormId:
-                                                        checkBoxListTileModel[
-                                                                index]
-                                                            .form
-                                                            .id,
-                                                    metaEntity:
-                                                        widget.metaEntity,
-                                                    preferredSlotTime: widget
-                                                        .preferredSlotTime,
-                                                    backRoute:
-                                                        ManageEntityForms(
-                                                      isFullPermission: widget
-                                                          .isFullPermission,
-                                                      metaEntity:
-                                                          widget.metaEntity,
-                                                      preferredSlotTime: widget
-                                                          .preferredSlotTime,
-                                                      backRoute:
-                                                          widget.backRoute,
-                                                      isReadOnly:
-                                                          widget.isReadOnly,
-                                                    ),
-                                                  )));
+                                                      new MaterialPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              EntityForm(
+                                                                bookingFormId:
+                                                                    checkBoxListTileModel[
+                                                                            index]
+                                                                        .form
+                                                                        .id,
+                                                                metaEntity: widget
+                                                                    .metaEntity,
+                                                                preferredSlotTime:
+                                                                    widget
+                                                                        .preferredSlotTime,
+                                                                backRoute:
+                                                                    ManageEntityForms(
+                                                                  isFullPermission:
+                                                                      widget
+                                                                          .isFullPermission,
+                                                                  metaEntity: widget
+                                                                      .metaEntity,
+                                                                  preferredSlotTime:
+                                                                      widget
+                                                                          .preferredSlotTime,
+                                                                  backRoute: widget
+                                                                      .backRoute,
+                                                                  isReadOnly: widget
+                                                                      .isReadOnly,
+                                                                ),
+                                                              )));
                                                 },
                                               ),
                                             ),
@@ -789,8 +794,10 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                         .then((value) {
                                       if (widget.backRoute != null)
                                         Navigator.of(context).push(
-                                            PageAnimation.createRoute(
-                                                widget.backRoute));
+                                            new MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        widget.backRoute));
                                     });
                                   });
                                 } else {
@@ -907,8 +914,10 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                       // Navigator.of(context).pop();
                                       if (widget.backRoute != null)
                                         Navigator.of(context).push(
-                                            PageAnimation.createRoute(
-                                                widget.backRoute));
+                                            new MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        widget.backRoute));
                                     });
                                   });
                                 } else {
@@ -962,8 +971,8 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
         onWillPop: () async {
           Navigator.of(context).pop();
           if (widget.backRoute != null)
-            Navigator.of(context)
-                .push(PageAnimation.createRoute(widget.backRoute));
+            Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => widget.backRoute));
           return false;
         },
       );

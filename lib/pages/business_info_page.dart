@@ -368,8 +368,9 @@ class _ManageTokensState extends State<ManageTokens> {
                 color: Colors.white,
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.of(context)
-                      .push(PageAnimation.createRoute(ManageEntityListPage()));
+                  Navigator.of(context).push(new MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          ManageEntityListPage()));
                 }),
             flexibleSpace: Container(
               decoration: gradientBackground,

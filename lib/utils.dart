@@ -522,17 +522,17 @@ class Utils {
       }
       if (newBaFromGS != null) {
         gs.getEntityService().getEntity(newBaFromGS.entityId).then((entity) {
-          Navigator.of(context)
-              .push(PageAnimation.createRoute(ShowApplicationDetails(
-            bookingApplication: newBaFromGS,
-            showReject: false,
-            metaEntity: entity.getMetaEntity(),
-            newBookingDate: newBaFromGS.preferredSlotTiming,
-            isReadOnly: isReadOnly,
-            isAvailable: true,
-            tokenCounter: null,
-            backRoute: UserHomePage(),
-          )));
+          Navigator.of(context).push(new MaterialPageRoute(
+              builder: (BuildContext context) => ShowApplicationDetails(
+                    bookingApplication: newBaFromGS,
+                    showReject: false,
+                    metaEntity: entity.getMetaEntity(),
+                    newBookingDate: newBaFromGS.preferredSlotTiming,
+                    isReadOnly: isReadOnly,
+                    isAvailable: true,
+                    tokenCounter: null,
+                    backRoute: UserHomePage(),
+                  )));
         });
       } else {
         Utils.showMyFlushbar(

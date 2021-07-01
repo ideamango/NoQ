@@ -323,8 +323,8 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
             return false;
           } else {
             //Navigator.of(context).pop();
-            Navigator.of(context)
-                .push(PageAnimation.createRoute(ManageEntityListPage()));
+            Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => ManageEntityListPage()));
             return false;
           }
         },

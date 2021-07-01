@@ -715,8 +715,9 @@ class _ManageChildEntityDetailsPageState
 
       _gs.putEntity(serviceEntity, true, serviceEntity.parentId).then((value) {
         if (value) {
-          Navigator.of(context).push(PageAnimation.createRoute(
-              ManageChildEntityListPage(entity: this.serviceEntity)));
+          Navigator.of(context).push(new MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  ManageChildEntityListPage(entity: this.serviceEntity)));
         }
       });
     } else {

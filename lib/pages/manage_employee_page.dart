@@ -266,6 +266,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
             entity: entity,
             list: managersList,
             isManager: widget.isManager,
+            existingContact: true,
           ));
         });
       }
@@ -278,6 +279,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
             entity: entity,
             list: executiveList,
             isManager: widget.isManager,
+            existingContact: true,
           ));
         });
       }
@@ -293,6 +295,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         entity: entity,
         list: managersList,
         isManager: widget.isManager,
+        existingContact: true,
       ));
     }
     setState(() {
@@ -311,6 +314,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         entity: entity,
         list: executiveList,
         isManager: widget.isManager,
+        existingContact: true,
       ));
     }
     setState(() {
@@ -334,6 +338,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       entity: entity,
       list: managersList,
       isManager: widget.isManager,
+      existingContact: false,
     ));
     // }
     setState(() {
@@ -358,6 +363,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         entity: entity,
         list: executiveList,
         isManager: widget.isManager,
+        existingContact: false,
       ));
     }
     setState(() {
@@ -1046,8 +1052,8 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
             return false;
           } else {
             //Navigator.of(context).pop();
-            Navigator.of(context)
-                .push(PageAnimation.createRoute(ManageEntityListPage()));
+            Navigator.of(context).push(new MaterialPageRoute(
+                builder: (BuildContext context) => ManageEntityListPage()));
             return false;
           }
         },

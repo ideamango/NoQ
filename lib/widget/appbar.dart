@@ -89,8 +89,8 @@ class _CustomAppBarWithBackButtonState
           onPressed: () {
             Navigator.of(context).pop();
             if (widget.backRoute != null)
-              Navigator.of(context)
-                  .push(PageAnimation.createRoute(widget.backRoute));
+              Navigator.of(context).push(new MaterialPageRoute(
+                  builder: (BuildContext context) => widget.backRoute));
           }),
 
       actions: <Widget>[
@@ -161,8 +161,8 @@ class _CustomAppBarWithBackFwdButtonState
           onPressed: () {
             Navigator.of(context).pop();
             if (widget.backRoute != null)
-              Navigator.of(context)
-                  .push(PageAnimation.createRoute(widget.backRoute));
+              Navigator.of(context).push(new MaterialPageRoute(
+                  builder: (BuildContext context) => widget.backRoute));
           }),
 
       actions: <Widget>[
@@ -172,8 +172,8 @@ class _CustomAppBarWithBackFwdButtonState
             onPressed: () {
               //Navigator.of(context).pop();
               if (widget.fwdRoute != null)
-                Navigator.of(context)
-                    .push(PageAnimation.createRoute(widget.fwdRoute));
+                Navigator.of(context).push(new MaterialPageRoute(
+                    builder: (BuildContext context) => widget.fwdRoute));
             })
       ],
       // leading: Builder(

@@ -291,8 +291,8 @@ class _FavsListPageState extends State<FavsListPage>
                     color: Colors.white,
                     onPressed: () {
                       //  Navigator.of(context).pop();
-                      Navigator.of(context)
-                          .push(PageAnimation.createRoute(UserHomePage()));
+                      Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (BuildContext context) => UserHomePage()));
                     }),
                 title: Text(
                   "My Favourites",
@@ -894,8 +894,10 @@ class _FavsListPageState extends State<FavsListPage>
                                         pageName: "FavsSearch",
                                         childList: value.item1.childEntities,
                                         parentName: str.name);
-                                    Navigator.of(context)
-                                        .push(PageAnimation.createRoute(route));
+                                    Navigator.of(context).push(
+                                        new MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                route));
                                   } else {
                                     Utils.showMyFlushbar(
                                         context,
@@ -951,11 +953,12 @@ class _FavsListPageState extends State<FavsListPage>
   void showSlots(MetaEntity store, DateTime dateTime) {
     //Check INTERNET connection first.
 
-    Navigator.of(context).push(PageAnimation.createRoute(ShowSlotsPage(
-      metaEntity: store,
-      dateTime: dateTime,
-      forPage: 'FavsList',
-    )));
+    Navigator.of(context).push(new MaterialPageRoute(
+        builder: (BuildContext context) => ShowSlotsPage(
+              metaEntity: store,
+              dateTime: dateTime,
+              forPage: 'FavsList',
+            )));
   }
 
   List<Widget> _buildDateGridItems(MetaEntity store, String sid, String sname,

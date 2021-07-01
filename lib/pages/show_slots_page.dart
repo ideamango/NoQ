@@ -790,8 +790,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     if (!Utils.isNullOrEmpty(metaEntity.forms)) {
       if (metaEntity.forms.length >= 1) {
         //Show Booking request form SELECTION page
-        Navigator.of(context).push(PageAnimation.createRoute(
-            BookingFormSelection(
+        Navigator.of(context).push(new MaterialPageRoute(
+            builder: (BuildContext context) => BookingFormSelection(
                 entityId: metaEntity.entityId,
                 entity: null,
                 preferredSlotTime: selectedSlot.dateTime,

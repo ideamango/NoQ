@@ -2110,8 +2110,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       }
 
       backRoute() {
-        Navigator.of(context)
-            .push(PageAnimation.createRoute(ManageEntityListPage()));
+        Navigator.of(context).push(new MaterialPageRoute(
+            builder: (BuildContext context) => ManageEntityListPage()));
       }
 
       processSaveWithTimer() async {
@@ -4403,8 +4403,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           if (value) {
                                             Navigator.pop(context);
                                             Navigator.of(context).push(
-                                                PageAnimation.createRoute(
-                                                    ManageEntityListPage()));
+                                                new MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        ManageEntityListPage()));
                                           } else {
                                             //Entity not deleted.
                                             Utils.showMyFlushbar(

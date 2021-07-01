@@ -487,14 +487,23 @@ class _UserHomePageState extends State<UserHomePage>
                           elevation: 20,
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(UPIPaymentPage(
-                                upiId: upiId,
-                                upiQrCodeImgPath: upiQrImgPath,
-                                backRoute: UserHomePage(),
-                                isDonation: true,
-                                showMinimum: false,
-                              )));
+                              Navigator.of(context).push(new MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      UPIPaymentPage(
+                                        upiId: upiId,
+                                        upiQrCodeImgPath: upiQrImgPath,
+                                        backRoute: UserHomePage(),
+                                        isDonation: true,
+                                        showMinimum: false,
+                                      )));
+                              // Navigator.of(context).push(
+                              //     PageAnimation.createRoute(UPIPaymentPage(
+                              //   upiId: upiId,
+                              //   upiQrCodeImgPath: upiQrImgPath,
+                              //   backRoute: UserHomePage(),
+                              //   isDonation: true,
+                              //   showMinimum: false,
+                              // )));
                             },
                             child: Image(
                               fit: BoxFit.fitWidth,
@@ -612,8 +621,8 @@ class _UserHomePageState extends State<UserHomePage>
                           onTap: () {
                             //User clicked on show how, lets show them.
                             print("Showing how to book time-slot");
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(
+                            Navigator.of(context).push(new MaterialPageRoute(
+                                builder: (BuildContext context) =>
                                     HowToRegForBusiness()));
                           },
                           child: Container(
@@ -632,8 +641,10 @@ class _UserHomePageState extends State<UserHomePage>
                           onTap: () {
                             //User clicked on show how, lets show them.
                             print("Showing how to book time-slot");
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(HowToRegForUsers()));
+
+                            Navigator.of(context).push(new MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    HowToRegForUsers()));
                           },
                           child: Container(
                             width: MediaQuery.of(context).size.width,
@@ -1067,14 +1078,15 @@ class _UserHomePageState extends State<UserHomePage>
                                     if (Utils.isNotNullOrEmpty(
                                         token.parent.upiId)) {
                                       Navigator.of(context).push(
-                                          PageAnimation.createRoute(
-                                              UPIPaymentPage(
-                                        upiId: token.parent.upiId,
-                                        upiQrCodeImgPath: null,
-                                        backRoute: UserHomePage(),
-                                        isDonation: false,
-                                        showMinimum: false,
-                                      )));
+                                          new MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  UPIPaymentPage(
+                                                    upiId: token.parent.upiId,
+                                                    upiQrCodeImgPath: null,
+                                                    backRoute: UserHomePage(),
+                                                    isDonation: false,
+                                                    showMinimum: false,
+                                                  )));
                                     } else {
                                       Utils.showMyFlushbar(
                                           context,
@@ -1100,11 +1112,13 @@ class _UserHomePageState extends State<UserHomePage>
                                   .then((bookingApplication) {
                                 if (bookingApplication != null) {
                                   Navigator.of(context).push(
-                                      PageAnimation.createRoute(
-                                          ShowUserApplicationDetails(
-                                    bookingApplication: bookingApplication,
-                                    backRoute: UserHomePage(),
-                                  )));
+                                      new MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              ShowUserApplicationDetails(
+                                                bookingApplication:
+                                                    bookingApplication,
+                                                backRoute: UserHomePage(),
+                                              )));
                                 } else {
                                   Utils.showMyFlushbar(
                                       context,
@@ -1245,14 +1259,14 @@ class _UserHomePageState extends State<UserHomePage>
                                       ':' +
                                       token.parent.userId;
 
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(
+                              Navigator.of(context).push(new MaterialPageRoute(
+                                  builder: (BuildContext context) =>
                                       GenerateQrUserApplication(
-                                entityName: token.parent.entityName,
-                                backRoute: "UserHome",
-                                baId: null,
-                                uniqueTokenIdentifier: id,
-                              )));
+                                        entityName: token.parent.entityName,
+                                        backRoute: "UserHome",
+                                        baId: null,
+                                        uniqueTokenIdentifier: id,
+                                      )));
                             }),
                       ),
                     Container(
@@ -1385,11 +1399,11 @@ class _UserHomePageState extends State<UserHomePage>
                             .getApplication(booking.applicationId)
                             .then((bookingApplication) {
                           if (bookingApplication != null) {
-                            Navigator.of(context)
-                                .push(PageAnimation.createRoute(
-                              ShowUserApplicationDetails(
-                                  bookingApplication: bookingApplication,
-                                  backRoute: UserHomePage()),
+                            Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ShowUserApplicationDetails(
+                                      bookingApplication: bookingApplication,
+                                      backRoute: UserHomePage()),
                             ));
                           } else {
                             Utils.showMyFlushbar(

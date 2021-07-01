@@ -86,11 +86,11 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       // else fetch from DB.
 
       Navigator.of(context).pop();
-      Navigator.of(context)
-          .push(PageAnimation.createRoute(ManageChildEntityDetailsPage(
-        childMetaEntity: _metaEntity,
-        isManager: isManager || isExec,
-      )));
+      Navigator.of(context).push(new MaterialPageRoute(
+          builder: (BuildContext context) => ManageChildEntityDetailsPage(
+                childMetaEntity: _metaEntity,
+                isManager: isManager || isExec,
+              )));
     }
 
     generateLinkAndShareWithParams(String entityId, String name) async {
@@ -127,13 +127,14 @@ class ChildEntityRowState extends State<ChildEntityRow> {
           Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 4),
               missingInfoForShareStr, missingInfoForShareSubStr);
         } else
-          Navigator.of(context).push(PageAnimation.createRoute(GenerateScreen(
-            entityId: _metaEntity.entityId,
-            entityName: _metaEntity.name,
-            backRoute: ManageChildEntityListPage(
-              entity: parentEntity,
-            ),
-          )));
+          Navigator.of(context).push(new MaterialPageRoute(
+              builder: (BuildContext context) => GenerateScreen(
+                    entityId: _metaEntity.entityId,
+                    entityName: _metaEntity.name,
+                    backRoute: ManageChildEntityListPage(
+                      entity: parentEntity,
+                    ),
+                  )));
       });
     }
 
@@ -300,15 +301,17 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                     "");
                               } else {
                                 Navigator.of(context).push(
-                                    PageAnimation.createRoute(
-                                        ManageEmployeePage(
-                                  metaEntity: _metaEntity,
-                                  backRoute: ManageChildEntityListPage(
-                                    entity: parentEntity,
-                                  ),
-                                  defaultDate: null,
-                                  isManager: isManager,
-                                )));
+                                    new MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            ManageEmployeePage(
+                                              metaEntity: _metaEntity,
+                                              backRoute:
+                                                  ManageChildEntityListPage(
+                                                entity: parentEntity,
+                                              ),
+                                              defaultDate: null,
+                                              isManager: isManager,
+                                            )));
                               }
                             }
                           },
@@ -373,17 +376,18 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                   "");
                             } else {
                               print("To Add details page");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(ManageEntityForms(
-                                // forms: _metaEntity.forms,
-                                metaEntity: _metaEntity,
-                                preferredSlotTime: null,
-                                isFullPermission: !readOnly,
-                                backRoute: ManageChildEntityListPage(
-                                  entity: parentEntity,
-                                ),
-                                isReadOnly: readOnly,
-                              )));
+                              Navigator.of(context).push(new MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      ManageEntityForms(
+                                        // forms: _metaEntity.forms,
+                                        metaEntity: _metaEntity,
+                                        preferredSlotTime: null,
+                                        isFullPermission: !readOnly,
+                                        backRoute: ManageChildEntityListPage(
+                                          entity: parentEntity,
+                                        ),
+                                        isReadOnly: readOnly,
+                                      )));
                             }
                           }
                         },
@@ -450,18 +454,21 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                               if (!Utils.isNullOrEmpty(entity.forms)) {
                                 // if (entity.forms.length > 1) {
                                 Navigator.of(context).push(
-                                    PageAnimation.createRoute(
-                                        BookingFormSelection(
-                                  entityId: entity.entityId,
-                                  entity: entity,
-                                  preferredSlotTime: null,
-                                  isFullAccess: isAdmin || isManager,
-                                  forUser: false,
-                                  backRoute: ManageChildEntityListPage(
-                                    entity: parentEntity,
-                                  ),
-                                  isOnlineToken: null,
-                                )));
+                                    new MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            BookingFormSelection(
+                                              entityId: entity.entityId,
+                                              entity: entity,
+                                              preferredSlotTime: null,
+                                              isFullAccess:
+                                                  isAdmin || isManager,
+                                              forUser: false,
+                                              backRoute:
+                                                  ManageChildEntityListPage(
+                                                entity: parentEntity,
+                                              ),
+                                              isOnlineToken: null,
+                                            )));
                                 // } else {
                                 //   Navigator.of(context).push(
                                 //       PageAnimation.createRoute(OverviewPage(
@@ -545,15 +552,17 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                               if (_metaEntity.isBookable) {
                                 print("To child list page");
                                 Navigator.of(context).push(
-                                    PageAnimation.createRoute(
-                                        EntityTokenListPage(
-                                  metaEntity: _metaEntity,
-                                  backRoute: ManageChildEntityListPage(
-                                    entity: parentEntity,
-                                  ),
-                                  defaultDate: null,
-                                  isReadOnly: isExec,
-                                )));
+                                    new MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            EntityTokenListPage(
+                                              metaEntity: _metaEntity,
+                                              backRoute:
+                                                  ManageChildEntityListPage(
+                                                entity: parentEntity,
+                                              ),
+                                              defaultDate: null,
+                                              isReadOnly: isExec,
+                                            )));
                               } else
                                 Utils.showMyFlushbar(
                                     context,

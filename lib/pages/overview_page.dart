@@ -188,13 +188,14 @@ class _OverviewPageState extends State<OverviewPage> {
                           //User clicked on show how, lets show them.
                           print("Showing how to book time-slot");
 
-                          Navigator.of(context).push(PageAnimation.createRoute(
-                              ApplicationsList(
-                                  metaEntity: widget.metaEntity,
-                                  bookingFormId: widget.bookingFormId,
-                                  status: ApplicationStatus.NEW,
-                                  titleText: "New Applications",
-                                  isReadOnly: widget.isReadOnly)));
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ApplicationsList(
+                                      metaEntity: widget.metaEntity,
+                                      bookingFormId: widget.bookingFormId,
+                                      status: ApplicationStatus.NEW,
+                                      titleText: "New Applications",
+                                      isReadOnly: widget.isReadOnly)));
                         },
                         child: Card(
                           elevation: 20,
@@ -256,13 +257,14 @@ class _OverviewPageState extends State<OverviewPage> {
                         onTap: () {
                           //User clicked on show how, lets show them.
                           print("Showing how to book time-slot");
-                          Navigator.of(context).push(PageAnimation.createRoute(
-                              ApplicationsList(
-                                  metaEntity: widget.metaEntity,
-                                  bookingFormId: widget.bookingFormId,
-                                  status: ApplicationStatus.INPROCESS,
-                                  titleText: "In-Process Applications",
-                                  isReadOnly: widget.isReadOnly)));
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ApplicationsList(
+                                      metaEntity: widget.metaEntity,
+                                      bookingFormId: widget.bookingFormId,
+                                      status: ApplicationStatus.INPROCESS,
+                                      titleText: "In-Process Applications",
+                                      isReadOnly: widget.isReadOnly)));
                         },
                         child: Card(
                           elevation: 8,
@@ -329,13 +331,14 @@ class _OverviewPageState extends State<OverviewPage> {
                         onTap: () {
                           //User clicked on show how, lets show them.
                           print("Showing how to book time-slot");
-                          Navigator.of(context).push(PageAnimation.createRoute(
-                              ApplicationsList(
-                                  metaEntity: widget.metaEntity,
-                                  bookingFormId: widget.bookingFormId,
-                                  status: ApplicationStatus.REJECTED,
-                                  titleText: "Rejected Applications",
-                                  isReadOnly: widget.isReadOnly)));
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ApplicationsList(
+                                      metaEntity: widget.metaEntity,
+                                      bookingFormId: widget.bookingFormId,
+                                      status: ApplicationStatus.REJECTED,
+                                      titleText: "Rejected Applications",
+                                      isReadOnly: widget.isReadOnly)));
                         },
                         child: Card(
                           elevation: 20,
@@ -401,13 +404,14 @@ class _OverviewPageState extends State<OverviewPage> {
                         onTap: () {
                           //User clicked on show how, lets show them.
                           print("Showing how to book time-slot");
-                          Navigator.of(context).push(PageAnimation.createRoute(
-                              ApplicationsList(
-                                  metaEntity: widget.metaEntity,
-                                  bookingFormId: widget.bookingFormId,
-                                  status: ApplicationStatus.CANCELLED,
-                                  titleText: "Cancelled Applications",
-                                  isReadOnly: widget.isReadOnly)));
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ApplicationsList(
+                                      metaEntity: widget.metaEntity,
+                                      bookingFormId: widget.bookingFormId,
+                                      status: ApplicationStatus.CANCELLED,
+                                      titleText: "Cancelled Applications",
+                                      isReadOnly: widget.isReadOnly)));
                         },
                         child: Card(
                           elevation: 20,
@@ -476,13 +480,14 @@ class _OverviewPageState extends State<OverviewPage> {
                         onTap: () {
                           //User clicked on show how, lets show them.
                           print("Showing how to book time-slot");
-                          Navigator.of(context).push(PageAnimation.createRoute(
-                              ApplicationsList(
-                                  metaEntity: widget.metaEntity,
-                                  bookingFormId: widget.bookingFormId,
-                                  status: ApplicationStatus.ONHOLD,
-                                  titleText: "On-Hold Applications",
-                                  isReadOnly: widget.isReadOnly)));
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ApplicationsList(
+                                      metaEntity: widget.metaEntity,
+                                      bookingFormId: widget.bookingFormId,
+                                      status: ApplicationStatus.ONHOLD,
+                                      titleText: "On-Hold Applications",
+                                      isReadOnly: widget.isReadOnly)));
                         },
                         child: Card(
                           elevation: 20,
@@ -545,13 +550,14 @@ class _OverviewPageState extends State<OverviewPage> {
                         onTap: () {
                           //User clicked on show how, lets show them.
                           print("Showing how to book time-slot");
-                          Navigator.of(context).push(PageAnimation.createRoute(
-                              ApplicationsList(
-                                  metaEntity: widget.metaEntity,
-                                  bookingFormId: widget.bookingFormId,
-                                  status: ApplicationStatus.APPROVED,
-                                  titleText: "Approved Applications",
-                                  isReadOnly: widget.isReadOnly)));
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ApplicationsList(
+                                      metaEntity: widget.metaEntity,
+                                      bookingFormId: widget.bookingFormId,
+                                      status: ApplicationStatus.APPROVED,
+                                      titleText: "Approved Applications",
+                                      isReadOnly: widget.isReadOnly)));
                         },
                         child: Card(
                           elevation: 20,
@@ -620,8 +626,8 @@ class _OverviewPageState extends State<OverviewPage> {
                       onTap: () {
                         //User clicked on show how, lets show them.
                         print("Showing how to book time-slot");
-                        Navigator.of(context).push(PageAnimation.createRoute(
-                            ApplicationsList(
+                        Navigator.of(context).push(new MaterialPageRoute(
+                            builder: (BuildContext context) => ApplicationsList(
                                 metaEntity: widget.metaEntity,
                                 bookingFormId: widget.bookingFormId,
                                 status: ApplicationStatus.COMPLETED,
