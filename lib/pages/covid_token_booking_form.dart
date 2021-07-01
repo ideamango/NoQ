@@ -1223,7 +1223,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       }
 
       backRoute() {
-        Navigator.of(context).push(PageAnimation.createRoute(widget.backRoute));
+        Navigator.of(context).push(new MaterialPageRoute(
+            builder: (BuildContext context) => widget.backRoute));
       }
 
       processSaveWithTimer() async {

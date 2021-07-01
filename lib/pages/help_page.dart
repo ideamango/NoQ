@@ -238,14 +238,18 @@ class _HelpPageState extends State<HelpPage> {
                                           recognizer: new TapGestureRecognizer()
                                             ..onTap = () {
                                               Navigator.of(context).push(
-                                                  PageAnimation.createRoute(
-                                                      UPIPaymentPage(
-                                                upiId: upiId,
-                                                upiQrCodeImgPath: upiQrImgPath,
-                                                backRoute: HelpPage(),
-                                                isDonation: true,
-                                                showMinimum: false,
-                                              )));
+                                                  new MaterialPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          UPIPaymentPage(
+                                                            upiId: upiId,
+                                                            upiQrCodeImgPath:
+                                                                upiQrImgPath,
+                                                            backRoute:
+                                                                HelpPage(),
+                                                            isDonation: true,
+                                                            showMinimum: false,
+                                                          )));
                                             },
                                         ),
                                       ])),

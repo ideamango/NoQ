@@ -326,17 +326,18 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                               .getEntity(bookingToken.parent.entityId)
                               .then((entity) {
                             Navigator.of(context)
-                                .push(PageAnimation.createRoute(
-                                    ShowApplicationDetails(
-                              bookingApplication: newBaFromGS,
-                              showReject: false,
-                              metaEntity: entity.getMetaEntity(),
-                              newBookingDate: null,
-                              isReadOnly: isReadOnly,
-                              isAvailable: true,
-                              tokenCounter: null,
-                              backRoute: null,
-                            )))
+                                .push(new MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ShowApplicationDetails(
+                                          bookingApplication: newBaFromGS,
+                                          showReject: false,
+                                          metaEntity: entity.getMetaEntity(),
+                                          newBookingDate: null,
+                                          isReadOnly: isReadOnly,
+                                          isAvailable: true,
+                                          tokenCounter: null,
+                                          backRoute: null,
+                                        )))
                                 .then((updatedBaTuple) {
                               if (updatedBaTuple != null) {
                                 if (updatedBaTuple.item1.status ==

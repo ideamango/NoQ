@@ -263,8 +263,9 @@ class _LoginPageState extends State<LoginPage> {
                                 splashColor: highlightColor.withOpacity(.8),
                                 onPressed: () {
                                   Navigator.of(context).push(
-                                      PageAnimation.createRoute(
-                                          ExplorePageForBusiness()));
+                                      new MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              ExplorePageForBusiness()));
                                 },
                                 child: Text(
                                   "Business Owners",
@@ -293,8 +294,9 @@ class _LoginPageState extends State<LoginPage> {
                                 splashColor: highlightColor.withOpacity(.8),
                                 onPressed: () {
                                   Navigator.of(context).push(
-                                      PageAnimation.createRoute(
-                                          ExplorePageForUser()));
+                                      new MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              ExplorePageForUser()));
                                 },
                                 child: Text(
                                   "Users",

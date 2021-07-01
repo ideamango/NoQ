@@ -1710,8 +1710,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 parentName: str.name,
                                 parentId: str.entityId,
                                 parentType: str.type);
-                            Navigator.of(context)
-                                .push(PageAnimation.createRoute(route));
+                            Navigator.of(context).push(new MaterialPageRoute(
+                                builder: (BuildContext context) => route));
                             // Navigator.push(context,
                             //     MaterialPageRoute(builder: (context) => route));
                           },

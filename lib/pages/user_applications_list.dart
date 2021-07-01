@@ -1636,14 +1636,14 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                             ),
                             onPressed: () {
                               print(ba.entityId);
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(
+                              Navigator.of(context).push(new MaterialPageRoute(
+                                  builder: (BuildContext context) =>
                                       GenerateQrUserApplication(
-                                baId: ba.id,
-                                entityName: ba.entityName,
-                                backRoute: "UserAppsList",
-                                uniqueTokenIdentifier: null,
-                              )));
+                                        baId: ba.id,
+                                        entityName: ba.entityName,
+                                        backRoute: "UserAppsList",
+                                        uniqueTokenIdentifier: null,
+                                      )));
                             }),
                       ),
                       Container(
@@ -2096,11 +2096,12 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(
-                          PageAnimation.createRoute(ShowUserApplicationDetails(
-                        bookingApplication: ba,
-                        backRoute: UserAccountPage(),
-                      )));
+                      Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              ShowUserApplicationDetails(
+                                bookingApplication: ba,
+                                backRoute: UserAccountPage(),
+                              )));
                     },
                     child: Container(
                       padding: EdgeInsets.all(5),

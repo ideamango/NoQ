@@ -40,12 +40,12 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
               User value = FirebaseAuth.instance.currentUser;
               if (value == null) {
                 print("No user");
-                Navigator.of(context)
-                    .push(PageAnimation.createRoute(LoginPage()));
+                Navigator.of(context).push(new MaterialPageRoute(
+                    builder: (BuildContext context) => LoginPage()));
               } else {
                 print("Go to dashboard");
-                Navigator.of(context)
-                    .push(PageAnimation.createRoute(UserHomePage()));
+                Navigator.of(context).push(new MaterialPageRoute(
+                    builder: (BuildContext context) => UserHomePage()));
               }
             },
           ),

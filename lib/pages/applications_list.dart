@@ -1489,25 +1489,27 @@ class _ApplicationsListState extends State<ApplicationsList> {
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context)
-                              .push(PageAnimation.createRoute(
-                                  ShowApplicationDetails(
-                            bookingApplication: ba,
-                            showReject: false,
-                            metaEntity: widget.metaEntity,
-                            newBookingDate:
-                                (applicationNewSlotMap.containsKey(ba.id)
-                                    ? applicationNewSlotMap[ba.id]
-                                    : ba.preferredSlotTiming),
-                            isReadOnly: widget.isReadOnly,
-                            isAvailable: isAvailable(ba.preferredSlotTiming),
-                            tokenCounter: tokenCounterForEntity,
-                            backRoute: ApplicationsList(
-                                metaEntity: widget.metaEntity,
-                                bookingFormId: widget.bookingFormId,
-                                isReadOnly: widget.isReadOnly,
-                                status: widget.status,
-                                titleText: widget.titleText),
-                          )))
+                              .push(new MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      ShowApplicationDetails(
+                                        bookingApplication: ba,
+                                        showReject: false,
+                                        metaEntity: widget.metaEntity,
+                                        newBookingDate: (applicationNewSlotMap
+                                                .containsKey(ba.id)
+                                            ? applicationNewSlotMap[ba.id]
+                                            : ba.preferredSlotTiming),
+                                        isReadOnly: widget.isReadOnly,
+                                        isAvailable:
+                                            isAvailable(ba.preferredSlotTiming),
+                                        tokenCounter: tokenCounterForEntity,
+                                        backRoute: ApplicationsList(
+                                            metaEntity: widget.metaEntity,
+                                            bookingFormId: widget.bookingFormId,
+                                            isReadOnly: widget.isReadOnly,
+                                            status: widget.status,
+                                            titleText: widget.titleText),
+                                      )))
                               .then((value) {
                             tokenCounterForEntity = value;
                             //refreshTokenCounter();

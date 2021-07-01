@@ -288,8 +288,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                 color: textColor,
               ),
               onPressed: () {
-                Navigator.of(context)
-                    .push(PageAnimation.createRoute(TokensInSlot(
+                Navigator.of(context).push(new MaterialPageRoute(
+                    builder: (BuildContext context) => TokensInSlot(
                         slotKey: time,
                         stats: stats,
                         date: selectedDate,
@@ -765,19 +765,20 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
           IconButton(
             icon: Icon(Icons.details),
             onPressed: () {
-              Navigator.of(context).push(PageAnimation.createRoute(TokensInSlot(
-                  slotKey: key,
-                  stats: stats,
-                  date: date,
-                  format: DateDisplayFormat.date,
-                  metaEntity: widget.metaEntity,
-                  isReadOnly: widget.isReadOnly,
-                  backRoute: EntityTokenListPage(
-                    metaEntity: widget.metaEntity,
-                    backRoute: widget.backRoute,
-                    defaultDate: selectedDate,
-                    isReadOnly: widget.isReadOnly,
-                  ))));
+              Navigator.of(context).push(new MaterialPageRoute(
+                  builder: (BuildContext context) => TokensInSlot(
+                      slotKey: key,
+                      stats: stats,
+                      date: date,
+                      format: DateDisplayFormat.date,
+                      metaEntity: widget.metaEntity,
+                      isReadOnly: widget.isReadOnly,
+                      backRoute: EntityTokenListPage(
+                        metaEntity: widget.metaEntity,
+                        backRoute: widget.backRoute,
+                        defaultDate: selectedDate,
+                        isReadOnly: widget.isReadOnly,
+                      ))));
               // getTokenList(key, date, format).then((value) {
               print("DONEJHCFGJHSDCSDCH");
               // });

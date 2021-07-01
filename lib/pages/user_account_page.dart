@@ -636,14 +636,16 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     if (Utils.isNotNullOrEmpty(
                                         booking.parent.upiId)) {
                                       Navigator.of(context).push(
-                                          PageAnimation.createRoute(
-                                              UPIPaymentPage(
-                                        upiId: booking.parent.upiId,
-                                        upiQrCodeImgPath: null,
-                                        backRoute: UserAccountPage(),
-                                        isDonation: false,
-                                        showMinimum: false,
-                                      )));
+                                          new MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  UPIPaymentPage(
+                                                    upiId: booking.parent.upiId,
+                                                    upiQrCodeImgPath: null,
+                                                    backRoute:
+                                                        UserAccountPage(),
+                                                    isDonation: false,
+                                                    showMinimum: false,
+                                                  )));
                                     } else {
                                       Utils.showMyFlushbar(
                                           context,
@@ -669,11 +671,13 @@ class _UserAccountPageState extends State<UserAccountPage>
                                   .then((bookingApplication) {
                                 if (bookingApplication != null) {
                                   Navigator.of(context).push(
-                                      PageAnimation.createRoute(
-                                          ShowUserApplicationDetails(
-                                    bookingApplication: bookingApplication,
-                                    backRoute: UserAccountPage(),
-                                  )));
+                                      new MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              ShowUserApplicationDetails(
+                                                bookingApplication:
+                                                    bookingApplication,
+                                                backRoute: UserAccountPage(),
+                                              )));
                                 } else {
                                   Utils.showMyFlushbar(
                                       context,
@@ -795,14 +799,14 @@ class _UserAccountPageState extends State<UserAccountPage>
                                       ':' +
                                       booking.parent.userId;
 
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(
+                              Navigator.of(context).push(new MaterialPageRoute(
+                                  builder: (BuildContext context) =>
                                       GenerateQrUserApplication(
-                                entityName: booking.parent.entityName,
-                                backRoute: "UserAppsList",
-                                uniqueTokenIdentifier: id,
-                                baId: null,
-                              )));
+                                        entityName: booking.parent.entityName,
+                                        backRoute: "UserAppsList",
+                                        uniqueTokenIdentifier: id,
+                                        baId: null,
+                                      )));
                             }),
                       ),
                     Container(
@@ -934,11 +938,11 @@ class _UserAccountPageState extends State<UserAccountPage>
                             .getApplication(booking.applicationId)
                             .then((bookingApplication) {
                           if (bookingApplication != null) {
-                            Navigator.of(context)
-                                .push(PageAnimation.createRoute(
-                              ShowUserApplicationDetails(
-                                  bookingApplication: bookingApplication,
-                                  backRoute: UserAccountPage()),
+                            Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ShowUserApplicationDetails(
+                                      bookingApplication: bookingApplication,
+                                      backRoute: UserAccountPage()),
                             ));
                           } else {
                             Utils.showMyFlushbar(

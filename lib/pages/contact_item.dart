@@ -22,12 +22,14 @@ class ContactRow extends StatefulWidget {
   final Employee contact;
   final List<Employee> list;
   final bool isManager;
+  final bool existingContact;
   ContactRow(
       {Key key,
       @required this.entity,
       @required this.empType,
       @required this.contact,
       @required this.isManager,
+      @required this.existingContact,
       this.list})
       : super(key: key);
   @override
@@ -165,8 +167,9 @@ class ContactRowState extends State<ContactRow> {
       key: phn1Key,
       maxLines: 1,
       minLines: 1,
+      readOnly: widget.existingContact ? true : false,
       enabled: (widget.isManager ? false : true),
-      style: textInputTextStyle,
+      style: widget.existingContact ? disabledTextStyle : textInputTextStyle,
       keyboardType: TextInputType.phone,
       controller: _ctPhn1controller,
       decoration: CommonStyle.textFieldStyle(
@@ -175,6 +178,15 @@ class ContactRowState extends State<ContactRow> {
       onChanged: (String value) {
         phn1Key.currentState.validate();
         contact.ph = "+91" + value;
+      },
+      onTap: () {
+        if (widget.existingContact)
+          Utils.showMyFlushbar(
+              context,
+              Icons.info,
+              Duration(seconds: 7),
+              "The primary phone number cannot be changed",
+              "Remove this employee and add another employee with different phone number");
       },
       onSaved: (value) {
         contact.ph = "+91" + value;

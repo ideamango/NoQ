@@ -287,25 +287,27 @@ class _TokensInSlotState extends State<TokensInSlot>
                           if (bookingApplication != null) {
                             Navigator.of(_).pop();
                             Navigator.of(context)
-                                .push(PageAnimation.createRoute(
-                                    ShowApplicationDetails(
-                              bookingApplication: bookingApplication,
-                              showReject: true,
-                              metaEntity: widget.metaEntity,
-                              newBookingDate: null,
-                              isReadOnly: widget.isReadOnly,
-                              isAvailable: null,
-                              tokenCounter: null,
-                              backRoute: TokensInSlot(
-                                slotKey: widget.slotKey,
-                                stats: widget.stats,
-                                date: widget.date,
-                                format: widget.format,
-                                metaEntity: widget.metaEntity,
-                                backRoute: widget.backRoute,
-                                isReadOnly: widget.isReadOnly,
-                              ),
-                            )))
+                                .push(new MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ShowApplicationDetails(
+                                          bookingApplication:
+                                              bookingApplication,
+                                          showReject: true,
+                                          metaEntity: widget.metaEntity,
+                                          newBookingDate: null,
+                                          isReadOnly: widget.isReadOnly,
+                                          isAvailable: null,
+                                          tokenCounter: null,
+                                          backRoute: TokensInSlot(
+                                            slotKey: widget.slotKey,
+                                            stats: widget.stats,
+                                            date: widget.date,
+                                            format: widget.format,
+                                            metaEntity: widget.metaEntity,
+                                            backRoute: widget.backRoute,
+                                            isReadOnly: widget.isReadOnly,
+                                          ),
+                                        )))
                                 .then((value) {
                               print(
                                   "Rejecting the application, Now refresh this page.");
@@ -689,17 +691,19 @@ class _TokensInSlotState extends State<TokensInSlot>
                                   .then((bookingApplication) {
                                 if (bookingApplication != null) {
                                   Navigator.of(context)
-                                      .push(PageAnimation.createRoute(
-                                          ShowApplicationDetails(
-                                    bookingApplication: bookingApplication,
-                                    showReject: false,
-                                    metaEntity: widget.metaEntity,
-                                    newBookingDate: null,
-                                    isReadOnly: widget.isReadOnly,
-                                    isAvailable: null,
-                                    tokenCounter: null,
-                                    backRoute: null,
-                                  )))
+                                      .push(new MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              ShowApplicationDetails(
+                                                bookingApplication:
+                                                    bookingApplication,
+                                                showReject: false,
+                                                metaEntity: widget.metaEntity,
+                                                newBookingDate: null,
+                                                isReadOnly: widget.isReadOnly,
+                                                isAvailable: null,
+                                                tokenCounter: null,
+                                                backRoute: null,
+                                              )))
                                       .then((value) {
                                     if (value != null) {
                                       bookingApplication.status =
