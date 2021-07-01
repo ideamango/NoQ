@@ -446,7 +446,7 @@ class DBTest {
 
     await _gs
         .getEntityService()
-        .addEmployee('Child101-1', emp, EntityRole.Admin);
+        .upsertEmployee('Child101-1', emp, EntityRole.Admin);
 
     await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
 
@@ -968,16 +968,16 @@ class DBTest {
     emp.name = "FName1 User1";
     await _gs
         .getEntityService()
-        .addEmployee('Child101-1', emp, EntityRole.Admin);
+        .upsertEmployee('Child101-1', emp, EntityRole.Admin);
     await _gs
         .getEntityService()
-        .addEmployee('Entity102', emp, EntityRole.Admin);
+        .upsertEmployee('Entity102', emp, EntityRole.Admin);
     await _gs
         .getEntityService()
-        .addEmployee('Entity102', emp, EntityRole.Admin);
+        .upsertEmployee('Entity102', emp, EntityRole.Admin);
     await _gs
         .getEntityService()
-        .addEmployee('Entity102', emp, EntityRole.Admin);
+        .upsertEmployee('Entity102', emp, EntityRole.Admin);
 
     print("Security permission test completed.");
   }
@@ -1901,11 +1901,10 @@ class DBTest {
     try {
       await _gs
           .getEntityService()
-          .addEmployee("MyHomeApartment", secondAdmin, EntityRole.Admin);
+          .upsertEmployee("MyHomeApartment", secondAdmin, EntityRole.Admin);
 
-      await _gs
-          .getEntityService()
-          .addEmployee("SalonMyHomeApartment", secondAdmin, EntityRole.Admin);
+      await _gs.getEntityService().upsertEmployee(
+          "SalonMyHomeApartment", secondAdmin, EntityRole.Admin);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1923,15 +1922,14 @@ class DBTest {
     executive1.ph = "+912626262626"; //Nokia - Apartment Executive
 
     try {
+      await _gs.getEntityService().upsertEmployee(
+          "MyHomeApartment", managerMyHomeApt, EntityRole.Manager);
       await _gs
           .getEntityService()
-          .addEmployee("MyHomeApartment", managerMyHomeApt, EntityRole.Manager);
+          .upsertEmployee("MyHomeApartment", executive1, EntityRole.Executive);
       await _gs
           .getEntityService()
-          .addEmployee("MyHomeApartment", executive1, EntityRole.Executive);
-      await _gs
-          .getEntityService()
-          .addEmployee("SalonMyHomeApartment", adminSalon, EntityRole.Admin);
+          .upsertEmployee("SalonMyHomeApartment", adminSalon, EntityRole.Admin);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1983,9 +1981,8 @@ class DBTest {
 
     //now make the manager as Admin of the Apartment
     try {
-      await _gs
-          .getEntityService()
-          .addEmployee("MyHomeApartment", managerMyHomeApt, EntityRole.Admin);
+      await _gs.getEntityService().upsertEmployee(
+          "MyHomeApartment", managerMyHomeApt, EntityRole.Admin);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
