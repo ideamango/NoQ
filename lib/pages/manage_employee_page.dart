@@ -388,7 +388,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       emp.ph = phone;
       _gs
           .getEntityService()
-          .addEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin)
+          .upsertEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin)
           .then((retVal) {
         Utils.showMyFlushbar(
             context,
