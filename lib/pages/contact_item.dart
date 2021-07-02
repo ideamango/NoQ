@@ -1,4 +1,7 @@
 import 'package:LESSs/constants.dart';
+import 'package:LESSs/db/exceptions/access_denied_exception.dart';
+import 'package:LESSs/db/exceptions/cant_remove_admin_with_one_admin_exception.dart';
+import 'package:LESSs/db/exceptions/existing_user_role_update_exception.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -56,6 +59,7 @@ class ContactRowState extends State<ContactRow> {
   List<Employee> _list;
   GlobalState _gs;
   bool showLoading = false;
+  bool existingContact = false;
 
   @override
   void initState() {
@@ -63,6 +67,7 @@ class ContactRowState extends State<ContactRow> {
     contact = widget.contact;
     _entity = widget.entity;
     _list = widget.list;
+    existingContact = widget.existingContact;
     GlobalState.getGlobalState().then((value) {
       _gs = value;
     });
@@ -116,6 +121,32 @@ class ContactRowState extends State<ContactRow> {
     return null;
   }
 
+  handleUpsertEmployeeErrors(dynamic error) {
+    switch (error.runtimeType) {
+      case AccessDeniedException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            "Could not Update the Employee records", error.cause, Colors.red);
+        break;
+      case ExistingUserRoleUpdateException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            "Could not Update the Employee records", error.cause, Colors.red);
+        break;
+      case CantRemoveAdminWithOneAdminException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            "Could not Update the Employee records", error.cause, Colors.red);
+        break;
+      default:
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 8),
+            "Could not Update the Employee records",
+            error.toString(),
+            Colors.red);
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // showServiceForm() {
@@ -134,7 +165,7 @@ class ContactRowState extends State<ContactRow> {
       keyboardType: TextInputType.text,
       controller: _ctNameController,
       decoration:
-          CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
+          CommonStyle.textFieldStyle(labelTextStr: "Name*", hintTextStr: ""),
       validator: validateText,
       onChanged: (String value) {
         contact.name = value;
@@ -167,20 +198,20 @@ class ContactRowState extends State<ContactRow> {
       key: phn1Key,
       maxLines: 1,
       minLines: 1,
-      readOnly: widget.existingContact ? true : false,
+      readOnly: existingContact ? true : false,
       enabled: (widget.isManager ? false : true),
-      style: widget.existingContact ? disabledTextStyle : textInputTextStyle,
+      style: existingContact ? disabledTextStyle : textInputTextStyle,
       keyboardType: TextInputType.phone,
       controller: _ctPhn1controller,
       decoration: CommonStyle.textFieldStyle(
-          prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
+          prefixText: '+91', labelTextStr: "Primary Phone*", hintTextStr: ""),
       validator: Utils.validateMobileField,
       onChanged: (String value) {
         phn1Key.currentState.validate();
         contact.ph = "+91" + value;
       },
       onTap: () {
-        if (widget.existingContact)
+        if (existingContact)
           Utils.showMyFlushbar(
               context,
               Icons.info,
@@ -400,7 +431,7 @@ class ContactRowState extends State<ContactRow> {
         ),
         child: ExpansionTile(
           //key: PageStorageKey(this.widget.headerTitle),
-          initiallyExpanded: true,
+          initiallyExpanded: widget.existingContact ? false : true,
           //Check if contact is not yet saved, CONTACT would be null, check before accessing.
           title: Text(
             Utils.isNotNullOrEmpty(contact.name)
@@ -458,7 +489,7 @@ class ContactRowState extends State<ContactRow> {
                               children: [
                                 SizedBox(
                                   width:
-                                      MediaQuery.of(context).size.width * .37,
+                                      MediaQuery.of(context).size.width * .34,
                                   child: RaisedButton(
                                       color: Colors.white,
                                       child: Row(
@@ -510,46 +541,65 @@ class ContactRowState extends State<ContactRow> {
                                               }
                                             }
                                             if (removeThisId != null) {
-                                              _gs
-                                                  .removeEmployee(
-                                                widget.entity.entityId,
-                                                contact.ph,
-                                              )
-                                                  .then((retVal) {
+                                              if (existingContact) {
+                                                _gs
+                                                    .removeEmployee(
+                                                  widget.entity.entityId,
+                                                  contact.ph,
+                                                )
+                                                    .then((retVal) {
+                                                  setState(() {
+                                                    showLoading = false;
+                                                  });
+                                                  if (retVal) {
+                                                    print("Success");
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.check,
+                                                        Duration(seconds: 3),
+                                                        "Manager Removed Successfully!",
+                                                        "",
+                                                        successGreenSnackBar);
+                                                  } else {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info,
+                                                        Duration(seconds: 3),
+                                                        "Oho! Could not Remove Manager.",
+                                                        "");
+                                                  }
+                                                });
+
+                                                setState(() {
+                                                  contact = null;
+                                                  showLoading = false;
+                                                  // _entity.managers.removeWhere(
+                                                  //     (element) => element.id == removeThisId);
+                                                  _list.removeWhere((element) =>
+                                                      element.id ==
+                                                      removeThisId);
+                                                  EventBus.fireEvent(
+                                                      MANAGER_REMOVED_EVENT,
+                                                      null,
+                                                      removeThisId);
+                                                });
+                                              } else {
                                                 setState(() {
                                                   showLoading = false;
                                                 });
-                                                if (retVal) {
-                                                  print("Success");
-                                                  Utils.showMyFlushbar(
-                                                      context,
-                                                      Icons.check,
-                                                      Duration(seconds: 3),
-                                                      "Manager Removed Successfully!",
-                                                      "",
-                                                      successGreenSnackBar);
-                                                } else {
-                                                  Utils.showMyFlushbar(
-                                                      context,
-                                                      Icons.info,
-                                                      Duration(seconds: 3),
-                                                      "Oho! Could not Remove Manager.",
-                                                      "");
-                                                }
-                                              });
-
-                                              setState(() {
-                                                contact = null;
-                                                showLoading = false;
                                                 // _entity.managers.removeWhere(
                                                 //     (element) => element.id == removeThisId);
                                                 _list.removeWhere((element) =>
                                                     element.id == removeThisId);
+                                                _entity.managers.removeWhere(
+                                                    (element) =>
+                                                        element.id ==
+                                                        removeThisId);
                                                 EventBus.fireEvent(
                                                     MANAGER_REMOVED_EVENT,
                                                     null,
                                                     removeThisId);
-                                              });
+                                              }
                                             }
                                           } else if (widget.empType ==
                                               EntityRole.Executive) {
@@ -564,44 +614,68 @@ class ContactRowState extends State<ContactRow> {
                                                 break;
                                               }
                                             }
-                                            if (removeThisId != null) {
-                                              //TODO call remove employee from Global state
-                                              _gs
-                                                  .removeEmployee(
-                                                widget.entity.entityId,
-                                                contact.ph,
-                                              )
-                                                  .then((retVal) {
-                                                if (retVal) {
-                                                  print("Success");
-                                                  Utils.showMyFlushbar(
-                                                      context,
-                                                      Icons.check,
-                                                      Duration(seconds: 3),
-                                                      "Executive Removed Successfully!",
-                                                      "",
-                                                      successGreenSnackBar);
-                                                } else {
-                                                  Utils.showMyFlushbar(
-                                                      context,
-                                                      Icons.info,
-                                                      Duration(seconds: 3),
-                                                      "Oho! Could not Remove Executive.",
-                                                      "");
-                                                }
-                                              });
 
-                                              setState(() {
-                                                contact = null;
-                                                // _entity.managers.removeWhere(
-                                                //     (element) => element.id == removeThisId);
+                                            if (removeThisId != null) {
+                                              if (existingContact) {
+                                                //TODO call remove employee from Global state
+                                                _gs
+                                                    .removeEmployee(
+                                                  widget.entity.entityId,
+                                                  contact.ph,
+                                                )
+                                                    .then((retVal) {
+                                                  if (retVal) {
+                                                    print("Success");
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.check,
+                                                        Duration(seconds: 3),
+                                                        "Executive Removed Successfully!",
+                                                        "",
+                                                        successGreenSnackBar);
+                                                  } else {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info,
+                                                        Duration(seconds: 3),
+                                                        "Oho! Could not Remove Executive.",
+                                                        "");
+                                                  }
+                                                });
+
+                                                setState(() {
+                                                  contact = null;
+                                                  // _entity.managers.removeWhere(
+                                                  //     (element) => element.id == removeThisId);
+                                                  _list.removeWhere((element) =>
+                                                      element.id ==
+                                                      removeThisId);
+                                                  EventBus.fireEvent(
+                                                      EXECUTIVE_REMOVED_EVENT,
+                                                      null,
+                                                      removeThisId);
+                                                });
+                                              } else {
+                                                _entity.executives.removeWhere(
+                                                    (element) =>
+                                                        element.id ==
+                                                        removeThisId);
                                                 _list.removeWhere((element) =>
                                                     element.id == removeThisId);
+                                                setState(() {
+                                                  showLoading = false;
+                                                });
                                                 EventBus.fireEvent(
                                                     EXECUTIVE_REMOVED_EVENT,
                                                     null,
                                                     removeThisId);
-                                              });
+
+                                                //case where this is a new contact but not Saved.
+//Just remove from _list collection and entity.executives.
+
+                                                //case where this is a new contact and Saved.
+
+                                              }
                                             }
                                           }
                                         }
@@ -613,7 +687,7 @@ class ContactRowState extends State<ContactRow> {
                                 ),
                                 SizedBox(
                                   width:
-                                      MediaQuery.of(context).size.width * .37,
+                                      MediaQuery.of(context).size.width * .34,
                                   child: RaisedButton(
                                       color: btnColor,
                                       child: Row(
@@ -679,9 +753,28 @@ class ContactRowState extends State<ContactRow> {
                                                 "");
                                             return;
                                           }
+//Check if same phone is added for another profile as well, Since phone is primary key
+// Another employee with same number is not allowed
+                                          bool contactAlreadyExists = false;
+                                          // _list.forEach((element) {
+                                          //   if (element.ph == contact.ph) {
+                                          //     contactAlreadyExists = true;
+                                          //   }
+                                          // });
+                                          // if (contactAlreadyExists) {
+                                          //   Utils.showMyFlushbar(
+                                          //       context,
+                                          //       Icons.info,
+                                          //       Duration(seconds: 3),
+                                          //       "An Employee with SAME Phone number already exists",
+                                          //       "");
+                                          //   return;
+                                          // }
+
                                           setState(() {
                                             showLoading = true;
                                           });
+
                                           _gs
                                               .addEmployee(
                                                   widget.entity.entityId,
@@ -690,9 +783,11 @@ class ContactRowState extends State<ContactRow> {
                                               .then((retVal) {
                                             if (retVal) {
                                               print("Success");
+                                              existingContact = true;
                                               setState(() {
                                                 showLoading = false;
                                               });
+
                                               Utils.showMyFlushbar(
                                                   context,
                                                   Icons.check,
@@ -701,6 +796,11 @@ class ContactRowState extends State<ContactRow> {
                                                   "",
                                                   successGreenSnackBar);
                                             }
+                                          }).onError((error, stackTrace) {
+                                            setState(() {
+                                              showLoading = false;
+                                            });
+                                            handleUpsertEmployeeErrors(error);
                                           });
                                         }
                                       }),

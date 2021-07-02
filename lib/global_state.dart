@@ -423,7 +423,6 @@ class GlobalState {
       putEntity(updatedEntity, false);
       return true;
     }
-
     return false;
   }
 

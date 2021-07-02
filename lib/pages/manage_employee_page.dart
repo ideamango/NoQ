@@ -220,12 +220,17 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
   }
 
   void refreshOnExecutiveRemove(event, args) {
-    setState(() {
-      execRowWidgets.clear();
-      execRowWidgets.add(showCircularProgress());
-    });
-    managersList
-        .removeWhere((element) => element.id == event.eventData.toString());
+    if (mounted) {
+      setState(() {
+        execRowWidgets.clear();
+        execRowWidgets.add(showCircularProgress());
+      });
+    }
+    if (managersList
+        .contains((element) => element.id == event.eventData.toString())) {
+      managersList
+          .removeWhere((element) => element.id == event.eventData.toString());
+    }
 
     refreshExecutives();
   }
@@ -306,7 +311,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
   }
 
   refreshExecutives() {
-    List<Widget> newList = new List<Widget>();
+    List<Widget> newList = [];
     for (int i = 0; i < executiveList.length; i++) {
       newList.add(new ContactRow(
         contact: executiveList[i],
@@ -317,10 +322,12 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         existingContact: true,
       ));
     }
-    setState(() {
-      execRowWidgets.clear();
-      execRowWidgets.addAll(newList);
-    });
+    if (mounted) {
+      setState(() {
+        execRowWidgets.clear();
+        execRowWidgets.addAll(newList);
+      });
+    }
     entity.executives = executiveList;
   }
 
@@ -388,7 +395,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       emp.ph = phone;
       _gs
           .getEntityService()
-          .addEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin)
+          .upsertEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin)
           .then((retVal) {
         Utils.showMyFlushbar(
             context,
@@ -559,6 +566,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
+                  margin: EdgeInsets.all(12),
                   height: MediaQuery.of(context).size.height * .85,
                   child: Scrollbar(
                     child: SingleChildScrollView(
@@ -620,7 +628,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                               child: Row(
                                                 children: <Widget>[
                                                   Expanded(
-                                                    child: Text(contactInfoStr,
+                                                    child: Text(managerInfoStr,
                                                         style:
                                                             buttonXSmlTextStyle),
                                                   ),
@@ -740,7 +748,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                               child: Row(
                                                 children: <Widget>[
                                                   Expanded(
-                                                    child: Text(adminInfoStr,
+                                                    child: Text(execInfoStr,
                                                         style:
                                                             buttonXSmlTextStyle),
                                                   ),
@@ -826,6 +834,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     Container(
                                       //padding: EdgeInsets.only(left: 5),
@@ -1051,9 +1060,9 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
             bottomSheetController = null;
             return false;
           } else {
-            //Navigator.of(context).pop();
-            Navigator.of(context).push(new MaterialPageRoute(
-                builder: (BuildContext context) => ManageEntityListPage()));
+            Navigator.of(context).pop();
+            // Navigator.of(context).push(new MaterialPageRoute(
+            //     builder: (BuildContext context) => ManageEntityListPage()));
             return false;
           }
         },
