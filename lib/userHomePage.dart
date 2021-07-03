@@ -1428,10 +1428,10 @@ class _UserHomePageState extends State<UserHomePage>
                             "Cancelling Token ${booking.getDisplayName()}",
                             "Please wait..");
 
-                        _gs
-                            .getTokenService()
-                            .cancelToken(
-                                booking.parent.getTokenId(), booking.number)
+                        _gs.cancelBooking(booking.parent.getTokenId())
+                            // .getTokenService()
+                            // .cancelToken(
+                            //     booking.parent.getTokenId(), booking.number)
                             .then((value) {
                           if (value == null) {
                             Utils.showMyFlushbar(

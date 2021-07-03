@@ -966,10 +966,10 @@ class _UserAccountPageState extends State<UserAccountPage>
                             ),
                             "Cancelling your booking",
                             "Please wait..");
-                        _gs
-                            .getTokenService()
-                            .cancelToken(
-                                booking.parent.getTokenId(), booking.number)
+                        _gs.cancelBooking(booking.parent.getTokenId())
+                            // .getTokenService()
+                            // .cancelToken(
+                            //     booking.parent.getTokenId(), booking.number)
                             .then((value) {
                           if (value != null) {
                             setState(() {
