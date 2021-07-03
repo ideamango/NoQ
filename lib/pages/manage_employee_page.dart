@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:LESSs/db/exceptions/access_denied_exception.dart';
+import 'package:LESSs/db/exceptions/cant_remove_admin_with_one_admin_exception.dart';
+import 'package:LESSs/db/exceptions/existing_user_role_update_exception.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -124,13 +127,36 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     });
   }
 
+  handleUpsertEmployeeErrors(dynamic error, String phone) {
+    switch (error.runtimeType) {
+      case AccessDeniedException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            "Could not Update the Admin $phone", error.cause, Colors.red);
+        break;
+      case ExistingUserRoleUpdateException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            "Could not Update the Admin $phone", error.cause, Colors.red);
+        break;
+      case CantRemoveAdminWithOneAdminException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            "Could not Update the Admin $phone", error.cause, Colors.red);
+        break;
+      default:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 8),
+            "Could not Update the Admin $phone", error.toString(), Colors.red);
+        break;
+    }
+  }
+
   void _removeServiceRow(String currItem) {
     removeAdmin(entity.entityId, currItem).then((delStatus) {
-      if (delStatus)
+      if (delStatus) {
         setState(() {
           adminsList.remove(currItem);
         });
-      else
+        Utils.showMyFlushbar(context, Icons.info_outline, Duration(seconds: 3),
+            "Removed Admin Successfully", "");
+      } else
         Utils.showMyFlushbar(
             context,
             Icons.info_outline,
@@ -390,6 +416,15 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
   }
 
   bool saveAdmins() {
+    Utils.showMyFlushbar(
+        context,
+        Icons.check,
+        Duration(
+          seconds: 4,
+        ),
+        "Saving Admins..",
+        "",
+        successGreenSnackBar);
     adminsList.forEach((phone) {
       Employee emp = new Employee();
       emp.ph = phone;
@@ -397,15 +432,19 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
           .getEntityService()
           .upsertEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin)
           .then((retVal) {
-        Utils.showMyFlushbar(
-            context,
-            Icons.check,
-            Duration(
-              seconds: 4,
-            ),
-            "Admin Details Saved Successfully!",
-            "",
-            successGreenSnackBar);
+        if (retVal != null) {
+          Utils.showMyFlushbar(
+              context,
+              Icons.check,
+              Duration(
+                seconds: 3,
+              ),
+              "Admin $phone Saved Successfully!",
+              "",
+              successGreenSnackBar);
+        }
+      }).onError((error, stackTrace) {
+        handleUpsertEmployeeErrors(error, phone);
       });
     });
     return true;
@@ -482,6 +521,8 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                         "Assign another Admin, before you move out!",
                         "Because you are the Only Admin here.");
                   } else {
+                    Utils.showMyFlushbar(context, Icons.info_outline,
+                        Duration(seconds: 3), "Removing the admin..", "");
                     _removeServiceRow(newAdminRowItem);
                     _adminItemController.text = "";
                   }

@@ -1,6 +1,7 @@
 import 'package:LESSs/constants.dart';
 import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/db/exceptions/cant_remove_admin_with_one_admin_exception.dart';
+import 'package:LESSs/db/exceptions/entity_does_not_exists_exception.dart';
 import 'package:LESSs/db/exceptions/existing_user_role_update_exception.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
@@ -119,6 +120,27 @@ class ContactRowState extends State<ContactRow> {
     }
 
     return null;
+  }
+
+  handleRemoveEmployee(dynamic error) {
+    switch (error.runtimeType) {
+      case AccessDeniedException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            "Could not Remove the Employee", error.cause, Colors.red);
+        break;
+      case CantRemoveAdminWithOneAdminException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            "Could not Remove the Employee", error.cause, Colors.red);
+        break;
+      case EntityDoesNotExistsException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            "Could not Remove the Employee", error.cause, Colors.red);
+        break;
+      default:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 8),
+            "Could not Remove the Employee", error.toString(), Colors.red);
+        break;
+    }
   }
 
   handleUpsertEmployeeErrors(dynamic error) {
@@ -548,9 +570,9 @@ class ContactRowState extends State<ContactRow> {
                                                   contact.ph,
                                                 )
                                                     .then((retVal) {
-                                                  setState(() {
-                                                    showLoading = false;
-                                                  });
+                                                  // setState(() {
+                                                  //   showLoading = false;
+                                                  // });
                                                   if (retVal) {
                                                     print("Success");
                                                     Utils.showMyFlushbar(
@@ -568,25 +590,35 @@ class ContactRowState extends State<ContactRow> {
                                                         "Oho! Could not Remove Manager.",
                                                         "");
                                                   }
-                                                });
 
-                                                setState(() {
-                                                  contact = null;
-                                                  showLoading = false;
-                                                  // _entity.managers.removeWhere(
-                                                  //     (element) => element.id == removeThisId);
-                                                  _list.removeWhere((element) =>
-                                                      element.id ==
-                                                      removeThisId);
-                                                  EventBus.fireEvent(
-                                                      MANAGER_REMOVED_EVENT,
-                                                      null,
-                                                      removeThisId);
+                                                  setState(() {
+                                                    contact = null;
+                                                    showLoading = false;
+                                                    // _entity.managers.removeWhere(
+                                                    //     (element) => element.id == removeThisId);
+                                                    _list.removeWhere(
+                                                        (element) =>
+                                                            element.id ==
+                                                            removeThisId);
+                                                    EventBus.fireEvent(
+                                                        MANAGER_REMOVED_EVENT,
+                                                        null,
+                                                        removeThisId);
+                                                  });
+                                                }).onError((error, stackTrace) {
+                                                  handleRemoveEmployee(error);
                                                 });
                                               } else {
                                                 setState(() {
                                                   showLoading = false;
                                                 });
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.check,
+                                                    Duration(seconds: 3),
+                                                    "Manager Removed Successfully!",
+                                                    "",
+                                                    successGreenSnackBar);
                                                 // _entity.managers.removeWhere(
                                                 //     (element) => element.id == removeThisId);
                                                 _list.removeWhere((element) =>
@@ -641,25 +673,34 @@ class ContactRowState extends State<ContactRow> {
                                                         "Oho! Could not Remove Executive.",
                                                         "");
                                                   }
-                                                });
-
-                                                setState(() {
-                                                  contact = null;
-                                                  // _entity.managers.removeWhere(
-                                                  //     (element) => element.id == removeThisId);
-                                                  _list.removeWhere((element) =>
-                                                      element.id ==
-                                                      removeThisId);
-                                                  EventBus.fireEvent(
-                                                      EXECUTIVE_REMOVED_EVENT,
-                                                      null,
-                                                      removeThisId);
+                                                  setState(() {
+                                                    contact = null;
+                                                    // _entity.managers.removeWhere(
+                                                    //     (element) => element.id == removeThisId);
+                                                    _list.removeWhere(
+                                                        (element) =>
+                                                            element.id ==
+                                                            removeThisId);
+                                                    EventBus.fireEvent(
+                                                        EXECUTIVE_REMOVED_EVENT,
+                                                        null,
+                                                        removeThisId);
+                                                  });
+                                                }).onError((error, stackTrace) {
+                                                  handleRemoveEmployee(error);
                                                 });
                                               } else {
                                                 _entity.executives.removeWhere(
                                                     (element) =>
                                                         element.id ==
                                                         removeThisId);
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.check,
+                                                    Duration(seconds: 3),
+                                                    "Executive Removed Successfully!",
+                                                    "",
+                                                    successGreenSnackBar);
                                                 _list.removeWhere((element) =>
                                                     element.id == removeThisId);
                                                 setState(() {
