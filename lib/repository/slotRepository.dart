@@ -26,31 +26,31 @@ Future<Tuple<EntitySlots, List<Slot>>> getSlotsListForEntity(
   return new Tuple(item1: entitySlots, item2: slots);
 }
 
-Future<UserToken> bookSlotForStore(
-    MetaEntity meta, Slot slot, bool enableVideoChat) async {
-//TODO: Have Entity object here, either pass entity object to generateToken() or create metaEntity and pass to this method.
+// Future<UserToken> bookSlotForStore(
+//     MetaEntity meta, Slot slot, bool enableVideoChat) async {
+// //TODO: Have Entity object here, either pass entity object to generateToken() or create metaEntity and pass to this method.
 
-  GlobalState gs = await GlobalState.getGlobalState();
-  UserTokens tokens;
-  Triplet<UserTokens, TokenCounter, EntitySlots> tuple =
-      await gs.addBooking(meta, slot, enableVideoChat);
-  tokens = tuple.item1;
+//   GlobalState gs = await GlobalState.getGlobalState();
+//   UserTokens tokens;
+//   Triplet<UserTokens, TokenCounter, EntitySlots> tuple =
+//       await gs.addBooking(meta, slot, enableVideoChat);
+//   tokens = tuple.item1;
 
-  gs.getNotificationService().registerTokenNotification(tokens);
+//   gs.getNotificationService().registerTokenNotification(tokens);
 
-  return tokens.tokens.last;
-}
+//   return tokens.tokens.last;
+// }
 
-Future<bool> cancelToken(UserToken token) async {
-  GlobalState gs = await GlobalState.getGlobalState();
+// Future<bool> cancelToken(UserToken token) async {
+//   GlobalState gs = await GlobalState.getGlobalState();
 
-  bool returnVal =
-      await gs.cancelBooking(token.parent.getTokenId(), token.number);
+//   bool returnVal =
+//       await gs.cancelBooking(token.parent.getTokenId(), token.number);
 
-  gs.getNotificationService().unRegisterTokenNotification(token);
+//   gs.getNotificationService().unRegisterTokenNotification(token);
 
-  return returnVal;
-}
+//   return returnVal;
+// }
 
 Future<bool> updateToken(UserTokens tokens) async {
   GlobalState gs = await GlobalState.getGlobalState();

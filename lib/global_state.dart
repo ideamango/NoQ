@@ -922,9 +922,11 @@ class GlobalState {
   }
 
   //Throws => TokenAlreadyCancelledException, NoTokenFoundException
-  Future<bool> cancelBooking(String tokenId, [int number]) async {
+  Future<Triplet<UserToken, TokenCounter, EntitySlots>> cancelBooking(
+      String tokenId,
+      [int number]) async {
     Triplet<UserToken, TokenCounter, EntitySlots> tuple;
-    if (_gs == null || _tokenService == null) return false;
+    if (_gs == null || _tokenService == null) return null;
 
     tuple = await _tokenService.cancelToken(tokenId, number);
     UserToken ut = tuple.item1;
@@ -943,11 +945,11 @@ class GlobalState {
             break;
           } else {
             //supplied number should not exist in the returned UserTokens object as that would have changed to -1 and original number should match
-            for (UserToken ut in uts.tokens) {
-              if (number == ut.numberBeforeCancellation &&
+            for (UserToken tok in uts.tokens) {
+              if (number == tok.numberBeforeCancellation &&
                   number == existingTok.item1.number) {
                 didMatch = true;
-                cancelledToken = ut;
+                cancelledToken = tok;
                 break;
               }
             }
@@ -959,13 +961,16 @@ class GlobalState {
       }
 
       if (didMatch) {
-        bookings[index] = new Tuple<UserToken, DocumentSnapshot>(
-            item1: cancelledToken, item2: null);
+        Tuple<UserToken, DocumentSnapshot> tup = bookings[index];
+        tup.item1 = cancelledToken;
+        tuple.item1 = cancelledToken;
       }
+
       getNotificationService().unRegisterTokenNotification(cancelledToken);
-      return true;
+
+      return tuple;
     } else {
-      return false;
+      return null;
     }
   }
 
