@@ -963,6 +963,7 @@ class GlobalState {
         bookings[index] = new Tuple<UserToken, DocumentSnapshot>(
             item1: cancelledToken, item2: null);
       }
+      getNotificationService().unRegisterTokenNotification(cancelledToken);
       return true;
     } else {
       return false;
