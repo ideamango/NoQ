@@ -2136,7 +2136,6 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                         if ((remarks[1])) {
                           ba.notesOnCancellation = (remarks[0]);
                           _gs
-                              .getApplicationService()
                               .withDrawApplication(widget.ba.id, remarks[0])
                               .then((value) {
                             widget.ba.notesOnCancellation = remarks[0];

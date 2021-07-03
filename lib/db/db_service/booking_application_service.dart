@@ -406,7 +406,7 @@ class BookingApplicationService {
 
   //to be done by the Applicant
   //Throws => TokenAlreadyCancelledException, NoTokenFoundException
-  Future<Tuple<UserToken, TokenCounter>> withDrawApplication(
+  Future<Triplet<UserToken, TokenCounter, EntitySlots>> withDrawApplication(
       String applicationId, String notesOnCancellation) async {
     //set the BookingApplication status as cancelled
     //If the token is approved, cancel the token also
@@ -434,6 +434,8 @@ class BookingApplicationService {
 
     final DocumentReference applicationRef =
         fStore.doc('bookingApplications/' + bookingApplicationId);
+
+    Triplet<UserToken, TokenCounter, EntitySlots> triplet;
 
     // final DocumentReference bookingFormRef =
     //     fStore.doc('bookingForms/' + bookingFormId);
@@ -531,7 +533,6 @@ class BookingApplicationService {
           String tokenIdWithoutNumber = tokenIdSplitted.item1;
           int tokenNumber = tokenIdSplitted.item2;
 
-          Triplet<UserToken, TokenCounter, EntitySlots> triplet;
           //cancel the token
           triplet = await _gs.getTokenService().cancelTokenInTransaction(
               tx, userPhone, tokenIdWithoutNumber, tokenNumber);
@@ -540,30 +541,30 @@ class BookingApplicationService {
           cancelledTokens = cancelledTok.parent;
 
           //update the GlobalState bookings collection with the cancelled token
-          int index = -1;
-          bool matched = false;
+          // int index = -1;
+          // bool matched = false;
 
-          if (_gs.bookings != null) {
-            for (Tuple<UserToken, DocumentSnapshot> ut in _gs.bookings) {
-              index++;
-              for (UserToken cut in cancelledTokens.tokens) {
-                if (ut.item1.getID() == cut.getID() &&
-                    tokenNumber == cut.numberBeforeCancellation) {
-                  matched = true;
-                  cancelledTok = cut;
-                  break;
-                }
-              }
-              if (matched) {
-                break;
-              }
-            }
+          // if (_gs.bookings != null) {
+          //   for (Tuple<UserToken, DocumentSnapshot> ut in _gs.bookings) {
+          //     index++;
+          //     for (UserToken cut in cancelledTokens.tokens) {
+          //       if (ut.item1.getID() == cut.getID() &&
+          //           tokenNumber == cut.numberBeforeCancellation) {
+          //         matched = true;
+          //         cancelledTok = cut;
+          //         break;
+          //       }
+          //     }
+          //     if (matched) {
+          //       break;
+          //     }
+          //   }
 
-            if (index > -1 && cancelledTok != null) {
-              _gs.bookings[index] = new Tuple<UserToken, DocumentSnapshot>(
-                  item1: cancelledTok, item2: null);
-            }
-          }
+          //   if (index > -1 && cancelledTok != null) {
+          //     _gs.bookings[index] = new Tuple<UserToken, DocumentSnapshot>(
+          //         item1: cancelledTok, item2: null);
+          //   }
+          // }
         }
 
         if (existingStatus == ApplicationStatus.APPROVED) {
@@ -636,10 +637,11 @@ class BookingApplicationService {
       throw e;
     }
 
-    if (isSuccess && cancelledTokens != null && cancelledTok != null) {
-      _gs.getNotificationService().unRegisterTokenNotification(cancelledTok);
-    }
-    return new Tuple(item1: cancelledTok, item2: tokenCounter);
+    // if (isSuccess && cancelledTokens != null && cancelledTok != null) {
+    //   _gs.getNotificationService().unRegisterTokenNotification(cancelledTok);
+    // }
+    return new Triplet<UserToken, TokenCounter, EntitySlots>(
+        item1: cancelledTok, item2: tokenCounter, item3: triplet.item3);
   }
 
   //To be called by Manager of the Entity who has restricted rights or by the Admin

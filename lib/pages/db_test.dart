@@ -2370,7 +2370,7 @@ class DBTest {
     bool isCancelled = false;
     UserToken token;
 
-    Tuple<UserToken, TokenCounter> tuple = await _gs
+    Triplet<UserToken, TokenCounter, EntitySlots> tuple = await _gs
         .getApplicationService()
         .withDrawApplication(approvedBA.id,
             "Cancelled the application and as a result the token should also get cancelled");

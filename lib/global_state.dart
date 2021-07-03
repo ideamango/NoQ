@@ -921,56 +921,57 @@ class GlobalState {
     _gs = null;
   }
 
+  Future<Triplet<UserToken, TokenCounter, EntitySlots>> withDrawApplication(
+      String applicationId, String notesOnCancellation) async {
+    if (_gs == null ||
+        _applicationService == null ||
+        !Utils.isNotNullOrEmpty(applicationId)) return null;
+
+    Triplet<UserToken, TokenCounter, EntitySlots> triplet =
+        await _applicationService.withDrawApplication(
+            applicationId, notesOnCancellation);
+
+    _updateTokensCacheAndCancelNotification(triplet.item1);
+
+    return triplet;
+  }
+
   //Throws => TokenAlreadyCancelledException, NoTokenFoundException
   Future<Triplet<UserToken, TokenCounter, EntitySlots>> cancelBooking(
       String tokenId,
       [int number]) async {
-    Triplet<UserToken, TokenCounter, EntitySlots> tuple;
+    Triplet<UserToken, TokenCounter, EntitySlots> triplet;
     if (_gs == null || _tokenService == null) return null;
 
-    tuple = await _tokenService.cancelToken(tokenId, number);
-    UserToken ut = tuple.item1;
-    UserTokens uts = ut.parent;
+    triplet = await _tokenService.cancelToken(tokenId, number);
+
+    _updateTokensCacheAndCancelNotification(triplet.item1);
+
+    return triplet;
+  }
+
+  void _updateTokensCacheAndCancelNotification(UserToken cancelledToken) {
+    UserTokens uts = cancelledToken.parent;
     if (uts != null) {
       //update the bookings in the collection
       int index = -1;
-      UserToken cancelledToken;
+
       bool didMatch = false;
       for (Tuple<UserToken, DocumentSnapshot> existingTok in bookings) {
         index++;
-        if (existingTok.item1.parent.getTokenId() == uts.getTokenId()) {
-          if (number == null) {
-            didMatch = true;
-            cancelledToken = uts.tokens[0];
-            break;
-          } else {
-            //supplied number should not exist in the returned UserTokens object as that would have changed to -1 and original number should match
-            for (UserToken tok in uts.tokens) {
-              if (number == tok.numberBeforeCancellation &&
-                  number == existingTok.item1.number) {
-                didMatch = true;
-                cancelledToken = tok;
-                break;
-              }
-            }
-            if (didMatch) {
-              break;
-            }
-          }
+        if (existingTok.item1.getID() == cancelledToken.getID()) {
+          //supplied number should not exist in the returned UserTokens object as that would have changed to -1 and original number should match
+          didMatch = true;
+          break;
         }
       }
 
       if (didMatch) {
         Tuple<UserToken, DocumentSnapshot> tup = bookings[index];
         tup.item1 = cancelledToken;
-        tuple.item1 = cancelledToken;
       }
 
       getNotificationService().unRegisterTokenNotification(cancelledToken);
-
-      return tuple;
-    } else {
-      return null;
     }
   }
 
