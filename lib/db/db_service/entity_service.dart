@@ -402,6 +402,7 @@ class EntityService {
 
     AccessDeniedException accessDeniedException;
     CantRemoveAdminWithOneAdminException cantRemoveAdminWithOneAdminException;
+    ExistingUserRoleUpdateException existingUserRoleUpdateException;
 
     String roleStr = EnumToString.convertToString(role);
 
@@ -436,11 +437,13 @@ class EntityService {
         }
         String strRole = EnumToString.convertToString(role);
 
-        if (ePrivate.roles.containsKey(user.phoneNumber) &&
-            ePrivate.roles[user.phoneNumber] != strRole) {
+        if (ePrivate.roles.containsKey(employee.ph) &&
+            ePrivate.roles[employee.ph] != strRole) {
           String message =
-              "User already exists in '$strRole' role, please remove the user and add the details with the new Role";
-          throw new ExistingUserRoleUpdateException(message);
+              "User already exists in ${ePrivate.roles[employee.ph]} role.Please remove the user and add the details with the new Role";
+          existingUserRoleUpdateException =
+              new ExistingUserRoleUpdateException(message);
+          throw existingUserRoleUpdateException;
         }
 
         DocumentSnapshot usrDoc = await tx.get(userRef);
@@ -561,6 +564,10 @@ class EntityService {
         isSuccess = false;
       }
     });
+
+    if (existingUserRoleUpdateException != null) {
+      throw existingUserRoleUpdateException;
+    }
 
     if (accessDeniedException != null) {
       throw accessDeniedException;

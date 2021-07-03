@@ -273,9 +273,12 @@ String basicInfoStr =
 String bookable =
     '"Bookable" means that time-slots can be booked by the users. For example, places like Mall & Apartment are not bookable but Shop, Solon, Gym, etc. can be booked.';
 
-String adminInfoStr = 'The person who manages the Place.';
-String contactInfoStr =
-    'The person who can be contacted for any queries regarding your place.';
+String adminInfoStr =
+    'The person will manage the Place details, Employees, Forms for Requests and  Process Applications/Tokens.';
+String execInfoStr =
+    'The person can view the Applications and Tokens details for processing.';
+String managerInfoStr =
+    'The person will be responsible for process the Applications and Tokens';
 String ratingMsg = "We really appreciate your time to provide the review.";
 
 String completeDialogMsg =
