@@ -797,20 +797,20 @@ class ContactRowState extends State<ContactRow> {
 //Check if same phone is added for another profile as well, Since phone is primary key
 // Another employee with same number is not allowed
                                           bool contactAlreadyExists = false;
-                                          // _list.forEach((element) {
-                                          //   if (element.ph == contact.ph) {
-                                          //     contactAlreadyExists = true;
-                                          //   }
-                                          // });
-                                          // if (contactAlreadyExists) {
-                                          //   Utils.showMyFlushbar(
-                                          //       context,
-                                          //       Icons.info,
-                                          //       Duration(seconds: 3),
-                                          //       "An Employee with SAME Phone number already exists",
-                                          //       "");
-                                          //   return;
-                                          // }
+                                          _list.forEach((element) {
+                                            if (element.ph == contact.ph) {
+                                              contactAlreadyExists = true;
+                                            }
+                                          });
+                                          if (contactAlreadyExists) {
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.info,
+                                                Duration(seconds: 5),
+                                                "An Employee with SAME Phone number already exists",
+                                                "");
+                                            return;
+                                          }
 
                                           setState(() {
                                             showLoading = true;

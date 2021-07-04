@@ -127,25 +127,31 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     });
   }
 
-  handleUpsertEmployeeErrors(dynamic error, String phone) {
+  String handleUpsertEmployeeErrors(dynamic error, String phone) {
+    String msg;
     switch (error.runtimeType) {
       case AccessDeniedException:
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            "Could not Update the Admin $phone", error.cause, Colors.red);
+        //Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+        msg = error.cause;
+        //, error.cause, Colors.red);
         break;
       case ExistingUserRoleUpdateException:
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            "Could not Update the Admin $phone", error.cause, Colors.red);
+        // Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+        //     "Could not Update the Admin $phone", error.cause, Colors.red);
+        msg = error.cause;
         break;
       case CantRemoveAdminWithOneAdminException:
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            "Could not Update the Admin $phone", error.cause, Colors.red);
+        // Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+        //     "Could not Update the Admin $phone", error.cause, Colors.red);
+        msg = error.cause;
         break;
       default:
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 8),
-            "Could not Update the Admin $phone", error.toString(), Colors.red);
+        // Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 8),
+        //     "Could not Update the Admin $phone", error.toString(), Colors.red);
+        msg = error.cause;
         break;
     }
+    return msg;
   }
 
   void _removeServiceRow(String currItem) {
@@ -420,11 +426,13 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         context,
         Icons.check,
         Duration(
-          seconds: 4,
+          seconds: 2,
         ),
         "Saving Admins..",
         "",
         successGreenSnackBar);
+    String errMsg = "";
+    String subErrMsg = "";
     adminsList.forEach((phone) {
       Employee emp = new Employee();
       emp.ph = phone;
@@ -432,21 +440,34 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
           .getEntityService()
           .upsertEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin)
           .then((retVal) {
-        if (retVal != null) {
-          Utils.showMyFlushbar(
-              context,
-              Icons.check,
-              Duration(
-                seconds: 3,
-              ),
-              "Admin $phone Saved Successfully!",
-              "",
-              successGreenSnackBar);
+        if (retVal == null) {
+          errMsg = errMsg + "Could not save the Admin with phone number $phone";
         }
       }).onError((error, stackTrace) {
-        handleUpsertEmployeeErrors(error, phone);
+        subErrMsg = subErrMsg + handleUpsertEmployeeErrors(error, phone);
       });
     });
+    if (Utils.isNotNullOrEmpty(errMsg) || Utils.isNotNullOrEmpty(subErrMsg)) {
+      Utils.showMyFlushbar(
+          context,
+          Icons.check,
+          Duration(
+            seconds: 3,
+          ),
+          Utils.isNotNullOrEmpty(errMsg) ? errMsg : subErrMsg,
+          Utils.isNotNullOrEmpty(errMsg) ? subErrMsg : "",
+          successGreenSnackBar);
+    } else {
+      Utils.showMyFlushbar(
+          context,
+          Icons.check,
+          Duration(
+            seconds: 3,
+          ),
+          "Admin Saved Successfully!",
+          "",
+          successGreenSnackBar);
+    }
     return true;
   }
 
