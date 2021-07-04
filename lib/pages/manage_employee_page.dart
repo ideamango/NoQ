@@ -95,10 +95,8 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
   }
 
   void _addNewAdminRow(String phone) {
-    bool insert = true;
-
     setState(() {
-      if (insert) adminsList.insert(0, phone);
+      adminsList.insert(0, phone);
       saveAdmin(phone);
       print("after foreach");
     });
@@ -390,13 +388,13 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     });
   }
 
-  void saveNewAdminRow(String newAdmPh) {
-    setState(() {
-      adminsList.forEach((element) {
-        if (element.compareTo(newAdmPh) != 0) adminsList.add(newAdmPh);
-      });
-    });
-  }
+  // void saveNewAdminRow(String newAdmPh) {
+  //   setState(() {
+  //     adminsList.forEach((element) {
+  //       if (element.compareTo(newAdmPh) != 0) adminsList.add(newAdmPh);
+  //     });
+  //   });
+  // }
 
   bool saveAdmin(String phone) {
     Utils.showMyFlushbar(
