@@ -966,7 +966,6 @@ class _ShowUserApplicationDetailsState
                                   ? remarks[0]
                                   : "");
                           _gs
-                              .getApplicationService()
                               .withDrawApplication(
                                   widget.bookingApplication.id, remarks[0])
                               .then((value) {
