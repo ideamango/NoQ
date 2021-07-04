@@ -796,13 +796,14 @@ class ContactRowState extends State<ContactRow> {
                                           }
 //Check if same phone is added for another profile as well, Since phone is primary key
 // Another employee with same number is not allowed
-                                          bool contactAlreadyExists = false;
+
+                                          int count = 0;
                                           _list.forEach((element) {
                                             if (element.ph == contact.ph) {
-                                              contactAlreadyExists = true;
+                                              count++;
                                             }
                                           });
-                                          if (contactAlreadyExists) {
+                                          if (count > 1) {
                                             Utils.showMyFlushbar(
                                                 context,
                                                 Icons.info,

@@ -295,8 +295,9 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       }
 
       if (!(Utils.isNullOrEmpty(entity.managers))) {
-        managersList = entity.managers;
-        managersList.forEach((element) {
+        managersList.addAll(entity.managers);
+
+        entity.managers.forEach((element) {
           contactRowWidgets.add(new ContactRow(
             contact: element,
             empType: EntityRole.Manager,
@@ -308,7 +309,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         });
       }
       if (!(Utils.isNullOrEmpty(entity.executives))) {
-        executiveList = entity.executives;
+        executiveList.addAll(entity.executives);
         executiveList.forEach((element) {
           execRowWidgets.add(new ContactRow(
             contact: element,
@@ -339,7 +340,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       contactRowWidgets.clear();
       contactRowWidgets.addAll(newList);
     });
-    entity.managers = managersList;
+    //entity.managers = managersList;
   }
 
   refreshExecutives() {
@@ -360,7 +361,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         execRowWidgets.addAll(newList);
       });
     }
-    entity.executives = executiveList;
+    //entity.executives = executiveList;
   }
 
   void _addNewContactRow() {
@@ -371,19 +372,20 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
 
     List<Widget> newList = new List<Widget>();
     // for (int i = 0; i < contactList.length; i++) {
-    newList.add(new ContactRow(
+    Widget newContact = new ContactRow(
       contact: managersList[managersList.length - 1],
       empType: EntityRole.Manager,
       entity: entity,
       list: managersList,
       isManager: widget.isManager,
       existingContact: false,
-    ));
+    );
+    // newList.add();
     // }
     setState(() {
       //  contactRowWidgets.clear();
-      contactRowWidgets.addAll(newList);
-      entity.managers = managersList;
+      contactRowWidgets.add(newContact);
+      //entity.managers = managersList;
       // _contactCount = _contactCount + 1;
     });
   }
@@ -394,21 +396,23 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     executive.id = uuid.v1();
     executiveList.add(executive);
 
-    List<Widget> newExecList = new List<Widget>();
-    for (int i = 0; i < executiveList.length; i++) {
-      newExecList.add(new ContactRow(
-        contact: executiveList[i],
-        empType: EntityRole.Executive,
-        entity: entity,
-        list: executiveList,
-        isManager: widget.isManager,
-        existingContact: false,
-      ));
-    }
+    Widget newContact = new ContactRow(
+      contact: executiveList[executiveList.length - 1],
+      empType: EntityRole.Executive,
+      entity: entity,
+      list: executiveList,
+      isManager: widget.isManager,
+      existingContact: false,
+    );
+
+    // List<Widget> newExecList = new List<Widget>();
+    // for (int i = 0; i < executiveList.length; i++) {
+    //newExecList.add();
+    //}
     setState(() {
-      execRowWidgets.clear();
-      execRowWidgets.addAll(newExecList);
-      entity.executives = executiveList;
+      //execRowWidgets.clear();
+      execRowWidgets.add(newContact);
+      //  entity.executives = executiveList;
       // _contactCount = _contactCount + 1;
     });
   }

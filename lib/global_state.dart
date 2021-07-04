@@ -408,7 +408,8 @@ class GlobalState {
     Entity updatedEntity =
         await _gs.getEntityService().removeEmployee(entityId, phone);
     if (updatedEntity != null) {
-      putEntity(updatedEntity, false);
+      _entities[updatedEntity.entityId] = updatedEntity;
+      _entityState[updatedEntity.entityId] = true;
       return true;
     }
 
@@ -420,7 +421,9 @@ class GlobalState {
     Entity updatedEntity =
         await _gs.getEntityService().upsertEmployee(entityId, employee, role);
     if (updatedEntity != null) {
-      putEntity(updatedEntity, false);
+      //putEntity(updatedEntity, false);
+      _entities[updatedEntity.entityId] = updatedEntity;
+      _entityState[updatedEntity.entityId] = true;
       return true;
     }
     return false;
