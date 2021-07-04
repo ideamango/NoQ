@@ -440,7 +440,7 @@ class EntityService {
         if (ePrivate.roles.containsKey(employee.ph) &&
             ePrivate.roles[employee.ph] != strRole) {
           String message =
-              "User already exists in ${ePrivate.roles[employee.ph]} role.Please remove the user and add the details with the new Role";
+              "User already exists with $phone in ${ePrivate.roles[employee.ph]} role.";
           existingUserRoleUpdateException =
               new ExistingUserRoleUpdateException(message);
           throw existingUserRoleUpdateException;

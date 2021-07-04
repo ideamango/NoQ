@@ -94,36 +94,13 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     EventBus.unregisterEvent(removeManagerListener);
   }
 
-  void _addNewAdminRow() {
+  void _addNewAdminRow(String phone) {
     bool insert = true;
-    String newAdminPh = '+91' + _adminItemController.text;
 
     setState(() {
-      if (adminsList.length != 0) {
-        for (int i = 0; i < adminsList.length; i++) {
-          if (adminsList[i] == (newAdminPh)) {
-            insert = false;
-            Utils.showMyFlushbar(
-                context,
-                Icons.info_outline,
-                Duration(
-                  seconds: 5,
-                ),
-                "Error",
-                "Phone number already exists !!");
-            break;
-          }
-          print("in for loop $insert");
-          print(adminsList[i] == newAdminPh);
-          print(newAdminPh);
-          print(adminsList[i]);
-        }
-      }
-
-      if (insert) adminsList.insert(0, newAdminPh);
+      if (insert) adminsList.insert(0, phone);
+      saveAdmin(phone);
       print("after foreach");
-
-      //TODO: Smita - Update GS
     });
   }
 
@@ -131,24 +108,20 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     String msg;
     switch (error.runtimeType) {
       case AccessDeniedException:
-        //Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-        msg = error.cause;
-        //, error.cause, Colors.red);
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            error.cause, "", Colors.red);
         break;
       case ExistingUserRoleUpdateException:
-        // Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-        //     "Could not Update the Admin $phone", error.cause, Colors.red);
-        msg = error.cause;
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            error.cause, "", Colors.red);
         break;
       case CantRemoveAdminWithOneAdminException:
-        // Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-        //     "Could not Update the Admin $phone", error.cause, Colors.red);
-        msg = error.cause;
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            error.cause, "", Colors.red);
         break;
       default:
-        // Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 8),
-        //     "Could not Update the Admin $phone", error.toString(), Colors.red);
-        msg = error.cause;
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            error.cause, "", Colors.red);
         break;
     }
     return msg;
@@ -425,53 +398,57 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     });
   }
 
-  bool saveAdmins() {
+  bool saveAdmin(String phone) {
     Utils.showMyFlushbar(
         context,
         Icons.check,
         Duration(
           seconds: 2,
         ),
-        "Saving Admins..",
+        "Saving Admin..",
         "",
         successGreenSnackBar);
     String errMsg = "";
     String subErrMsg = "";
-    adminsList.forEach((phone) {
-      Employee emp = new Employee();
-      emp.ph = phone;
-      _gs
-          .getEntityService()
-          .upsertEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin)
-          .then((retVal) {
-        if (retVal == null) {
-          errMsg = errMsg + "Could not save the Admin with phone number $phone";
-        }
-      }).onError((error, stackTrace) {
-        subErrMsg = subErrMsg + handleUpsertEmployeeErrors(error, phone);
-      });
+
+    //adminsList.forEach((phone) {
+    Employee emp = new Employee();
+    emp.ph = phone;
+    _gs
+        .getEntityService()
+        .upsertEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin)
+        .then((retVal) {
+      if (retVal == null) {
+        Utils.showMyFlushbar(
+            context,
+            Icons.check,
+            Duration(
+              seconds: 3,
+            ),
+            "Could not save the Admin with phone number $phone",
+            tryAgainLater,
+            successGreenSnackBar);
+      } else {
+        _adminItemController.text = "";
+        Utils.showMyFlushbar(
+            context,
+            Icons.check,
+            Duration(
+              seconds: 3,
+            ),
+            "Admin Saved Successfully!",
+            "",
+            successGreenSnackBar);
+      }
+    }).onError((error, stackTrace) {
+      handleUpsertEmployeeErrors(error, phone);
     });
-    if (Utils.isNotNullOrEmpty(errMsg) || Utils.isNotNullOrEmpty(subErrMsg)) {
-      Utils.showMyFlushbar(
-          context,
-          Icons.check,
-          Duration(
-            seconds: 3,
-          ),
-          Utils.isNotNullOrEmpty(errMsg) ? errMsg : subErrMsg,
-          Utils.isNotNullOrEmpty(errMsg) ? subErrMsg : "",
-          successGreenSnackBar);
-    } else {
-      Utils.showMyFlushbar(
-          context,
-          Icons.check,
-          Duration(
-            seconds: 3,
-          ),
-          "Admin Saved Successfully!",
-          "",
-          successGreenSnackBar);
-    }
+    // });
+    // if (Utils.isNotNullOrEmpty(errMsg) || Utils.isNotNullOrEmpty(subErrMsg)) {
+    //
+    // } else {
+    //
+    // }
     return true;
   }
 
@@ -1024,17 +1001,53 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                                                 Duration(
                                                                   seconds: 4,
                                                                 ),
-                                                                "Something Missing ..",
-                                                                "Please enter Phone number !!");
+                                                                "Please enter Phone number of Admin and click '+' to Add.",
+                                                                "");
                                                           } else {
+                                                            String newAdminPh =
+                                                                '+91' +
+                                                                    _adminItemController
+                                                                        .text;
                                                             bool result =
                                                                 adminPhoneKey
                                                                     .currentState
                                                                     .validate();
                                                             if (result) {
-                                                              _addNewAdminRow();
-                                                              _adminItemController
-                                                                  .text = "";
+                                                              bool error =
+                                                                  false;
+                                                              if (adminsList
+                                                                      .length !=
+                                                                  0) {
+                                                                for (int i = 0;
+                                                                    i <
+                                                                        adminsList
+                                                                            .length;
+                                                                    i++) {
+                                                                  if (adminsList[
+                                                                          i] ==
+                                                                      (newAdminPh)) {
+                                                                    error =
+                                                                        true;
+                                                                    Utils.showMyFlushbar(
+                                                                        context,
+                                                                        Icons.error,
+                                                                        Duration(
+                                                                          seconds:
+                                                                              5,
+                                                                        ),
+                                                                        "Admin already exists with same number $newAdminPh",
+                                                                        "",
+                                                                        Colors.red);
+                                                                    break;
+                                                                  }
+                                                                }
+                                                              }
+                                                              if (error)
+                                                                return;
+                                                              else {
+                                                                _addNewAdminRow(
+                                                                    newAdminPh);
+                                                              }
                                                             } else {
                                                               Utils.showMyFlushbar(
                                                                   context,
@@ -1068,46 +1081,46 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                         ),
                                       ],
                                     ),
-                                    (adminsList.length != 0)
-                                        ? Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9,
-                                            child: RaisedButton(
-                                              color: widget.isManager
-                                                  ? disabledColor
-                                                  : btnColor,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    "Save Admins",
-                                                    style: buttonMedTextStyle,
-                                                  ),
-                                                  SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .01),
-                                                  Icon(Icons.save,
-                                                      color: Colors.white)
-                                                ],
-                                              ),
-                                              onPressed: () {
-                                                if (widget.isManager) {
-                                                  return;
-                                                } else {
-                                                  saveAdmins();
-                                                }
-                                              },
-                                            ),
-                                          )
-                                        : Container(
-                                            width: 0,
-                                          ),
+                                    // (adminsList.length != 0)
+                                    //     ? Container(
+                                    //         width: MediaQuery.of(context)
+                                    //                 .size
+                                    //                 .width *
+                                    //             .9,
+                                    //         child: RaisedButton(
+                                    //           color: widget.isManager
+                                    //               ? disabledColor
+                                    //               : btnColor,
+                                    //           child: Row(
+                                    //             mainAxisAlignment:
+                                    //                 MainAxisAlignment.center,
+                                    //             children: [
+                                    //               Text(
+                                    //                 "Save Admins",
+                                    //                 style: buttonMedTextStyle,
+                                    //               ),
+                                    //               SizedBox(
+                                    //                   width:
+                                    //                       MediaQuery.of(context)
+                                    //                               .size
+                                    //                               .width *
+                                    //                           .01),
+                                    //               Icon(Icons.save,
+                                    //                   color: Colors.white)
+                                    //             ],
+                                    //           ),
+                                    //           onPressed: () {
+                                    //             if (widget.isManager) {
+                                    //               return;
+                                    //             } else {
+                                    //               saveAdmins();
+                                    //             }
+                                    //           },
+                                    //         ),
+                                    //       )
+                                    //     : Container(
+                                    //         width: 0,
+                                    //       ),
                                   ],
                                 ),
                               ],

@@ -143,19 +143,24 @@ class ContactRowState extends State<ContactRow> {
     }
   }
 
-  handleUpsertEmployeeErrors(dynamic error) {
+  handleUpsertEmployeeErrors(dynamic error, String phone) {
     switch (error.runtimeType) {
       case AccessDeniedException:
         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            "Could not Update the Employee records", error.cause, Colors.red);
+            error.cause, "Could not Update the Employee records", Colors.red);
         break;
       case ExistingUserRoleUpdateException:
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            "Could not Update the Employee records", error.cause, Colors.red);
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 6),
+            error.cause,
+            "If you wish to add in this role, then remove the other user.",
+            Colors.red);
         break;
       case CantRemoveAdminWithOneAdminException:
         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            "Could not Update the Employee records", error.cause, Colors.red);
+            error.cause, "Could not Update the Employee records", Colors.red);
         break;
       default:
         Utils.showMyFlushbar(
@@ -592,7 +597,7 @@ class ContactRowState extends State<ContactRow> {
                                                   }
 
                                                   setState(() {
-                                                    contact = null;
+                                                    // contact = null;
                                                     showLoading = false;
                                                     // _entity.managers.removeWhere(
                                                     //     (element) => element.id == removeThisId);
@@ -674,7 +679,7 @@ class ContactRowState extends State<ContactRow> {
                                                         "");
                                                   }
                                                   setState(() {
-                                                    contact = null;
+                                                    //   contact = null;
                                                     // _entity.managers.removeWhere(
                                                     //     (element) => element.id == removeThisId);
                                                     _list.removeWhere(
@@ -842,7 +847,8 @@ class ContactRowState extends State<ContactRow> {
                                             setState(() {
                                               showLoading = false;
                                             });
-                                            handleUpsertEmployeeErrors(error);
+                                            handleUpsertEmployeeErrors(
+                                                error, contact.ph);
                                           });
                                         }
                                       }),
