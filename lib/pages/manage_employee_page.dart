@@ -94,14 +94,6 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     EventBus.unregisterEvent(removeManagerListener);
   }
 
-  void _addNewAdminRow(String phone) {
-    setState(() {
-      adminsList.insert(0, phone);
-      saveAdmin(phone);
-      print("after foreach");
-    });
-  }
-
   String handleUpsertEmployeeErrors(dynamic error, String phone) {
     String msg;
     switch (error.runtimeType) {
@@ -572,6 +564,9 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
             "Admin Saved Successfully!",
             "",
             successGreenSnackBar);
+        setState(() {
+          adminsList.insert(0, phone);
+        });
       }
     }).onError((error, stackTrace) {
       handleUpsertEmployeeErrors(error, phone);
@@ -1178,7 +1173,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                                               if (error)
                                                                 return;
                                                               else {
-                                                                _addNewAdminRow(
+                                                                saveAdmin(
                                                                     newAdminPh);
                                                               }
                                                             } else {
