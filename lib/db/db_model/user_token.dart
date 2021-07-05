@@ -133,7 +133,7 @@ class UserTokens {
 
   String getDisplayNamePrefix() {
     String name = entityName.substring(0, 3).toUpperCase();
-    DateFormat formatter = DateFormat('-yyMMdd-hhmm-');
+    DateFormat formatter = DateFormat('-yyMMdd-kkmm-');
     String formattedDate = formatter.format(dateTime);
 
     String prefix = name + formattedDate;
