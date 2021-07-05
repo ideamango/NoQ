@@ -125,6 +125,141 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     return msg;
   }
 
+  // showRemoveAdminDialog() {
+  //   showDialog(
+  //       context: context,
+  //       barrierDismissible: true,
+  //       builder: (BuildContext context) {
+  //         return StatefulBuilder(builder: (_, setState) {
+  //           return new AlertDialog(
+  //             backgroundColor: Colors.grey[200],
+  //             // titleTextStyle: inputTextStyle,
+  //             elevation: 10.0,
+  //             content: Column(
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: <Widget>[
+  //                 RichText(
+  //                   text:
+  //                       TextSpan(style: lightSubTextStyle, children: <TextSpan>[
+  //                     TextSpan(text: "Enter "),
+  //                     TextSpan(text: "DELETE ", style: errorTextStyle),
+  //                     TextSpan(
+  //                         text:
+  //                             "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
+  //                   ]),
+  //                 ),
+  //                 new Row(
+  //                   children: <Widget>[
+  //                     new Expanded(
+  //                       child: new TextField(
+  //                         style: inputTextStyle,
+  //                         textCapitalization: TextCapitalization.characters,
+  //                         controller: _txtController,
+  //                         decoration: InputDecoration(
+  //                           hintText: 'eg. delete',
+  //                           enabledBorder: UnderlineInputBorder(
+  //                               borderSide: BorderSide(color: Colors.grey)),
+  //                           focusedBorder: UnderlineInputBorder(
+  //                               borderSide: BorderSide(color: Colors.orange)),
+  //                         ),
+  //                         onEditingComplete: () {
+  //                           print(_txtController.text);
+  //                         },
+  //                         onChanged: (value) {
+  //                           if (value.toUpperCase() == "DELETE".toUpperCase())
+  //                             setState(() {
+  //                               _delEnabled = true;
+  //                               _errorMessage = null;
+  //                             });
+  //                           else
+  //                             setState(() {
+  //                               _errorMessage =
+  //                                   "You have to enter DELETE to proceed.";
+  //                             });
+  //                         },
+  //                         autofocus: false,
+  //                       ),
+  //                     )
+  //                   ],
+  //                 ),
+  //                 (_errorMessage != null
+  //                     ? Text(
+  //                         _errorMessage,
+  //                         style: errorTextStyle,
+  //                       )
+  //                     : Container()),
+  //               ],
+  //             ),
+
+  //             contentPadding: EdgeInsets.all(10),
+  //             actions: <Widget>[
+  //               MaterialButton(
+  //                 color: Colors.white,
+  //                 elevation: 0,
+  //                 shape: RoundedRectangleBorder(
+  //                     side: BorderSide(color: Colors.blueGrey[500]),
+  //                     borderRadius: BorderRadius.all(Radius.circular(5.0))),
+  //                 onPressed: () {
+  //                   Navigator.of(_).pop(false);
+  //                 },
+  //                 splashColor:
+  //                     (_delEnabled) ? highlightColor : Colors.blueGrey[200],
+  //                 child: Container(
+  //                   width: MediaQuery.of(context).size.width * .3,
+  //                   alignment: Alignment.center,
+  //                   child: Text("Cancel", style: TextStyle(color: btnColor)),
+  //                 ),
+  //               ),
+  //               MaterialButton(
+  //                 color: (_delEnabled) ? btnColor : Colors.blueGrey[200],
+  //                 elevation: (_delEnabled) ? 20 : 0,
+  //                 onPressed: () {
+  //                   if (_delEnabled) {
+  //                     Navigator.of(_).pop(true);
+  //                   } else {
+  //                     setState(() {
+  //                       _errorMessage = "You have to enter DELETE to proceed.";
+  //                     });
+  //                   }
+  //                 },
+  //                 splashColor:
+  //                     (_delEnabled) ? highlightColor : Colors.blueGrey[200],
+  //                 child: Container(
+  //                   width: MediaQuery.of(context).size.width * .3,
+  //                   alignment: Alignment.center,
+  //                   child:
+  //                       Text("Delete", style: TextStyle(color: Colors.white)),
+  //                 ),
+  //               ),
+  //             ],
+  //           );
+  //         });
+  //       }).then((returnVal) {
+  //     if (returnVal != null) {
+  //       if (returnVal) {
+  //         _gs.removeEntity(entity.entityId).then((value) {
+  //           if (value) {
+  //             Navigator.pop(context);
+  //             Navigator.of(context).push(new MaterialPageRoute(
+  //                 builder: (BuildContext context) => ManageEntityListPage()));
+  //           } else {
+  //             //Entity not deleted.
+  //             Utils.showMyFlushbar(
+  //                 context,
+  //                 Icons.error,
+  //                 Duration(seconds: 5),
+  //                 'Could not Delete this place',
+  //                 "Please try again.",
+  //                 Colors.red);
+  //           }
+  //         }).catchError((error) {
+  //           ErrorsUtil.handleDeleteEntityErrors(context, error);
+  //         });
+  //       }
+  //     }
+  //   });
+  // }
+
   void _removeServiceRow(String currItem) {
     removeAdmin(entity.entityId, currItem).then((delStatus) {
       if (delStatus) {
@@ -397,15 +532,15 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
   // }
 
   bool saveAdmin(String phone) {
-    Utils.showMyFlushbar(
-        context,
-        Icons.check,
-        Duration(
-          seconds: 2,
-        ),
-        "Saving Admin..",
-        "",
-        successGreenSnackBar);
+    // Utils.showMyFlushbar(
+    //     context,
+    //     Icons.check,
+    //     Duration(
+    //       seconds: 2,
+    //     ),
+    //     "Saving Admin..",
+    //     "",
+    //     successGreenSnackBar);
     String errMsg = "";
     String subErrMsg = "";
 
@@ -521,8 +656,8 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                         "Assign another Admin, before you move out!",
                         "Because you are the Only Admin here.");
                   } else {
-                    Utils.showMyFlushbar(context, Icons.info_outline,
-                        Duration(seconds: 3), "Removing the admin..", "");
+                    // Utils.showMyFlushbar(context, Icons.info_outline,
+                    //     Duration(seconds: 3), "Removing the admin..", "");
                     _removeServiceRow(newAdminRowItem);
                     _adminItemController.text = "";
                   }

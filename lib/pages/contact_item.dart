@@ -558,12 +558,11 @@ class ContactRowState extends State<ContactRow> {
                                               EntityRole.Manager) {
                                             String removeThisId;
                                             for (int i = 0;
-                                                i < _entity.managers.length;
+                                                i < _list.length;
                                                 i++) {
-                                              if (_entity.managers[i].id ==
-                                                  contact.id) {
+                                              if (_list[i].id == contact.id) {
                                                 removeThisId = contact.id;
-                                                print(_entity.managers[i].id);
+                                                print(_list[i].id);
                                                 break;
                                               }
                                             }
@@ -628,26 +627,35 @@ class ContactRowState extends State<ContactRow> {
                                                 //     (element) => element.id == removeThisId);
                                                 _list.removeWhere((element) =>
                                                     element.id == removeThisId);
-                                                _entity.managers.removeWhere(
-                                                    (element) =>
-                                                        element.id ==
-                                                        removeThisId);
+                                                // _entity.managers.removeWhere(
+                                                //     (element) =>
+                                                //         element.id ==
+                                                //         removeThisId);
                                                 EventBus.fireEvent(
                                                     MANAGER_REMOVED_EVENT,
                                                     null,
                                                     removeThisId);
                                               }
+                                            } else {
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.info,
+                                                  Duration(seconds: 3),
+                                                  "Oho! Could not Remove Manager.",
+                                                  tryAgainLater);
+                                              setState(() {
+                                                showLoading = false;
+                                              });
                                             }
                                           } else if (widget.empType ==
                                               EntityRole.Executive) {
                                             String removeThisId;
                                             for (int i = 0;
-                                                i < _entity.executives.length;
+                                                i < _list.length;
                                                 i++) {
-                                              if (_entity.executives[i].id ==
-                                                  contact.id) {
+                                              if (_list[i].id == contact.id) {
                                                 removeThisId = contact.id;
-                                                print(_entity.executives[i].id);
+                                                print(_list[i].id);
                                                 break;
                                               }
                                             }
@@ -695,10 +703,10 @@ class ContactRowState extends State<ContactRow> {
                                                   handleRemoveEmployee(error);
                                                 });
                                               } else {
-                                                _entity.executives.removeWhere(
-                                                    (element) =>
-                                                        element.id ==
-                                                        removeThisId);
+                                                // _entity.executives.removeWhere(
+                                                //     (element) =>
+                                                //         element.id ==
+                                                //         removeThisId);
                                                 Utils.showMyFlushbar(
                                                     context,
                                                     Icons.check,
