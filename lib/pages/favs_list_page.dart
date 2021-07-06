@@ -894,10 +894,8 @@ class _FavsListPageState extends State<FavsListPage>
                                         pageName: "FavsSearch",
                                         childList: value.item1.childEntities,
                                         parentName: str.name);
-                                    Navigator.of(context).push(
-                                        new MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                route));
+                                    Navigator.of(context)
+                                        .push(PageAnimation.createRoute(route));
                                   } else {
                                     Utils.showMyFlushbar(
                                         context,

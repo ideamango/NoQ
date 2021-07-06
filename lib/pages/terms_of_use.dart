@@ -1,3 +1,4 @@
+import 'package:LESSs/widget/page_animation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
@@ -39,12 +40,12 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
               User value = FirebaseAuth.instance.currentUser;
               if (value == null) {
                 print("No user");
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
+                Navigator.of(context)
+                    .push(PageNoAnimation.createRoute(LoginPage()));
               } else {
                 print("Go to dashboard");
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => UserHomePage()));
+                Navigator.of(context)
+                    .push(PageNoAnimation.createRoute(UserHomePage()));
               }
             },
           ),

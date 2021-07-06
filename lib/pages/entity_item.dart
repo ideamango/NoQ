@@ -103,8 +103,8 @@ class EntityRowState extends State<EntityRow> {
               "Oops! Couldn't fetch details of this entity now. Please try again later.",
               "");
         } else {
-          Navigator.of(context).push(new MaterialPageRoute(
-              builder: (BuildContext context) => ManageEntityDetailsPage(
+          Navigator.of(context).push(PageAnimation.createRoute(
+              ManageEntityDetailsPage(
                   entity: entity, isManager: isManager || isExec)));
         }
       });
@@ -131,9 +131,8 @@ class EntityRowState extends State<EntityRow> {
         }
 
         if (isSavedOnServer) {
-          Navigator.of(context).push(new MaterialPageRoute(
-              builder: (BuildContext context) => ManageChildEntityListPage(
-                  entity: ent, isReadOnly: readOnly)));
+          Navigator.of(context).push(PageAnimation.createRoute(
+              ManageChildEntityListPage(entity: ent, isReadOnly: readOnly)));
         } else {
           //No entity created yet.. show msg to create entity first.
           Utils.showMyFlushbar(
@@ -187,12 +186,11 @@ class EntityRowState extends State<EntityRow> {
               "Important details are missing in entity, Please fill those first.",
               "Save Entity and then Share!!");
         } else
-          Navigator.of(context).push(new MaterialPageRoute(
-              builder: (BuildContext context) => GenerateScreen(
-                    entityId: _metaEntity.entityId,
-                    entityName: _metaEntity.name,
-                    backRoute: ManageEntityListPage(),
-                  )));
+          Navigator.of(context).push(PageAnimation.createRoute(GenerateScreen(
+            entityId: _metaEntity.entityId,
+            entityName: _metaEntity.name,
+            backRoute: ManageEntityListPage(),
+          )));
       });
     }
 
@@ -436,14 +434,13 @@ class EntityRowState extends State<EntityRow> {
                                 "First, enter basic details of the place",
                                 "");
                           } else {
-                            Navigator.of(context).push(new MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    ManageEmployeePage(
-                                      metaEntity: _metaEntity,
-                                      backRoute: ManageEntityListPage(),
-                                      defaultDate: null,
-                                      isManager: isManager,
-                                    )));
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(ManageEmployeePage(
+                              metaEntity: _metaEntity,
+                              backRoute: ManageEntityListPage(),
+                              defaultDate: null,
+                              isManager: isManager,
+                            )));
                           }
                         } else {
                           //Only admins can view Employees for a place
@@ -518,18 +515,16 @@ class EntityRowState extends State<EntityRow> {
                             if (value.item1 != null) {
                               if (!Utils.isNullOrEmpty(value.item1.forms)) {
                                 Navigator.of(context).push(
-                                    new MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            BookingFormSelection(
-                                              entityId: _metaEntity.entityId,
-                                              entity: value.item1,
-                                              preferredSlotTime: null,
-                                              isFullAccess:
-                                                  isAdmin || isManager,
-                                              forUser: false,
-                                              backRoute: ManageEntityListPage(),
-                                              isOnlineToken: null,
-                                            )));
+                                    PageAnimation.createRoute(
+                                        BookingFormSelection(
+                                  entityId: _metaEntity.entityId,
+                                  entity: value.item1,
+                                  preferredSlotTime: null,
+                                  isFullAccess: isAdmin || isManager,
+                                  forUser: false,
+                                  backRoute: ManageEntityListPage(),
+                                  isOnlineToken: null,
+                                )));
                               } else {
                                 Utils.showMyFlushbar(
                                     context,
@@ -606,14 +601,13 @@ class EntityRowState extends State<EntityRow> {
                         } else {
                           if (_metaEntity.isBookable) {
                             print("To child list page");
-                            Navigator.of(context).push(new MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    EntityTokenListPage(
-                                      metaEntity: _metaEntity,
-                                      backRoute: ManageEntityListPage(),
-                                      defaultDate: null,
-                                      isReadOnly: isExec,
-                                    )));
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(EntityTokenListPage(
+                              metaEntity: _metaEntity,
+                              backRoute: ManageEntityListPage(),
+                              defaultDate: null,
+                              isReadOnly: isExec,
+                            )));
                           } else {
                             Utils.showMyFlushbar(
                                 context,
@@ -679,15 +673,14 @@ class EntityRowState extends State<EntityRow> {
                               "");
                         } else {
                           print("To Add details page");
-                          Navigator.of(context).push(new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ManageEntityForms(
-                                    metaEntity: _metaEntity,
-                                    preferredSlotTime: null,
-                                    isFullPermission: !readOnly,
-                                    backRoute: ManageEntityListPage(),
-                                    isReadOnly: readOnly,
-                                  )));
+                          Navigator.of(context)
+                              .push(PageAnimation.createRoute(ManageEntityForms(
+                            metaEntity: _metaEntity,
+                            preferredSlotTime: null,
+                            isFullPermission: !readOnly,
+                            backRoute: ManageEntityListPage(),
+                            isReadOnly: readOnly,
+                          )));
                         }
                       } else {
                         Utils.showMyFlushbar(

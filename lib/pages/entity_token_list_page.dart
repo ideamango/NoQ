@@ -288,8 +288,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                 color: textColor,
               ),
               onPressed: () {
-                Navigator.of(context).push(new MaterialPageRoute(
-                    builder: (BuildContext context) => TokensInSlot(
+                Navigator.of(context)
+                    .push(PageAnimation.createRoute(TokensInSlot(
                         slotKey: time,
                         stats: stats,
                         date: selectedDate,
@@ -1132,7 +1132,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                           decoration: buttonBackground,
                           //width: MediaQuery.of(context).size.width * .18,
                           height: MediaQuery.of(context).size.width * .08,
-                          child: FlatButton(
+                          child: MaterialButton(
                               visualDensity: VisualDensity.compact,
                               // color: (selectedDateFormat ==
                               //         DateDisplayFormat.date)

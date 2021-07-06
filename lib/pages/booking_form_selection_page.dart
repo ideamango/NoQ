@@ -360,9 +360,8 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                   } else {
                                     if (dashBoardRoute != null)
                                       Navigator.of(context).push(
-                                          new MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  dashBoardRoute));
+                                          PageAnimation.createRoute(
+                                              dashBoardRoute));
                                   }
                                 }),
                           ],

@@ -1,3 +1,4 @@
+import 'package:LESSs/widget/page_animation.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -826,20 +827,15 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       Navigator.of(context).pop();
                       print(_fromPage);
                       if (_fromPage == 'Search')
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SearchEntityPage()));
+                        Navigator.of(context).push(
+                            PageReverseAnimation.createRoute(
+                                SearchEntityPage()));
                       else if (_fromPage == 'FavsSearch')
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FavsListPage()));
+                        Navigator.of(context).push(
+                            PageReverseAnimation.createRoute(FavsListPage()));
                       else
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UserHomePage()));
+                        Navigator.of(context).push(
+                            PageReverseAnimation.createRoute(UserHomePage()));
                     }),
                 title: Text(
                   title,
@@ -1038,8 +1034,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       return false;
     } else {
       //Navigator.of(context).pop();
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => SearchEntityPage()));
+      Navigator.of(context)
+          .push(PageReverseAnimation.createRoute(SearchEntityPage()));
       return false;
     }
   }
