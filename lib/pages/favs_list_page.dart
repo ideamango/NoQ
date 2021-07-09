@@ -703,7 +703,7 @@ class _FavsListPageState extends State<FavsListPage>
                     margin: EdgeInsets.all(0),
                     height: 35.0,
                     width: 45.0,
-                    child: RaisedButton(
+                    child: MaterialButton(
                       elevation: 5,
                       padding: EdgeInsets.all(5),
                       // alignment: Alignment.center,
