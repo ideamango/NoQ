@@ -11,7 +11,7 @@ description: Book your peace of mind with Less
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
@@ -23,7 +23,7 @@ dependencies:
   #Added http for accessing APIs for data
   
   pinput: ^0.2.3
-  path_provider: ^0.4.1
+  path_provider: ^2.0.2
   shared_preferences: ^0.5.7
   flutter_datetime_picker: ^1.5.1
   weekday_selector_formfield: ^1.0.4   

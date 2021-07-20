@@ -15,19 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "643643889883-cl8bi8l969ne3adri2ol58t5ip83mgh0.apps.googleusercontent.com",
+          "client_id": "643643889883-pq4aoujuva55e95q1rua3dvlnt1m2802.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "net.lesss",
-            "certificate_hash": "549200133731dee3d2f211494b0cf4dfb621a340"
-          }
-        },
-        {
-          "client_id": "643643889883-ekvidor44ln8srt5hndtpppdesv30bvd.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "net.lesss",
-            "certificate_hash": "873c1be027566f20bf722110a2ce49c884065dd3"
+            "certificate_hash": "d74c2b2c1ca6048f371cf830444bbbf4d1ae6c54"
           }
         },
         {

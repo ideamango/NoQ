@@ -1132,7 +1132,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                           decoration: buttonBackground,
                           //width: MediaQuery.of(context).size.width * .18,
                           height: MediaQuery.of(context).size.width * .08,
-                          child: MaterialButton(
+                          child: FlatButton(
                               visualDensity: VisualDensity.compact,
                               // color: (selectedDateFormat ==
                               //         DateDisplayFormat.date)
