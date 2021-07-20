@@ -2144,14 +2144,15 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               break;
             } else {
               List<String> targetPaths = [];
+
               for (String path in (listOfFields[i] as FormInputFieldAttachment)
                   .responseFilePaths) {
                 String fileName = pathfile.basename(path);
                 print(fileName);
 
-                // String targetFileName =
-                //     '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
-                String targetFileName = "Y+$i";
+                String targetFileName =
+                    '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
+print(targetFileName);
                 String targetPath =
                     await uploadFilesToServer(path, targetFileName);
                 print(targetPath);
@@ -2198,6 +2199,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
                 String targetFileName =
                     '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
+                print(targetFileName);
                 String targetPath =
                     await uploadFilesToServer(path, targetFileName);
                 print(targetPath);
