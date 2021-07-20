@@ -159,6 +159,79 @@ Future<String> showMessageDialog(
   });
 }
 
+Future<bool> showConfirmationDialog(BuildContext context, String headerMsg,
+    String mainMsg, String subMsg, String btnText1, String btnText2) {
+  return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return new AlertDialog(
+          //  title:
+          backgroundColor: Colors.grey[200],
+          titleTextStyle: inputTextStyle,
+          elevation: 10.0,
+          content: Container(
+              width: double.infinity,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    headerMsg,
+                    style: TextStyle(
+                        color: primaryDarkColor,
+                        fontFamily: 'Monsterrat',
+                        fontSize: 18.0),
+                  ),
+                  Divider(color: Colors.blueGrey[400], height: 1),
+                  verticalSpacer,
+                  RichText(
+                      text: TextSpan(
+                          style: msgDialogTextStyle,
+                          children: <TextSpan>[
+                        TextSpan(text: mainMsg),
+                        TextSpan(
+                          text: '\n $subMsg ',
+                        ),
+                      ])),
+                  verticalSpacer,
+                  Divider(color: Colors.blueGrey[400], height: 1),
+                ],
+              )),
+          contentPadding: EdgeInsets.all(10),
+          actions: <Widget>[
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+              child: MaterialButton(
+                elevation: 0.0,
+                color: Colors.white,
+                textColor: btnColor,
+                shape:
+                    RoundedRectangleBorder(side: BorderSide(color: btnColor)),
+                child: Text(btnText1),
+                onPressed: () {
+                  Navigator.of(_).pop(false);
+                },
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+              child: MaterialButton(
+                elevation: 8.0,
+                color: btnColor,
+                textColor: Colors.white,
+                child: Text(btnText2),
+                onPressed: () {
+                  Navigator.of(_).pop(true);
+                },
+              ),
+            ),
+          ],
+        );
+      }).then((val) {
+    return val;
+  });
+}
+
 Future<List> showApplicationStatusDialog(BuildContext context, String headerMsg,
     String mainMsg, String subMsg, String btnText) async {
   TextEditingController rmksController = new TextEditingController();

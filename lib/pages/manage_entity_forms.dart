@@ -1,6 +1,7 @@
 import 'package:LESSs/constants.dart';
 import 'package:LESSs/db/db_model/booking_form.dart';
 import 'package:LESSs/db/db_service/booking_application_service.dart';
+import 'package:LESSs/pages/token_alert.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
@@ -497,63 +498,80 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                             "");
                                                         return;
                                                       }
+                                                      showConfirmationDialog(
+                                                              context,
+                                                              "Delete Form Confirmation",
+                                                              'If you DELETE the form, all the Applications submitted by your Customers, for this form would also be deleted.\n ',
+                                                              'Do you want to delete the form?',
+                                                              'Cancel',
+                                                              'Delete')
+                                                          .then((value) {
+                                                        print("Delete");
+                                                        if (!value) {
+                                                          return;
+                                                        } else {
+                                                          //If the form being deleted is newly added just delete it
+                                                          // else if its old form of entity delete the ref from entity.forms
+                                                          int indexToBeRemoved;
 
-                                                      //If the form being deleted is newly added just delete it
-                                                      // else if its old form of entity delete the ref from entity.forms
-                                                      int indexToBeRemoved;
-
-                                                      for (int i = 0;
-                                                          i <
-                                                              newlyAddedForms
-                                                                  .length;
-                                                          i++) {
-                                                        if (newlyAddedForms[i]
-                                                                .id ==
-                                                            selectedForms[index]
-                                                                .id) {
-                                                          indexToBeRemoved = i;
-                                                          break;
-                                                        }
-                                                      }
-
-                                                      if (indexToBeRemoved !=
-                                                          null)
-                                                        newlyAddedForms.removeAt(
-                                                            indexToBeRemoved);
-                                                      else {
-                                                        int indexToBeRemovedForEntityForms;
-
-                                                        for (int i = 0;
-                                                            i <
-                                                                entity.forms
-                                                                    .length;
-                                                            i++) {
-                                                          if (entity.forms[i]
-                                                                  .id ==
-                                                              selectedForms[
-                                                                      index]
-                                                                  .id) {
-                                                            indexToBeRemovedForEntityForms =
-                                                                i;
-                                                            break;
+                                                          for (int i = 0;
+                                                              i <
+                                                                  newlyAddedForms
+                                                                      .length;
+                                                              i++) {
+                                                            if (newlyAddedForms[
+                                                                        i]
+                                                                    .id ==
+                                                                selectedForms[
+                                                                        index]
+                                                                    .id) {
+                                                              indexToBeRemoved =
+                                                                  i;
+                                                              break;
+                                                            }
                                                           }
-                                                        }
 
-                                                        if (indexToBeRemovedForEntityForms !=
-                                                            null) {
-                                                          entityDeletedForms
-                                                              .add(
+                                                          if (indexToBeRemoved !=
+                                                              null)
+                                                            newlyAddedForms
+                                                                .removeAt(
+                                                                    indexToBeRemoved);
+                                                          else {
+                                                            int indexToBeRemovedForEntityForms;
+
+                                                            for (int i = 0;
+                                                                i <
+                                                                    entity.forms
+                                                                        .length;
+                                                                i++) {
+                                                              if (entity
+                                                                      .forms[i]
+                                                                      .id ==
+                                                                  selectedForms[
+                                                                          index]
+                                                                      .id) {
+                                                                indexToBeRemovedForEntityForms =
+                                                                    i;
+                                                                break;
+                                                              }
+                                                            }
+
+                                                            if (indexToBeRemovedForEntityForms !=
+                                                                null) {
+                                                              entityDeletedForms.add(
                                                                   selectedForms[
                                                                           index]
                                                                       .id);
-                                                        }
-                                                      }
-                                                      selectedForms
-                                                          .removeAt(index);
+                                                            }
+                                                          }
+                                                          selectedForms
+                                                              .removeAt(index);
 
-                                                      print(
-                                                          selectedForms.length);
-                                                      setState(() {});
+                                                          print(selectedForms
+                                                              .length);
+                                                          setState(() {});
+                                                        }
+                                                      });
                                                     },
                                                   ),
                                                   Column(
