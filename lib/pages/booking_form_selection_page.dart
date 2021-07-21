@@ -66,7 +66,11 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                 "Oops..There seems to some problem. Please try again later.";
           } else {
             entity = value.item1;
-            forms = entity.forms;
+            for (var form in entity.forms) {
+              if (form.isActive) {
+                forms.add(form);
+              }
+            }
           }
           setState(() {
             initCompleted = true;

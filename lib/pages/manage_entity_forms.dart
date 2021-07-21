@@ -498,19 +498,8 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                             "");
                                                         return;
                                                       }
-                                                      showConfirmationDialog(
-                                                              context,
-                                                              "Delete Form Confirmation",
-                                                              'If you DELETE the form, all the Applications submitted by your Customers, for this form would also be deleted.\n ',
-                                                              'Do you want to delete the form?',
-                                                              'Cancel',
-                                                              'Delete')
-                                                          .then((value) {
-                                                        print("Delete");
-                                                        if (!value) {
-                                                          return;
-                                                        } else {
-                                                          //If the form being deleted is newly added just delete it
+                                                      
+                                                    //If the form being deleted is newly added just delete it
                                                           // else if its old form of entity delete the ref from entity.forms
                                                           int indexToBeRemoved;
 
@@ -571,7 +560,8 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                               .length);
                                                           setState(() {});
                                                         }
-                                                      });
+                                                   
+                                                   
                                                     },
                                                   ),
                                                   Column(
@@ -862,8 +852,17 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                     for (int i = 0;
                                         i < entityDeletedForms.length;
                                         i++) {
-                                      entity.forms.removeWhere((element) =>
-                                          element.id == entityDeletedForms[i]);
+                                          //Set the deleted flag to true in entity.
+                                      // entity.forms.removeWhere((element) =>
+                                      //     element.id == entityDeletedForms[i]);
+
+
+  for (var entityForm in entity.forms){
+    if(entityForm.id == entityDeletedForms[i])
+    {
+      entityForm.isActive = false; 
+    }
+}
                                       entityModified = true;
                                     }
                                   }
