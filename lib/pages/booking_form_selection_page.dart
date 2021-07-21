@@ -44,7 +44,7 @@ class BookingFormSelection extends StatefulWidget {
 class _BookingFormSelectionState extends State<BookingFormSelection> {
   MetaEntity metaEntity;
   Entity entity;
-  List<MetaForm> forms;
+  List<MetaForm> forms = [];
   GlobalState _gs;
   bool initCompleted = false;
   int _radioValue1 = -1;
@@ -67,9 +67,13 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
           } else {
             entity = value.item1;
             for (var form in entity.forms) {
-              if (form.isActive) {
+              if (widget.forUser && (form.isActive != null && !form.isActive)) {
+                continue;
+              } else {
+                // if (form.isActive == null || form.isActive) {
                 forms.add(form);
               }
+              //}
             }
           }
           setState(() {
@@ -213,19 +217,34 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Wrap(children: [
-                                                new Text(
-                                                  forms[index].name,
-                                                  style: TextStyle(
-                                                    color: (_selectedValue ==
-                                                            index)
-                                                        ? Colors.blueGrey[900]
-                                                        : Colors.blueGrey[600],
-                                                    fontWeight: FontWeight.w600,
-                                                    fontFamily:
-                                                        'RalewayRegular',
-                                                    letterSpacing: 0.5,
-                                                    fontSize: 14.0,
-                                                    //height: 2,
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .77,
+                                                  child: new Text(
+                                                    forms[index].name +
+                                                        ((forms[index].isActive ==
+                                                                    null ||
+                                                                forms[index]
+                                                                    .isActive)
+                                                            ? ""
+                                                            : "(Deleted)"),
+                                                    maxLines: null,
+                                                    style: TextStyle(
+                                                      color: (_selectedValue ==
+                                                              index)
+                                                          ? Colors.blueGrey[900]
+                                                          : Colors
+                                                              .blueGrey[600],
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontFamily:
+                                                          'RalewayRegular',
+                                                      letterSpacing: 0.5,
+                                                      fontSize: 14.0,
+                                                      //height: 2,
+                                                    ),
                                                   ),
                                                 ),
                                               ]),

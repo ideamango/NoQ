@@ -5,7 +5,8 @@ class MetaForm {
       this.description,
       this.autoApproved,
       this.allowedOnline,
-      this.isActive});
+      this.isActive,
+      this.deletedOn});
 
   //just need an id which is unique even if later phone or firebase id changes
   String id;
@@ -14,6 +15,7 @@ class MetaForm {
   bool autoApproved;
   bool allowedOnline;
   bool isActive;
+  DateTime deletedOn;
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -21,7 +23,8 @@ class MetaForm {
         'description': description,
         'autoApproved': autoApproved,
         'allowedOnline': allowedOnline,
-        'isActive': isActive
+        'isActive': isActive,
+        'deletedOn': deletedOn
       };
 
   static MetaForm fromJson(Map<String, dynamic> json) {
@@ -31,6 +34,10 @@ class MetaForm {
         description: json["description"],
         autoApproved: json['autoApproved'],
         allowedOnline: json['allowedOnline'],
-        isActive: json['isActive']);
+        isActive: json['isActive'],
+        deletedOn: (json['deletedOn'] != null)
+            ? (new DateTime.fromMillisecondsSinceEpoch(
+                json['deletedOn'].seconds * 1000))
+            : null);
   }
 }

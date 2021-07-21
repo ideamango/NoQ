@@ -95,7 +95,12 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
       _gs.getEntity(widget.metaEntity.entityId).then((value) {
         entity = value.item1;
         if (!Utils.isNullOrEmpty(entity.forms)) {
-          selectedForms.addAll(entity.forms);
+          for (var form in entity.forms) {
+            if (form.isActive == null || form.isActive) {
+              selectedForms.add(form);
+            }
+          }
+          //  selectedForms.addAll(entity.forms);
         }
         setState(() {
           initCompleted = true;
@@ -480,90 +485,83 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   IconButton(
-                                                    alignment:
-                                                        Alignment.topCenter,
-                                                    icon: Icon(
-                                                      Icons.remove_circle,
-                                                      color: Colors.cyan[700],
-                                                      size: 30,
-                                                    ),
-                                                    onPressed: () {
-                                                      if (widget.isReadOnly) {
-                                                        Utils.showMyFlushbar(
-                                                            context,
-                                                            Icons.info,
-                                                            Duration(
-                                                                seconds: 3),
-                                                            "$noEditPermission Forms",
-                                                            "");
-                                                        return;
-                                                      }
-                                                      
-                                                    //If the form being deleted is newly added just delete it
-                                                          // else if its old form of entity delete the ref from entity.forms
-                                                          int indexToBeRemoved;
+                                                      alignment:
+                                                          Alignment.topCenter,
+                                                      icon: Icon(
+                                                        Icons.remove_circle,
+                                                        color: Colors.cyan[700],
+                                                        size: 30,
+                                                      ),
+                                                      onPressed: () {
+                                                        if (widget.isReadOnly) {
+                                                          Utils.showMyFlushbar(
+                                                              context,
+                                                              Icons.info,
+                                                              Duration(
+                                                                  seconds: 3),
+                                                              "$noEditPermission Forms",
+                                                              "");
+                                                          return;
+                                                        }
+
+                                                        //If the form being deleted is newly added just delete it
+                                                        // else if its old form of entity delete the ref from entity.forms
+                                                        int indexToBeRemoved;
+
+                                                        for (int i = 0;
+                                                            i <
+                                                                newlyAddedForms
+                                                                    .length;
+                                                            i++) {
+                                                          if (newlyAddedForms[i]
+                                                                  .id ==
+                                                              selectedForms[
+                                                                      index]
+                                                                  .id) {
+                                                            indexToBeRemoved =
+                                                                i;
+                                                            break;
+                                                          }
+                                                        }
+
+                                                        if (indexToBeRemoved !=
+                                                            null)
+                                                          newlyAddedForms.removeAt(
+                                                              indexToBeRemoved);
+                                                        else {
+                                                          int indexToBeRemovedForEntityForms;
 
                                                           for (int i = 0;
                                                               i <
-                                                                  newlyAddedForms
+                                                                  entity.forms
                                                                       .length;
                                                               i++) {
-                                                            if (newlyAddedForms[
-                                                                        i]
+                                                            if (entity.forms[i]
                                                                     .id ==
                                                                 selectedForms[
                                                                         index]
                                                                     .id) {
-                                                              indexToBeRemoved =
+                                                              indexToBeRemovedForEntityForms =
                                                                   i;
                                                               break;
                                                             }
                                                           }
 
-                                                          if (indexToBeRemoved !=
-                                                              null)
-                                                            newlyAddedForms
-                                                                .removeAt(
-                                                                    indexToBeRemoved);
-                                                          else {
-                                                            int indexToBeRemovedForEntityForms;
-
-                                                            for (int i = 0;
-                                                                i <
-                                                                    entity.forms
-                                                                        .length;
-                                                                i++) {
-                                                              if (entity
-                                                                      .forms[i]
-                                                                      .id ==
-                                                                  selectedForms[
-                                                                          index]
-                                                                      .id) {
-                                                                indexToBeRemovedForEntityForms =
-                                                                    i;
-                                                                break;
-                                                              }
-                                                            }
-
-                                                            if (indexToBeRemovedForEntityForms !=
-                                                                null) {
-                                                              entityDeletedForms.add(
-                                                                  selectedForms[
-                                                                          index]
-                                                                      .id);
-                                                            }
+                                                          if (indexToBeRemovedForEntityForms !=
+                                                              null) {
+                                                            entityDeletedForms.add(
+                                                                selectedForms[
+                                                                        index]
+                                                                    .id);
                                                           }
-                                                          selectedForms
-                                                              .removeAt(index);
-
-                                                          print(selectedForms
-                                                              .length);
-                                                          setState(() {});
                                                         }
-                                                   
-                                                   
-                                                    },
-                                                  ),
+                                                        selectedForms
+                                                            .removeAt(index);
+
+                                                        print(selectedForms
+                                                            .length);
+                                                        setState(() {});
+                                                      }),
                                                   Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -782,127 +780,62 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                 if (entity.forms == null) entity.forms = [];
                                 bool entityModified = false;
                                 //If all pre existing forms for entity are deleted.
-                                if (Utils.isNullOrEmpty(selectedForms) &&
-                                    (!Utils.isNullOrEmpty(entity.forms))) {
-                                  entity.forms.clear();
-                                  _gs.putEntity(entity, true).then((value) {
-                                    Utils.showMyFlushbar(
-                                        context,
-                                        Icons.check,
-                                        Duration(seconds: 3),
-                                        "Saved Application Form Successfully!",
-                                        "",
-                                        successGreenSnackBar);
-                                    setState(() {
-                                      showLoading = false;
-                                    });
+                                // if (Utils.isNullOrEmpty(selectedForms) &&
+                                //     (!Utils.isNullOrEmpty(entity.forms))) {
+                                //   // entity.forms.clear();
+                                //   //We are not deleting the form, just set the isActive to false.
 
-                                    // Navigator.of(context).pop();
-                                    Future.delayed(Duration(seconds: 2))
-                                        .then((value) {
-                                      if (widget.backRoute != null)
-                                        Navigator.of(context).push(
-                                            new MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        widget.backRoute));
-                                    });
-                                  });
-                                } else {
-                                  //Check if any existing forms in entity are modified
-                                  for (int i = 0;
-                                      i < entityModifiedForms.length;
-                                      i++) {
-                                    for (int j = 0;
-                                        j < entity.forms.length;
-                                        j++) {
-                                      if (entity.forms[j].id ==
-                                          entityModifiedForms[i].id) {
-                                        entity.forms[j].autoApproved =
-                                            entityModifiedForms[i].autoApproved;
-                                        entityModified = true;
-                                        BookingForm bf = await _gs
-                                            .getApplicationService()
-                                            .getBookingForm(entity.forms[j].id);
-                                        bf.autoApproved =
-                                            entityModifiedForms[i].autoApproved;
-                                        bool isFormSaved = await _gs
-                                            .getApplicationService()
-                                            .saveBookingForm(bf);
+                                //   _gs.putEntity(entity, true).then((value) {
+                                //     Utils.showMyFlushbar(
+                                //         context,
+                                //         Icons.check,
+                                //         Duration(seconds: 3),
+                                //         "Saved Application Form Successfully!",
+                                //         "",
+                                //         successGreenSnackBar);
+                                //     setState(() {
+                                //       showLoading = false;
+                                //     });
 
-                                        if (!isFormSaved) {
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.info,
-                                              Duration(seconds: 5),
-                                              "Oho..Could not save the Application Form changes.",
-                                              "Please try again.");
-                                          setState(() {
-                                            showLoading = false;
-                                          });
-                                        }
-                                      }
-                                    }
-
-                                    entityModified = true;
-                                  }
-                                  //Check if any existing forms in entity are deleted
-                                  if (!Utils.isNullOrEmpty(
-                                      entityDeletedForms)) {
-                                    for (int i = 0;
-                                        i < entityDeletedForms.length;
-                                        i++) {
-                                          //Set the deleted flag to true in entity.
-                                      // entity.forms.removeWhere((element) =>
-                                      //     element.id == entityDeletedForms[i]);
-
-
-  for (var entityForm in entity.forms){
-    if(entityForm.id == entityDeletedForms[i])
-    {
-      entityForm.isActive = false; 
-    }
-}
+                                //     // Navigator.of(context).pop();
+                                //     Future.delayed(Duration(seconds: 2))
+                                //         .then((value) {
+                                //       if (widget.backRoute != null)
+                                //         Navigator.of(context).push(
+                                //             new MaterialPageRoute(
+                                //                 builder:
+                                //                     (BuildContext context) =>
+                                //                         widget.backRoute));
+                                //     });
+                                //   });
+                                // } else {
+                                //Check if any existing forms in entity are modified
+                                for (int i = 0;
+                                    i < entityModifiedForms.length;
+                                    i++) {
+                                  for (int j = 0;
+                                      j < entity.forms.length;
+                                      j++) {
+                                    if (entity.forms[j].id ==
+                                        entityModifiedForms[i].id) {
+                                      entity.forms[j].autoApproved =
+                                          entityModifiedForms[i].autoApproved;
                                       entityModified = true;
-                                    }
-                                  }
-                                  if (!Utils.isNullOrEmpty(
-                                      entityModifiedForms)) {
-                                    for (int i = 0;
-                                        i < entityModifiedForms.length;
-                                        i++) {
-                                      for (var form in entity.forms) {
-                                        if (form.id ==
-                                            entityModifiedForms[i].id) {
-                                          form.autoApproved =
-                                              entityModifiedForms[i]
-                                                  .autoApproved;
-                                        }
-                                      }
-
-                                      entityModified = true;
-                                    }
-                                  }
-
-                                  //Check if any newly added forms are there
-                                  if (!Utils.isNullOrEmpty(newlyAddedForms)) {
-                                    for (int i = 0;
-                                        i < newlyAddedForms.length;
-                                        i++) {
+                                      BookingForm bf = await _gs
+                                          .getApplicationService()
+                                          .getBookingForm(entity.forms[j].id);
+                                      bf.autoApproved =
+                                          entityModifiedForms[i].autoApproved;
                                       bool isFormSaved = await _gs
                                           .getApplicationService()
-                                          .saveBookingForm(newlyAddedForms[i]);
+                                          .saveBookingForm(bf);
 
-                                      if (isFormSaved) {
-                                        entity.forms.add(
-                                            newlyAddedForms[i].getMetaForm());
-                                        entityModified = true;
-                                      } else {
+                                      if (!isFormSaved) {
                                         Utils.showMyFlushbar(
                                             context,
                                             Icons.info,
                                             Duration(seconds: 5),
-                                            "Oho..Could not add the Application Form.",
+                                            "Oho..Could not save the Application Form changes.",
                                             "Please try again.");
                                         setState(() {
                                           showLoading = false;
@@ -910,7 +843,70 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                       }
                                     }
                                   }
+
+                                  entityModified = true;
                                 }
+                                //Check if any existing forms in entity are deleted
+                                if (!Utils.isNullOrEmpty(entityDeletedForms)) {
+                                  for (int i = 0;
+                                      i < entityDeletedForms.length;
+                                      i++) {
+                                    //Set the deleted flag to true in entity.
+                                    // entity.forms.removeWhere((element) =>
+                                    //     element.id == entityDeletedForms[i]);
+
+                                    for (var entityForm in entity.forms) {
+                                      if (entityForm.id ==
+                                          entityDeletedForms[i]) {
+                                        entityForm.isActive = false;
+                                      }
+                                    }
+                                    entityModified = true;
+                                  }
+                                }
+                                if (!Utils.isNullOrEmpty(entityModifiedForms)) {
+                                  for (int i = 0;
+                                      i < entityModifiedForms.length;
+                                      i++) {
+                                    for (var form in entity.forms) {
+                                      if (form.id ==
+                                          entityModifiedForms[i].id) {
+                                        form.autoApproved =
+                                            entityModifiedForms[i].autoApproved;
+                                      }
+                                    }
+
+                                    entityModified = true;
+                                  }
+                                }
+
+                                //Check if any newly added forms are there
+                                if (!Utils.isNullOrEmpty(newlyAddedForms)) {
+                                  for (int i = 0;
+                                      i < newlyAddedForms.length;
+                                      i++) {
+                                    bool isFormSaved = await _gs
+                                        .getApplicationService()
+                                        .saveBookingForm(newlyAddedForms[i]);
+
+                                    if (isFormSaved) {
+                                      entity.forms.add(
+                                          newlyAddedForms[i].getMetaForm());
+                                      entityModified = true;
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "Oho..Could not add the Application Form.",
+                                          "Please try again.");
+                                      setState(() {
+                                        showLoading = false;
+                                      });
+                                    }
+                                  }
+                                }
+                                // }
                                 //SAVE Entity
                                 if (entityModified) {
                                   _gs.putEntity(entity, true).then((value) {
