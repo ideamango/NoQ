@@ -93,6 +93,7 @@ class BookingForm {
     mf.name = this.formName;
     mf.autoApproved = this.autoApproved;
     mf.allowedOnline = this.allowedOnline;
+    mf.isActive = this.isActive;
     return mf;
   }
 
