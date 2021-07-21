@@ -437,8 +437,7 @@ class _LoginPageState extends State<LoginPage> {
             message =
                 'There seems to be some problem with your internet connection. Please Check.';
         } else {
-          message =
-              'Oops, Something went wrong. Check your internet connection.';
+          message = 'Oops, Something went wrong.';
         }
         break;
     }
@@ -452,7 +451,7 @@ class _LoginPageState extends State<LoginPage> {
         Icons.error,
         Duration(seconds: 6),
         Utils.isStrNullOrEmpty(message)
-            ? 'Oops, Something went wrong. Check your internet connection.'
+            ? 'Oops, Something went wrong.'
             : message,
         "Please try again later");
   }
