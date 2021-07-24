@@ -786,21 +786,31 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       setState(() {});
       return;
     }
-
+    bool showForm = false;
     if (!Utils.isNullOrEmpty(metaEntity.forms)) {
       if (metaEntity.forms.length >= 1) {
-        //Show Booking request form SELECTION page
-        Navigator.of(context).push(new MaterialPageRoute(
-            builder: (BuildContext context) => BookingFormSelection(
-                entityId: metaEntity.entityId,
-                entity: null,
-                preferredSlotTime: selectedSlot.dateTime,
-                isFullAccess: false,
-                forUser: true,
-                backRoute: SearchEntityPage(),
-                isOnlineToken: enableVideoChat)));
+        // Check if forms are not in deleted state
+
+        for (var form in metaEntity.forms) {
+          if (form.isActive) {
+            showForm = true;
+          }
+        }
+        if (showForm) {
+          //Show Booking request form SELECTION page
+          Navigator.of(context).push(new MaterialPageRoute(
+              builder: (BuildContext context) => BookingFormSelection(
+                  entityId: metaEntity.entityId,
+                  entity: null,
+                  preferredSlotTime: selectedSlot.dateTime,
+                  isFullAccess: false,
+                  forUser: true,
+                  backRoute: SearchEntityPage(),
+                  isOnlineToken: enableVideoChat)));
+        }
       }
-    } else {
+    }
+    if (!showForm) {
       Utils.showMyFlushbar(
           context,
           Icons.info_outline,
