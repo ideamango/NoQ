@@ -1,4 +1,6 @@
+import 'package:LESSs/services/url_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../login_page.dart';
@@ -55,22 +57,63 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              Container(
-                  padding: EdgeInsets.all(0),
-                  height: MediaQuery.of(context).size.height * .3,
-                  child: Image.asset('assets/privacy.png')),
-              RichText(
-                text:
-                    TextSpan(style: highlightSubTextStyle, children: <TextSpan>[
-                  TextSpan(text: privacyPolicy),
-                ]),
-              ),
-            ],
+        body: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(12),
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Card(
+                  elevation: 8,
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      children: [
+                        Container(
+                            padding: EdgeInsets.all(0),
+                            height: MediaQuery.of(context).size.height * .35,
+                            child: Image.asset('assets/privacy.png')),
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          child: RichText(
+                            text: TextSpan(
+                                style: documentTextStyle,
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: privacyPolicy1,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(text: privacyPolicy2),
+                                  TextSpan(
+                                    text: " Read Privacy Policy",
+                                    style: TextStyle(color: Colors.blue),
+                                    recognizer: new TapGestureRecognizer()
+                                      ..onTap = () => launchUri(
+                                          "https://bigpiq.com/products/LESSs/privacy-policy.html"),
+                                  ),
+                                ]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Card(
+                //   elevation: 8,
+                //   child: Container(
+                //     padding: EdgeInsets.all(8),
+                //     color: Colors.blue[50],
+                //     child: RichText(
+                //       text:
+                //           TextSpan(style: documentTextStyle, children: <TextSpan>[
+                //         TextSpan(text: privacyPolicy2),
+                //       ]),
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
           ),
         ),
       ),

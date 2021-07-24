@@ -1,5 +1,7 @@
+import 'package:LESSs/services/url_services.dart';
 import 'package:LESSs/widget/page_animation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../login_page.dart';
@@ -55,22 +57,56 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              Container(
-                  padding: EdgeInsets.all(0),
-                  height: MediaQuery.of(context).size.height * .3,
-                  child: Image.asset('assets/terms.png')),
-              RichText(
-                text:
-                    TextSpan(style: highlightSubTextStyle, children: <TextSpan>[
-                  TextSpan(text: agreement),
-                ]),
-              ),
-            ],
+        body: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(12),
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Card(
+                  elevation: 8,
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      children: [
+                        Container(
+                            padding: EdgeInsets.all(0),
+                            height: MediaQuery.of(context).size.height * .35,
+                            child: Image.asset('assets/terms.png')),
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          child: RichText(
+                            text: TextSpan(
+                                style: documentTextStyle,
+                                children: <TextSpan>[
+                                  TextSpan(text: agreement1),
+                                  TextSpan(text: agreement2),
+                                  TextSpan(
+                                    text: agreement3,
+                                    style: TextStyle(color: Colors.blue),
+                                    recognizer: new TapGestureRecognizer()
+                                      ..onTap = () => launchUri(
+                                          "https://bigpiq.com/products/LESSs/terms-of-use.html"),
+                                  ),
+                                  TextSpan(text: agreement4),
+                                  TextSpan(
+                                    text: agreement5,
+                                    style: TextStyle(color: Colors.blue),
+                                    recognizer: new TapGestureRecognizer()
+                                      ..onTap = () => launchUri(
+                                          "https://bigpiq.com/products/LESSs/privacy-policy.html"),
+                                  ),
+                                  TextSpan(text: agreement6),
+                                ]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

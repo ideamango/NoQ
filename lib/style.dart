@@ -254,6 +254,11 @@ final highlightSubTextStyle = TextStyle(
     fontFamily: 'RalewayRegular',
     fontSize: 12.0,
     height: 1.5);
+final documentTextStyle = TextStyle(
+    color: Colors.blueGrey[900],
+    fontFamily: 'Roboto',
+    fontSize: 16.0,
+    height: 1.5);
 final msgDialogTextStyle = TextStyle(
     color: Colors.black,
     fontFamily: 'RalewayRegular',
@@ -265,7 +270,10 @@ final userAccountHeadingTextStyle = TextStyle(
     fontSize: 15.0,
     height: 1.5);
 final shareAppTextStyle = TextStyle(
-    color: Colors.blueGrey[900], fontFamily: 'Roboto', fontSize: 14.0);
+    color: Colors.blueGrey[900],
+    fontFamily: 'Roboto',
+    fontSize: 15.0,
+    height: 1.5);
 final placeDetailsHeadingTextStyle = TextStyle(
     color: primaryDarkColor, fontFamily: 'Montserrat', fontSize: 14.0);
 final placeDetailsHeadingSml = TextStyle(
