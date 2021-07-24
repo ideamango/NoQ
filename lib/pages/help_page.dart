@@ -85,9 +85,7 @@ class _HelpPageState extends State<HelpPage> {
                                   text: TextSpan(
                                       style: highlightSubTextStyle,
                                       children: <TextSpan>[
-                                    TextSpan(
-                                        text:
-                                            'Below you will find all the help to use LESSs like a pro. Still if you didn\'t find the answer you are looking for, feel free to drop a message to us at '),
+                                    TextSpan(text: faqHeadline),
                                     TextSpan(
                                       text: 'care@bigpiq.com',
                                       style: TextStyle(color: Colors.blue),

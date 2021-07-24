@@ -771,12 +771,12 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
   }
 
   Future<void> shareQR() async {
-    Directory tempDir = await getApplicationDocumentsDirectory();
+    Directory tempDir = await getTemporaryDirectory();
     RenderRepaintBoundary boundary = upiKey.currentContext.findRenderObject();
     var image = await boundary.toImage();
     ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
     Uint8List pngBytes = byteData.buffer.asUint8List();
-    tempDir = await getApplicationDocumentsDirectory();
+    tempDir = await getTemporaryDirectory();
     // final file =
     //     await new File('${tempDir.path}/qrcodeForShare.png').create();
     final file = new File('${tempDir.path}/bigpiq_gpay.jpg');

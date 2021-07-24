@@ -126,7 +126,7 @@ class GenerateScreenState extends State<GenerateScreen> {
       var image = await boundary.toImage();
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
-      tempDir = await getApplicationDocumentsDirectory();
+      tempDir = await getTemporaryDirectory();
       // final file =
       //     await new File('${tempDir.path}/qrcodeForShare.png').create();
       final file = new File('${tempDir.path}/qrcodeForShare.png');

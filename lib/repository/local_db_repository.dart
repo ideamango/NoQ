@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 Future<String> get localPath async {
-  final directory = await getApplicationDocumentsDirectory();
+  final directory = await getTemporaryDirectory();
   return directory.path;
 }
 

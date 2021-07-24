@@ -464,7 +464,8 @@ String ourStory8_1 =
 String ourStory8_2 = ' donation-based model';
 String ourStory8_3 =
     ''' to pay for the operational cost, through which we can continue to help our society and make it a better place for everyone.  ''';
-
+String faqHeadline =
+    'Below you will find all the help to use LESSs like a pro. Still if you didn\'t find the answer you are looking for, feel free to drop a message to us at ';
 String agreement1 = '''Welcome to LESSs mobile application.''';
 String agreement2 = '\n\nPlease carefully read the';
 String agreement3 = ' Terms of Use (here)';

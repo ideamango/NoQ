@@ -2152,7 +2152,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
                 String targetFileName =
                     '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
-print(targetFileName);
+                print(targetFileName);
                 String targetPath =
                     await uploadFilesToServer(path, targetFileName);
                 print(targetPath);
