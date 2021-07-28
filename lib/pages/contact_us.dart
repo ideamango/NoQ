@@ -181,7 +181,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
               child: new DropdownButton(
                 hint: new Text(
                   'Select',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 16),
                 ),
                 value: _reasonType,
                 isDense: true,
@@ -243,7 +243,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           'Your Feedback is Appreciated',
                           style: TextStyle(
                               color: Colors.blueGrey[800],
-                              fontFamily: 'RalewayRegular',
+                              fontFamily: 'AkkuratPro',
                               fontSize: 17.0),
                         ),
                         verticalSpacer,
@@ -256,22 +256,22 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 style: TextStyle(
                                     height: 1.3,
                                     color: Colors.blueGrey[800],
-                                    fontFamily: 'RalewayRegular',
-                                    fontSize: 13.0),
+                                    fontFamily: 'AkkuratPro',
+                                    fontSize: 14.0),
                                 children: <TextSpan>[
                               //TextSpan(text: contactUsPageHeadline),
                               TextSpan(text: contactUsLine1),
                               TextSpan(
                                   text: contactUsLine2,
                                   style: TextStyle(
-                                    fontSize: 13,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                   )),
                               TextSpan(text: contactUsLine3),
                               TextSpan(
                                   text: contactUsLine4,
                                   style: TextStyle(
-                                    fontSize: 13,
+                                    fontSize: 14,
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w600,
                                   )),
@@ -279,7 +279,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                               TextSpan(
                                   text: contactUsLine6,
                                   style: TextStyle(
-                                    fontSize: 13,
+                                    fontSize: 14,
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w600,
                                   )),
@@ -315,7 +315,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
                                 decoration: InputDecoration(
                                   labelText: 'Enter your message here..',
-                                  labelStyle: TextStyle(fontSize: 18),
+                                  labelStyle: TextStyle(fontSize: 15),
                                   enabledBorder: OutlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.grey)),

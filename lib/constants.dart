@@ -143,6 +143,8 @@ String whatsappVideoToUser_2 =
     "\n\nAre you ready for the Online Consultation. \nShall we start call?";
 String whatsappVideoToPlaceOwner_2 =
     "\n\nI am ready for the online consultation. \nShall we start call?";
+
+String whatsappMessageFromUser = "Hello";
 String whatsappMessage =
     "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your peace of mind with LESSs mobile app. \nBook your slot when it's Less crowded and Stay Safe!!";
 String videoCallWhatsappMsg = "LESSs: Video Call ";
@@ -417,12 +419,81 @@ String upiShareTitle = 'Share UPI title';
 String upiShareBody = 'Share UPI body';
 
 String faqHead1 = "How LESSs helps bring Sukoon to your life?";
-String faqHead1Sub1 = "Lets look at the problems first..";
-String faqHead1Sub2 = "How this app helps?";
+String faq1 = "Why use LESSs?";
+String faqAns1 =
+    '''There is not just one, but numerous reasons how this helps you. Here is how - Maintaing social distance is need of the hour. Sometimes just unavoidable when you visit your favourite grocery store for example, you see people standing in queue and wait-time could be anything from 10 mins to an hour. Another problem is, Shopping at place this crowded is not at all advisable. So, Not just you waste your precious time in waiting but also risk exposing yourself to virus(Covid-19).''';
+
+String faq2 = "Where LESSs can be used? ";
+String faqAns2 =
+    '''We have listed few places where we felt pre-planning and booking time-slot would be help. But owner of any place where crowd is expected and pre-panning would be of help, would definitely can be added here for benefit of all. Few Examples of Places are Shopping Marts, Gaming Zones in Mall, Apartment amenities such as Lawn Tennis Court, Grocery Store, Gym, Local vegetable vendor etc.''';
 String faqHead2 = "Registration";
-String faqHead2Sub1 = "Registration";
-String faqHead2Sub2 = "How do I register?";
-String faqHead2Sub3 = "Would I be charged?";
+String faq3 = "How do I login? ";
+String faqAns3 =
+    '''Registering with us is very simple and safe. We just ask for your phone number and NO other details will be asked. After providing your number, you will recieve an OTP on your phone number, just enter that and Done!! ''';
+
+String faq4 = "What are the charges for booking tokens? ";
+String faqAns4 =
+    '''There is absolutely no charge for registration or for using this app. However, If you like our work, you can always donate any amount as per your wish to keep us motivated.''';
+String faqAns4_2 = 'Click here to donate!!';
+String faq5 =
+    'Can I use same login if I need to book token for a family member? ';
+String faqAns5 =
+    'Yes, definitely. You can use your login and book tokens for your family. The maximum tokens booked per day would be as per the limit set by the place.';
+String faq6 = 'Can I use same mobile number for multiple Profiles/ Users?';
+String faqAns6 = 'Each phone number can be associated with one account only. ';
+
+String faqHead3 = "How to Use";
+String faq7 = "How to find the place where I am planning to go? ";
+String faqAns7 = "";
+String faq8 = "Cannot find the place I was planning to visit? ";
+String faqAns8 =
+    '''You can contact us and leave message about the same. We will try our best to get them onboard.Our ultimate purpose is to help create safe environment for all.''';
+String faq9 = "How to book a time-slot? ";
+String faqAns9 =
+    'You can search for different places using \'Search\' feature. Futher, select date and time when you are planing to visit that place. See how many people have booked that slot, in case, u decide to visit the place when less people are visiting you can just so do it. \nNow, visit store conveniently at booked time and avoid all that rush!!';
+String faq10 = "How to contact the Admin of the place? ";
+String faqAns10 = "";
+String faq11 =
+    "Can I share some important notes with the Admin of place, before I visit? ";
+String faqAns11 = "";
+String faq12 = "How to fill online forms for a place? ";
+String faqAns12 = "";
+String faqHead4 = "Business";
+String faq13 = "Why should I register my Business on LESSs? ";
+String faqAns13 = "";
+String faq14 = "How do I register my Business? ";
+String faqAns14 =
+    '''Business can only be added by person who is either owner or authorized to manage the place. Using "Manage your Places" option, you can add the business and all details like opening/closing time, location of the place, number of people allowed in a time-slot to minimise crowd inside place.\nFill all other important details. If your business has whatsapp contact, on-call contact person, please provide that too, that would help customers to contact you.''';
+String faqAns14_2 = '\nClick here to register your business!!';
+String faq15 =
+    "Is it possible to have an idea how many customers/ visitors will be expected in a day or say at one time?";
+String faqAns15 = "";
+String faq16 =
+    "What are application request forms, and how does it help my business? ";
+String faqAns16 = "";
+String faq17 = "Cannot find the application form in pre-defined templates. ";
+String faqAns17 = "";
+String faq18 = "Where can I see all the applications submitted by user? ";
+String faqAns18 = "";
+String faq19 =
+    "What if I cannot cater to all the applications received for a day or a given time-slot?";
+String faqAns19 = "";
+String faq20 =
+    "Can I create different profiles for executives and managers for my place?";
+String faqAns20 = "";
+String faq21 = "What to do if an executive/manager leaves my place?";
+String faqAns21 = "";
+String faq22 = "How do I publish applications forms for my place?";
+String faqAns22 = "";
+String faq23 = "What should I do we need to close the place for few days?";
+String faqAns23 = "";
+String faqHead5 = "Exit LESSs";
+
+String faq24 = "How to delete my profile from LESSs?";
+String faqAns24 = "";
+String faq25 =
+    "How do I delete my place if I do not want to use the platform further?";
+String faqAns25 = "";
 
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = ['Admin', 'Manager'];
@@ -465,7 +536,7 @@ String ourStory8_2 = ' donation-based model';
 String ourStory8_3 =
     ''' to pay for the operational cost, through which we can continue to help our society and make it a better place for everyone.  ''';
 String faqHeadline =
-    'Below you will find all the help to use LESSs like a pro. Still if you didn\'t find the answer you are looking for, feel free to drop a message to us at ';
+    'These are frequently asked questions, still if you didn\'t find the answer you are looking for, feel free to drop a message to us at ';
 String agreement1 = '''Welcome to LESSs mobile application.''';
 String agreement2 = '\n\nPlease carefully read the';
 String agreement3 = ' Terms of Use (here)';

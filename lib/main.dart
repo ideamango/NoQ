@@ -60,9 +60,9 @@ class MyHome extends StatelessWidget {
           textTheme: TextTheme(
             headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
             subtitle1: TextStyle(
-                color: Colors.indigo,
-                fontSize: 36.0,
-                fontStyle: FontStyle.italic),
+              color: Colors.indigo,
+              fontSize: 36.0,
+            ),
             bodyText1: TextStyle(
                 color: Colors.indigo, fontSize: 14.0, fontFamily: 'Monsterrat'),
           ),

@@ -25,7 +25,7 @@ Future<String> showTokenAlert(BuildContext context, String msg, String tokenNo,
                     tokenHeading,
                     style: TextStyle(
                         color: primaryDarkColor,
-                        fontFamily: 'Monsterrat',
+                        fontFamily: 'AkkuratPro',
                         fontSize: 18.0),
                   ),
                   Divider(color: Colors.blueGrey[400], height: 1),

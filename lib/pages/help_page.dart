@@ -28,10 +28,12 @@ class _HelpPageState extends State<HelpPage> {
   GlobalState _gs;
   String upiId;
   String upiQrImgPath;
+  String emailId;
   @override
   void initState() {
     getGlobalState().then((gs) {
       _gs = gs;
+      emailId = _gs.getConfigurations().contactEmail;
       upiId = _gs.getConfigurations().upi;
       upiQrImgPath = "assets/bigpiq_gpay.jpg";
       upiId = upiId;
@@ -53,7 +55,7 @@ class _HelpPageState extends State<HelpPage> {
 
   @override
   Widget build(BuildContext context) {
-    String title = "How can we help you?";
+    String title = "Help Center";
     return WillPopScope(
       child: Scaffold(
         appBar: CustomAppBarWithBackButton(
@@ -69,7 +71,7 @@ class _HelpPageState extends State<HelpPage> {
                   Card(
                     elevation: 20,
                     child: Container(
-                        height: MediaQuery.of(context).size.height * .3,
+                        height: MediaQuery.of(context).size.height * .2,
                         child: Image.asset('assets/faq.png')),
                   ),
                   Card(
@@ -83,11 +85,12 @@ class _HelpPageState extends State<HelpPage> {
                               padding: EdgeInsets.all(5),
                               child: RichText(
                                   text: TextSpan(
-                                      style: highlightSubTextStyle,
+                                      style:
+                                          TextStyle(fontFamily: "AkkuratPro"),
                                       children: <TextSpan>[
                                     TextSpan(text: faqHeadline),
                                     TextSpan(
-                                      text: 'care@bigpiq.com',
+                                      text: emailId,
                                       style: TextStyle(color: Colors.blue),
                                       recognizer: new TapGestureRecognizer()
                                         ..onTap = () => Navigator.push(
@@ -124,52 +127,24 @@ class _HelpPageState extends State<HelpPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text(faqHead1Sub1, style: textLabelTextStyle),
+                                  Text(faq1, style: faqQuesStyle),
                                   verticalSpacer,
                                   RichText(
                                       text: TextSpan(
-                                          style: highlightSubTextStyle,
+                                          style: faqAnsStyle,
                                           children: <TextSpan>[
-                                        TextSpan(
-                                            text:
-                                                'There is not just one, but numerous reasons how this helps you. Here is how - '),
-                                        TextSpan(
-                                            text:
-                                                'Maintaing social distance is need of the hour. Sometimes just unavoidable when you visit your '),
-                                        TextSpan(
-                                            text:
-                                                'favourite grocery store for example, you see people standing in queue and wait-time could be anything from 10 mins to an hour.'),
-                                        TextSpan(
-                                            text:
-                                                'Another problem is, Shopping at place this crowded is not at all advisable.'),
-                                        TextSpan(
-                                            text:
-                                                'So, Not just you waste your precious time in waiting but also expose yourself to virus(Covid-19).'),
+                                        TextSpan(text: faqAns1),
                                       ])),
                                   verticalSpacer,
                                   myDivider,
                                   verticalSpacer,
-                                  Text(faqHead1Sub2, style: textLabelTextStyle),
+                                  Text(faq2, style: faqQuesStyle),
                                   verticalSpacer,
                                   RichText(
                                       text: TextSpan(
-                                          style: highlightSubTextStyle,
+                                          style: faqAnsStyle,
                                           children: <TextSpan>[
-                                        TextSpan(
-                                            text:
-                                                'The idea to is plan your visits well ahead so that shopping doesnt become unsafe for you.'),
-                                        TextSpan(
-                                            text:
-                                                'Now, How do we do this. We lists different places like Shopping Marts, Gaming Zones, Offices, Apartments, Medical Stores, etc'),
-                                        TextSpan(
-                                            text:
-                                                ' where you might visit frequently. Dates and available time slots will be shown, you can select time and date as per your convenience.  '),
-                                        TextSpan(
-                                            text:
-                                                ' So, Now when you visit at your pre-booked time, you dont have to wait and second as limited people would be allowed in a given time slot, it '),
-                                        TextSpan(
-                                            text:
-                                                ' much easier to maintain distance and be safe.'),
+                                        TextSpan(text: faqAns2),
                                       ])),
                                   verticalSpacer,
                                 ],
@@ -199,36 +174,26 @@ class _HelpPageState extends State<HelpPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text(faqHead2Sub2, style: textLabelTextStyle),
+                                  Text(faq3, style: faqQuesStyle),
                                   verticalSpacer,
                                   RichText(
                                       text: TextSpan(
-                                          style: highlightSubTextStyle,
+                                          style: faqAnsStyle,
                                           children: <TextSpan>[
-                                        TextSpan(
-                                            text:
-                                                'Registering with us is very simple and safe. We just ask for your phone number and NO other details will be asked. After providing your number, you will recieve an OTP on your '),
-                                        TextSpan(
-                                            text:
-                                                'phone number, just enter that and Done!!'),
+                                        TextSpan(text: faqAns3),
                                       ])),
                                   verticalSpacer,
                                   myDivider,
                                   verticalSpacer,
-                                  Text(faqHead2Sub3, style: textLabelTextStyle),
+                                  Text(faq4, style: faqQuesStyle),
                                   verticalSpacer,
                                   RichText(
                                       text: TextSpan(
-                                          style: highlightSubTextStyle,
+                                          style: faqAnsStyle,
                                           children: <TextSpan>[
+                                        TextSpan(text: faqAns4),
                                         TextSpan(
-                                            text:
-                                                'There is absolutely no charge for registration or for using this app. '),
-                                        TextSpan(
-                                            text:
-                                                'However, If you like our work, you can always donate any amount as per your wish to keep us motivated. '),
-                                        TextSpan(
-                                          text: 'Click here to donate!!',
+                                          text: faqAns4_2,
                                           style: new TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -254,17 +219,24 @@ class _HelpPageState extends State<HelpPage> {
                                   verticalSpacer,
                                   myDivider,
                                   verticalSpacer,
-                                  Text(
-                                      'Can I have multiple accounts with same phone number?',
-                                      style: textLabelTextStyle),
+                                  Text(faq5, style: faqQuesStyle),
                                   verticalSpacer,
                                   RichText(
                                       text: TextSpan(
-                                          style: highlightSubTextStyle,
+                                          style: faqAnsStyle,
                                           children: <TextSpan>[
-                                        TextSpan(
-                                            text:
-                                                'Each phone number can be associated with one account only. '),
+                                        TextSpan(text: faqAns5),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq6, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns6),
                                       ])),
                                   verticalSpacer
                                 ],
@@ -294,70 +266,123 @@ class _HelpPageState extends State<HelpPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text('Which all places can we book a slot?',
-                                      style: textLabelTextStyle),
+                                  Text(faq7, style: faqQuesStyle),
                                   verticalSpacer,
                                   RichText(
                                       text: TextSpan(
-                                          style: highlightSubTextStyle,
+                                          style: faqAnsStyle,
                                           children: <TextSpan>[
-                                        TextSpan(
-                                            text:
-                                                'We have listed few places where we felt pre-planning and booking time-slot would be help. But owner of any place where crowd '),
-                                        TextSpan(
-                                            text:
-                                                'is expected and pre-panning would be of help, would definitely can be added here for benefit of all. '),
-                                        TextSpan(
-                                            text:
-                                                'Few Examples of Places are Shopping Marts, Gaming Zones in Mall, Apartment amenities such as Lawn Tennis Court, Grocery Store, Gym, Local vegetable vendor etc.'),
+                                        TextSpan(text: faqAns7),
                                       ])),
                                   verticalSpacer,
                                   myDivider,
                                   verticalSpacer,
-                                  Text('How to book a time-slot?',
-                                      style: textLabelTextStyle),
+                                  Text(faq8, style: faqQuesStyle),
                                   verticalSpacer,
                                   RichText(
                                       text: TextSpan(
-                                          style: highlightSubTextStyle,
+                                          style: faqAnsStyle,
                                           children: <TextSpan>[
-                                        TextSpan(
-                                            text:
-                                                'You can search for different places using \'Search\' feature. Futher, select date and time when you are planing to'),
-                                        TextSpan(
-                                            text:
-                                                'visit that place. See how many people have booked that slot, in case, u decide to visit the place when less people are visiting '),
-                                        TextSpan(
-                                            text:
-                                                'you can just so do it. Now, visit store conveniently at booked time and avoid all that rush!!'),
+                                        TextSpan(text: faqAns8),
                                       ])),
                                   verticalSpacer,
                                   myDivider,
                                   verticalSpacer,
-                                  Text('How can I list my business/place here?',
-                                      style: textLabelTextStyle),
+                                  Text(faq9, style: faqQuesStyle),
                                   verticalSpacer,
                                   RichText(
                                       text: TextSpan(
-                                          style: highlightSubTextStyle,
+                                          style: faqAnsStyle,
                                           children: <TextSpan>[
                                         TextSpan(
-                                            text:
-                                                'Business can only be added by person who is either owner or authorized to manage the place. Using "Manage your Places" option, '),
+                                          text: faqAns9,
+                                        ),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq10, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns10),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq11, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns11),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq12, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns12),
+                                      ])),
+                                  verticalSpacer,
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+                  Card(
+                      elevation: 20,
+                      child: Container(
+                        // padding: EdgeInsets.all(8),
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                                height: MediaQuery.of(context).size.width * .08,
+                                width: MediaQuery.of(context).size.width,
+                                padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                                alignment: Alignment.center,
+                                decoration: btnColorContainer,
+                                child: Text(
+                                  faqHead4,
+                                  style: whiteBoldTextStyle1,
+                                )),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(faq13, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns13),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq14, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns14),
                                         TextSpan(
-                                            text:
-                                                'you can add the business and all details like opening/closing time, location of the place, number of people allowed in a time-slot to minimise crowd inside place.'),
-                                        TextSpan(
-                                            text:
-                                                'Fill all other important details. If your business has whatsapp contact, on-call contact person, please provide that too, that would help customers to contact you.'),
-                                        TextSpan(
-                                          text:
-                                              '\nClick here to register your business!!',
+                                          text: faqAns14_2,
                                           style: new TextStyle(
                                               color: highlightColor),
                                           recognizer: new TapGestureRecognizer()
                                             ..onTap = () {
-                                              //TODO: Smita- add payments options google pay  etc
                                               Navigator.pop(context);
                                               Navigator.push(
                                                   context,
@@ -370,28 +395,154 @@ class _HelpPageState extends State<HelpPage> {
                                   verticalSpacer,
                                   myDivider,
                                   verticalSpacer,
-                                  Text(
-                                      'Cannot find my favourite places here, what to do?',
-                                      style: textLabelTextStyle),
+                                  Text(faq15, style: faqQuesStyle),
                                   verticalSpacer,
                                   RichText(
                                       text: TextSpan(
-                                          style: highlightSubTextStyle,
+                                          style: faqAnsStyle,
                                           children: <TextSpan>[
-                                        TextSpan(
-                                            text:
-                                                'You can contact us and leave message about the same. We will try our best to get them onboard.'),
-                                        TextSpan(
-                                            text:
-                                                'Our ultimate purpose is to help create safe environment for all.'),
+                                        TextSpan(text: faqAns15),
                                       ])),
-                                  verticalSpacer
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq16, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns16),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq17, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns17),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq18, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns18),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq19, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns19),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq20, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns20),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq21, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns21),
+                                      ])),
+                                  verticalSpacer,
+                                  myDivider,
+                                  verticalSpacer,
+                                  Text(faq22, style: faqQuesStyle),
+                                  verticalSpacer,
+                                  RichText(
+                                      text: TextSpan(
+                                          style: faqAnsStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(text: faqAns22),
+                                      ])),
+                                  verticalSpacer,
                                 ],
                               ),
                             ),
                           ],
                         ),
                       )),
+                  Card(
+                    elevation: 20,
+                    child: Container(
+                      // padding: EdgeInsets.all(8),
+                      child: Column(children: <Widget>[
+                        Container(
+                            height: MediaQuery.of(context).size.width * .08,
+                            width: MediaQuery.of(context).size.width,
+                            padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                            alignment: Alignment.center,
+                            decoration: btnColorContainer,
+                            child: Text(
+                              faqHead4,
+                              style: whiteBoldTextStyle1,
+                            )),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(faq23, style: faqQuesStyle),
+                                verticalSpacer,
+                                RichText(
+                                    text: TextSpan(
+                                        style: faqAnsStyle,
+                                        children: <TextSpan>[
+                                      TextSpan(text: faqAns23),
+                                    ])),
+                                verticalSpacer,
+                                myDivider,
+                                verticalSpacer,
+                                Text(faq24, style: faqQuesStyle),
+                                verticalSpacer,
+                                RichText(
+                                    text: TextSpan(
+                                        style: faqAnsStyle,
+                                        children: <TextSpan>[
+                                      TextSpan(text: faqAns24),
+                                    ])),
+                                verticalSpacer,
+                                myDivider,
+                                verticalSpacer,
+                                Text(faq25, style: faqQuesStyle),
+                                verticalSpacer,
+                                RichText(
+                                    text: TextSpan(
+                                        style: faqAnsStyle,
+                                        children: <TextSpan>[
+                                      TextSpan(text: faqAns25),
+                                    ])),
+                                verticalSpacer,
+                              ]),
+                        ),
+                      ]),
+                    ),
+                  ),
                 ],
               ),
             ])),

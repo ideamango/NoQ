@@ -39,7 +39,7 @@ class _HowToRegForBusinessState extends State<HowToRegForBusiness> {
                     padding: EdgeInsets.all(0),
                     child: VideoPlayerApp(
                       videoNwLink:
-                          'https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/search_book.mp4?alt=media&token=168009a3-b6f5-4e7f-86d3-12c5770051c2',
+                          'https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/draft.mp4?alt=media&token=8eaf16be-ca3b-4ace-9d81-5fc01fa0402a',
                     ),
                   ),
                 ),

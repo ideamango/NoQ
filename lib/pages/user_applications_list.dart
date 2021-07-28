@@ -1996,8 +1996,8 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                                 style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'RalewayRegular'),
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                             Container(

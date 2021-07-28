@@ -56,11 +56,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       //   "name": "View Business Statistics",
       //   "pageRoute": InfoPageForBusinesses(),
       // },
-      {
-        "icon": Icons.help_outline,
-        "name": "FAQs",
-        "pageRoute": HelpPage(),
-      },
+
       {
         "icon": Icons.contact_mail,
         "name": "Contact Us",
@@ -82,6 +78,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
         "icon": Icons.description,
         "name": "Terms of use",
         "pageRoute": TermsOfUsePage(),
+      },
+      {
+        "icon": Icons.help_outline,
+        "name": "Help",
+        "pageRoute": HelpPage(),
       },
       {
         "icon": Icons.info,

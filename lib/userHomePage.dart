@@ -584,17 +584,18 @@ class _UserHomePageState extends State<UserHomePage>
                                   Container(
                                     margin: EdgeInsets.all(10),
                                     child: MaterialButton(
+                                      elevation: 8,
                                       shape: RoundedRectangleBorder(
                                           side: BorderSide(
-                                              color: Colors.blueGrey),
+                                              color: Colors.blueGrey[700]),
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(3.0))),
+                                              Radius.circular(5.0))),
                                       child: Column(
                                         children: [
                                           Text('Show more Tokens',
                                               style: TextStyle(
                                                   fontSize: 15,
-                                                  color: Colors.blue)),
+                                                  color: btnColor)),
                                         ],
                                       ),
                                       onPressed: () {

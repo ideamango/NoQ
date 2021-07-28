@@ -178,9 +178,9 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                           "Select the purpose for submitting application request",
                           style: TextStyle(
                             color: Colors.blueGrey[700],
-                            fontFamily: 'RalewayRegular',
+                            fontFamily: 'Akkurat',
                             letterSpacing: 0.5,
-                            fontSize: 12.0,
+                            fontSize: 13.0,
                             //height: 2,
                           ),
                         ),
@@ -229,7 +229,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                                                 forms[index]
                                                                     .isActive)
                                                             ? ""
-                                                            : "(Deleted)"),
+                                                            : " (Deleted)"),
                                                     maxLines: null,
                                                     style: TextStyle(
                                                       color: (_selectedValue ==
@@ -239,8 +239,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                                               .blueGrey[600],
                                                       fontWeight:
                                                           FontWeight.w600,
-                                                      fontFamily:
-                                                          'RalewayRegular',
+                                                      fontFamily: 'Akkurat',
                                                       letterSpacing: 0.5,
                                                       fontSize: 14.0,
                                                       //height: 2,

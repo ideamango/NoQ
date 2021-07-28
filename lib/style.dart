@@ -151,7 +151,7 @@ final lightSubTextStyle = TextStyle(
 final textInputTextStyle = TextStyle(
   color: Colors.blueGrey[700],
   // fontWeight: FontWeight.w800,
-  fontFamily: 'Monsterrat',
+  fontFamily: 'AkkuratPro',
   letterSpacing: 0.5,
   fontSize: 15.0,
   //height: 2,
@@ -251,13 +251,24 @@ final Color btnDisabledolor = Colors.blueGrey[200];
 final Color highlightText = Colors.blueGrey[800];
 final highlightSubTextStyle = TextStyle(
     color: Colors.black87,
-    fontFamily: 'RalewayRegular',
-    fontSize: 12.0,
+    fontFamily: 'AkkuratPro',
+    fontSize: 14.0,
     height: 1.5);
+
 final documentTextStyle = TextStyle(
+    color: Colors.blueGrey[900],
+    fontFamily: 'AkkuratPro',
+    fontSize: 15.0,
+    height: 1.5);
+final faqQuesStyle = TextStyle(
     color: Colors.blueGrey[900],
     fontFamily: 'Roboto',
     fontSize: 16.0,
+    height: 1.5);
+final faqAnsStyle = TextStyle(
+    color: Colors.blueGrey[700],
+    fontFamily: 'Roboto',
+    fontSize: 14.0,
     height: 1.5);
 final msgDialogTextStyle = TextStyle(
     color: Colors.black,
@@ -271,7 +282,7 @@ final userAccountHeadingTextStyle = TextStyle(
     height: 1.5);
 final shareAppTextStyle = TextStyle(
     color: Colors.blueGrey[900],
-    fontFamily: 'Roboto',
+    fontFamily: 'AkkuratPro',
     fontSize: 15.0,
     height: 1.5);
 final placeDetailsHeadingTextStyle = TextStyle(
@@ -286,17 +297,20 @@ final linkTextStyle = TextStyle(
 final tokenTextStyle = TextStyle(
     color: highlightColor,
     //fontWeight: FontWeight.w600,
-    fontFamily: 'Montserrat',
+    fontFamily: '',
     letterSpacing: 3,
     // decoration: TextDecoration.underline,
     fontSize: 15.0);
 
 final tokenDataTextStyle = TextStyle(
-    fontFamily: 'RalewayRegular', fontSize: 12, color: primaryAccentColor);
+    fontFamily: 'AkkuratThin',
+    fontSize: 13,
+    height: 1.5,
+    color: primaryAccentColor);
 final tokenDateTextStyle = TextStyle(
     color: Colors.white,
     // fontWeight: FontWeight.w500,
-    fontFamily: 'Montserrat',
+    fontFamily: 'AkkuratPro',
     fontSize: 15.0);
 final appBarTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 25.0);

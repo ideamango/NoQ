@@ -611,8 +611,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   }
                 }),
             hintText: "Search by Name of Business/Place",
-            hintStyle:
-                new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+            hintStyle: new TextStyle(
+              fontSize: 14,
+              color: Colors.blueGrey[500],
+            )),
         onChanged: (value) {
           if (_searchTextController.text.isEmpty) {
             if (_entityType == null)
@@ -1533,7 +1535,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       if (str.whatsapp != null && str.whatsapp != "") {
                         try {
                           launchWhatsApp(
-                              message: whatsappMessage, phone: str.whatsapp);
+                              message: whatsappMessageFromUser,
+                              phone: str.whatsapp);
                         } catch (error) {
                           Utils.showMyFlushbar(
                               context,

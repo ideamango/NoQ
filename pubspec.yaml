@@ -172,9 +172,12 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-      - family: AnandaNamaste
+      - family: AkkuratPro
         fonts:
-          - asset: fonts/AnandaNamaste.ttf 
+          - asset: fonts/AkkRg_Pro_1.otf
+      - family: AkkuratThin
+        fonts:
+          - asset: fonts/AkkLg_Pro_Thin_1.otf
       - family: RalewayRegular
         fonts:
           - asset: fonts/Raleway-Regular.ttf      

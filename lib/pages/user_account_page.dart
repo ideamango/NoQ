@@ -1178,7 +1178,10 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               horizontalSpacer,
                                               Text(
                                                 ' Rate the app',
-                                                style: TextStyle(fontSize: 12),
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: "AkkuratPro",
+                                                ),
                                                 textAlign: TextAlign.center,
                                               ),
                                             ])),
@@ -1223,7 +1226,10 @@ class _UserAccountPageState extends State<UserAccountPage>
                                             horizontalSpacer,
                                             Text(
                                               'Invite friends',
-                                              style: TextStyle(fontSize: 12),
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: "AkkuratPro",
+                                              ),
                                               textAlign: TextAlign.center,
                                             ),
                                           ]),
@@ -1338,19 +1344,19 @@ class _UserAccountPageState extends State<UserAccountPage>
                                             loadMoreApplicationsMsg) &&
                                         !noAppls)
                                       Container(
-                                        margin: EdgeInsets.all(10),
+                                        margin: EdgeInsets.only(bottom: 10),
                                         child: MaterialButton(
                                           shape: RoundedRectangleBorder(
                                               side: BorderSide(
-                                                  color: Colors.blueGrey),
+                                                  color: Colors.blueGrey[700]),
                                               borderRadius: BorderRadius.all(
-                                                  Radius.circular(3.0))),
+                                                  Radius.circular(5.0))),
                                           child: Column(
                                             children: [
                                               Text('Show more Applications',
                                                   style: TextStyle(
                                                       fontSize: 15,
-                                                      color: Colors.blue)),
+                                                      color: btnColor)),
                                             ],
                                           ),
                                           onPressed: () {
@@ -1444,15 +1450,15 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         child: MaterialButton(
                                           shape: RoundedRectangleBorder(
                                               side: BorderSide(
-                                                  color: Colors.blueGrey),
+                                                  color: Colors.blueGrey[700]),
                                               borderRadius: BorderRadius.all(
-                                                  Radius.circular(3.0))),
+                                                  Radius.circular(5.0))),
                                           child: Column(
                                             children: [
                                               Text('Show more Tokens',
                                                   style: TextStyle(
                                                       fontSize: 15,
-                                                      color: Colors.blue)),
+                                                      color: btnColor)),
                                             ],
                                           ),
                                           onPressed: () {
@@ -1549,17 +1555,18 @@ class _UserAccountPageState extends State<UserAccountPage>
                                             child: MaterialButton(
                                               shape: RoundedRectangleBorder(
                                                   side: BorderSide(
-                                                      color: Colors.blueGrey),
+                                                      color: Colors
+                                                          .blueGrey[700]),
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(
-                                                              3.0))),
+                                                              5.0))),
                                               child: Column(
                                                 children: [
                                                   Text('Show more Tokens',
                                                       style: TextStyle(
                                                           fontSize: 15,
-                                                          color: Colors.blue)),
+                                                          color: btnColor)),
                                                 ],
                                               ),
                                               onPressed: () {

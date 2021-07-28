@@ -39,7 +39,7 @@ class _HowToRegForUsersState extends State<HowToRegForUsers> {
                     padding: EdgeInsets.all(0),
                     child: VideoPlayerApp(
                       videoNwLink:
-                          'https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/search_book.mp4?alt=media&token=168009a3-b6f5-4e7f-86d3-12c5770051c2',
+                          'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/Assets%2Fhow_to_search_forUser.mp4?alt=media&token=b57fcfc9-a3c8-4c0d-8046-87e74ffd8bbe',
                     ),
                   ),
                 ),
