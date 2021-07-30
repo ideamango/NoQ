@@ -421,7 +421,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                     Divider(
                       indent: MediaQuery.of(context).size.height * .008,
                       height: 1,
-                      color: Colors.blueGrey[300],
+                      color: Colors.blueGrey[700],
+                      endIndent: MediaQuery.of(context).size.height * .008,
                     ),
                     Column(
                       // mainAxisAlignment: MainAxisAlignment.end,
@@ -467,7 +468,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.phone,
-                                      color: lightIcon,
+                                      color: tokenIconColor,
                                       size: 20,
                                     ),
                                     onPressed: () {
@@ -502,7 +503,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.cancel,
-                                      color: lightIcon,
+                                      color: tokenIconColor,
                                       size: 22,
                                     ),
                                     onPressed: () {
@@ -538,7 +539,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.location_on,
-                                      color: lightIcon,
+                                      color: tokenIconColor,
                                       size: 21,
                                     ),
                                     onPressed: () {
@@ -568,7 +569,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                   icon: ImageIcon(
                                     AssetImage('assets/whatsapp.png'),
                                     size: 18,
-                                    color: Colors.white,
+                                    color: tokenIconColor,
                                   ),
                                   onPressed: () {
                                     String phoneNo =
@@ -609,7 +610,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                   highlightColor: Colors.orange[300],
                                   icon: Icon(
                                     Icons.list,
-                                    color: lightIcon,
+                                    color: tokenIconColor,
                                     size: 22,
                                   ),
                                   onPressed: () => showShoppingList(booking),
@@ -629,7 +630,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     size: 16,
                                     color: (Utils.isNotNullOrEmpty(
                                             booking.parent.upiId)
-                                        ? lightIcon
+                                        ? tokenIconColor
                                         : Colors.blueGrey[400]),
                                   ),
                                   onPressed: () {
@@ -704,13 +705,13 @@ class _UserAccountPageState extends State<UserAccountPage>
                   ],
                 ),
               ),
-              VerticalDivider(
-                indent: 5,
-                endIndent: 5,
-                // thickness: 1,
-                width: 1,
-                color: Colors.blueGrey[300],
-              ),
+              // VerticalDivider(
+              //   indent: 5,
+              //   endIndent: 5,
+              //   // thickness: 1,
+              //   width: 1,
+              //   color: Colors.blueGrey[300],
+              // ),
               Container(
                 width: MediaQuery.of(context).size.width * .2,
                 // padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
@@ -784,7 +785,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                             icon: ImageIcon(
                               AssetImage('assets/qrcode.png'),
                               size: 30,
-                              color: Colors.white,
+                              color: primaryDarkColor,
                             ),
                             onPressed: () {
                               print(booking.applicationId);
@@ -818,8 +819,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                       maxFontSize: 12,
                       maxLines: 1,
                       style: TextStyle(
-                          fontFamily: 'RalewayRegular',
-                          color: primaryAccentColor),
+                          fontFamily: 'AkkuratPro',
+                          color: Colors.lightBlue[900]),
                     ),
                     Container(
                       height: 5,

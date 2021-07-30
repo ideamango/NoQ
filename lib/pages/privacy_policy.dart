@@ -71,8 +71,14 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
                     child: Column(
                       children: [
                         Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: borderColor),
+                                color: Colors.white,
+                                shape: BoxShape.rectangle,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0))),
                             padding: EdgeInsets.all(0),
-                            height: MediaQuery.of(context).size.height * .35,
+                            height: MediaQuery.of(context).size.height * .3,
                             child: Image.asset('assets/privacy.png')),
                         Container(
                           padding: EdgeInsets.all(8),

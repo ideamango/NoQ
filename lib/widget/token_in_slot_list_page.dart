@@ -538,7 +538,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                   icon: ImageIcon(
                                     AssetImage('assets/whatsapp.png'),
                                     size: 18,
-                                    color: Colors.white,
+                                    color: tokenIconColor,
                                   ),
                                   onPressed: () {
                                     print(booking.parent.userId);

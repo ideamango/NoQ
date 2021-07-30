@@ -226,6 +226,7 @@ final headingTextStyle = TextStyle(
     fontSize: 15.0);
 final Color primaryIcon = Colors.blueGrey[800];
 final Color lightIcon = Colors.white;
+final Color tokenIconColor = Colors.blueGrey[700];
 
 final Color btnColor = Colors.cyan[600];
 
@@ -295,7 +296,7 @@ final linkTextStyle = TextStyle(
     color: Colors.blue[700], fontFamily: 'Montserrat', fontSize: 12.0);
 
 final tokenTextStyle = TextStyle(
-    color: highlightColor,
+    color: Colors.deepOrange[800],
     //fontWeight: FontWeight.w600,
     fontFamily: '',
     letterSpacing: 3,
@@ -303,12 +304,12 @@ final tokenTextStyle = TextStyle(
     fontSize: 15.0);
 
 final tokenDataTextStyle = TextStyle(
-    fontFamily: 'AkkuratThin',
+    fontFamily: 'AkkuratPro',
     fontSize: 13,
     height: 1.5,
-    color: primaryAccentColor);
+    color: Colors.lightBlue[900]);
 final tokenDateTextStyle = TextStyle(
-    color: Colors.white,
+    color: Colors.lightBlue[900],
     // fontWeight: FontWeight.w500,
     fontFamily: 'AkkuratPro',
     fontSize: 15.0);

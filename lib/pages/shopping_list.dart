@@ -92,109 +92,109 @@ class _ShoppingListState extends State<ShoppingList> {
     itemNameController.text = newItem.itemName;
     //itemQtyController.text = newItem.quantity;
     return Container(
-        height: 40,
+        //  height: 40,
         child: Card(
-          semanticContainer: true,
-          elevation: 15,
-          margin: EdgeInsets.all(2),
-          child: Container(
-            height: 45,
-            //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
-            margin: EdgeInsets.fromLTRB(4, 8, 4, 6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  height: 40,
-                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  width: MediaQuery.of(context).size.width * .06,
-                  child: Checkbox(
-                    value: newItem.isDone,
-                    onChanged: (value) {
-                      if (widget.isAdmin) {
-                        Utils.showMyFlushbar(
-                            context,
-                            Icons.info,
-                            Duration(seconds: 4),
-                            "Admin cannot modify the list by User",
-                            "");
-                      } else {
-                        setState(() {
-                          newItem.isDone = value;
-                        });
-                      }
-                    },
-                    activeColor: primaryIcon,
-                    checkColor: primaryAccentColor,
-                  ),
-                ),
-                Container(
-                    height: 40,
-                    width: MediaQuery.of(context).size.width * .5,
-                    child: TextField(
-                      enabled: (widget.isAdmin) ? false : true,
-                      cursorColor: highlightColor,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(18),
-                      ],
-                      style: TextStyle(fontSize: 14, color: primaryDarkColor),
-                      controller: itemNameController,
-                      decoration: InputDecoration(
-                        //contentPadding: EdgeInsets.all(12),
-                        // labelText: newItem.itemName,
-                        hintText: 'Item name',
-                        hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                      ),
-                      onChanged: (value) {
-                        newItem.itemName = value;
-                      },
-                    )
-
-                    // Text(
-                    //   newItem.itemName,ggg
-
-                    // ),
-                    ),
-                // horizontalSpacer,
-
-                Container(
-                  height: 45,
-                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  width: MediaQuery.of(context).size.width * .1,
-                  child: IconButton(
-                    alignment: Alignment.topCenter,
-                    padding: EdgeInsets.all(0),
-                    icon: Icon(Icons.delete,
-                        color: (widget.isAdmin)
-                            ? disabledColor
-                            : Colors.blueGrey[400],
-                        size: 20),
-                    onPressed: () {
-                      if (!widget.isAdmin) {
-                        if (_shoppingListFormKey.currentState.validate()) {
-                          _shoppingListFormKey.currentState.save();
-                          _removeServiceRow(newItem);
-                          _listItem.text = "";
-                        }
-                      } else {
-                        Utils.showMyFlushbar(
-                            context,
-                            Icons.info,
-                            Duration(seconds: 4),
-                            "Admin cannot modify the list by User",
-                            "");
-                      }
-                    },
-                  ),
-                ),
-              ],
+      semanticContainer: true,
+      elevation: 15,
+      margin: EdgeInsets.all(2),
+      child: Container(
+        //height: 45,
+        //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
+        margin: EdgeInsets.fromLTRB(4, 8, 4, 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              height: 40,
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              width: MediaQuery.of(context).size.width * .06,
+              child: Checkbox(
+                value: newItem.isDone,
+                onChanged: (value) {
+                  if (widget.isAdmin) {
+                    Utils.showMyFlushbar(
+                        context,
+                        Icons.info,
+                        Duration(seconds: 4),
+                        "Admin cannot modify the list by User",
+                        "");
+                  } else {
+                    setState(() {
+                      newItem.isDone = value;
+                    });
+                  }
+                },
+                activeColor: primaryIcon,
+                checkColor: primaryAccentColor,
+              ),
             ),
-          ),
-        ));
+            Container(
+                // height: 40,
+                width: MediaQuery.of(context).size.width * .76,
+                child: TextField(
+                  enabled: (widget.isAdmin) ? false : true,
+                  cursorColor: highlightColor,
+                  maxLines: null,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(18),
+                  ],
+                  style: TextStyle(fontSize: 14, color: primaryDarkColor),
+                  controller: itemNameController,
+                  decoration: InputDecoration(
+                    //contentPadding: EdgeInsets.all(12),
+                    // labelText: newItem.itemName,
+                    hintText: 'Item name',
+                    hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                  ),
+                  onChanged: (value) {
+                    newItem.itemName = value;
+                  },
+                )
+
+                // Text(
+                //   newItem.itemName,ggg
+
+                // ),
+                ),
+            // horizontalSpacer,
+
+            Container(
+              height: 45,
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              width: MediaQuery.of(context).size.width * .1,
+              child: IconButton(
+                alignment: Alignment.topCenter,
+                padding: EdgeInsets.all(0),
+                icon: Icon(Icons.delete,
+                    color:
+                        (widget.isAdmin) ? disabledColor : Colors.blueGrey[400],
+                    size: 20),
+                onPressed: () {
+                  if (!widget.isAdmin) {
+                    if (_shoppingListFormKey.currentState.validate()) {
+                      _shoppingListFormKey.currentState.save();
+                      _removeServiceRow(newItem);
+                      _listItem.text = "";
+                    }
+                  } else {
+                    Utils.showMyFlushbar(
+                        context,
+                        Icons.info,
+                        Duration(seconds: 4),
+                        "Admin cannot modify the list by User",
+                        "");
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    ));
   }
 
   @override
@@ -207,9 +207,10 @@ class _ShoppingListState extends State<ShoppingList> {
 
     final itemField = new TextFormField(
       autofocus: true,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(18),
-      ],
+      maxLines: null,
+      // inputFormatters: [
+      //   LengthLimitingTextInputFormatter(18),
+      // ],
       controller: _listItem,
       cursorColor: highlightColor,
       enabled: (widget.isAdmin) ? false : true,

@@ -1,5 +1,6 @@
 //import 'dart:js';
 
+import 'package:LESSs/pages/search_entity_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,9 +24,7 @@ class AuthService {
         stream: getFirebaseAuth().authStateChanges(),
         builder: (BuildContext context, snapshot) {
           if (snapshot.hasData) {
-            return UserHomePage(
-              dontShowUpdate: false,
-            );
+            return SearchEntityPage();
           } else {
             return LoginPage();
           }

@@ -85,8 +85,9 @@ class _HelpPageState extends State<HelpPage> {
                               padding: EdgeInsets.all(5),
                               child: RichText(
                                   text: TextSpan(
-                                      style:
-                                          TextStyle(fontFamily: "AkkuratPro"),
+                                      style: TextStyle(
+                                          fontFamily: "AkkuratPro",
+                                          color: Colors.black),
                                       children: <TextSpan>[
                                     TextSpan(text: faqHeadline),
                                     TextSpan(
@@ -380,7 +381,9 @@ class _HelpPageState extends State<HelpPage> {
                                         TextSpan(
                                           text: faqAns14_2,
                                           style: new TextStyle(
-                                              color: highlightColor),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.orange[700]),
                                           recognizer: new TapGestureRecognizer()
                                             ..onTap = () {
                                               Navigator.pop(context);
