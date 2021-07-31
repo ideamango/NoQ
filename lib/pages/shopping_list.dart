@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../constants.dart';
 import '../db/db_model/list_item.dart';
 import '../db/db_model/message.dart';
 import '../db/db_model/order.dart';
@@ -96,7 +97,8 @@ class _ShoppingListState extends State<ShoppingList> {
         child: Card(
       semanticContainer: true,
       elevation: 15,
-      margin: EdgeInsets.all(2),
+      margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width * .02, 8,
+          MediaQuery.of(context).size.width * .02, 4),
       child: Container(
         //height: 45,
         //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
@@ -131,7 +133,7 @@ class _ShoppingListState extends State<ShoppingList> {
             ),
             Container(
                 // height: 40,
-                width: MediaQuery.of(context).size.width * .76,
+                width: MediaQuery.of(context).size.width * .74,
                 child: TextField(
                   enabled: (widget.isAdmin) ? false : true,
                   cursorColor: highlightColor,
@@ -165,9 +167,9 @@ class _ShoppingListState extends State<ShoppingList> {
               height: 45,
               margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              width: MediaQuery.of(context).size.width * .1,
+              width: MediaQuery.of(context).size.width * .08,
               child: IconButton(
-                alignment: Alignment.topCenter,
+                alignment: Alignment.center,
                 padding: EdgeInsets.all(0),
                 icon: Icon(Icons.delete,
                     color:
@@ -203,7 +205,7 @@ class _ShoppingListState extends State<ShoppingList> {
     //    .add(new ChildEntityAppData.cType(value, entity.id));
     //   saveEntityDetails(entity);
 
-    String title = "Notes";
+    String title = widget.isAdmin ? "Notes/ List shared by User" : "Notes";
 
     final itemField = new TextFormField(
       autofocus: true,
@@ -340,147 +342,174 @@ class _ShoppingListState extends State<ShoppingList> {
                 }),
             title: Text(
               title,
-              style: whiteBoldTextStyle1,
+              maxLines: 2,
+              style: TextStyle(color: Colors.white, fontSize: 15),
               overflow: TextOverflow.ellipsis,
             )),
         body: Center(
-          child: new Form(
-            key: _shoppingListFormKey,
-            autovalidate: true,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Column(
-                children: <Widget>[
-                  if (!widget.isAdmin)
-                    Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
-                          width: MediaQuery.of(context).size.width * .75,
-                          child: AutoSizeText(
-                            "Turn ON to share this list with the place Admin",
-                            maxLines: 2,
-                            minFontSize: 10,
-                            maxFontSize: 15,
+          child: (!Utils.isNullOrEmpty(listOfShoppingItems))
+              ? new Form(
+                  key: _shoppingListFormKey,
+                  autovalidate: true,
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Column(
+                      children: <Widget>[
+                        if (!widget.isAdmin)
+                          Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+                                width: MediaQuery.of(context).size.width * .75,
+                                child: AutoSizeText(
+                                  "Turn ON to share this list with the place Admin",
+                                  maxLines: 2,
+                                  minFontSize: 10,
+                                  maxFontSize: 15,
+                                ),
+                              ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * .08,
+                                width: MediaQuery.of(context).size.width * .2,
+                                child: Transform.scale(
+                                  scale: .7,
+                                  alignment: Alignment.centerRight,
+                                  child: Switch(
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    value: isPublic,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        isPublic = value;
+                                        token.order.isPublic = value;
+                                        print(isPublic);
+                                        //}
+                                      });
+                                    },
+                                    // activeTrackColor: Colors.green,
+                                    activeColor: Colors.green,
+                                    inactiveThumbColor: Colors.grey[300],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * .08,
-                          width: MediaQuery.of(context).size.width * .2,
-                          child: Transform.scale(
-                            scale: .7,
-                            alignment: Alignment.centerRight,
-                            child: Switch(
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                              value: isPublic,
-                              onChanged: (value) {
-                                setState(() {
-                                  isPublic = value;
-                                  token.order.isPublic = value;
-                                  print(isPublic);
-                                  //}
-                                });
+                        if (!Utils.isNullOrEmpty(listOfShoppingItems))
+                          new Expanded(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              //scrollDirection: Axis.vertical,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  child: new Column(
+                                      children: listOfShoppingItems
+                                          .map(_buildServiceItem)
+                                          .toList()),
+                                );
                               },
-                              // activeTrackColor: Colors.green,
-                              activeColor: Colors.green,
-                              inactiveThumbColor: Colors.grey[300],
+                              itemCount: 1,
                             ),
                           ),
+                        Text(
+                          (_errMsg != null) ? _errMsg : "",
+                          style: errorTextStyle,
                         ),
-                      ],
-                    ),
-                  new Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      //scrollDirection: Axis.vertical,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          child: new Column(
-                              children: listOfShoppingItems
-                                  .map(_buildServiceItem)
-                                  .toList()),
-                        );
-                      },
-                      itemCount: 1,
-                    ),
-                  ),
-                  Text(
-                    (_errMsg != null) ? _errMsg : "",
-                    style: errorTextStyle,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(5, 5, 5, 8),
-                    child: Card(
-                      elevation: 20,
-                      child: Container(
-                        height: MediaQuery.of(context).size.width * .13,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: borderColor),
-                            color: Colors.white,
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            //subEntityType,
+                        if (!widget.isAdmin)
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(5, 5, 5, 8),
+                            child: Card(
+                              elevation: 20,
+                              child: Container(
+                                height: MediaQuery.of(context).size.width * .13,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: borderColor),
+                                    color: Colors.white,
+                                    shape: BoxShape.rectangle,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    //subEntityType,
 
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                              child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Container(
-                                    height:
-                                        MediaQuery.of(context).size.width * .1,
-                                    width:
-                                        MediaQuery.of(context).size.width * .75,
-                                    child: itemField,
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    width:
-                                        MediaQuery.of(context).size.width * .1,
-                                    height:
-                                        MediaQuery.of(context).size.width * .1,
-                                    child: IconButton(
-                                      padding: EdgeInsets.all(0),
-                                      icon: Icon(Icons.add_circle,
-                                          color: highlightColor, size: 38),
-                                      onPressed: () {
-                                        if (widget.isAdmin) {
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.info,
-                                              Duration(seconds: 4),
-                                              "Admin cannot modify the list by User",
-                                              "");
-                                        } else {
-                                          if (_shoppingListFormKey.currentState
-                                              .validate()) {
-                                            _shoppingListFormKey.currentState
-                                                .save();
-                                            _addNewServiceRow();
-                                            _listItem.text = "";
-                                          }
-                                        }
-                                      },
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          8.0, 0, 8, 0),
+                                      child: Row(
+                                        // mainAxisAlignment: MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .1,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .75,
+                                            child: itemField,
+                                          ),
+                                          Container(
+                                            padding:
+                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .1,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .1,
+                                            child: IconButton(
+                                              padding: EdgeInsets.all(0),
+                                              icon: Icon(Icons.add_circle,
+                                                  color: highlightColor,
+                                                  size: 38),
+                                              onPressed: () {
+                                                if (widget.isAdmin) {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info,
+                                                      Duration(seconds: 4),
+                                                      "Admin cannot modify the list by User",
+                                                      "");
+                                                } else {
+                                                  if (_shoppingListFormKey
+                                                      .currentState
+                                                      .validate()) {
+                                                    _shoppingListFormKey
+                                                        .currentState
+                                                        .save();
+                                                    _addNewServiceRow();
+                                                    _listItem.text = "";
+                                                  }
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            // bottomNavigationBar: buildBottomItems()
-          ),
+                  // bottomNavigationBar: buildBottomItems()
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      noListByUser,
+                      style: TextStyle(fontFamily: "Akkurat", fontSize: 18),
+                    )
+                  ],
+                ),
         ),
       ),
       onWillPop: () async {

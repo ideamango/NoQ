@@ -89,6 +89,13 @@ class _TokensInSlotState extends State<TokensInSlot>
     });
   }
 
+  @override
+  void dispose() {
+    _animationController.dispose();
+
+    super.dispose();
+  }
+
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
   }
@@ -456,7 +463,8 @@ class _TokensInSlotState extends State<TokensInSlot>
                     Divider(
                       indent: MediaQuery.of(context).size.height * .008,
                       height: 1,
-                      color: Colors.blueGrey[300],
+                      color: Colors.blueGrey[700],
+                      endIndent: MediaQuery.of(context).size.height * .008,
                     ),
                     Column(
                       // mainAxisAlignment: MainAxisAlignment.end,
@@ -480,7 +488,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                 fontFamily: 'Roboto',
                                 fontSize: 12,
                                 letterSpacing: 1.2,
-                                color: primaryAccentColor),
+                                color: Colors.lightBlue[900]),
                           ),
                         ),
                         SizedBox(
@@ -502,7 +510,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.phone,
-                                      color: lightIcon,
+                                      color: tokenIconColor,
                                       size: 20,
                                     ),
                                     onPressed: () {
@@ -580,7 +588,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                   highlightColor: Colors.orange[300],
                                   icon: Icon(
                                     Icons.cancel,
-                                    color: lightIcon,
+                                    color: tokenIconColor,
                                     size: 22,
                                   ),
                                   onPressed: () {
@@ -666,10 +674,11 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.list,
-                                      color: lightIcon,
+                                      color: tokenIconColor,
                                       size: 22,
                                     ),
                                     onPressed: () {
+                                      //TODO
                                       Navigator.of(context).push(
                                           PageNoAnimation.createRoute(
                                               ShoppingList(
@@ -757,13 +766,13 @@ class _TokensInSlotState extends State<TokensInSlot>
                   ],
                 ),
               ),
-              VerticalDivider(
-                indent: 5,
-                endIndent: 5,
-                // thickness: 1,
-                width: 1,
-                color: Colors.blueGrey[300],
-              ),
+              // VerticalDivider(
+              //   indent: 5,
+              //   endIndent: 5,
+              //   // thickness: 1,
+              //   width: 1,
+              //   color: Colors.blueGrey[300],
+              // ),
               Container(
                 width: MediaQuery.of(context).size.width * .2,
                 padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
@@ -916,12 +925,12 @@ class _TokensInSlotState extends State<TokensInSlot>
             ]),
             if (booking.number == -1)
               new Positioned(
-                left: MediaQuery.of(context).size.width * .5,
-                bottom: MediaQuery.of(context).size.width * .14,
+                left: MediaQuery.of(context).size.width * .2,
+                bottom: MediaQuery.of(context).size.width * .1,
                 child: new Container(
                   //color: Colors.red,
-                  height: MediaQuery.of(context).size.width * .1,
-                  width: MediaQuery.of(context).size.width * .4,
+                  height: MediaQuery.of(context).size.width * .13,
+                  width: MediaQuery.of(context).size.width * .48,
                   child: Image.asset('assets/cancelled_2.png'),
                 ),
               ),

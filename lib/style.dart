@@ -296,7 +296,8 @@ final linkTextStyle = TextStyle(
     color: Colors.blue[700], fontFamily: 'Montserrat', fontSize: 12.0);
 
 final tokenTextStyle = TextStyle(
-    color: Colors.deepOrange[800],
+    color:  primaryDarkColor,
+
     //fontWeight: FontWeight.w600,
     fontFamily: '',
     letterSpacing: 3,

@@ -846,12 +846,12 @@ class _UserAccountPageState extends State<UserAccountPage>
             ]),
             if (booking.number == -1)
               new Positioned(
-                left: MediaQuery.of(context).size.width * .5,
-                bottom: MediaQuery.of(context).size.width * .14,
+                left: MediaQuery.of(context).size.width * .2,
+                bottom: MediaQuery.of(context).size.width * .1,
                 child: new Container(
                   //color: Colors.red,
-                  height: MediaQuery.of(context).size.width * .1,
-                  width: MediaQuery.of(context).size.width * .4,
+                  height: MediaQuery.of(context).size.width * .13,
+                  width: MediaQuery.of(context).size.width * .48,
                   child: Image.asset('assets/cancelled_2.png'),
                 ),
               ),

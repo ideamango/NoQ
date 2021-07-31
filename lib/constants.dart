@@ -179,7 +179,7 @@ String locationMarkingActiveInfo =
     'Note: Users will be able to search/discover your Business/Place based on this location, so ensure that this is correctly saved before you make it "Active"';
 String contactUsPageHeadline =
     'We would be happy to help you. Just drop a message to us and we will try our best to address that at the earliest.';
-
+String noListByUser = "Nothing shared by User yet!";
 String contactUsLine1 =
     "Do you like our work?  What else can we do?  How can we improve?";
 String contactUsLine2 = "  We would love to hear from you!";
