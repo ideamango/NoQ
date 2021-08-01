@@ -347,8 +347,17 @@ class _ShoppingListState extends State<ShoppingList> {
               overflow: TextOverflow.ellipsis,
             )),
         body: Center(
-          child: (!Utils.isNullOrEmpty(listOfShoppingItems))
-              ? new Form(
+          child: ((Utils.isNullOrEmpty(listOfShoppingItems) && widget.isAdmin)
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      noListByUser,
+                      style: TextStyle(fontFamily: "Akkurat", fontSize: 18),
+                    )
+                  ],
+                )
+              : new Form(
                   key: _shoppingListFormKey,
                   autovalidate: true,
                   child: Padding(
@@ -395,22 +404,22 @@ class _ShoppingListState extends State<ShoppingList> {
                               ),
                             ],
                           ),
-                        if (!Utils.isNullOrEmpty(listOfShoppingItems))
-                          new Expanded(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              //scrollDirection: Axis.vertical,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  child: new Column(
-                                      children: listOfShoppingItems
-                                          .map(_buildServiceItem)
-                                          .toList()),
-                                );
-                              },
-                              itemCount: 1,
-                            ),
+                        //if (!Utils.isNullOrEmpty(listOfShoppingItems))
+                        new Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            //scrollDirection: Axis.vertical,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                child: new Column(
+                                    children: listOfShoppingItems
+                                        .map(_buildServiceItem)
+                                        .toList()),
+                              );
+                            },
+                            itemCount: 1,
                           ),
+                        ),
                         Text(
                           (_errMsg != null) ? _errMsg : "",
                           style: errorTextStyle,
@@ -500,16 +509,7 @@ class _ShoppingListState extends State<ShoppingList> {
                     ),
                   ),
                   // bottomNavigationBar: buildBottomItems()
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      noListByUser,
-                      style: TextStyle(fontFamily: "Akkurat", fontSize: 18),
-                    )
-                  ],
-                ),
+                )),
         ),
       ),
       onWillPop: () async {
