@@ -28,6 +28,7 @@ import 'widgets.dart';
 class TokensInSlot extends StatefulWidget {
   final String slotKey;
   final TokenStats stats;
+  final List<UserToken> tokensList;
   final DateTime date;
   final DateDisplayFormat format;
   final MetaEntity metaEntity;
@@ -37,6 +38,7 @@ class TokensInSlot extends StatefulWidget {
       {Key key,
       @required this.slotKey,
       @required this.stats,
+      @required this.tokensList,
       @required this.date,
       @required this.format,
       @required this.metaEntity,
@@ -78,7 +80,7 @@ class _TokensInSlotState extends State<TokensInSlot>
     slotId = widget.metaEntity.entityId + "#" + dateTime;
     getGlobalState().whenComplete(() {
       _gs.getTokenService().getAllTokensForSlot(slotId).then((list) {
-        listOfTokens = list;
+        listOfTokens = widget.tokensList;
         if (this.mounted) {
           setState(() {
             initCompleted = true;

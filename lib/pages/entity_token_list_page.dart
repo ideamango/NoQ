@@ -64,9 +64,10 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
   Widget listWidget;
   Widget barChartWidget;
   DateTime selectedDate;
-  List<Slot> allSlotsList = new List<Slot>();
+  List<Slot> allSlotsList = [];
   TokenStats emptyToken;
   TokenCounter tokenCounterForYear;
+  EntitySlots entitySlotsForDay;
   AnimationController _animationController;
   Animation animation;
 
@@ -91,6 +92,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
 
       getSlotsListForEntity(widget.metaEntity, selectedDate).then((value) {
         Tuple<EntitySlots, List<Slot>> slotTuple = value;
+        entitySlotsForDay = slotTuple.item1;
         allSlotsList = slotTuple.item2;
         _gs
             .getTokenService()
@@ -288,10 +290,26 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                 color: textColor,
               ),
               onPressed: () {
+                //getTokens in this slot.
+                List<UserToken> tokenList = [];
+                List<UserTokens> tokensList = [];
+                for (var eSlot in entitySlotsForDay.slots) {
+                  if (eSlot.slotId == slot.slotId) {
+                    tokensList = eSlot.tokens;
+                  }
+                }
+
+                for (UserTokens uts in tokensList) {
+                  for (UserToken ut in uts.tokens) {
+                    tokenList.add(ut);
+                  }
+                }
+
                 Navigator.of(context)
                     .push(PageAnimation.createRoute(TokensInSlot(
                         slotKey: time,
                         stats: stats,
+                        tokensList: tokenList,
                         date: selectedDate,
                         format: DateDisplayFormat.date,
                         metaEntity: widget.metaEntity,
@@ -328,6 +346,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
         await getSlotsListForEntity(widget.metaEntity, selectedDate);
 
     allSlotsList = slotTuple.item2;
+    entitySlotsForDay = slotTuple.item1;
 
     switch (format) {
       case DateDisplayFormat.date:
