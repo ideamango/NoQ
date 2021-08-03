@@ -2443,7 +2443,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                   children: <Widget>[
                     Container(
                       margin: EdgeInsets.all(6),
-                      padding: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(02),
                       child: Text('Fields marked with * are Mandatory.',
                           style: TextStyle(
                               color: btnColor, fontWeight: FontWeight.bold)),
@@ -4403,8 +4403,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           if (value) {
                                             Navigator.pop(context);
                                             Navigator.of(context).push(
-                                               PageAnimation.createRoute(
-                                                        ManageEntityListPage()));
+                                                PageAnimation.createRoute(
+                                                    ManageEntityListPage()));
                                           } else {
                                             //Entity not deleted.
                                             Utils.showMyFlushbar(

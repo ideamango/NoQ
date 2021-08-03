@@ -250,7 +250,7 @@ class _LoginPageState extends State<LoginPage> {
                               padding: EdgeInsets.all(0),
                               margin: EdgeInsets.all(0),
                               height: MediaQuery.of(context).size.height * .05,
-                              width: MediaQuery.of(context).size.width * .4,
+                              width: MediaQuery.of(context).size.width * .38,
                               child: RaisedButton(
                                 elevation: 20,
                                 shape: RoundedRectangleBorder(
@@ -275,13 +275,13 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
-                            //horizontalSpacer,
+                            horizontalSpacer,
                             Container(
                               //  alignment: Alignment.centerRight,
                               padding: EdgeInsets.all(0),
                               margin: EdgeInsets.all(0),
                               height: MediaQuery.of(context).size.height * .05,
-                              width: MediaQuery.of(context).size.width * .4,
+                              width: MediaQuery.of(context).size.width * .38,
                               child: RaisedButton(
                                 elevation: 20,
                                 shape: RoundedRectangleBorder(
@@ -765,13 +765,13 @@ class _LoginPageState extends State<LoginPage> {
                       (!timeLapsed)
                           ? Container(
                               padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
-                              width: dialogWidth,
+                              //   width: dialogWidth,
                               height: MediaQuery.of(context).size.width * .15,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Container(
-                                    width: dialogWidth * .7,
+                                    // width: dialogWidth * .7,
                                     alignment: Alignment.centerLeft,
                                     padding: EdgeInsets.zero,
                                     margin: EdgeInsets.zero,

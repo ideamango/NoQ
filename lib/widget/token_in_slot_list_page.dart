@@ -79,15 +79,17 @@ class _TokensInSlotState extends State<TokensInSlot>
     print(dateTime);
     slotId = widget.metaEntity.entityId + "#" + dateTime;
     getGlobalState().whenComplete(() {
-      _gs.getTokenService().getAllTokensForSlot(slotId).then((list) {
-        listOfTokens = widget.tokensList;
-        if (this.mounted) {
-          setState(() {
-            initCompleted = true;
-          });
-        } else
+      // _gs.getTokenService().getAllTokensForSlot(slotId).then((list) {
+      listOfTokens = widget.tokensList;
+      //get list/notes shared by user.
+
+      if (this.mounted) {
+        setState(() {
           initCompleted = true;
-      });
+        });
+      } else
+        initCompleted = true;
+      // });
     });
   }
 

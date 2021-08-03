@@ -296,7 +296,7 @@ final linkTextStyle = TextStyle(
     color: Colors.blue[700], fontFamily: 'Montserrat', fontSize: 12.0);
 
 final tokenTextStyle = TextStyle(
-    color:  primaryDarkColor,
+    color: primaryDarkColor,
 
     //fontWeight: FontWeight.w600,
     fontFamily: '',
@@ -329,7 +329,7 @@ final highlightTextStyle = TextStyle(
 final BoxDecoration darkContainer = new BoxDecoration(
     //   border: Border.all(color: Colors.blueGrey[300]),
     shape: BoxShape.rectangle,
-    color: Colors.blueGrey[500],
+    color: Colors.indigo[900],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 
