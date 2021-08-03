@@ -335,7 +335,7 @@ class DBTest {
         geoPoint, EntityType.PLACE_TYPE_APARTMENT, false, null, true);
 
     await createEntity(
-        CYBER_APARTMENT_SINGH_CLINIC,
+        CYBER_APARTMENT_STAR_CLINIC,
         "STAR Clinic",
         cyberAdrs,
         geoPoint,
@@ -485,7 +485,7 @@ class DBTest {
     await deleteEntity(VENUS_HEART_CLINIC);
     await deleteEntity(SATURN_CLINIC);
     await deleteEntity(MERCURY_CLINIC);
-    await deleteEntity(CYBER_APARTMENT_SINGH_CLINIC);
+    await deleteEntity(CYBER_APARTMENT_STAR_CLINIC);
     await deleteEntity(CYBER_APARTMENT);
     await deleteEntity(HOME_APARTMENT_SINGH_CLINIC);
     await deleteEntity(HOME_APARTMENT);
