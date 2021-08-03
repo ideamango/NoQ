@@ -79,9 +79,9 @@ class DBTest {
     //await systemSetUp();
 
     await clearAll();
-    // await tests();
-    // await createDummyPlaces();
-    // await securityPermissionTests();
+    await tests();
+    await createDummyPlaces();
+    await securityPermissionTests();
     await creatEntitiesForScreenShots();
   }
 
