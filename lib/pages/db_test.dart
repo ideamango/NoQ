@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:uuid/uuid.dart';
 import '../db/db_model/address.dart';
 import '../db/db_model/booking_application.dart';
 import '../db/db_model/booking_form.dart';
@@ -39,6 +40,28 @@ class DBTest {
   String Test_Hospital_Child_Clinic = "TEST_HOSPITAL_CHILD_CLINIC";
   String Multi_Forms_School_ID = "Selenium-School_Multiple_Forms";
 
+  double lat = 71.70; //17.444317
+  double lon = -42.60; //78.355321
+
+  String NEBULA_CLINIC = "NEBULA_CLINIC";
+  String PLUTO_CLINIC = "PLUTO_CLINIC";
+  String VENUS_HEART_CLINIC = "VENUS_HEART_CLINIC";
+  String SATURN_CLINIC = "SATURN_CLINIC";
+  String MERCURY_CLINIC = "MERCURY_CLINIC";
+  String SILVER_APARTMENT = "SILVER_APARTMENT";
+  String SILVER_APARTMENT_GYM = "SILVER_APARTMENT_GYM";
+  String SILVER_APARTMENT_MURTHY_CLINIC = "SILVER_APARTMENT_MURTHY_CLINIC";
+
+  String SILVER_APARTMENT_SALON = "SILVER_APARTMENT_SALON";
+  String SILVER_APARTMENT_BADMINTON_COURT_1 =
+      "SILVER_APARTMENT_BADMINTON_COURT_1";
+  String SILVER_APARTMENT_BADMINTON_COURT_2 =
+      "SILVER_APARTMENT_BADMINTON_COURT_2";
+  String CYBER_APARTMENT = "CYBER_APARTMENT";
+  String CYBER_APARTMENT_STAR_CLINIC = "CYBER_APARTMENT_SINGH_CLINIC";
+  String HOME_APARTMENT = "HOME_APARTMENT";
+  String HOME_APARTMENT_SINGH_CLINIC = "HOME_APARTMENT_SINGH_CLINIC";
+
   GlobalState _gs;
   DBTest() {
     GlobalState.clearGlobalState();
@@ -53,12 +76,13 @@ class DBTest {
     fireLocalNotificationEvent();
 
     //this should be carefully called
-    await systemSetUp();
+    //await systemSetUp();
 
     await clearAll();
     await tests();
     await createDummyPlaces();
     await securityPermissionTests();
+    await creatEntitiesForScreenShots();
   }
 
   Future<void> systemSetUp() async {
@@ -114,6 +138,296 @@ class DBTest {
     }
   }
 
+  Future<Entity> addFormToEntity(Entity entity, String templateFormID,
+      bool autoApproved, bool allowedOnline) async {
+    if (entity.forms == null) {
+      entity.forms = [];
+    }
+
+    BookingForm form =
+        await _gs.getApplicationService().getBookingForm(templateFormID);
+    form.id = templateFormID + "#" + Uuid().v1();
+    form.autoApproved = autoApproved;
+    form.allowedOnline = allowedOnline;
+    entity.forms.add(form.getMetaForm());
+    await _gs.getApplicationService().saveBookingForm(form);
+    await _gs
+        .getEntityService()
+        .upsertChildEntityToParent(entity, entity.parentId);
+    return entity;
+  }
+
+  Future<void> creatEntitiesForScreenShots() async {
+    print("Started adding data for screenshots..");
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
+
+    Address nebulaAdrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Block 22, Behind Cyber Towers, Hitech City");
+
+    Entity nebulaClinic = await createEntity(
+        NEBULA_CLINIC,
+        "Nebula Clinic HiTech City",
+        nebulaAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_MEDICAL_CLINIC,
+        true,
+        2,
+        false);
+
+    await addFormToEntity(
+        nebulaClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    await addFormToEntity(
+        nebulaClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
+
+    Address plutoAdrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Tower1, Cyberlane, Hitech City");
+
+    Entity plutoClinic = await createEntity(
+        PLUTO_CLINIC,
+        "Pluto Fertility Center",
+        plutoAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_MEDICAL_CLINIC,
+        true,
+        2,
+        false);
+
+    await addFormToEntity(
+        plutoClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    await addFormToEntity(
+        plutoClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
+
+    Address venusAdrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Plot No 6, Old Mumbai Highway");
+
+    Entity venusClinic = await createEntity(
+        VENUS_HEART_CLINIC,
+        "Venus Heart Speciality Center",
+        venusAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_MEDICAL_CLINIC,
+        false,
+        2,
+        false);
+
+    await addFormToEntity(
+        venusClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    await addFormToEntity(
+        venusClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
+
+    Address saturnAdrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "B22/310 D-5B, Hitech City");
+
+    Entity saturnClinic = await createEntity(
+        SATURN_CLINIC,
+        "Saturn Pediatrics",
+        saturnAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_MEDICAL_CLINIC,
+        false,
+        2,
+        false);
+
+    await addFormToEntity(
+        saturnClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    await addFormToEntity(
+        saturnClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, false);
+
+    Address mercuryAdrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "C23/520 D-7D, Hitech City,");
+
+    await createEntity(
+        MERCURY_CLINIC,
+        "Mercury Multi Speciality Clinic",
+        mercuryAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_MEDICAL_CLINIC,
+        true,
+        2,
+        false);
+
+    Address silverAdrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "B27/320 C-5B, Hitech City");
+
+    await createEntity(SILVER_APARTMENT, "Silver Blossom Apartment", silverAdrs,
+        geoPoint, EntityType.PLACE_TYPE_APARTMENT, false, null, true);
+
+    await createEntity(SILVER_APARTMENT_GYM, "Main Gym", silverAdrs, geoPoint,
+        EntityType.PLACE_TYPE_GYM, false, 10, true, SILVER_APARTMENT);
+
+    await createEntity(
+        SILVER_APARTMENT_MURTHY_CLINIC,
+        "Doctor Murthy Clinic",
+        silverAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_MEDICAL_CLINIC,
+        true,
+        2,
+        true,
+        SILVER_APARTMENT);
+
+    Offer offer = new Offer(
+        message: "Get 40% off on facial on Thursdays", coupon: "THUR40");
+    offer.startDateTime = new DateTime(2021, 8, 13, 10, 30, 0, 0);
+    offer.endDateTime = new DateTime(2022, 8, 20, 10, 30, 0, 0);
+
+    Entity salon = await createEntity(
+        SILVER_APARTMENT_SALON,
+        "MyStyle Salon",
+        silverAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_SALON,
+        false,
+        2,
+        true,
+        SILVER_APARTMENT);
+
+    salon.offer = offer;
+    await _gs.getEntityService().upsertEntity(salon);
+
+    await createEntity(
+        SILVER_APARTMENT_BADMINTON_COURT_1,
+        "Badminton Court 1",
+        silverAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_SPORTS,
+        false,
+        5,
+        true,
+        SILVER_APARTMENT);
+
+    await createEntity(
+        SILVER_APARTMENT_BADMINTON_COURT_2,
+        "Badminton Court 2",
+        silverAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_SPORTS,
+        false,
+        5,
+        true,
+        SILVER_APARTMENT);
+
+    Address cyberAdrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "320 C-5B, Hitech City");
+
+    await createEntity(CYBER_APARTMENT, "Cyber Heights Apartment", cyberAdrs,
+        geoPoint, EntityType.PLACE_TYPE_APARTMENT, false, null, true);
+
+    await createEntity(
+        CYBER_APARTMENT_SINGH_CLINIC,
+        "STAR Clinic",
+        cyberAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_MEDICAL_CLINIC,
+        true,
+        2,
+        true,
+        CYBER_APARTMENT);
+
+    Address homeMyHomeAdrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "52, Hitech City road");
+
+    await createEntity(HOME_APARTMENT, "HomeMyHome Apartment", homeMyHomeAdrs,
+        geoPoint, EntityType.PLACE_TYPE_APARTMENT, false, null, false);
+
+    await createEntity(
+        HOME_APARTMENT_SINGH_CLINIC,
+        "Doctor Singh Clinic",
+        cyberAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_MEDICAL_CLINIC,
+        true,
+        2,
+        true,
+        HOME_APARTMENT);
+
+    print("Finshed adding data for screenshots..");
+  }
+
+  Future<Entity> createEntity(
+      String id,
+      String name,
+      Address adrs,
+      MyGeoFirePoint geoPoint,
+      EntityType type,
+      bool onlineConsultation,
+      int maxAllowed,
+      bool isPrivate,
+      [String parentId]) async {
+    Entity entity = new Entity(
+        entityId: id,
+        name: name,
+        address: adrs,
+        advanceDays: 4,
+        isPublic: isPrivate,
+        //geo: geoPoint,
+        maxAllowed: maxAllowed,
+        slotDuration: 30,
+        closedOn: (type == EntityType.PLACE_TYPE_APARTMENT ||
+                type == EntityType.PLACE_TYPE_HOSPITAL ||
+                type == EntityType.PLACE_TYPE_MALL)
+            ? null
+            : [WEEK_DAY_SUNDAY],
+        breakStartHour: type == EntityType.PLACE_TYPE_APARTMENT ? null : 13,
+        breakStartMinute: type == EntityType.PLACE_TYPE_APARTMENT ? null : 30,
+        breakEndHour: type == EntityType.PLACE_TYPE_APARTMENT ? null : 14,
+        breakEndMinute: type == EntityType.PLACE_TYPE_APARTMENT ? null : 30,
+        startTimeHour: type == EntityType.PLACE_TYPE_APARTMENT ? null : 10,
+        startTimeMinute: type == EntityType.PLACE_TYPE_APARTMENT ? null : 30,
+        endTimeHour: type == EntityType.PLACE_TYPE_APARTMENT ? null : 21,
+        endTimeMinute: type == EntityType.PLACE_TYPE_APARTMENT ? null : 0,
+        parentId: parentId,
+        type: type,
+        isBookable: (type == EntityType.PLACE_TYPE_APARTMENT ||
+                type == EntityType.PLACE_TYPE_HOSPITAL ||
+                type == EntityType.PLACE_TYPE_MALL)
+            ? false
+            : true,
+        isActive: true,
+        coordinates: geoPoint,
+        allowOnlineAppointment: onlineConsultation,
+        maxTokensByUserInDay: 2);
+
+    try {
+      entity.regNum = "testReg";
+      if (parentId == null) {
+        await _gs.getEntityService().upsertEntity(entity);
+      } else {
+        await _gs
+            .getEntityService()
+            .upsertChildEntityToParent(entity, parentId);
+      }
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+
+    return entity;
+  }
+
   Future<void> createBookingForms() async {
     await createBookingFormGlobalCovidVaccination_OLD(
         COVID_VACCINATION_BOOKING_FORM_ID_OLD);
@@ -137,171 +451,18 @@ class DBTest {
   Future<void> clearAll() async {
     DateTime now = DateTime.now();
 
-    try {
-      await _gs.getEntityService().deleteEntity('SalonMyHomeApartment');
-      await _gs.getTokenService().deleteSlotsForEntity('SalonMyHomeApartment');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('SalonMyHomeApartment');
-      await _gs.getTokenService().deleteTokensForEntity('SalonMyHomeApartment');
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity('SalonMyHomeApartment');
-    } catch (e) {
-      print("SalonMyHomeApartment is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity(Test_Hospital_center);
-      await _gs.getTokenService().deleteSlotsForEntity(Test_Hospital_center);
-      await _gs.getTokenService().deleteTokensForEntity(Test_Hospital_center);
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity(Test_Hospital_center);
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity(Test_Hospital_center);
-    } catch (e) {
-      print("Test Selenium Hospital is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity(Test_Hospital_Child_Clinic);
-      await _gs
-          .getTokenService()
-          .deleteSlotsForEntity(Test_Hospital_Child_Clinic);
-      await _gs
-          .getTokenService()
-          .deleteTokensForEntity(Test_Hospital_Child_Clinic);
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity(Test_Hospital_Child_Clinic);
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity(Test_Hospital_Child_Clinic);
-    } catch (e) {
-      print("Test Selenium Hospital Child clinic is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity('MyHomeApartment');
-      await _gs.getTokenService().deleteSlotsForEntity('MyHomeApartment');
-      await _gs.getTokenService().deleteTokensForEntity('MyHomeApartment');
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity('MyHomeApartment');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('MyHomeApartment');
-    } catch (e) {
-      print("MyHomeApartment is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity('SportsEntity103');
-      await _gs.getTokenService().deleteSlotsForEntity('SportsEntity103');
-      await _gs.getTokenService().deleteTokensForEntity('SportsEntity103');
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity('SportsEntity103');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('SportsEntity103');
-    } catch (e) {
-      print("SportsEntity103 is not cleared");
-    }
-    try {
-      await _gs.getEntityService().deleteEntity('SportsEntity104');
-      await _gs.getTokenService().deleteSlotsForEntity('SportsEntity104');
-      await _gs.getTokenService().deleteTokensForEntity('SportsEntity104');
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity('SportsEntity104');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('SportsEntity104');
-    } catch (e) {
-      print("SportsEntity104 is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity('SportsEntity105');
-      await _gs.getTokenService().deleteSlotsForEntity('SportsEntity105');
-      await _gs.getTokenService().deleteTokensForEntity('SportsEntity105');
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity('SportsEntity105');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('SportsEntity105');
-    } catch (e) {
-      print("SportsEntity105 is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity('BankEntity106');
-      await _gs.getTokenService().deleteSlotsForEntity('BankEntity106');
-      await _gs.getTokenService().deleteTokensForEntity('BankEntity106');
-      await _gs.getTokenService().deleteTokenCountersForEntity('BankEntity106');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('BankEntity106');
-    } catch (e) {
-      print("BankEntity106 is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity('SalonEntity107');
-      await _gs.getTokenService().deleteSlotsForEntity('SalonEntity107');
-      await _gs.getTokenService().deleteTokensForEntity('SalonEntity107');
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity('SalonEntity107');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('SalonEntity107');
-    } catch (e) {
-      print("SalonEntity107 is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity('SalonEntity108');
-      await _gs.getTokenService().deleteSlotsForEntity('SalonEntity108');
-      await _gs.getTokenService().deleteTokensForEntity('SalonEntity108');
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity('SalonEntity108');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('SalonEntity108');
-    } catch (e) {
-      print("SalonEntity108 is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity('GymEntity109');
-      await _gs.getTokenService().deleteSlotsForEntity('GymEntity109');
-      await _gs.getTokenService().deleteTokensForEntity('GymEntity109');
-      await _gs.getTokenService().deleteTokenCountersForEntity('GymEntity109');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('GymEntity109');
-    } catch (e) {
-      print("GymEntity109 is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity('GymEntity110');
-      await _gs.getTokenService().deleteSlotsForEntity('GymEntity110');
-      await _gs.getTokenService().deleteTokensForEntity('GymEntity110');
-      await _gs.getTokenService().deleteTokenCountersForEntity('GymEntity110');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('GymEntity110');
-    } catch (e) {
-      print("GymEntity110 is not cleared");
-    }
-
+    await deleteEntity('SalonMyHomeApartment');
+    await deleteEntity(Test_Hospital_Child_Clinic);
+    await deleteEntity(Test_Hospital_center);
+    await deleteEntity('MyHomeApartment');
+    await deleteEntity('SportsEntity103');
+    await deleteEntity('SportsEntity104');
+    await deleteEntity('SportsEntity105');
+    await deleteEntity('BankEntity106');
+    await deleteEntity('SalonEntity107');
+    await deleteEntity('SalonEntity108');
+    await deleteEntity('GymEntity109');
+    await deleteEntity('GymEntity110');
     try {
       bool deleted = await _gs.getEntityService().deleteEntity('Entity101');
       if (deleted) {
@@ -318,91 +479,50 @@ class DBTest {
       }
     }
 
+    //Delete Screenshot entities
+    await deleteEntity(NEBULA_CLINIC);
+    await deleteEntity(PLUTO_CLINIC);
+    await deleteEntity(VENUS_HEART_CLINIC);
+    await deleteEntity(SATURN_CLINIC);
+    await deleteEntity(MERCURY_CLINIC);
+    await deleteEntity(CYBER_APARTMENT_SINGH_CLINIC);
+    await deleteEntity(CYBER_APARTMENT);
+    await deleteEntity(HOME_APARTMENT_SINGH_CLINIC);
+    await deleteEntity(HOME_APARTMENT);
+
     try {
       //first delete all children then deleted parent Entity
-      bool deletedChild1 =
-          await _gs.getEntityService().deleteEntity('Child101-1');
-      await _gs.getTokenService().deleteSlotsForEntity('Child101-1');
-      await _gs.getTokenService().deleteTokensForEntity('Child101-1');
-      await _gs.getTokenService().deleteTokenCountersForEntity('Child101-1');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('Child101-1');
+      await deleteEntity(SILVER_APARTMENT_GYM);
+      await deleteEntity(SILVER_APARTMENT_MURTHY_CLINIC);
+      await deleteEntity("SILVER_APARTMENT_SINGH_CLINIC");
+      await deleteEntity(SILVER_APARTMENT_SALON);
+      await deleteEntity(SILVER_APARTMENT_BADMINTON_COURT_1);
+      await deleteEntity(SILVER_APARTMENT_BADMINTON_COURT_2);
+      await deleteEntity(SILVER_APARTMENT);
+    } catch (e) {
+      print("SILVER_APARTMENT deletion failed --> FAILURE");
+    }
 
-      bool deletedChild2 =
-          await _gs.getEntityService().deleteEntity('Child101-2');
-      await _gs.getTokenService().deleteSlotsForEntity('Child101-2');
-      await _gs.getTokenService().deleteTokensForEntity('Child101-2');
-      await _gs.getTokenService().deleteTokenCountersForEntity('Child101-2');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('Child101-2');
+    try {
+      //first delete all children then deleted parent Entity
+      await deleteEntity('Child101-1');
 
-      bool deletedChild3 =
-          await _gs.getEntityService().deleteEntity('Child101-3');
-      await _gs.getTokenService().deleteSlotsForEntity('Child101-3');
-      await _gs.getTokenService().deleteTokensForEntity('Child101-3');
-      await _gs.getTokenService().deleteTokenCountersForEntity('Child101-3');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('Child101-3');
+      await deleteEntity('Child101-2');
 
-      bool parentDeleted =
-          await _gs.getEntityService().deleteEntity('Entity101');
-      await _gs.getTokenService().deleteSlotsForEntity('Entity101');
-      await _gs.getTokenService().deleteTokensForEntity('Entity101');
-      await _gs.getTokenService().deleteTokenCountersForEntity('Entity101');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('Entity101');
+      await deleteEntity('Child101-3');
+
+      await deleteEntity('Entity101');
     } catch (e) {
       print("Entity101 deletion failed --> FAILURE");
     }
 
-    try {
-      await _gs.getEntityService().deleteEntity('Entity102');
-      await _gs.getTokenService().deleteSlotsForEntity('Entity102');
-      await _gs.getTokenService().deleteTokensForEntity('Entity102');
-      await _gs.getTokenService().deleteTokenCountersForEntity('Entity102');
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity('Entity102');
-    } catch (e) {
-      print("Entity102 is not cleared");
-    }
+    await deleteEntity('Entity102');
+
     //delete user
 
     await _gs.getUserService().deleteCurrentUser();
-
-    try {
-      await _gs.getEntityService().deleteEntity(Covid_Vacination_Center);
-      await _gs.getTokenService().deleteSlotsForEntity(Covid_Vacination_Center);
-      await _gs
-          .getTokenService()
-          .deleteTokensForEntity(Covid_Vacination_Center);
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity(Covid_Vacination_Center);
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity(Covid_Vacination_Center);
-    } catch (e) {
-      print(Covid_Vacination_Center + " is not cleared");
-    }
-
-    try {
-      await _gs.getEntityService().deleteEntity(Multi_Forms_School_ID);
-      await _gs.getTokenService().deleteSlotsForEntity(Multi_Forms_School_ID);
-      await _gs.getTokenService().deleteTokensForEntity(Multi_Forms_School_ID);
-      await _gs
-          .getTokenService()
-          .deleteTokenCountersForEntity(Multi_Forms_School_ID);
-      await _gs
-          .getApplicationService()
-          .deleteApplicationsForEntity(Multi_Forms_School_ID);
-    } catch (e) {
-      print(Multi_Forms_School_ID + " is not cleared");
-    }
+    await deleteEntity(Covid_Vacination_Center);
+    await deleteEntity(Multi_Forms_School_ID);
 
     _gs.getUserService().deleteUser("+912626262626");
     _gs.getUserService().deleteUser("+916565656565");
@@ -411,6 +531,18 @@ class DBTest {
     _gs.getUserService().deleteUser("+911111111111");
     _gs.getUserService().deleteUser("+913611009823");
     _gs.getUserService().deleteUser("+919999999999");
+  }
+
+  Future<void> deleteEntity(String entityId) async {
+    try {
+      await _gs.getEntityService().deleteEntity(entityId);
+      await _gs.getTokenService().deleteSlotsForEntity(entityId);
+      await _gs.getTokenService().deleteTokensForEntity(entityId);
+      await _gs.getTokenService().deleteTokenCountersForEntity(entityId);
+      await _gs.getApplicationService().deleteApplicationsForEntity(entityId);
+    } catch (e) {
+      print(entityId + " is not cleared");
+    }
   }
 
   Future<void> tests() async {
@@ -434,7 +566,7 @@ class DBTest {
       print(
           "EntityService.upsertChildEntityToParent (expected exception thrown) --> SUCCESS");
     }
-    await createEntity();
+    await createInorbitEntity();
 
     await createEntity2();
 
@@ -650,7 +782,7 @@ class DBTest {
 
     List<Entity> entitiesByTypeAndNameNull = await _gs
         .getEntityService()
-        .search(null, EntityType.PLACE_TYPE_SHOP, 17.4338, 78.3321, 2, 1, 2);
+        .search(null, EntityType.PLACE_TYPE_SHOP, 71.70, -42.60, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameNull) {
       print(me.name + ":" + me.distance.toString());
@@ -667,7 +799,7 @@ class DBTest {
 
     List<Entity> entitiesByTypeNullAndName = await _gs
         .getEntityService()
-        .search("Habi", null, 17.4338, 78.3321, 2, 1, 2);
+        .search("Habi", null, 71.70, -42.60, 2, 1, 2);
 
     for (Entity me in entitiesByTypeNullAndName) {
       print(me.name + ":" + me.distance.toString());
@@ -685,7 +817,7 @@ class DBTest {
 
     List<Entity> entitiesByTypeAndName = await _gs
         .getEntityService()
-        .search("Bat", EntityType.PLACE_TYPE_SHOP, 17.4338, 78.3321, 2, 1, 2);
+        .search("Bat", EntityType.PLACE_TYPE_SHOP, 71.70, -42.60, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndName) {
       print(me.name + ":" + me.distance.toString());
@@ -703,8 +835,7 @@ class DBTest {
 
     List<Entity> entitiesByTypeAndNameAgain = await _gs
         .getEntityService()
-        .search(
-            "Habina", EntityType.PLACE_TYPE_SHOP, 17.4338, 78.3321, 2, 1, 2);
+        .search("Habina", EntityType.PLACE_TYPE_SHOP, 71.70, -42.60, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameAgain) {
       print(me.name + ":" + me.distance.toString());
@@ -720,8 +851,9 @@ class DBTest {
     print(
         "---------Search By Name and Type Store (no intersection) --------------");
 
-    List<Entity> noIntersection = await _gs.getEntityService().search(
-        "Bata", EntityType.PLACE_TYPE_POPSHOP, 17.4338, 78.3321, 2, 1, 2);
+    List<Entity> noIntersection = await _gs
+        .getEntityService()
+        .search("Bata", EntityType.PLACE_TYPE_POPSHOP, 71.70, -42.60, 2, 1, 2);
 
     for (Entity me in noIntersection) {
       print(me.name + ":" + me.distance.toString());
@@ -982,14 +1114,14 @@ class DBTest {
     print("Security permission test completed.");
   }
 
-  Future<void> createEntity() async {
+  Future<void> createInorbitEntity() async {
     Address adrs = new Address(
         city: "Hyderbad",
         state: "Telangana",
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: "Entity101",
         name: "Inorbit",
@@ -1087,7 +1219,7 @@ class DBTest {
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
 
     Entity child1 = new Entity(
         entityId: id,
@@ -1132,7 +1264,7 @@ class DBTest {
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
 
     Entity child1 = new Entity(
         entityId: id,
@@ -1414,7 +1546,7 @@ class DBTest {
     offer.coupon = "Coup10";
     offer.message = "Avail 10% off on booking betwee 1 PM to 5 PM on weekdays";
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: "SportsEntity103",
         name: "Place Sport",
@@ -1459,7 +1591,7 @@ class DBTest {
         country: "India",
         address: "Shop 121, Row 5, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: "SportsEntity104",
         name: "Place Sports Center 2",
@@ -1510,7 +1642,7 @@ class DBTest {
     offer.coupon = "Coup10";
     offer.message = "Avail 10% off on booking betwee 1 PM to 5 PM on weekdays";
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: "SportsEntity105",
         name: "Place Sports 3",
@@ -1559,7 +1691,7 @@ class DBTest {
     offer.coupon = "Coup10";
     offer.message = "Life time free credit cards!!";
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: "BankEntity106",
         name: "Place Bank State of Peeru",
@@ -1611,7 +1743,7 @@ class DBTest {
     offer.startDateTime = DateTime.now().add(Duration(days: 1));
     offer.endDateTime = DateTime.now().add(Duration(days: 10));
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: "SalonEntity107",
         name: "Place Smarty Solon and Parlour",
@@ -1663,7 +1795,7 @@ class DBTest {
     offer.startDateTime = DateTime.now().add(Duration(days: 1));
     offer.endDateTime = DateTime.now().add(Duration(days: 5));
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: "SalonEntity108",
         name: "Place Rocky Salon",
@@ -1714,7 +1846,7 @@ class DBTest {
     offer.startDateTime = DateTime.now();
     offer.endDateTime = DateTime.utc(2021, 11, 4);
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: "GymEntity109",
         name: "Place Great Tyson Gymkhana",
@@ -1766,7 +1898,7 @@ class DBTest {
     offer.startDateTime = DateTime.now();
     offer.endDateTime = DateTime.utc(2021, 11, 4);
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: "GymEntity110",
         name: "Place Great Private Gymkhana",
@@ -1817,10 +1949,10 @@ class DBTest {
     offer.startDateTime = DateTime.now();
     offer.endDateTime = DateTime.utc(2021, 11, 4);
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: "MyHomeApartment",
-        name: "My Home Apartment",
+        name: "Homely Apartment",
         address: adrs,
         advanceDays: 9,
         isPublic: false,
@@ -2076,7 +2208,7 @@ class DBTest {
     List<MetaForm> forms = [];
     forms.add(bf.getMetaForm());
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: Covid_Vacination_Center,
         name: "Selenium Covid Vacination Center",
@@ -2510,7 +2642,7 @@ class DBTest {
     forms.add(admissionForm.getMetaForm());
     forms.add(tcForm.getMetaForm());
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: Multi_Forms_School_ID,
         name: "Selenium International School",
@@ -3404,7 +3536,7 @@ class DBTest {
     forms.add(hospitalMedicalCheckup.getMetaForm());
     forms.add(hospitalAdmission.getMetaForm());
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
 
     Entity entity = new Entity(
         entityId: Test_Hospital_center,
