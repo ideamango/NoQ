@@ -111,6 +111,9 @@ class EntityService {
             currentUser.entities = [];
           }
           currentUser.entities.add(entity.getMetaEntity());
+          if (currentUser.entityVsRole == null) {
+            currentUser.entityVsRole = new Map<String, EntityRole>();
+          }
           currentUser.entityVsRole[entity.entityId] = EntityRole.Admin;
         } else {
           //will happen when entity exists i.e. update scenario and current user is the admin,
