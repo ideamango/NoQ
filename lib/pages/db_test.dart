@@ -177,8 +177,8 @@ class DBTest {
         2,
         false);
 
-    await addFormToEntity(
-        nebulaClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    // await addFormToEntity(
+    //     nebulaClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
     await addFormToEntity(
         nebulaClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
 
@@ -198,8 +198,8 @@ class DBTest {
         2,
         false);
 
-    await addFormToEntity(
-        plutoClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    // await addFormToEntity(
+    //     plutoClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
     await addFormToEntity(
         plutoClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
 
@@ -219,8 +219,8 @@ class DBTest {
         2,
         false);
 
-    await addFormToEntity(
-        venusClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    // await addFormToEntity(
+    //     venusClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
     await addFormToEntity(
         venusClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
 
@@ -240,8 +240,8 @@ class DBTest {
         2,
         false);
 
-    await addFormToEntity(
-        saturnClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    // await addFormToEntity(
+    //     saturnClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
     await addFormToEntity(
         saturnClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, false);
 
