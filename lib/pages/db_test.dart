@@ -79,9 +79,9 @@ class DBTest {
     //await systemSetUp();
 
     await clearAll();
-    await tests();
-    await createDummyPlaces();
-    await securityPermissionTests();
+    // await tests();
+    // await createDummyPlaces();
+    // await securityPermissionTests();
     await creatEntitiesForScreenShots();
   }
 
@@ -151,15 +151,19 @@ class DBTest {
     form.allowedOnline = allowedOnline;
     entity.forms.add(form.getMetaForm());
     await _gs.getApplicationService().saveBookingForm(form);
-    await _gs
-        .getEntityService()
-        .upsertChildEntityToParent(entity, entity.parentId);
+    if (Utils.isNotNullOrEmpty(entity.parentId)) {
+      await _gs
+          .getEntityService()
+          .upsertChildEntityToParent(entity, entity.parentId);
+    } else {
+      await _gs.getEntityService().upsertEntity(entity);
+    }
     return entity;
   }
 
   Future<void> creatEntitiesForScreenShots() async {
     print("Started adding data for screenshots..");
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat + 0.00767, lon + 0.00396);
 
     Address nebulaAdrs = new Address(
         city: "Hyderbad",
@@ -192,7 +196,7 @@ class DBTest {
         PLUTO_CLINIC,
         "Pluto Fertility Center",
         plutoAdrs,
-        geoPoint,
+        new MyGeoFirePoint(lat + 0.00767, lon + 0.00396),
         EntityType.PLACE_TYPE_MEDICAL_CLINIC,
         true,
         2,
@@ -213,7 +217,7 @@ class DBTest {
         VENUS_HEART_CLINIC,
         "Venus Heart Speciality Center",
         venusAdrs,
-        geoPoint,
+        new MyGeoFirePoint(lat + 0.00710, lon + 0.00417),
         EntityType.PLACE_TYPE_MEDICAL_CLINIC,
         false,
         2,
@@ -234,7 +238,7 @@ class DBTest {
         SATURN_CLINIC,
         "Saturn Pediatrics",
         saturnAdrs,
-        geoPoint,
+        new MyGeoFirePoint(lat + 0.00867, lon + 0.00396),
         EntityType.PLACE_TYPE_MEDICAL_CLINIC,
         false,
         2,
@@ -255,7 +259,7 @@ class DBTest {
         MERCURY_CLINIC,
         "Mercury Multi Speciality Clinic",
         mercuryAdrs,
-        geoPoint,
+        new MyGeoFirePoint(lat + 0.00767, lon + 0.00496),
         EntityType.PLACE_TYPE_MEDICAL_CLINIC,
         true,
         2,
@@ -267,11 +271,26 @@ class DBTest {
         country: "India",
         address: "B27/320 C-5B, Hitech City");
 
-    await createEntity(SILVER_APARTMENT, "Silver Blossom Apartment", silverAdrs,
-        geoPoint, EntityType.PLACE_TYPE_APARTMENT, false, null, true);
+    await createEntity(
+        SILVER_APARTMENT,
+        "Silver Blossom Apartment",
+        silverAdrs,
+        new MyGeoFirePoint(lat + 0.00767, lon + 0.00399),
+        EntityType.PLACE_TYPE_APARTMENT,
+        false,
+        null,
+        true);
 
-    await createEntity(SILVER_APARTMENT_GYM, "Main Gym", silverAdrs, geoPoint,
-        EntityType.PLACE_TYPE_GYM, false, 10, true, SILVER_APARTMENT);
+    await createEntity(
+        SILVER_APARTMENT_GYM,
+        "Main Gym",
+        silverAdrs,
+        new MyGeoFirePoint(lat + 0.00799, lon + 0.00396),
+        EntityType.PLACE_TYPE_GYM,
+        false,
+        10,
+        true,
+        SILVER_APARTMENT);
 
     await createEntity(
         SILVER_APARTMENT_MURTHY_CLINIC,
