@@ -44,6 +44,7 @@ class DBTest {
   double lon = -42.60; //78.355321
 
   String NEBULA_CLINIC = "NEBULA_CLINIC";
+  String BIGPIQ_PRIVATE_OFFICE = "BIGPIQ_PRIVATE_OFFICE";
   String PLUTO_CLINIC = "PLUTO_CLINIC";
   String VENUS_HEART_CLINIC = "VENUS_HEART_CLINIC";
   String SATURN_CLINIC = "SATURN_CLINIC";
@@ -76,7 +77,7 @@ class DBTest {
     fireLocalNotificationEvent();
 
     //this should be carefully called
-    //await systemSetUp();
+    await systemSetUp();
 
     await clearAll();
     await tests();
@@ -109,6 +110,10 @@ class DBTest {
 
       await _gs
           .getApplicationService()
+          .deleteBookingForm(COVID_VACCINATION_EMPLOYEES_BOOKING_FORM_ID);
+
+      await _gs
+          .getApplicationService()
           .deleteBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
 
       await _gs
@@ -133,6 +138,14 @@ class DBTest {
       await _gs
           .getApplicationService()
           .deleteBookingForm(MEDICAL_TEST_DIAGNOSTIC_FORM);
+
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(GENERAL_VACCINE_HOSPITAL_FORM);
+
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(GENERAL_VACCINE_CLINIC_FORM);
     } catch (e) {
       print("Error while cleaning the system booking forms");
     }
@@ -165,6 +178,25 @@ class DBTest {
     print("Started adding data for screenshots..");
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat + 0.00767, lon + 0.00396);
 
+    Address bigpiqAdrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Block 11, Cyber Towers, Hitech City");
+
+    Entity bigpiq = await createEntity(
+        BIGPIQ_PRIVATE_OFFICE,
+        "BIGPIQ Technologies Pvt. Ltd.",
+        bigpiqAdrs,
+        geoPoint,
+        EntityType.PLACE_TYPE_PRIVATE_OFFICE,
+        false,
+        4,
+        true);
+
+    await addFormToEntity(
+        bigpiq, COVID_VACCINATION_EMPLOYEES_BOOKING_FORM_ID, true, false);
+
     Address nebulaAdrs = new Address(
         city: "Hyderbad",
         state: "Telangana",
@@ -181,8 +213,8 @@ class DBTest {
         2,
         false);
 
-    await addFormToEntity(
-        nebulaClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    // await addFormToEntity(
+    //     nebulaClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
     await addFormToEntity(
         nebulaClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
 
@@ -202,8 +234,8 @@ class DBTest {
         2,
         false);
 
-    await addFormToEntity(
-        plutoClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    // await addFormToEntity(
+    //     plutoClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
     await addFormToEntity(
         plutoClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
 
@@ -223,8 +255,8 @@ class DBTest {
         2,
         false);
 
-    await addFormToEntity(
-        venusClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    // await addFormToEntity(
+    //     venusClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
     await addFormToEntity(
         venusClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
 
@@ -244,8 +276,8 @@ class DBTest {
         2,
         false);
 
-    await addFormToEntity(
-        saturnClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    // await addFormToEntity(
+    //     saturnClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
     await addFormToEntity(
         saturnClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, false);
 
@@ -450,11 +482,17 @@ class DBTest {
   Future<void> createBookingForms() async {
     await createBookingFormGlobalCovidVaccination_OLD(
         COVID_VACCINATION_BOOKING_FORM_ID_OLD);
+
     await createBookingGlobalSchoolNewAdmission(
         SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
     await createBookingFormGlobalSchoolTC(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
+
     await createBookingFormForCovidVaccination(
         COVID_VACCINATION_CLINIC_BOOKING_FORM_ID);
+
+    await createBookingFormForCovidVaccination(
+        COVID_VACCINATION_EMPLOYEES_BOOKING_FORM_ID);
+
     await createBookingFormForCovidVaccination(
         COVID_VACCINATION_HOSPITAL_BOOKING_FORM_ID);
     await createNewAdmissionFormForHospital(HOSPITAL_ADMISSION_FORM);
@@ -462,6 +500,10 @@ class DBTest {
     await createDoctorConsultationForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
     await createDoctorConsultationForm(DOCTOR_CONSULTATION_CLINIC_FORM);
 
+    await createGeneralVaccineForm(GENERAL_VACCINE_HOSPITAL_FORM);
+    await createGeneralVaccineForm(GENERAL_VACCINE_CLINIC_FORM);
+
+    await createMedicalTestRequestFormForClinic(MEDICAL_TEST_CLINIC_FORM);
     await createMedicalTestRequestFormForHospital(MEDICAL_TEST_HOSPITAL_FORM);
     await createMedicalTestRequestFormForDiagnosticCenter(
         MEDICAL_TEST_DIAGNOSTIC_FORM);
@@ -482,6 +524,7 @@ class DBTest {
     await deleteEntity('SalonEntity108');
     await deleteEntity('GymEntity109');
     await deleteEntity('GymEntity110');
+
     try {
       bool deleted = await _gs.getEntityService().deleteEntity('Entity101');
       if (deleted) {
@@ -499,6 +542,7 @@ class DBTest {
     }
 
     //Delete Screenshot entities
+    await deleteEntity(BIGPIQ_PRIVATE_OFFICE);
     await deleteEntity(NEBULA_CLINIC);
     await deleteEntity(PLUTO_CLINIC);
     await deleteEntity(VENUS_HEART_CLINIC);
@@ -513,7 +557,6 @@ class DBTest {
       //first delete all children then deleted parent Entity
       await deleteEntity(SILVER_APARTMENT_GYM);
       await deleteEntity(SILVER_APARTMENT_MURTHY_CLINIC);
-      await deleteEntity("SILVER_APARTMENT_SINGH_CLINIC");
       await deleteEntity(SILVER_APARTMENT_SALON);
       await deleteEntity(SILVER_APARTMENT_BADMINTON_COURT_1);
       await deleteEntity(SILVER_APARTMENT_BADMINTON_COURT_2);
@@ -3083,6 +3126,26 @@ class DBTest {
     bf.id = formId;
     bf.autoApproved = false;
 
+    if (formId == COVID_VACCINATION_EMPLOYEES_BOOKING_FORM_ID) {
+      FormInputFieldText employeeId = FormInputFieldText(
+          "Employee ID of the Applicant",
+          true,
+          "Please enter your Employee ID",
+          50);
+      employeeId.isMeta = true;
+
+      bf.addField(employeeId);
+
+      FormInputFieldOptions self = FormInputFieldOptions(
+          "Self/Dependant",
+          true,
+          "Are you booking for Self or your dependant",
+          [Value('Self'), Value('Dependant')],
+          false);
+
+      bf.addField(self);
+    }
+
     FormInputFieldText nameInput = FormInputFieldText("Name of the Applicant",
         true, "Please enter your name as per Government ID proof", 50);
     nameInput.isMeta = true;
@@ -3102,7 +3165,8 @@ class DBTest {
     FormInputFieldPhone phoneField = FormInputFieldPhone(
         "Registered phone number with COWIN",
         true,
-        "Please enter the applicant's phone number which is registered with COWIN app");
+        "Please enter the applicant's phone number which is registered with COWIN app (optional)");
+    phoneField.isMandatory = false;
 
     bf.addField(phoneField);
 
@@ -3130,19 +3194,26 @@ class DBTest {
 
     bf.addField(doseNumber);
 
-    FormInputFieldInt cowinSecrete = FormInputFieldInt("COWIN Secrete Code",
-        true, "This is last four digit of REF ID on the COWIN app", 0000, 9999);
+    FormInputFieldInt cowinSecrete = FormInputFieldInt(
+        "COWIN Secrete Code",
+        true,
+        "This is last four digit of REF ID on the COWIN app (optional)",
+        0000,
+        9999);
     cowinSecrete.maxLength = 4;
     cowinSecrete.minLength = 4;
+    cowinSecrete.isMandatory = false;
     bf.addField(cowinSecrete);
 
-    FormInputFieldAttachment payment = FormInputFieldAttachment(
-        "Payment receipt (if applicable)",
-        false,
-        "Please attach image of payment made (you can take screenshot and attach)");
-    payment.paymentProofRequired = true;
+    if (formId != COVID_VACCINATION_EMPLOYEES_BOOKING_FORM_ID) {
+      FormInputFieldAttachment payment = FormInputFieldAttachment(
+          "Payment receipt (if applicable)",
+          false,
+          "Please attach image of payment made (you can take screenshot and attach)");
+      payment.paymentProofRequired = true;
 
-    bf.addField(payment);
+      bf.addField(payment);
+    }
 
     //NOTE: If this is executed, every time the ID of the field is going to change
     await _gs.getApplicationService().saveBookingForm(bf);
@@ -3252,6 +3323,128 @@ class DBTest {
     await _gs.getApplicationService().saveBookingForm(admissionForm);
 
     return admissionForm;
+  }
+
+  Future<BookingForm> createGeneralVaccineForm(String formId) async {
+    BookingForm vaccineForm = new BookingForm(
+        formName: "General Vaccination Form",
+        headerMsg:
+            "Your request will be approved based on the information provided by you, please enter the correct information.",
+        footerMsg:
+            "Please carry previous medical test results and doctor's prescription (if any). Please mark your presence 5 minutes prior to your appointment time.",
+        autoApproved: false);
+
+    vaccineForm.isSystemTemplate = true;
+    vaccineForm.id = formId;
+    vaccineForm.autoApproved = true;
+    vaccineForm.allowedOnline = false;
+
+    FormInputFieldText nameInput = FormInputFieldText("Name of the Patient",
+        true, "Please enter patient name as per Government ID proof", 100);
+    nameInput.isMeta = true;
+
+    vaccineForm.addField(nameInput);
+
+    FormInputFieldDateTime dob = FormInputFieldDateTime(
+        "Year of Birth of the Patient",
+        true,
+        "Please select the patient's Year of Birth");
+    dob.isMeta = true;
+    dob.isAge = true;
+    dob.yearOnly = true;
+
+    vaccineForm.addField(dob);
+
+    FormInputFieldOptions gender = FormInputFieldOptions(
+        "Gender",
+        false,
+        "Please select the Patient's gender ",
+        [Value('Male'), Value('Female'), Value('Other')],
+        false);
+
+    gender.isMeta = false;
+    gender.defaultValueIndex = 0;
+
+    vaccineForm.addField(gender);
+
+    FormInputFieldOptions bloodGroup = FormInputFieldOptions(
+        "Blood group",
+        false,
+        "Please select the Patient's Blood group/type. If it's not known, don't select any option.",
+        [
+          Value('O+'),
+          Value('O-'),
+          Value('A+'),
+          Value('A-'),
+          Value('B+'),
+          Value('B-'),
+          Value('AB+'),
+          Value('AB-')
+        ],
+        false);
+
+    bloodGroup.isMeta = true;
+    bloodGroup.defaultValueIndex = 0;
+
+    vaccineForm.addField(bloodGroup);
+
+    FormInputFieldOptions vaccineType = FormInputFieldOptions(
+        "Choose the Vaccine",
+        false,
+        "Please select the desease against which the patient is to be vaccinated",
+        [
+          Value('Hepatitis B'),
+          Value('Smallpox'),
+          Value('Rotavirus'),
+          Value('Measles'),
+          Value('Chickenpox'),
+          Value('Yellow fever'),
+          Value('Hepatitis A'),
+          Value('Tetanus'),
+          Value('Influenza'),
+          Value('Poliovirus'),
+          Value('Others')
+        ],
+        true);
+
+    vaccineType.isMeta = true;
+    vaccineType.defaultValueIndex = 0;
+
+    vaccineForm.addField(vaccineType);
+
+    FormInputFieldPhone patientContactPhone = FormInputFieldPhone(
+        "Patient's phone number",
+        true,
+        "Please enter Patient's phone number on which Doctor can contact");
+    patientContactPhone.isMeta = false;
+
+    vaccineForm.addField(patientContactPhone);
+
+    FormInputFieldAttachment medicalReport = FormInputFieldAttachment(
+        "Medical Report",
+        false,
+        "Please attach Medical report, if you have (optional)");
+
+    vaccineForm.addField(medicalReport);
+
+    FormInputFieldAttachment medicalPrescription = FormInputFieldAttachment(
+        "Doctor's prescription",
+        false,
+        "Please attach Doctor's prescription, if you have (optional)");
+
+    vaccineForm.addField(medicalPrescription);
+
+    FormInputFieldText specialNotes = FormInputFieldText(
+        "Special notes",
+        false,
+        "Please enter other details about patient's condition, symptoms, allergies, etc.",
+        500);
+    vaccineForm.addField(specialNotes);
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(vaccineForm);
+
+    return vaccineForm;
   }
 
   Future<BookingForm> createDoctorConsultationForm(String formId) async {
@@ -3393,6 +3586,16 @@ class DBTest {
     await _gs.getApplicationService().saveBookingForm(doctorConsultationForm);
 
     return doctorConsultationForm;
+  }
+
+  Future<BookingForm> createMedicalTestRequestFormForClinic(
+      String formId) async {
+    BookingForm form = createMedicalTestRequestForm(formId);
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(form);
+
+    return form;
   }
 
   Future<BookingForm> createMedicalTestRequestFormForHospital(
