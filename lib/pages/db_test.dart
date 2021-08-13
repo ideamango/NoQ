@@ -213,8 +213,9 @@ class DBTest {
         2,
         false);
 
-    // await addFormToEntity(
-    //     nebulaClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    await addFormToEntity(
+        nebulaClinic, GENERAL_VACCINE_CLINIC_FORM, true, false);
+    await addFormToEntity(nebulaClinic, MEDICAL_TEST_CLINIC_FORM, true, false);
     await addFormToEntity(
         nebulaClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
 
@@ -234,8 +235,9 @@ class DBTest {
         2,
         false);
 
-    // await addFormToEntity(
-    //     plutoClinic, COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, true, false);
+    await addFormToEntity(
+        plutoClinic, GENERAL_VACCINE_CLINIC_FORM, true, false);
+    await addFormToEntity(plutoClinic, MEDICAL_TEST_CLINIC_FORM, true, false);
     await addFormToEntity(
         plutoClinic, DOCTOR_CONSULTATION_CLINIC_FORM, true, true);
 
@@ -3680,10 +3682,17 @@ class DBTest {
           Value('Advanced Full Body Checkup'),
           Value('Covid-19 - Antigen Rapid'),
           Value('Covid-19 - PCR'),
+          Value('Fasting Blood Sugar'),
+          Value('Post Lunch Blood Sugar'),
+          Value('E.C.G'),
+          Value('HIV'),
+          Value('HBSAG (Hepatitis B surface antigen)'),
+          Value('HCV (Hepatitis C virus)'),
           Value('Complete Blood Test'),
           Value('Urine Routine & Microscopy'),
           Value('Urine Culture'),
           Value('CT Scan'),
+          Value('Eye checkup'),
           Value('Cholesterol (lipid profile)'),
           Value('Liver function'),
           Value('Full blood count'),
