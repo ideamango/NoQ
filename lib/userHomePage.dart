@@ -416,7 +416,8 @@ class _UserHomePageState extends State<UserHomePage>
                                         width:
                                             MediaQuery.of(context).size.width,
                                         child: Card(
-                                          color: primaryAccentColor,
+                                          elevation: 0,
+                                          color: Colors.white,
                                           child: card,
                                         ),
                                       );
