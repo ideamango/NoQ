@@ -50,8 +50,8 @@ class Item3 extends StatelessWidget {
     return Container(
       child: Image.asset(
         'assets/3.jpg',
-        height: MediaQuery.of(context).size.height * .22,
-        fit: BoxFit.contain,
+        width: MediaQuery.of(context).size.width * .9,
+        fit: BoxFit.fitWidth,
       ),
       // child: Image.asset('assets/3.jpg',
       //     gaplessPlayback: true,
@@ -69,8 +69,8 @@ class Item4 extends StatelessWidget {
     return Container(
       child: Image.asset(
         'assets/4.jpg',
-        height: MediaQuery.of(context).size.height * .2,
-        fit: BoxFit.contain,
+        width: MediaQuery.of(context).size.width * .9,
+        fit: BoxFit.fitWidth,
       ),
     );
   }
@@ -83,8 +83,8 @@ class Item5 extends StatelessWidget {
     return Container(
       child: Image.asset(
         'assets/5.jpg',
-        height: MediaQuery.of(context).size.height * .22,
-        fit: BoxFit.contain,
+        width: MediaQuery.of(context).size.width * .9,
+        fit: BoxFit.fitWidth,
       ),
     );
   }
@@ -97,8 +97,8 @@ class Item6 extends StatelessWidget {
     return Container(
       child: Image.asset(
         'assets/6.jpg',
-        height: MediaQuery.of(context).size.height * .22,
-        fit: BoxFit.contain,
+        width: MediaQuery.of(context).size.width * .9,
+        fit: BoxFit.fitWidth,
       ),
     );
   }
@@ -111,8 +111,8 @@ class Item7 extends StatelessWidget {
     return Container(
       child: Image.asset(
         'assets/7.jpg',
-        height: MediaQuery.of(context).size.height * .22,
-        fit: BoxFit.contain,
+        width: MediaQuery.of(context).size.width * .9,
+        fit: BoxFit.fitWidth,
       ),
     );
   }
