@@ -7,8 +7,8 @@ class Item1 extends StatelessWidget {
     return Container(
       child: Image.asset(
         'assets/1.jpg',
-        height: MediaQuery.of(context).size.height * .22,
-        fit: BoxFit.contain,
+        width: MediaQuery.of(context).size.width * .9,
+        fit: BoxFit.fitWidth,
       ),
     );
   }
@@ -21,8 +21,8 @@ class Item2 extends StatelessWidget {
     return Container(
       child: Image.asset(
         'assets/2.jpg',
-        height: MediaQuery.of(context).size.height * .22,
-        fit: BoxFit.contain,
+        width: MediaQuery.of(context).size.width * .9,
+        fit: BoxFit.fitWidth,
       ),
       // child: Column(
       //   mainAxisAlignment: MainAxisAlignment.center,
