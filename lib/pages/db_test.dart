@@ -3395,12 +3395,12 @@ class DBTest {
         false,
         "Please select the desease against which the patient is to be vaccinated",
         [
-          Value('Hepatitis B'),
           Value('Smallpox'),
           Value('Rotavirus'),
           Value('Measles'),
           Value('Chickenpox'),
           Value('Yellow fever'),
+          Value('Hepatitis B'),
           Value('Hepatitis A'),
           Value('Tetanus'),
           Value('Influenza'),
