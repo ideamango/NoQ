@@ -44,9 +44,9 @@ class _VideoPlayerAppState extends State<VideoPlayerApp> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            width: MediaQuery.of(context).size.width * .3,
+            width: MediaQuery.of(context).size.width * .27,
             padding: EdgeInsets.all(0),
-            margin: EdgeInsets.all(5),
+            margin: EdgeInsets.all(0),
             child: MaterialButton(
               padding: EdgeInsets.all(0),
               color: Colors.white,
@@ -57,7 +57,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp> {
                     MaterialPageRoute(builder: (context) => UserHomePage()));
               },
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.fromLTRB(0, 0, 0, 0),

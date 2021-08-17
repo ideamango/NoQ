@@ -175,7 +175,7 @@ final textBotSheetTextStyle = TextStyle(
 final textLabelTextStyle = TextStyle(
   color: Colors.blueGrey[900],
   // fontWeight: FontWeight.w800,
-  fontFamily: 'RalewayRegular',
+  //fontFamily: 'RalewayRegular',
   letterSpacing: 0.5,
   fontSize: 15.0,
   //height: 2,
