@@ -41,13 +41,15 @@ class _VideoPlayerAppState extends State<VideoPlayerApp> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
+            width: MediaQuery.of(context).size.width * .3,
             padding: EdgeInsets.all(0),
             margin: EdgeInsets.all(5),
-            child: FlatButton(
+            child: MaterialButton(
               padding: EdgeInsets.all(0),
-              color: Colors.grey[300],
+              color: Colors.white,
               splashColor: highlightColor.withOpacity(.8),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -86,7 +88,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(0),
             child: AspectRatio(
               aspectRatio: _controller.value.aspectRatio,
               child: Stack(

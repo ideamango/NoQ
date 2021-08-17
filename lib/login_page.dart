@@ -238,78 +238,78 @@ class _LoginPageState extends State<LoginPage> {
                       //     ),
                       //   ),
                       // ),
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width * .8,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          //mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Container(
-                              //alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.all(0),
-                              margin: EdgeInsets.all(0),
-                              height: MediaQuery.of(context).size.height * .05,
-                              width: MediaQuery.of(context).size.width * .38,
-                              child: RaisedButton(
-                                elevation: 20,
-                                shape: RoundedRectangleBorder(
-                                    side:
-                                        BorderSide(color: Colors.blueGrey[600]),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5.0))),
-                                padding: EdgeInsets.all(0),
-                                color: Colors.transparent,
-                                splashColor: highlightColor.withOpacity(.8),
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                      new MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              ExplorePageForBusiness()));
-                                },
-                                child: Text(
-                                  "Business Owners",
-                                  style: TextStyle(
-                                    color: highlightColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            horizontalSpacer,
-                            Container(
-                              //  alignment: Alignment.centerRight,
-                              padding: EdgeInsets.all(0),
-                              margin: EdgeInsets.all(0),
-                              height: MediaQuery.of(context).size.height * .05,
-                              width: MediaQuery.of(context).size.width * .38,
-                              child: RaisedButton(
-                                elevation: 20,
-                                shape: RoundedRectangleBorder(
-                                    side:
-                                        BorderSide(color: Colors.blueGrey[600]),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5.0))),
-                                padding: EdgeInsets.all(0),
-                                color: Colors.transparent,
-                                splashColor: highlightColor.withOpacity(.8),
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                      new MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              ExplorePageForUser()));
-                                },
-                                child: Text(
-                                  "Users",
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    color: highlightColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      //   alignment: Alignment.center,
+                      //   width: MediaQuery.of(context).size.width * .8,
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.center,
+                      //     //mainAxisSize: MainAxisSize.min,
+                      //     children: <Widget>[
+                      //       Container(
+                      //         //alignment: Alignment.centerLeft,
+                      //         padding: EdgeInsets.all(0),
+                      //         margin: EdgeInsets.all(0),
+                      //         height: MediaQuery.of(context).size.height * .05,
+                      //         width: MediaQuery.of(context).size.width * .38,
+                      //         child: RaisedButton(
+                      //           elevation: 20,
+                      //           shape: RoundedRectangleBorder(
+                      //               side:
+                      //                   BorderSide(color: Colors.blueGrey[600]),
+                      //               borderRadius:
+                      //                   BorderRadius.all(Radius.circular(5.0))),
+                      //           padding: EdgeInsets.all(0),
+                      //           color: Colors.transparent,
+                      //           splashColor: highlightColor.withOpacity(.8),
+                      //           onPressed: () {
+                      //             Navigator.of(context).push(
+                      //                 new MaterialPageRoute(
+                      //                     builder: (BuildContext context) =>
+                      //                         ExplorePageForBusiness()));
+                      //           },
+                      //           child: Text(
+                      //             "Business Owners",
+                      //             style: TextStyle(
+                      //               color: highlightColor,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //       horizontalSpacer,
+                      //       Container(
+                      //         //  alignment: Alignment.centerRight,
+                      //         padding: EdgeInsets.all(0),
+                      //         margin: EdgeInsets.all(0),
+                      //         height: MediaQuery.of(context).size.height * .05,
+                      //         width: MediaQuery.of(context).size.width * .38,
+                      //         child: RaisedButton(
+                      //           elevation: 20,
+                      //           shape: RoundedRectangleBorder(
+                      //               side:
+                      //                   BorderSide(color: Colors.blueGrey[600]),
+                      //               borderRadius:
+                      //                   BorderRadius.all(Radius.circular(5.0))),
+                      //           padding: EdgeInsets.all(0),
+                      //           color: Colors.transparent,
+                      //           splashColor: highlightColor.withOpacity(.8),
+                      //           onPressed: () {
+                      //             Navigator.of(context).push(
+                      //                 new MaterialPageRoute(
+                      //                     builder: (BuildContext context) =>
+                      //                         ExplorePageForUser()));
+                      //           },
+                      //           child: Text(
+                      //             "Users",
+                      //             textAlign: TextAlign.right,
+                      //             style: TextStyle(
+                      //               color: highlightColor,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

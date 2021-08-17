@@ -29,6 +29,8 @@ class Configurations {
       this.upi,
       this.ipURL,
       this.ipstackURL,
+      this.userBookingVideoLink,
+      this.businessRegisterVideoLink,
       this.iOSAppId,
       this.packageName});
 
@@ -54,6 +56,8 @@ class Configurations {
   String upi;
   String ipURL;
   String ipstackURL;
+  String userBookingVideoLink;
+  String businessRegisterVideoLink;
   String iOSAppId;
   String packageName;
 
@@ -80,6 +84,8 @@ class Configurations {
             convertFromMapOfList(iosAppVersionToEntityTypes),
         'upi': upi,
         'ipURL': ipURL,
+        'userBookingVideoLink': userBookingVideoLink,
+        'businessRegisterVideoLink': businessRegisterVideoLink,
         'ipstackURL': ipstackURL,
         'iOSAppId': iOSAppId,
         'packageName': packageName
@@ -158,6 +164,8 @@ class Configurations {
             convertToMapOfList(json['iosAppVersionToEntityTypes']),
         upi: json['upi'],
         ipURL: json['ipURL'],
+        userBookingVideoLink: json['userBookingVideoLink'],
+        businessRegisterVideoLink: json['businessRegisterVideoLink'],
         ipstackURL: json['ipstackURL'],
         iOSAppId: json['iOSAppId'],
         packageName: json['packageName']);
