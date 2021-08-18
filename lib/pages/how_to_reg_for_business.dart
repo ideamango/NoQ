@@ -17,7 +17,7 @@ class _HowToRegForBusinessState extends State<HowToRegForBusiness> {
     super.initState();
     GlobalState.getGlobalState().then((value) {
       _gs = value;
-      videoPath = _gs.getConfigurations().userBookingVideoLink;
+      videoPath = _gs.getConfigurations().businessRegisterVideoLink;
       setState(() {
         initCompleted = true;
       });

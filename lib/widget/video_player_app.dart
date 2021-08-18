@@ -42,11 +42,13 @@ class _VideoPlayerAppState extends State<VideoPlayerApp> {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
             width: MediaQuery.of(context).size.width * .27,
             padding: EdgeInsets.all(0),
-            margin: EdgeInsets.all(0),
+            margin: EdgeInsets.fromLTRB(
+                8, MediaQuery.of(context).size.height * .05, 8, 8),
             child: MaterialButton(
               padding: EdgeInsets.all(0),
               color: Colors.white,
