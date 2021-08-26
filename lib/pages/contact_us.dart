@@ -74,8 +74,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
           context,
           Icons.check,
           Duration(seconds: 5),
-          "Your message has been sent.",
-          "Our team will contact you as soon as possible.",
+          mailSentMsg,
+          mailSentSubMsg,
           successGreenSnackBar));
 
       print("Mail sent");
@@ -305,49 +305,44 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         ),
                         new ListTile(
                           leading: Container(
-                              padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+                              // padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
                               child: const Icon(Icons.email)),
-                          title: Column(
-                            children: <Widget>[
-                              TextField(
-                                autofocus: false,
-                                controller: _msgController,
+                          title: TextField(
+                            autofocus: false,
+                            controller: _msgController,
+                            style: TextStyle(fontSize: 14),
+                            decoration: InputDecoration(
+                              labelText: 'Enter your message here..',
+                              labelStyle: TextStyle(fontSize: 15),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.orange)),
+                              // errorText:
+                              //     _validate ? 'Please enter your message' : null,
+                            ),
+                            //validator: validateText,
+                            keyboardType: TextInputType.multiline,
 
-                                decoration: InputDecoration(
-                                  labelText: 'Enter your message here..',
-                                  labelStyle: TextStyle(fontSize: 15),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.grey)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.orange)),
-                                  // errorText:
-                                  //     _validate ? 'Please enter your message' : null,
-                                ),
-                                //validator: validateText,
-                                keyboardType: TextInputType.multiline,
-                                maxLength: null,
-                                maxLines: null,
-                                onChanged: (value) {
-                                  if (_msgController.text?.length != 0)
-                                    setState(() {
-                                      _errMsg = null;
-                                    });
-                                  setState(() {
-                                    _mailSecLine = _msgController.text;
-                                    _mailBody = (_mailFirstline != null)
-                                        ? _mailFirstline + "\n" + _mailSecLine
-                                        : _mailSecLine;
-                                  });
-                                },
-                              ),
-                              Text(
-                                (_errMsg != null) ? _errMsg : "",
-                                style: errorTextStyle,
-                              ),
-                            ],
+                            maxLength: null,
+                            maxLines: null,
+                            onChanged: (value) {
+                              if (_msgController.text?.length != 0)
+                                setState(() {
+                                  _errMsg = null;
+                                });
+                              setState(() {
+                                _mailSecLine = _msgController.text;
+                                _mailBody = (_mailFirstline != null)
+                                    ? _mailFirstline + "\n" + _mailSecLine
+                                    : _mailSecLine;
+                              });
+                            },
                           ),
+                        ),
+                        Text(
+                          (_errMsg != null) ? _errMsg : "",
+                          style: errorTextStyle,
                         ),
                         verticalSpacer,
                         Row(

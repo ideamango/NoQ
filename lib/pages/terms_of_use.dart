@@ -93,7 +93,7 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
                                     style: TextStyle(color: Colors.blue),
                                     recognizer: new TapGestureRecognizer()
                                       ..onTap = () => launchUri(
-                                          "https://bigpiq.com/products/LESSs/terms-of-use.html"),
+                                          "https://lesss.bigpiq.com/terms-of-use"),
                                   ),
                                   TextSpan(text: agreement4),
                                   TextSpan(
@@ -101,7 +101,7 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
                                     style: TextStyle(color: Colors.blue),
                                     recognizer: new TapGestureRecognizer()
                                       ..onTap = () => launchUri(
-                                          "https://bigpiq.com/products/LESSs/privacy-policy.html"),
+                                          "https://lesss.bigpiq.com/privacy-policy"),
                                   ),
                                   TextSpan(text: agreement6),
                                 ]),

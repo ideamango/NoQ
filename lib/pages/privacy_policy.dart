@@ -96,7 +96,7 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
                                     style: TextStyle(color: Colors.blue),
                                     recognizer: new TapGestureRecognizer()
                                       ..onTap = () => launchUri(
-                                          "https://bigpiq.com/products/LESSs/privacy-policy.html"),
+                                          "https://lesss.bigpiq.com/privacy-policy"),
                                   ),
                                 ]),
                           ),
