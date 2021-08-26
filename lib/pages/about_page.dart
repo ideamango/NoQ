@@ -89,7 +89,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                     style: TextStyle(color: Colors.blue),
                     recognizer: new TapGestureRecognizer()
                       ..onTap = () => launchUri(
-                          "https://bigpiq.com/products/LESSs/lesss_home.html#features"),
+                          "https://lesss.bigpiq.com#features"),
                   ),
                   TextSpan(
                     text: ourStory8_1,

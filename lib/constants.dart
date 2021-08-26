@@ -511,6 +511,8 @@ List<String> mailReasons = [
   'Report an Issue',
   'Press'
 ];
+String mailSentMsg = "Thank you for reaching out to us";
+String mailSentSubMsg = "Have a good day.";
 String ourStory1 = ' "We are changing the world with technology"';
 
 String ourStory2 = ' - said';
