@@ -44,7 +44,7 @@ dependencies:
   firebase_dynamic_links: 2.0.1
   firebase_storage: ^8.0.4
   uuid: ^2.2.2
- #Added for QR code scan and generate
+ #Added for QR code scan and generate.. testing the git user change
   barcode_scan_fix: ^1.0.2
   qr_flutter: ^3.2.0
   share: ^0.6.5+4 
