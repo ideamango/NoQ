@@ -74,7 +74,7 @@
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
-  		<true/>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>ip-api.com</key>
@@ -98,7 +98,6 @@
 	<string>An applicant will be required to attach documents while submitting the Booking form if required by the Service Provider.</string>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>location</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
