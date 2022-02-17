@@ -789,6 +789,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                       slotKey: key,
                       stats: stats,
                       date: date,
+                      //SMITA added tokensList for removing errors
+                      tokensList: [],
                       format: DateDisplayFormat.date,
                       metaEntity: widget.metaEntity,
                       isReadOnly: widget.isReadOnly,

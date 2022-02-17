@@ -878,7 +878,7 @@ class Utils {
         minimumVersion: 1,
         //fallbackUrl: Uri.parse('https://bigpiq.com/#product')
       ),
-      iosParameters: IosParameters(
+      iosParameters: IOSParameters(
         bundleId: bundleId,
         minimumVersion: '1',
         appStoreId: appStoreId,
@@ -890,7 +890,7 @@ class Utils {
             'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
       ),
     );
-    final link = await parameters.buildUrl();
+    final link = parameters.link;
     // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
     // print("short url");
     // print(shortenedLink);
@@ -911,7 +911,7 @@ class Utils {
         minimumVersion: 1,
         //  fallbackUrl: Uri.parse('https://bigpiq.com/#product')
       ),
-      iosParameters: IosParameters(
+      iosParameters: IOSParameters(
         bundleId: bundleId,
         minimumVersion: '1',
         appStoreId: appStoreId,
@@ -923,7 +923,7 @@ class Utils {
             'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
       ),
     );
-    final link = await parameters.buildUrl();
+    final link = parameters.link;
     // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
     // print("short url");
     // print(shortenedLink);
@@ -944,7 +944,7 @@ class Utils {
         minimumVersion: 1,
         //  fallbackUrl: Uri.parse('https://bigpiq.com/#product')
       ),
-      iosParameters: IosParameters(
+      iosParameters: IOSParameters(
         bundleId: bundleId,
         minimumVersion: '1',
         appStoreId: appStoreId,
@@ -956,16 +956,26 @@ class Utils {
             'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
       ),
     );
-    final link = await parameters.buildUrl();
+
+    Uri url;
+    bool short = false;
+    if (short) {
+      final Uri shortLink = parameters.link;
+      url = shortLink;
+    } else {
+      url = parameters.link;
+    }
+
+    //final link = await parameters.buildUrl();
     // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
     // print("short url");
     // print(shortenedLink);
     //return shortenedLink.shortUrl;
-    return link;
+    return url;
   }
 
   static Future<Uri> createDynamicLinkWithParams(String entityId,
-      String msgTitle, String bundleId, String appStoreId) async {
+      String msgTitle, final String bundleId, String appStoreId) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
       uriPrefix: shareURLPrefix,
@@ -979,7 +989,7 @@ class Utils {
         minimumVersion: 1,
         // fallbackUrl: Uri.parse('https://bigpiq.com/#product')
       ),
-      iosParameters: IosParameters(
+      iosParameters: IOSParameters(
         bundleId: bundleId,
         minimumVersion: '1',
         appStoreId: appStoreId,
@@ -990,12 +1000,12 @@ class Utils {
             'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
       ),
     );
-    final link = await parameters.buildUrl();
-    final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+    //final link = await parameters.buildUrl();
+    final Uri shortenedLink = parameters.link;
     print("short url");
     print(shortenedLink);
     //return shortenedLink.shortUrl;
-    return shortenedLink.shortUrl;
+    return shortenedLink;
   }
 
   static generateLinkAndShare(String entityId, String msgTitle, String msgBody,

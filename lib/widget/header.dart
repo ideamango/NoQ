@@ -172,14 +172,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     item['icon'],
                     color: _page == index
                         ? highlightColor
-                        : Theme.of(context).textTheme.title.color,
+                        : Theme.of(context).textTheme.headline6.color,
                   ),
                   title: Text(
                     item['name'],
                     style: TextStyle(
                       color: _page == index
                           ? highlightColor
-                          : Theme.of(context).textTheme.title.color,
+                          : Theme.of(context).textTheme.headline6.color,
                     ),
                   ),
                   children: <Widget>[
@@ -195,14 +195,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             subItem['icon'],
                             color: _page == index
                                 ? highlightColor
-                                : Theme.of(context).textTheme.title.color,
+                                : Theme.of(context).textTheme.headline6.color,
                           ),
                           title: Text(
                             subItem['name'],
                             style: TextStyle(
                               color: _page == index
                                   ? highlightColor
-                                  : Theme.of(context).textTheme.title.color,
+                                  : Theme.of(context).textTheme.headline6.color,
                             ),
                           ),
                           onTap: () {
@@ -224,14 +224,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     item['icon'],
                     color: _page == index
                         ? highlightColor
-                        : Theme.of(context).textTheme.title.color,
+                        : Theme.of(context).textTheme.headline6.color,
                   ),
                   title: Text(
                     item['name'],
                     style: TextStyle(
                       color: _page == index
                           ? highlightColor
-                          : Theme.of(context).textTheme.title.color,
+                          : Theme.of(context).textTheme.headline6.color,
                     ),
                   ),
                   onTap: () {

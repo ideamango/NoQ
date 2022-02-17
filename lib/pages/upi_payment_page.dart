@@ -169,14 +169,16 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     print("Starting transaction with id $transactionRef");
 
     final response = await UpiPay.initiateTransaction(
-      amount: _amountController.text,
-      app: app.upiApplication,
-      receiverName: 'LESSs',
-      receiverUpiAddress: _upiAddressController.text,
-      // receiverUpiAddress: _upiAddressController.text,
-      transactionRef: transactionRef,
-      merchantCode: '7372',
-    ).onError((error, stackTrace) => handleUpiPayErrors(error));
+            amount: _amountController.text,
+            app: app.upiApplication,
+            receiverName: 'LESSs',
+            receiverUpiAddress: _upiAddressController.text,
+            // receiverUpiAddress: _upiAddressController.text,
+            transactionRef: transactionRef,
+            transactionNote: "UPI Transaction"
+            //merchantCode: '7372',
+            )
+        .onError((error, stackTrace) => handleUpiPayErrors(error));
     print(response);
     if (response.status == UpiTransactionStatus.failure) {
       Utils.showMyFlushbar(
@@ -203,30 +205,30 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     String mainMsg;
     String subMsg;
     switch (error.runtimeType) {
-      case InvalidAmountException:
-        String errorMessage = (error as InvalidAmountException).message;
-        subMsg = "Please enter correct amount and try again.";
-        if (errorMessage.contains('greater than 1')) {
-          mainMsg = 'Amount must be greater than 1';
-        } else if (errorMessage.contains('not a valid')) {
-          mainMsg = 'The amount entered is not a valid Number.';
-        } else if (errorMessage.contains('upper limit')) {
-          mainMsg =
-              'Amount must be less then 1,00,000 since that is the upper limit per UPI transaction';
-        }
+      // case InvalidAmountException:
+      //   String errorMessage = (error as InvalidAmountException).message;
+      //   subMsg = "Please enter correct amount and try again.";
+      //   if (errorMessage.contains('greater than 1')) {
+      //     mainMsg = 'Amount must be greater than 1';
+      //   } else if (errorMessage.contains('not a valid')) {
+      //     mainMsg = 'The amount entered is not a valid Number.';
+      //   } else if (errorMessage.contains('upper limit')) {
+      //     mainMsg =
+      //         'Amount must be less then 1,00,000 since that is the upper limit per UPI transaction';
+      //   }
 
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            mainMsg, subMsg, Colors.red);
-        break;
-      case InvalidAmountException:
-        Utils.showMyFlushbar(
-            context,
-            Icons.error,
-            Duration(seconds: 6),
-            "Could not process UPI payment at this time.",
-            "Try again with correct UPI Id.",
-            Colors.red);
-        break;
+      //   Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+      //       mainMsg, subMsg, Colors.red);
+      //   break;
+      // case InvalidAmountException:
+      //   Utils.showMyFlushbar(
+      //       context,
+      //       Icons.error,
+      //       Duration(seconds: 6),
+      //       "Could not process UPI payment at this time.",
+      //       "Try again with correct UPI Id.",
+      //       Colors.red);
+      //   break;
 
       default:
         Utils.showMyFlushbar(
@@ -551,11 +553,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                             Container(
                               alignment: Alignment.centerRight,
                               width: MediaQuery.of(context).size.width * .4,
-                              child: Image.memory(
-                                _appsFuture[index].icon,
-                                width: 64,
-                                height: 64,
-                              ),
+                              child: _appsFuture[index].iconImage(64),
                             ),
                             Container(
                               alignment: Alignment.centerLeft,

@@ -124,7 +124,7 @@ class _MonthPickerDialogState extends State<_MonthPickerDialog> {
                 children: <Widget>[
                   Text(
                     '${DateFormat.yMMM(locale).format(selectedDate)}',
-                    style: theme.primaryTextTheme.subhead,
+                    style: theme.primaryTextTheme.subtitle1,
                   ),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,7 +139,7 @@ class _MonthPickerDialogState extends State<_MonthPickerDialog> {
                             },
                             child: Text(
                               '${DateFormat.y(locale).format(DateTime(displayedPage))}',
-                              style: theme.primaryTextTheme.headline,
+                              style: theme.primaryTextTheme.headline5,
                             ),
                           ),
                         if (isYearSelection)
@@ -149,15 +149,15 @@ class _MonthPickerDialogState extends State<_MonthPickerDialog> {
                               children: <Widget>[
                                 Text(
                                   '${DateFormat.y(locale).format(DateTime(displayedPage - 5))}',
-                                  style: theme.primaryTextTheme.headline,
+                                  style: theme.primaryTextTheme.headline5,
                                 ),
                                 Text(
                                   '-',
-                                  style: theme.primaryTextTheme.headline,
+                                  style: theme.primaryTextTheme.headline5,
                                 ),
                                 Text(
                                   '${DateFormat.y(locale).format(DateTime(displayedPage + 1))}',
-                                  style: theme.primaryTextTheme.headline,
+                                  style: theme.primaryTextTheme.headline5,
                                 )
                               ]),
                         Row(children: <Widget>[

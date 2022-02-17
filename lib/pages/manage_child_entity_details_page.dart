@@ -2441,7 +2441,9 @@ class _ManageChildEntityDetailsPageState
           child: SafeArea(
             child: new Form(
               key: _serviceDetailsFormKey,
-              autovalidate: _autoValidate,
+              autovalidateMode: _autoValidate
+                  ? AutovalidateMode.always
+                  : AutovalidateMode.disabled,
               child: ListView(padding: const EdgeInsets.all(8.0),
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[

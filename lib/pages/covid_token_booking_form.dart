@@ -1364,7 +1364,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
               bottom: true,
               child: new Form(
                 key: _tokenBookingDetailsFormKey,
-                autovalidate: _autoValidate,
+                autovalidateMode: _autoValidate
+                    ? AutovalidateMode.always
+                    : AutovalidateMode.disabled,
                 child: new ListView(
                   padding: const EdgeInsets.all(5.0),
                   children: <Widget>[

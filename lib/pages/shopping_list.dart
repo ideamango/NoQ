@@ -359,7 +359,7 @@ class _ShoppingListState extends State<ShoppingList> {
                 )
               : new Form(
                   key: _shoppingListFormKey,
-                  autovalidate: true,
+                  autovalidateMode: AutovalidateMode.always,
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Column(

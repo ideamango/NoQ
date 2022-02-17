@@ -84,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
       minLines: 1,
       style: lightInputTextStyle,
       inputFormatters: <TextInputFormatter>[
-        WhitelistingTextInputFormatter.digitsOnly,
+        FilteringTextInputFormatter.digitsOnly
       ],
       keyboardType: TextInputType.phone,
 
@@ -152,7 +152,9 @@ class _LoginPageState extends State<LoginPage> {
                 margin: new EdgeInsets.fromLTRB(10, 5.0, 10, 5),
                 child: new Form(
                   key: _loginPageFormKey,
-                  autovalidate: _autoValidate,
+                  autovalidateMode: _autoValidate
+                      ? AutovalidateMode.always
+                      : AutovalidateMode.disabled,
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[

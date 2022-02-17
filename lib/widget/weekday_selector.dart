@@ -134,7 +134,9 @@ class _WeekDaySelectorFormFieldState extends State<WeekDaySelectorFormField> {
     return FormField<List<days>>(
       enabled: this.widget.enabled,
       initialValue: widget.initialValue,
-      autovalidate: widget.autovalidate,
+      autovalidateMode: widget.autovalidate
+          ? AutovalidateMode.always
+          : AutovalidateMode.disabled,
       onSaved: (days) {
         // print("SELECTOR SAVE: " + daysSelected.toString());
         if (widget.onSaved != null) widget.onSaved(daysSelected);

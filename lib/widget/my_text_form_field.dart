@@ -10,7 +10,9 @@ class MyTextFormField extends FormField<int> {
             onSaved: onSaved,
             validator: validator,
             initialValue: initialValue,
-            autovalidate: autovalidate,
+            autovalidateMode: autovalidate
+                ? AutovalidateMode.always
+                : AutovalidateMode.disabled,
             builder: (FormFieldState<int> state) {
               return Row(
                 mainAxisSize: MainAxisSize.min,
