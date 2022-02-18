@@ -17,8 +17,8 @@ enum LegendShape { Circle, Rectangle }
 class EntityPieChart extends StatefulWidget {
   final Map<String, double> pieChartDataMap;
   EntityPieChart({
-    Key key,
-    @required this.pieChartDataMap,
+    Key? key,
+    required this.pieChartDataMap,
   }) : super(key: key);
 
   @override
@@ -26,7 +26,7 @@ class EntityPieChart extends StatefulWidget {
 }
 
 class _EntityPieChartState extends State<EntityPieChart> {
-  List<Color> colorList = [
+  List<Color?> colorList = [
     Colors.blue[200],
     Colors.yellow[200],
     Colors.orange[200],
@@ -34,18 +34,18 @@ class _EntityPieChartState extends State<EntityPieChart> {
     Colors.purple[200],
   ];
 
-  ChartType _chartType = ChartType.disc;
+  ChartType? _chartType = ChartType.disc;
   bool _showCenterText = true;
-  double _ringStrokeWidth = 32;
-  double _chartLegendSpacing = 32;
+  double? _ringStrokeWidth = 32;
+  double? _chartLegendSpacing = 32;
   bool _showLegendsInRow = true;
   bool _showLegends = true;
   bool _showChartValueBackground = false;
   bool _showChartValues = true;
   bool _showChartValuesInPercentage = true;
   bool _showChartValuesOutside = true;
-  LegendShape _legendShape = LegendShape.Rectangle;
-  LegendPosition _legendPosition = LegendPosition.bottom;
+  LegendShape? _legendShape = LegendShape.Rectangle;
+  LegendPosition? _legendPosition = LegendPosition.bottom;
   int key = 0;
 
   @override
@@ -56,7 +56,7 @@ class _EntityPieChartState extends State<EntityPieChart> {
       animationDuration: Duration(milliseconds: 800),
       chartLegendSpacing: 12,
       chartRadius: MediaQuery.of(context).size.width * .9,
-      colorList: colorList,
+      colorList: colorList as List<Color>,
       initialAngleInDegree: 0,
       chartType: ChartType.disc,
       //centerText: _showCenterText ? "HYBRID" : null,
@@ -87,7 +87,7 @@ class _EntityPieChartState extends State<EntityPieChart> {
             ListTile(
               title: Text(
                 'Pie Chart Options'.toUpperCase(),
-                style: Theme.of(context).textTheme.overline.copyWith(
+                style: Theme.of(context).textTheme.overline!.copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -193,7 +193,7 @@ class _EntityPieChartState extends State<EntityPieChart> {
             ListTile(
               title: Text(
                 'Legend Options'.toUpperCase(),
-                style: Theme.of(context).textTheme.overline.copyWith(
+                style: Theme.of(context).textTheme.overline!.copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -276,7 +276,7 @@ class _EntityPieChartState extends State<EntityPieChart> {
             ListTile(
               title: Text(
                 'Chart values Options'.toUpperCase(),
-                style: Theme.of(context).textTheme.overline.copyWith(
+                style: Theme.of(context).textTheme.overline!.copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),

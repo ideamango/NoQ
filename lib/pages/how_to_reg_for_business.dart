@@ -9,15 +9,15 @@ class HowToRegForBusiness extends StatefulWidget {
 }
 
 class _HowToRegForBusinessState extends State<HowToRegForBusiness> {
-  GlobalState _gs;
-  String videoPath;
+  GlobalState? _gs;
+  String? videoPath;
   bool initCompleted = false;
   @override
   void initState() {
     super.initState();
     GlobalState.getGlobalState().then((value) {
       _gs = value;
-      videoPath = _gs.getConfigurations().businessRegisterVideoLink;
+      videoPath = _gs!.getConfigurations()!.businessRegisterVideoLink;
       setState(() {
         initCompleted = true;
       });

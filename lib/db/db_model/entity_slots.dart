@@ -21,25 +21,25 @@ class EntitySlots {
       this.endTimeMinute});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
-  String entityId;
-  int maxAllowed;
-  DateTime date;
-  int slotDuration;
-  List<Slot> slots;
-  List<String> closedOn;
-  int breakStartHour;
-  int breakStartMinute;
-  int breakEndHour;
-  int breakEndMinute;
-  int startTimeHour;
-  int startTimeMinute;
-  int endTimeHour;
-  int endTimeMinute;
-  int maxTokensPerSlotByUser;
-  int maxPeoplePerToken;
-  int maxTokensByUserInDay;
+  String? entityId;
+  int? maxAllowed;
+  DateTime? date;
+  int? slotDuration;
+  List<Slot>? slots;
+  List<String>? closedOn;
+  int? breakStartHour;
+  int? breakStartMinute;
+  int? breakEndHour;
+  int? breakEndMinute;
+  int? startTimeHour;
+  int? startTimeMinute;
+  int? endTimeHour;
+  int? endTimeMinute;
+  int? maxTokensPerSlotByUser;
+  int? maxPeoplePerToken;
+  int? maxTokensByUserInDay;
 
-  static EntitySlots fromJson(Map<String, dynamic> json) {
+  static EntitySlots? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return new EntitySlots(
         entityId: json['entityId'],
@@ -65,7 +65,7 @@ class EntitySlots {
   static List<Slot> convertToSlotsFromJson(List<dynamic> slotsJson) {
     List<Slot> slots = [];
 
-    for (Map<String, dynamic> json in slotsJson) {
+    for (Map<String, dynamic> json in slotsJson as Iterable<Map<String, dynamic>>) {
       Slot sl = Slot.fromJson(json);
       slots.add(sl);
     }
@@ -75,7 +75,7 @@ class EntitySlots {
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
     List<String> days = [];
 
-    for (String day in daysJson) {
+    for (String day in daysJson as Iterable<String>) {
       days.add(day);
     }
     return days;
@@ -86,7 +86,7 @@ class EntitySlots {
         'maxAllowed': maxAllowed,
         'date': date,
         'slotDuration': slotDuration,
-        'slots': slotsToJson(slots),
+        'slots': slotsToJson(slots!),
         'closedOn': closedOn,
         'breakStartHour': breakStartHour,
         'breakStartMinute': breakStartMinute,

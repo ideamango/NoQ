@@ -21,14 +21,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 
 class GenerateScreen extends StatefulWidget {
-  final String entityId;
-  final String entityName;
+  final String? entityId;
+  final String? entityName;
   final dynamic backRoute;
   GenerateScreen(
-      {Key key,
-      @required this.entityId,
-      @required this.entityName,
-      @required this.backRoute})
+      {Key? key,
+      required this.entityId,
+      required this.entityName,
+      required this.backRoute})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => GenerateScreenState();
@@ -41,25 +41,25 @@ class GenerateScreenState extends State<GenerateScreen> {
   dynamic route;
 
   GlobalKey globalKey = new GlobalKey();
-  String _dataString;
-  String _inputErrorText;
+  late String _dataString;
+  String? _inputErrorText;
   final TextEditingController _textController = TextEditingController();
-  Directory tempDir;
-  Uri uriLink;
+  late Directory tempDir;
+  Uri? uriLink;
   bool _initCompleted = false;
-  String iosAppId;
-  String packageId;
-  String msgBody;
-  String msgTitle;
+  String? iosAppId;
+  String? packageId;
+  late String msgBody;
+  String? msgTitle;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    msgTitle = qrCodeShareHeading + widget.entityName;
+    msgTitle = qrCodeShareHeading + widget.entityName!;
     msgBody = qrCodeShareMessage;
     GlobalState.getGlobalState().then((value) {
-      iosAppId = value.getConfigurations().iOSAppId;
-      packageId = value.getConfigurations().packageName;
+      iosAppId = value!.getConfigurations()!.iOSAppId;
+      packageId = value.getConfigurations()!.packageName;
       generateQrCode();
     });
 
@@ -75,7 +75,7 @@ class GenerateScreenState extends State<GenerateScreen> {
     //dataString needs to be set, using this the Qr code is generated.
 
     Utils.createDynamicLinkFullWithParams(
-            widget.entityId, widget.entityName, packageId, iosAppId)
+            widget.entityId, widget.entityName!, packageId!, iosAppId)
         .then((value) {
       uriLink = value;
       // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
@@ -122,9 +122,9 @@ class GenerateScreenState extends State<GenerateScreen> {
       //'LESSs ~ Book your peace of mind!!'
 
       RenderRepaintBoundary boundary =
-          globalKey.currentContext.findRenderObject();
+          globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       var image = await boundary.toImage();
-      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+      ByteData byteData = await (image.toByteData(format: ImageByteFormat.png) as FutureOr<ByteData>);
       Uint8List pngBytes = byteData.buffer.asUint8List();
       tempDir = await getTemporaryDirectory();
       // final file =
@@ -133,18 +133,18 @@ class GenerateScreenState extends State<GenerateScreen> {
       await file.writeAsBytes(pngBytes);
       // final channel = const MethodChannel('channel:me.sukoon.share/share');
       // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
-      final RenderBox box = context.findRenderObject();
+      final RenderBox? box = context.findRenderObject() as RenderBox?;
       if (Platform.isAndroid) {
         Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
             subject: msgTitle,
-            text: msgTitle + '\n\n' + msgBody,
-            sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+            text: msgTitle! + '\n\n' + msgBody,
+            sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
       }
       if (Platform.isIOS) {
         Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
             //subject: msgTitle,
             //text: msgBody,
-            sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+            sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
       }
     } catch (e) {
       print(e.toString());
@@ -242,7 +242,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                                               20, 10, 10, 0),
                                           child: Column(
                                             children: [
-                                              Text(msgTitle + '\n'),
+                                              Text(msgTitle! + '\n'),
                                               Text(msgBody),
                                             ],
                                           ),
@@ -258,7 +258,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                         margin: EdgeInsets.all(10),
                         child: MaterialButton(
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.blueGrey[400]),
+                            side: BorderSide(color: Colors.blueGrey[400]!),
                             borderRadius: BorderRadius.circular(5),
                           ),
                           color: btnColor,

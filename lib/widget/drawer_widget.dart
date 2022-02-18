@@ -9,7 +9,7 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  PageController _pageController;
+  late PageController _pageController;
   int _page = 0;
 
   List drawerItems = [
@@ -90,14 +90,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     item['icon'],
                     color: _page == index
                         ? highlightColor
-                        : Theme.of(context).textTheme.title.color,
+                        : Theme.of(context).textTheme.headline6!.color,
                   ),
                   title: Text(
                     item['name'],
                     style: TextStyle(
                       color: _page == index
                           ? highlightColor
-                          : Theme.of(context).textTheme.title.color,
+                          : Theme.of(context).textTheme.headline6!.color,
                     ),
                   ),
                   children: <Widget>[
@@ -114,14 +114,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             subItem['icon'],
                             color: _page == index
                                 ? highlightColor
-                                : Theme.of(context).textTheme.title.color,
+                                : Theme.of(context).textTheme.headline6!.color,
                           ),
                           title: Text(
                             subItem['name'],
                             style: TextStyle(
                               color: _page == index
                                   ? highlightColor
-                                  : Theme.of(context).textTheme.title.color,
+                                  : Theme.of(context).textTheme.headline6!.color,
                             ),
                           ),
                           onTap: () {
@@ -139,14 +139,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     item['icon'],
                     color: _page == index
                         ? highlightColor
-                        : Theme.of(context).textTheme.title.color,
+                        : Theme.of(context).textTheme.headline6!.color,
                   ),
                   title: Text(
                     item['name'],
                     style: TextStyle(
                       color: _page == index
                           ? highlightColor
-                          : Theme.of(context).textTheme.title.color,
+                          : Theme.of(context).textTheme.headline6!.color,
                     ),
                   ),
                   onTap: () {

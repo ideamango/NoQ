@@ -15,7 +15,7 @@ import '../utils.dart';
 class ShoppingList extends StatefulWidget {
   final UserToken token;
   final bool isAdmin;
-  ShoppingList({Key key, @required this.token, @required this.isAdmin})
+  ShoppingList({Key? key, required this.token, required this.isAdmin})
       : super(key: key);
   @override
   _ShoppingListState createState() => _ShoppingListState();
@@ -24,16 +24,16 @@ class ShoppingList extends StatefulWidget {
 class _ShoppingListState extends State<ShoppingList> {
   final String title = "Notes";
 
-  UserToken token;
+  late UserToken token;
   final GlobalKey<FormState> _shoppingListFormKey = new GlobalKey<FormState>();
-  List<ListItem> listOfShoppingItems;
+  List<ListItem>? listOfShoppingItems;
   TextEditingController _listItem = new TextEditingController();
 
-  String _item;
+  String? _item;
   bool _initCompleted = false;
   bool _checked = false;
-  String _errMsg;
-  bool isPublic = false;
+  String? _errMsg;
+  bool? isPublic = false;
 
 //Add service Row
 
@@ -59,21 +59,21 @@ class _ShoppingListState extends State<ShoppingList> {
           deliveryAddress: null,
           orderCreatedDateTime: null,
           deliveryDateTime: null,
-          entityId: token.parent.entityId,
+          entityId: token.parent!.entityId,
           isPublic: false,
-          userId: token.parent.userId);
+          userId: token.parent!.userId);
       token.order = ord;
-      listOfShoppingItems = token.order.items;
+      listOfShoppingItems = token.order!.items;
     } else {
-      isPublic = token.order.isPublic;
-      listOfShoppingItems = token.order.items;
+      isPublic = token.order!.isPublic;
+      listOfShoppingItems = token.order!.items;
     }
   }
 
   void _addNewServiceRow() {
     setState(() {
       ListItem sItem = new ListItem(itemName: _item, isDone: false);
-      listOfShoppingItems.add(sItem);
+      listOfShoppingItems!.add(sItem);
       _count = _count + 1;
       //token.order.items.add(sItem);
       //TODO: Smita - Update GS
@@ -82,7 +82,7 @@ class _ShoppingListState extends State<ShoppingList> {
 
   void _removeServiceRow(ListItem currItem) {
     setState(() {
-      listOfShoppingItems.remove(currItem);
+      listOfShoppingItems!.remove(currItem);
       _count = _count - 1;
     });
   }
@@ -90,7 +90,7 @@ class _ShoppingListState extends State<ShoppingList> {
   Widget _buildServiceItem(ListItem newItem) {
     TextEditingController itemNameController = new TextEditingController();
     //TextEditingController itemQtyController = new TextEditingController();
-    itemNameController.text = newItem.itemName;
+    itemNameController.text = newItem.itemName!;
     //itemQtyController.text = newItem.quantity;
     return Container(
         //  height: 40,
@@ -177,8 +177,8 @@ class _ShoppingListState extends State<ShoppingList> {
                     size: 20),
                 onPressed: () {
                   if (!widget.isAdmin) {
-                    if (_shoppingListFormKey.currentState.validate()) {
-                      _shoppingListFormKey.currentState.save();
+                    if (_shoppingListFormKey.currentState!.validate()) {
+                      _shoppingListFormKey.currentState!.save();
                       _removeServiceRow(newItem);
                       _listItem.text = "";
                     }
@@ -257,7 +257,7 @@ class _ShoppingListState extends State<ShoppingList> {
                     color: Colors.white,
                   ),
                   onPressed: () {
-                    if (listOfShoppingItems.length != 0) {
+                    if (listOfShoppingItems!.length != 0) {
                       print("This list will be shared");
                       var concatenate = StringBuffer();
                       String heading = "Items List from LESSs";
@@ -270,13 +270,13 @@ class _ShoppingListState extends State<ShoppingList> {
                       // concatenate.writeln('------------------------------');
 
                       int count = 1;
-                      for (int i = 0; i < listOfShoppingItems.length; i++) {
-                        if (listOfShoppingItems[i].itemName == null ||
-                            listOfShoppingItems[i].itemName.isEmpty) return;
+                      for (int i = 0; i < listOfShoppingItems!.length; i++) {
+                        if (listOfShoppingItems![i].itemName == null ||
+                            listOfShoppingItems![i].itemName!.isEmpty) return;
 
                         concatenate.writeln(count.toString() +
                             ") " +
-                            listOfShoppingItems[i].itemName);
+                            listOfShoppingItems![i].itemName!);
 
                         count++;
                       }
@@ -284,7 +284,7 @@ class _ShoppingListState extends State<ShoppingList> {
                       //   concatenate.writeln("**************************");
                       //    concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
 
-                      String phoneNo = token.parent.entityWhatsApp;
+                      String? phoneNo = token.parent!.entityWhatsApp;
                       if (phoneNo != null) {
                         try {
                           print(concatenate.toString());
@@ -337,7 +337,7 @@ class _ShoppingListState extends State<ShoppingList> {
                 color: Colors.white,
                 onPressed: () {
                   print("going back");
-                  updateToken(token.parent);
+                  updateToken(token.parent!);
                   Navigator.of(context).pop();
                 }),
             title: Text(
@@ -359,7 +359,7 @@ class _ShoppingListState extends State<ShoppingList> {
                 )
               : new Form(
                   key: _shoppingListFormKey,
-                  autovalidate: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Column(
@@ -387,11 +387,11 @@ class _ShoppingListState extends State<ShoppingList> {
                                   child: Switch(
                                     materialTapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
-                                    value: isPublic,
+                                    value: isPublic!,
                                     onChanged: (value) {
                                       setState(() {
                                         isPublic = value;
-                                        token.order.isPublic = value;
+                                        token.order!.isPublic = value;
                                         print(isPublic);
                                         //}
                                       });
@@ -412,7 +412,7 @@ class _ShoppingListState extends State<ShoppingList> {
                             itemBuilder: (BuildContext context, int index) {
                               return Container(
                                 child: new Column(
-                                    children: listOfShoppingItems
+                                    children: listOfShoppingItems!
                                         .map(_buildServiceItem)
                                         .toList()),
                               );
@@ -421,7 +421,7 @@ class _ShoppingListState extends State<ShoppingList> {
                           ),
                         ),
                         Text(
-                          (_errMsg != null) ? _errMsg : "",
+                          (_errMsg != null) ? _errMsg! : "",
                           style: errorTextStyle,
                         ),
                         if (!widget.isAdmin)
@@ -432,7 +432,7 @@ class _ShoppingListState extends State<ShoppingList> {
                               child: Container(
                                 height: MediaQuery.of(context).size.width * .13,
                                 decoration: BoxDecoration(
-                                    border: Border.all(color: borderColor),
+                                    border: Border.all(color: borderColor!),
                                     color: Colors.white,
                                     shape: BoxShape.rectangle,
                                     borderRadius:
@@ -485,10 +485,10 @@ class _ShoppingListState extends State<ShoppingList> {
                                                       "");
                                                 } else {
                                                   if (_shoppingListFormKey
-                                                      .currentState
+                                                      .currentState!
                                                       .validate()) {
                                                     _shoppingListFormKey
-                                                        .currentState
+                                                        .currentState!
                                                         .save();
                                                     _addNewServiceRow();
                                                     _listItem.text = "";

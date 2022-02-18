@@ -33,21 +33,21 @@ class ShowApplicationDetails extends StatefulWidget {
   final bool showReject;
   final dynamic backRoute;
   final bool isReadOnly;
-  final MetaEntity metaEntity;
-  final DateTime newBookingDate;
-  final bool isAvailable;
-  final TokenCounter tokenCounter;
+  final MetaEntity? metaEntity;
+  final DateTime? newBookingDate;
+  final bool? isAvailable;
+  final TokenCounter? tokenCounter;
 
   ShowApplicationDetails({
-    Key key,
-    @required this.bookingApplication,
-    @required this.showReject,
-    @required this.backRoute,
-    @required this.isReadOnly,
-    @required this.metaEntity,
-    @required this.newBookingDate,
-    @required this.isAvailable,
-    @required this.tokenCounter,
+    Key? key,
+    required this.bookingApplication,
+    required this.showReject,
+    required this.backRoute,
+    required this.isReadOnly,
+    required this.metaEntity,
+    required this.newBookingDate,
+    required this.isAvailable,
+    required this.tokenCounter,
   }) : super(key: key);
   @override
   _ShowApplicationDetailsState createState() => _ShowApplicationDetailsState();
@@ -55,14 +55,14 @@ class ShowApplicationDetails extends StatefulWidget {
 
 class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   bool initCompleted = false;
-  GlobalState _gs;
-  List<BookingApplication> list;
+  GlobalState? _gs;
+  List<BookingApplication>? list;
   TextEditingController notesController = new TextEditingController();
-  MetaEntity metaEntity;
+  MetaEntity? metaEntity;
   bool showLoading = false;
-  DateTime newBookingDate;
+  DateTime? newBookingDate;
   bool applicationUpdated = false;
-  Triplet<BookingApplication, TokenCounter, EntitySlots> returnTupleNewBa;
+  Triplet<BookingApplication, TokenCounter, EntitySlots>? returnTupleNewBa;
   @override
   void initState() {
     super.initState();
@@ -98,32 +98,32 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   List<Item> idProofTypes = List<Item>();
   List<Value> medConditionsStrList = List<Value>();
   List<Item> medConditions = List<Item>();
-  Map<String, TextEditingController> listOfControllers =
-      new Map<String, TextEditingController>();
+  Map<String?, TextEditingController> listOfControllers =
+      new Map<String?, TextEditingController>();
 
   //File _image; // Used only if you need a single picture
   // String _downloadUrl;
-  BookingForm bookingForm;
-  List<Field> fields;
+  BookingForm? bookingForm;
+  List<Field>? fields;
 
-  FormInputFieldText nameInput;
-  FormInputFieldDateTime dobInput;
-  FormInputFieldText primaryPhone;
-  FormInputFieldText alternatePhone;
-  String _idProofType;
-  FormInputFieldOptionsWithAttachments idProofField;
-  FormInputFieldOptions healthDetailsInput;
-  FormInputFieldText healthDetailsDesc;
-  FormInputFieldText latInput;
-  FormInputFieldText lonInput;
-  FormInputFieldText addressInput;
-  FormInputFieldText addresslandmark;
-  FormInputFieldText addressLocality;
-  FormInputFieldText addressCity;
-  FormInputFieldText addressState;
-  FormInputFieldText addressCountry;
-  FormInputFieldText notesInput;
-  FormInputFieldText addressPin;
+  FormInputFieldText? nameInput;
+  FormInputFieldDateTime? dobInput;
+  FormInputFieldText? primaryPhone;
+  FormInputFieldText? alternatePhone;
+  String? _idProofType;
+  FormInputFieldOptionsWithAttachments? idProofField;
+  FormInputFieldOptions? healthDetailsInput;
+  FormInputFieldText? healthDetailsDesc;
+  FormInputFieldText? latInput;
+  FormInputFieldText? lonInput;
+  FormInputFieldText? addressInput;
+  FormInputFieldText? addresslandmark;
+  FormInputFieldText? addressLocality;
+  FormInputFieldText? addressCity;
+  FormInputFieldText? addressState;
+  FormInputFieldText? addressCountry;
+  FormInputFieldText? notesInput;
+  FormInputFieldText? addressPin;
   var btnLabelGroup = AutoSizeGroup();
 
   Widget _emptyPage() {
@@ -161,12 +161,12 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
         date.minute.toString();
     print(slotIdForDate);
     if (widget.tokenCounter != null) {
-      if (widget.tokenCounter.slotWiseStats.containsKey(slotIdForDate)) {
-        if ((widget.tokenCounter.slotWiseStats[slotIdForDate]
-                    .numberOfTokensCreated -
-                widget.tokenCounter.slotWiseStats[slotIdForDate]
-                    .numberOfTokensCancelled) <
-            widget.metaEntity.maxAllowed) {
+      if (widget.tokenCounter!.slotWiseStats!.containsKey(slotIdForDate)) {
+        if ((widget.tokenCounter!.slotWiseStats![slotIdForDate]!
+                    .numberOfTokensCreated! -
+                widget.tokenCounter!.slotWiseStats![slotIdForDate]!
+                    .numberOfTokensCancelled!) <
+            widget.metaEntity!.maxAllowed!) {
           return true;
         } else
           return false;
@@ -187,7 +187,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
       switch (field.type) {
         case FieldType.TEXT:
           {
-            FormInputFieldText newfield = field;
+            FormInputFieldText newfield = field as FormInputFieldText;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
               height: MediaQuery.of(context).size.height * .07,
@@ -206,9 +206,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey[300])),
+                      borderSide: BorderSide(color: Colors.grey[300]!)),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange[300])),
+                      borderSide: BorderSide(color: Colors.orange[300]!)),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -219,12 +219,12 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 // keyboardType: TextInputType.multiline,
               ),
             );
-            listOfControllers[field.label].text = newfield.response.toString();
+            listOfControllers[field.label]!.text = newfield.response.toString();
           }
           break;
         case FieldType.NUMBER:
           {
-            FormInputFieldNumber newfield = field;
+            FormInputFieldNumber newfield = field as FormInputFieldNumber;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
               height: MediaQuery.of(context).size.height * .08,
@@ -243,9 +243,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey[300])),
+                      borderSide: BorderSide(color: Colors.grey[300]!)),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange[300])),
+                      borderSide: BorderSide(color: Colors.orange[300]!)),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -256,13 +256,13 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 // keyboardType: TextInputType.text,
               ),
             );
-            listOfControllers[field.label].text =
+            listOfControllers[field.label]!.text =
                 (newfield.response.toString());
           }
           break;
         case FieldType.INT:
           {
-            FormInputFieldInt newfield = field;
+            FormInputFieldInt newfield = field as FormInputFieldInt;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
               height: MediaQuery.of(context).size.height * .08,
@@ -281,9 +281,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey[300])),
+                      borderSide: BorderSide(color: Colors.grey[300]!)),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange[300])),
+                      borderSide: BorderSide(color: Colors.orange[300]!)),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -294,13 +294,13 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 // keyboardType: TextInputType.text,
               ),
             );
-            listOfControllers[field.label].text =
+            listOfControllers[field.label]!.text =
                 (newfield.response.toString());
           }
           break;
         case FieldType.PHONE:
           {
-            FormInputFieldPhone newfield = field;
+            FormInputFieldPhone newfield = field as FormInputFieldPhone;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
               height: MediaQuery.of(context).size.height * .08,
@@ -319,9 +319,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey[300])),
+                      borderSide: BorderSide(color: Colors.grey[300]!)),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange[300])),
+                      borderSide: BorderSide(color: Colors.orange[300]!)),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -332,16 +332,16 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 //keyboardType: TextInputType.multiline,
               ),
             );
-            listOfControllers[field.label].text =
+            listOfControllers[field.label]!.text =
                 Utils.isNotNullOrEmpty(newfield.responsePhone)
-                    ? "+91 " + newfield.responsePhone
+                    ? "+91 " + newfield.responsePhone!
                     : "+91 ";
           }
           break;
 
         case FieldType.DATETIME:
           {
-            FormInputFieldDateTime newfield = field;
+            FormInputFieldDateTime newfield = field as FormInputFieldDateTime;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .9,
               height: MediaQuery.of(context).size.height * .08,
@@ -360,9 +360,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey[300])),
+                      borderSide: BorderSide(color: Colors.grey[300]!)),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange[300])),
+                      borderSide: BorderSide(color: Colors.orange[300]!)),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -373,19 +373,19 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 //keyboardType: TextInputType.text,
               ),
             );
-            listOfControllers[field.label].text = ((newfield.yearOnly)
-                    ? newfield.responseDateTime.year.toString()
+            listOfControllers[field.label]!.text = (newfield.yearOnly!
+                    ? newfield.responseDateTime!.year.toString()
                     : DateFormat('dd-MM-yyyy')
-                        .format(newfield.responseDateTime)
+                        .format(newfield.responseDateTime!)
                         .toString()) +
-                ((newfield.isAge)
-                    ? " (Age - ${((DateTime.now().difference(newfield.responseDateTime).inDays) / 365).toStringAsFixed(0)} years)"
+                (newfield.isAge!
+                    ? " (Age - ${((DateTime.now().difference(newfield.responseDateTime!).inDays) / 365).toStringAsFixed(0)} years)"
                     : "");
           }
           break;
         case FieldType.OPTIONS:
           {
-            FormInputFieldOptions newfield = field;
+            FormInputFieldOptions newfield = field as FormInputFieldOptions;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .9,
               // height: MediaQuery.of(context).size.height * .08,
@@ -405,9 +405,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey[300])),
+                      borderSide: BorderSide(color: Colors.grey[300]!)),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange[300])),
+                      borderSide: BorderSide(color: Colors.orange[300]!)),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -436,26 +436,26 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             //       : newfield.responseValues[0].value;
             // }
 
-            String responseVals;
-            for (Value val in newfield.responseValues) {
+            String? responseVals;
+            for (Value val in newfield.responseValues!) {
               if (!Utils.isNotNullOrEmpty(responseVals)) responseVals = "";
-              responseVals = responseVals +
+              responseVals = responseVals! +
                   ((responseVals != "")
                       ? (' | ' + val.value.toString())
                       : val.value.toString());
             }
 
             // print(conds);
-            listOfControllers[field.label].text = responseVals;
+            listOfControllers[field.label]!.text = responseVals!;
           }
           break;
         case FieldType.ATTACHMENT:
           {
-            FormInputFieldAttachment newfield = field;
+            FormInputFieldAttachment newfield = field as FormInputFieldAttachment;
             fieldWidget = Container(
               padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300], width: 1.5)),
+                  border: Border.all(color: Colors.grey[300]!, width: 1.5)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -478,16 +478,16 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             fontWeight: FontWeight.bold,
                             fontFamily: 'RalewayRegular'),
                         enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey[300])),
+                            borderSide: BorderSide(color: Colors.grey[300]!)),
                         focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.orange[300])),
+                            borderSide: BorderSide(color: Colors.orange[300]!)),
                       ),
                       //  keyboardType: TextInputType.multiline,
                     ),
                   ),
-                  (newfield.responseFilePaths.length > 0)
+                  (newfield.responseFilePaths!.length > 0)
                       ? Wrap(
-                          children: newfield.responseFilePaths
+                          children: newfield.responseFilePaths!
                               .map((item) => GestureDetector(
                                     onTap: () {
                                       Utils.showImagePopUp(
@@ -497,7 +497,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             loadingBuilder:
                                                 (BuildContext context,
                                                     Widget child,
-                                                    ImageChunkEvent
+                                                    ImageChunkEvent?
                                                         loadingProgress) {
                                               if (loadingProgress == null)
                                                 return child;
@@ -510,7 +510,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                       ? loadingProgress
                                                               .cumulativeBytesLoaded /
                                                           loadingProgress
-                                                              .expectedTotalBytes
+                                                              .expectedTotalBytes!
                                                       : null,
                                                 ),
                                               );
@@ -530,7 +530,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent loadingProgress) {
+                                              ImageChunkEvent? loadingProgress) {
                                             if (loadingProgress == null) {
                                               return child;
                                             }
@@ -542,7 +542,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                     ? loadingProgress
                                                             .cumulativeBytesLoaded /
                                                         loadingProgress
-                                                            .expectedTotalBytes
+                                                            .expectedTotalBytes!
                                                     : null,
                                               ),
                                             );
@@ -575,12 +575,12 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             //       : newfield.responseValues[0].value;
             // }
             // listOfControllers[field.label].text = conds;
-            listOfControllers[field.label].text = " ";
+            listOfControllers[field.label]!.text = " ";
             break;
           }
         case FieldType.OPTIONS_ATTACHMENTS:
           {
-            FormInputFieldOptionsWithAttachments newfield = field;
+            FormInputFieldOptionsWithAttachments newfield = field as FormInputFieldOptionsWithAttachments;
             // Widget attachmentList = Container(
             //     child: ListView.builder(
             //   itemBuilder: (BuildContext context, int index) {
@@ -597,7 +597,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             fieldWidget = Container(
               padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[200], width: 1.5)),
+                  border: Border.all(color: Colors.grey[200]!, width: 1.5)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -621,9 +621,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             fontWeight: FontWeight.bold,
                             fontFamily: 'RalewayRegular'),
                         enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey[300])),
+                            borderSide: BorderSide(color: Colors.grey[300]!)),
                         focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.orange[300])),
+                            borderSide: BorderSide(color: Colors.orange[300]!)),
                         // enabledBorder: OutlineInputBorder(
                         //     borderSide: BorderSide(color: Colors.grey)),
                         // focusedBorder: OutlineInputBorder(
@@ -634,9 +634,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       //  keyboardType: TextInputType.multiline,
                     ),
                   ),
-                  (newfield.responseFilePaths.length > 0)
+                  (newfield.responseFilePaths!.length > 0)
                       ? Wrap(
-                          children: newfield.responseFilePaths
+                          children: newfield.responseFilePaths!
                               .map((item) => GestureDetector(
                                     onTap: () {
                                       Utils.showImagePopUp(
@@ -646,7 +646,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             loadingBuilder:
                                                 (BuildContext context,
                                                     Widget child,
-                                                    ImageChunkEvent
+                                                    ImageChunkEvent?
                                                         loadingProgress) {
                                               if (loadingProgress == null)
                                                 return child;
@@ -659,7 +659,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                       ? loadingProgress
                                                               .cumulativeBytesLoaded /
                                                           loadingProgress
-                                                              .expectedTotalBytes
+                                                              .expectedTotalBytes!
                                                       : null,
                                                 ),
                                               );
@@ -679,7 +679,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent loadingProgress) {
+                                              ImageChunkEvent? loadingProgress) {
                                             if (loadingProgress == null) {
                                               return child;
                                             }
@@ -691,7 +691,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                     ? loadingProgress
                                                             .cumulativeBytesLoaded /
                                                         loadingProgress
-                                                            .expectedTotalBytes
+                                                            .expectedTotalBytes!
                                                     : null,
                                               ),
                                             );
@@ -705,25 +705,25 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 ],
               ),
             );
-            String conds = "";
+            String? conds = "";
 
-            if (newfield.isMultiSelect) {
+            if (newfield.isMultiSelect!) {
               if (Utils.isNullOrEmpty(newfield.responseValues)) {
                 conds = "None";
               } else {
-                for (int i = 0; i < newfield.responseValues.length; i++) {
+                for (int i = 0; i < newfield.responseValues!.length; i++) {
                   if (conds != "")
-                    conds = conds + "  |  " + newfield.responseValues[i].value;
+                    conds = conds! + "  |  " + newfield.responseValues![i].value;
                   else
-                    conds = conds + newfield.responseValues[i].value;
+                    conds = conds! + newfield.responseValues![i].value;
                 }
               }
             } else {
               conds = Utils.isNullOrEmpty(newfield.responseValues)
                   ? "None"
-                  : newfield.responseValues[0].value;
+                  : newfield.responseValues![0].value;
             }
-            listOfControllers[field.label].text = conds;
+            listOfControllers[field.label]!.text = conds!;
           }
           break;
         default:
@@ -754,7 +754,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     double cardHeight = MediaQuery.of(context).size.height * .38;
     double cardWidth = MediaQuery.of(context).size.width * .95;
     if (initCompleted) {
-      notesController.text = widget.bookingApplication.notes;
+      notesController.text = widget.bookingApplication.notes!;
       return WillPopScope(
         child: Scaffold(
           appBar: AppBar(
@@ -821,7 +821,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     child: AutoSizeText(
                                       DateFormat('yyyy-MM-dd – HH:mm').format(
                                           widget.bookingApplication
-                                              .timeOfSubmission),
+                                              .timeOfSubmission!),
                                       // group: responseGroup,
                                       minFontSize: 10,
                                       maxFontSize: 14,
@@ -854,7 +854,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                   ),
                                   AutoSizeText(
                                     widget.bookingApplication.userId != null
-                                        ? widget.bookingApplication.userId
+                                        ? widget.bookingApplication.userId!
                                         : '-',
                                     //  group: responseGroup,
                                     minFontSize: 12,
@@ -952,7 +952,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       width: MediaQuery.of(context).size.width * .9,
                       // color: Colors.cyan[100],
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.blueGrey[100]),
+                          border: Border.all(color: Colors.blueGrey[100]!),
                           color: Colors.white,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -976,7 +976,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                         fontFamily: 'RalewayRegular'),
                                   ),
                                   AutoSizeText(
-                                    ('${Utils.getTokenDisplayName(widget.bookingApplication.entityName, widget.bookingApplication.tokenId)}'),
+                                    ('${Utils.getTokenDisplayName(widget.bookingApplication.entityName!, widget.bookingApplication.tokenId!)}'),
                                     minFontSize: 9,
                                     maxFontSize: 15,
                                     maxLines: 1,
@@ -1026,7 +1026,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                   ),
                                   horizontalSpacer,
                                   AutoSizeText(
-                                    ('${DateFormat('yyyy-MM-dd – HH:mm').format(Utils.getTokenDate(widget.bookingApplication.tokenId))}'),
+                                    ('${DateFormat('yyyy-MM-dd – HH:mm').format(Utils.getTokenDate(widget.bookingApplication.tokenId!))}'),
                                     // group: medCondGroup,
                                     minFontSize: 9,
                                     maxFontSize: 15,
@@ -1073,7 +1073,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                     width: MediaQuery.of(context).size.width * .9,
                     // color: Colors.cyan[100],
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blueGrey[100]),
+                        border: Border.all(color: Colors.blueGrey[100]!),
                         color: Colors.white,
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1127,7 +1127,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                               ? DateFormat('yyyy-MM-dd – HH:mm')
                                                   .format(widget
                                                       .bookingApplication
-                                                      .preferredSlotTiming)
+                                                      .preferredSlotTiming!)
                                               : "None"),
                                           minFontSize: 12,
                                           maxFontSize: 14,
@@ -1148,7 +1148,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           ApplicationStatus.ONHOLD))
                                     DateTime.now().isAfter(widget
                                             .bookingApplication
-                                            .preferredSlotTiming)
+                                            .preferredSlotTiming!)
                                         ? Row(
                                             children: [
                                               Icon(Icons.event_busy,
@@ -1161,7 +1161,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             ],
                                           )
                                         : (isAvailable(widget.bookingApplication
-                                                .preferredSlotTiming)
+                                                .preferredSlotTiming!)
                                             ? Row(
                                                 children: [
                                                   Icon(Icons.event_available,
@@ -1286,7 +1286,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                               if (newBookingDate != null)
                                 AutoSizeText(
                                   DateFormat('yyyy-MM-dd – HH:mm')
-                                      .format(newBookingDate),
+                                      .format(newBookingDate!),
                                   minFontSize: 12,
                                   maxFontSize: 14,
                                   maxLines: 1,
@@ -1330,8 +1330,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                       margin: EdgeInsets.zero,
                                       padding: EdgeInsets.zero,
                                       child: AutoSizeText(
-                                        (widget.bookingApplication
-                                                .isOnlineModeOfInteraction)
+                                        widget.bookingApplication
+                                                .isOnlineModeOfInteraction!
                                             ? 'Online'
                                             : 'Walk-in',
                                         minFontSize: 12,
@@ -1347,8 +1347,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                   ],
                                 ),
                               ),
-                              (widget.bookingApplication
-                                      .isOnlineModeOfInteraction)
+                              widget.bookingApplication
+                                      .isOnlineModeOfInteraction!
                                   ? GestureDetector(
                                       onTap: () {
                                         if ((widget
@@ -1356,7 +1356,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             null) {
                                           DateTime tokenDateTime =
                                               Utils.getTokenDate(widget
-                                                  .bookingApplication.tokenId);
+                                                  .bookingApplication.tokenId!);
                                           if (tokenDateTime != null) {
                                             Duration timeDiff = DateTime.now()
                                                 .difference(tokenDateTime);
@@ -1377,14 +1377,14 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                   "Could not start Whatsapp call as this Booking has already expired.",
                                                   "Please contact Owner/Manager of this Place");
                                             } else {
-                                              String phoneNo = widget
+                                              String? phoneNo = widget
                                                   .bookingApplication.userId;
                                               if (phoneNo != null &&
                                                   phoneNo != "") {
                                                 try {
                                                   launchWhatsApp(
                                                       message: whatsappMessageToPlaceOwner +
-                                                          '${Utils.getTokenDisplayName(widget.bookingApplication.entityName, widget.bookingApplication.tokenId)}' +
+                                                          '${Utils.getTokenDisplayName(widget.bookingApplication.entityName!, widget.bookingApplication.tokenId!)}' +
                                                           "\n\n<Type your message here..>",
                                                       phone: phoneNo);
                                                 } catch (error) {
@@ -1480,11 +1480,11 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
                       //  height: MediaQuery.of(context).size.height * .3,
                       child: buildChildItem(widget
-                          .bookingApplication.responseForm
+                          .bookingApplication.responseForm!
                           .getFormFields()[index]),
                     );
                   },
-                  itemCount: widget.bookingApplication.responseForm
+                  itemCount: widget.bookingApplication.responseForm!
                       .getFormFields()
                       .length,
                 ),
@@ -1531,14 +1531,14 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     'Reject')
                                 .then((remarks) {
                               //Update application status change on server.
-                              if ((remarks[1])) {
+                              if ((remarks![1])) {
                                 widget.bookingApplication.notesOnRejection =
                                     remarks[0];
 
-                                _gs
-                                    .getApplicationService()
+                                _gs!
+                                    .getApplicationService()!
                                     .updateApplicationStatus(
-                                        widget.bookingApplication.id,
+                                        widget.bookingApplication.id!,
                                         ApplicationStatus.REJECTED,
                                         remarks[0],
                                         widget.metaEntity,
@@ -1551,15 +1551,15 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                       widget.bookingApplication.status =
                                           ApplicationStatus.REJECTED;
                                       widget.bookingApplication.tokenId =
-                                          newBa.item1.tokenId;
+                                          newBa.item1!.tokenId;
                                       widget.bookingApplication.rejectedBy =
-                                          newBa.item1.rejectedBy;
+                                          newBa.item1!.rejectedBy;
                                       widget.bookingApplication
                                               .notesOnRejection =
-                                          newBa.item1.notesOnRejection;
+                                          newBa.item1!.notesOnRejection;
                                       widget.bookingApplication
                                               .timeOfRejection =
-                                          newBa.item1.timeOfRejection;
+                                          newBa.item1!.timeOfRejection;
                                     });
                                     applicationUpdated = true;
                                     returnTupleNewBa = newBa;
@@ -1652,8 +1652,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                 }
                                 if (DateTime.now().isAfter(
                                     (newBookingDate != null
-                                        ? newBookingDate
-                                        : widget.newBookingDate))) {
+                                        ? newBookingDate!
+                                        : widget.newBookingDate!))) {
                                   Utils.showMyFlushbar(
                                       context,
                                       Icons.info,
@@ -1678,7 +1678,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           'Completed')
                                       .then((remarks) {
                                     //Update application status change on server.
-                                    if ((remarks[1])) {
+                                    if ((remarks![1])) {
                                       widget.bookingApplication
                                           .notesOnPuttingOnHold = (remarks[0]);
                                       widget.bookingApplication
@@ -1690,10 +1690,10 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                       //         widget.bookingApplication.id]
                                       //     : widget.bookingApplication
                                       //         .preferredSlotTiming;
-                                      _gs
-                                          .getApplicationService()
+                                      _gs!
+                                          .getApplicationService()!
                                           .updateApplicationStatus(
-                                              widget.bookingApplication.id,
+                                              widget.bookingApplication.id!,
                                               ApplicationStatus.COMPLETED,
                                               remarks[0],
                                               widget.metaEntity,
@@ -1706,18 +1706,18 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             widget.bookingApplication.status =
                                                 ApplicationStatus.COMPLETED;
                                             widget.bookingApplication.tokenId =
-                                                newBa.item1.tokenId;
+                                                newBa.item1!.tokenId;
                                             widget.bookingApplication
                                                     .putOnHoldBy =
-                                                newBa.item1.putOnHoldBy;
+                                                newBa.item1!.putOnHoldBy;
                                             widget.bookingApplication
                                                     .notesOnPuttingOnHold =
                                                 newBa
-                                                    .item1.notesOnPuttingOnHold;
+                                                    .item1!.notesOnPuttingOnHold;
 
                                             widget.bookingApplication
                                                     .timeOfPuttingOnHold =
-                                                newBa.item1.timeOfPuttingOnHold;
+                                                newBa.item1!.timeOfPuttingOnHold;
                                           });
                                           applicationUpdated = true;
                                           returnTupleNewBa = newBa;
@@ -1816,11 +1816,11 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                 }
                                 if (DateTime.now().isAfter(
                                     (newBookingDate != null
-                                        ? newBookingDate
+                                        ? newBookingDate!
                                         : (widget.newBookingDate != null
-                                            ? widget.newBookingDate
+                                            ? widget.newBookingDate!
                                             : widget.bookingApplication
-                                                .preferredSlotTiming)))) {
+                                                .preferredSlotTiming!)))) {
                                   Utils.showMyFlushbar(
                                       context,
                                       Icons.info,
@@ -1847,7 +1847,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           'Approve')
                                       .then((remarks) {
                                     //Update application status change on server.
-                                    if ((remarks[1])) {
+                                    if ((remarks![1])) {
                                       widget.bookingApplication
                                           .notesOnPuttingOnHold = (remarks[0]);
                                       widget.bookingApplication
@@ -1859,10 +1859,10 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                       //         widget.bookingApplication.id]
                                       //     : widget.bookingApplication
                                       //         .preferredSlotTiming;
-                                      _gs
-                                          .getApplicationService()
+                                      _gs!
+                                          .getApplicationService()!
                                           .updateApplicationStatus(
-                                              widget.bookingApplication.id,
+                                              widget.bookingApplication.id!,
                                               ApplicationStatus.APPROVED,
                                               remarks[0],
                                               widget.metaEntity,
@@ -1876,17 +1876,17 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                 ApplicationStatus.APPROVED;
                                             //set tokenId with new newBas from Server.
                                             widget.bookingApplication.tokenId =
-                                                newBa.item1.tokenId;
+                                                newBa.item1!.tokenId;
                                             widget.bookingApplication
                                                     .putOnHoldBy =
-                                                newBa.item1.putOnHoldBy;
+                                                newBa.item1!.putOnHoldBy;
                                             widget.bookingApplication
                                                     .notesOnPuttingOnHold =
                                                 newBa
-                                                    .item1.notesOnPuttingOnHold;
+                                                    .item1!.notesOnPuttingOnHold;
                                             widget.bookingApplication
                                                     .timeOfPuttingOnHold =
-                                                newBa.item1.timeOfPuttingOnHold;
+                                                newBa.item1!.timeOfPuttingOnHold;
                                           });
                                           applicationUpdated = true;
                                           returnTupleNewBa = newBa;
@@ -2024,7 +2024,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     .then((remarks) {
                                   //Update application status change on server.
 
-                                  if ((remarks[1])) {
+                                  if ((remarks![1])) {
                                     widget.bookingApplication
                                         .notesOnPuttingOnHold = (remarks[0]);
                                     // DateTime bookingDate = newBookingDate;
@@ -2034,10 +2034,10 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     //         widget.bookingApplication.id]
                                     //     : widget.bookingApplication
                                     //         .preferredSlotTiming;
-                                    _gs
-                                        .getApplicationService()
+                                    _gs!
+                                        .getApplicationService()!
                                         .updateApplicationStatus(
-                                            widget.bookingApplication.id,
+                                            widget.bookingApplication.id!,
                                             ApplicationStatus.ONHOLD,
                                             remarks[0],
                                             widget.metaEntity,
@@ -2053,17 +2053,17 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           widget.bookingApplication.status =
                                               ApplicationStatus.ONHOLD;
                                           widget.bookingApplication.tokenId =
-                                              newBa.item1.tokenId;
+                                              newBa.item1!.tokenId;
                                           widget.bookingApplication
                                                   .putOnHoldBy =
-                                              newBa.item1.putOnHoldBy;
+                                              newBa.item1!.putOnHoldBy;
                                           widget.bookingApplication
                                                   .notesOnPuttingOnHold =
-                                              newBa.item1.notesOnPuttingOnHold;
+                                              newBa.item1!.notesOnPuttingOnHold;
 
                                           widget.bookingApplication
                                                   .timeOfPuttingOnHold =
-                                              newBa.item1.timeOfPuttingOnHold;
+                                              newBa.item1!.timeOfPuttingOnHold;
                                         });
                                         applicationUpdated = true;
                                         returnTupleNewBa = newBa;
@@ -2195,7 +2195,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                         'Reject')
                                     .then((remarks) {
                                   //Update application status change on server.
-                                  if ((remarks[1])) {
+                                  if ((remarks![1])) {
                                     widget.bookingApplication
                                         .notesOnPuttingOnHold = (remarks[0]);
                                     widget.bookingApplication.notesOnRejection =
@@ -2207,10 +2207,10 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     //         widget.bookingApplication.id]
                                     //     : widget.bookingApplication
                                     //         .preferredSlotTiming;
-                                    _gs
-                                        .getApplicationService()
+                                    _gs!
+                                        .getApplicationService()!
                                         .updateApplicationStatus(
-                                            widget.bookingApplication.id,
+                                            widget.bookingApplication.id!,
                                             ApplicationStatus.REJECTED,
                                             remarks[0],
                                             widget.metaEntity,
@@ -2223,17 +2223,17 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           widget.bookingApplication.status =
                                               ApplicationStatus.REJECTED;
                                           widget.bookingApplication.tokenId =
-                                              newBa.item1.tokenId;
+                                              newBa.item1!.tokenId;
                                           widget.bookingApplication
                                                   .putOnHoldBy =
-                                              newBa.item1.putOnHoldBy;
+                                              newBa.item1!.putOnHoldBy;
                                           widget.bookingApplication
                                                   .notesOnPuttingOnHold =
-                                              newBa.item1.notesOnPuttingOnHold;
+                                              newBa.item1!.notesOnPuttingOnHold;
 
                                           widget.bookingApplication
                                                   .timeOfPuttingOnHold =
-                                              newBa.item1.timeOfPuttingOnHold;
+                                              newBa.item1!.timeOfPuttingOnHold;
                                         });
                                         applicationUpdated = true;
                                         returnTupleNewBa = newBa;

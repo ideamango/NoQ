@@ -30,18 +30,18 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 
 class UPIPaymentPage extends StatefulWidget {
-  final String upiId;
-  final String upiQrCodeImgPath;
+  final String? upiId;
+  final String? upiQrCodeImgPath;
   final dynamic backRoute;
   final bool isDonation;
   final bool showMinimum;
   UPIPaymentPage(
-      {Key key,
-      @required this.upiId,
-      @required this.upiQrCodeImgPath,
-      @required this.backRoute,
-      @required this.isDonation,
-      @required this.showMinimum})
+      {Key? key,
+      required this.upiId,
+      required this.upiQrCodeImgPath,
+      required this.backRoute,
+      required this.isDonation,
+      required this.showMinimum})
       : super(key: key);
 
   @override
@@ -50,8 +50,8 @@ class UPIPaymentPage extends StatefulWidget {
 
 class _UPIPaymentPageState extends State<UPIPaymentPage> {
   bool initCompleted = false;
-  GlobalState _gs;
-  String upiId;
+  GlobalState? _gs;
+  String? upiId;
   GlobalKey upiKey = new GlobalKey();
   bool showLoading = false;
   bool showPaymentApps = false;
@@ -71,10 +71,10 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     getGlobalState().then((gs) {
       _gs = gs;
 
-      _upiAddressController.text = widget.upiId;
+      _upiAddressController.text = widget.upiId!;
 
       //TODO: show the QR code and the UPI ID for IOS users to make the payment
-      _upiAddressController.text = widget.upiId;
+      _upiAddressController.text = widget.upiId!;
       if (!Platform.isIOS) {
         Future.delayed(Duration(seconds: 1)).then((value) {
           setState(() {
@@ -130,17 +130,17 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     });
   }
 
-  Future<GlobalState> getGlobalState() async {
+  Future<GlobalState?> getGlobalState() async {
     return await GlobalState.getGlobalState();
   }
 
-  String _amountError;
+  String? _amountError;
 
   final _upiAddressController = TextEditingController();
   final _amountController = TextEditingController();
 
   bool _isUpiEditable = false;
-  List<ApplicationMeta> _appsFuture;
+  List<ApplicationMeta>? _appsFuture;
 
   @override
   void dispose() {
@@ -168,15 +168,15 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     final transactionRef = Random.secure().nextInt(1 << 32).toString();
     print("Starting transaction with id $transactionRef");
 
-    final response = await UpiPay.initiateTransaction(
+    final UpiTransactionResponse response = await UpiPay.initiateTransaction(
       amount: _amountController.text,
       app: app.upiApplication,
       receiverName: 'LESSs',
       receiverUpiAddress: _upiAddressController.text,
       // receiverUpiAddress: _upiAddressController.text,
       transactionRef: transactionRef,
-      merchantCode: '7372',
-    ).onError((error, stackTrace) => handleUpiPayErrors(error));
+      // merchantCode: '7372',
+    ).onError((dynamic error, stackTrace) => handleUpiPayErrors(error));
     print(response);
     if (response.status == UpiTransactionStatus.failure) {
       Utils.showMyFlushbar(
@@ -202,31 +202,34 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     print(error.toString());
     String mainMsg;
     String subMsg;
+    print("CHANGE THE EXCEPTION TYPES ______ SMITA");
     switch (error.runtimeType) {
-      case InvalidAmountException:
-        String errorMessage = (error as InvalidAmountException).message;
-        subMsg = "Please enter correct amount and try again.";
-        if (errorMessage.contains('greater than 1')) {
-          mainMsg = 'Amount must be greater than 1';
-        } else if (errorMessage.contains('not a valid')) {
-          mainMsg = 'The amount entered is not a valid Number.';
-        } else if (errorMessage.contains('upper limit')) {
-          mainMsg =
-              'Amount must be less then 1,00,000 since that is the upper limit per UPI transaction';
-        }
 
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            mainMsg, subMsg, Colors.red);
-        break;
-      case InvalidAmountException:
-        Utils.showMyFlushbar(
-            context,
-            Icons.error,
-            Duration(seconds: 6),
-            "Could not process UPI payment at this time.",
-            "Try again with correct UPI Id.",
-            Colors.red);
-        break;
+      //TODO Smita: commented while migrating
+      // case InvalidAmountException:
+      //   String errorMessage = (error as InvalidAmountException).message;
+      //   subMsg = "Please enter correct amount and try again.";
+      //   if (errorMessage.contains('greater than 1')) {
+      //     mainMsg = 'Amount must be greater than 1';
+      //   } else if (errorMessage.contains('not a valid')) {
+      //     mainMsg = 'The amount entered is not a valid Number.';
+      //   } else if (errorMessage.contains('upper limit')) {
+      //     mainMsg =
+      //         'Amount must be less then 1,00,000 since that is the upper limit per UPI transaction';
+      //   }
+
+      //   Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+      //       mainMsg, subMsg, Colors.red);
+      //   break;
+      // case InvalidAmountException:
+      //   Utils.showMyFlushbar(
+      //       context,
+      //       Icons.error,
+      //       Duration(seconds: 6),
+      //       "Could not process UPI payment at this time.",
+      //       "Try again with correct UPI Id.",
+      //       Colors.red);
+      //   break;
 
       default:
         Utils.showMyFlushbar(
@@ -450,7 +453,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                 alignment: Alignment.center,
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * .3,
-                color: Colors.grey[200].withOpacity(.5),
+                color: Colors.grey[200]!.withOpacity(.5),
                 // decoration: BoxDecoration(
                 //   color: Colors.white,
                 //   backgroundBlendMode: BlendMode.saturation,
@@ -511,8 +514,8 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.orange)),
                       ),
-                      validator: (String val) {
-                        return _validateAmount(val);
+                      validator: (String? val) {
+                        return _validateAmount(val!);
                       }),
                 ],
               ),
@@ -535,10 +538,10 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
               //itemExtent: itemSize,
               itemBuilder: (BuildContext context, int index) {
                 return Material(
-                  key: ObjectKey(_appsFuture[index].upiApplication),
+                  key: ObjectKey(_appsFuture![index].upiApplication),
                   // color: Colors.grey[200],
                   child: InkWell(
-                    onTap: () => _onTap(_appsFuture[index]),
+                    onTap: () => _onTap(_appsFuture![index]),
                     child: Card(
                       elevation: 3,
                       child: Container(
@@ -551,18 +554,19 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                             Container(
                               alignment: Alignment.centerRight,
                               width: MediaQuery.of(context).size.width * .4,
-                              child: Image.memory(
-                                _appsFuture[index].icon,
-                                width: 64,
-                                height: 64,
-                              ),
+                              child: Text("App Image"),
+                              //  Image.memory(
+                              //   _appsFuture[index].iconImage(64).image.,
+                              //   width: 64,
+                              //   height: 64,
+                              // ),
                             ),
                             Container(
                               alignment: Alignment.centerLeft,
                               width: MediaQuery.of(context).size.width * .4,
                               // margin: EdgeInsets.only(bottom: 9),
                               child: Text(
-                                _appsFuture[index].upiApplication.getAppName(),
+                                _appsFuture![index].upiApplication.getAppName(),
                                 style: TextStyle(fontSize: 18),
                               ),
                             ),
@@ -573,7 +577,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                   ),
                 );
               },
-              itemCount: _appsFuture.length,
+              itemCount: _appsFuture!.length,
             ),
           ),
         if (!Platform.isIOS &&
@@ -625,8 +629,8 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
             drawer: widget.showMinimum
                 ? null
                 : CustomDrawer(
-                    phone: _gs.getCurrentUser().ph != null
-                        ? _gs.getCurrentUser().ph
+                    phone: _gs!.getCurrentUser()!.ph != null
+                        ? _gs!.getCurrentUser()!.ph
                         : "",
                   ),
             appBar: widget.showMinimum
@@ -711,7 +715,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                       height: MediaQuery.of(context).size.height * .6,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage(widget.upiQrCodeImgPath),
+                            image: AssetImage(widget.upiQrCodeImgPath!),
                             fit: BoxFit.contain),
                       ),
                     ),
@@ -736,7 +740,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                     color: Colors.white,
                     textColor: Colors.blueGrey[800],
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[600]),
+                        side: BorderSide(color: Colors.blueGrey[600]!),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Text('Will do later'),
                     onPressed: () {
@@ -755,7 +759,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                     splashColor: highlightColor.withOpacity(.8),
                     textColor: btnColor,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[600]),
+                        side: BorderSide(color: Colors.blueGrey[600]!),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Text('Share QR'),
                     onPressed: () {
@@ -772,9 +776,9 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
 
   Future<void> shareQR() async {
     Directory tempDir = await getTemporaryDirectory();
-    RenderRepaintBoundary boundary = upiKey.currentContext.findRenderObject();
+    RenderRepaintBoundary boundary = upiKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage();
-    ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+    ByteData byteData = await (image.toByteData(format: ImageByteFormat.png) as FutureOr<ByteData>);
     Uint8List pngBytes = byteData.buffer.asUint8List();
     tempDir = await getTemporaryDirectory();
     // final file =
@@ -783,7 +787,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
     await file.writeAsBytes(pngBytes);
     // final channel = const MethodChannel('channel:me.sukoon.share/share');
     // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
-    final RenderBox box = context.findRenderObject();
+    final RenderBox box = context.findRenderObject() as RenderBox;
     Share.shareFiles(['${tempDir.path}/bigpiq_gpay.jpg'],
         subject: upiShareSubject,
         text: upiShareTitle + '\n\n' + upiShareBody,
@@ -797,17 +801,17 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
   }
 }
 
-String _validateAmount(String value) {
+String? _validateAmount(String value) {
   if (value.isEmpty) {
     return 'Amount is required for payment';
   }
   if (double.tryParse(value) == null) {
     return 'Amount is not a valid number';
   }
-  if (double.tryParse(value) < 1) {
+  if (double.tryParse(value)! < 1) {
     return 'Amount must be greater than 1';
   }
-  if (double.tryParse(value) > 100000) {
+  if (double.tryParse(value)! > 100000) {
     return 'Amount must be less then 1,00,000 since that is the upper limit per UPI transaction';
   }
 

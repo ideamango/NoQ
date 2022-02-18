@@ -14,7 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class CreateFields extends StatefulWidget {
   final bool showAppBar;
-  CreateFields({Key key, @required this.showAppBar}) : super(key: key);
+  CreateFields({Key? key, required this.showAppBar}) : super(key: key);
 
   @override
   _CreateFieldsState createState() => _CreateFieldsState();
@@ -26,16 +26,16 @@ class _CreateFieldsState extends State<CreateFields> {
   TextEditingController _phController = new TextEditingController();
   final GlobalKey<FormFieldState> phnKey = new GlobalKey<FormFieldState>();
   TextEditingController _msgController = new TextEditingController();
-  String _reasonType;
+  String? _reasonType;
   List<String> attachments = [];
-  String _mailBody;
-  String _altPh;
-  String _mailFirstline;
-  String _mailSecLine;
+  String? _mailBody;
+  String? _altPh;
+  String? _mailFirstline;
+  late String _mailSecLine;
   bool _validate = false;
-  String _errMsg;
+  String? _errMsg;
   bool initCompleted = false;
-  GlobalState _state;
+  GlobalState? _state;
 
   @override
   void initState() {
@@ -59,7 +59,7 @@ class _CreateFieldsState extends State<CreateFields> {
     super.dispose();
   }
 
-  String validateText(String value) {
+  String? validateText(String value) {
     if (value == null || value == "") {
       return 'Please enter your message';
     }
@@ -67,7 +67,7 @@ class _CreateFieldsState extends State<CreateFields> {
     return null;
   }
 
-  _launchURL(String toMailId, String subject, String body) async {
+  _launchURL(String? toMailId, String? subject, String? body) async {
     var url = 'mailto:$toMailId?subject=$subject&body=$body';
     if (await canLaunch(url)) {
       launch(url).then((value) => Utils.showMyFlushbar(
@@ -131,7 +131,7 @@ class _CreateFieldsState extends State<CreateFields> {
               borderSide: BorderSide(color: Colors.orange)),
         ),
         // validator: validateText,
-        onSaved: (String value) {
+        onSaved: (String? value) {
           //entity.address.zipcode = value;
           print("saved address");
         },
@@ -160,7 +160,7 @@ class _CreateFieldsState extends State<CreateFields> {
             _mailFirstline = (_phController.text.isNotEmpty) ? _altPh : " ";
           });
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           //entity.address.zipcode = value;
           print("saved address");
         },
@@ -181,7 +181,7 @@ class _CreateFieldsState extends State<CreateFields> {
                 ),
                 value: _reasonType,
                 isDense: true,
-                onChanged: (newValue) {
+                onChanged: (dynamic newValue) {
                   setState(() {
                     _reasonType = newValue;
                     state.didChange(newValue);
@@ -200,7 +200,7 @@ class _CreateFieldsState extends State<CreateFields> {
             ),
           );
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           _reasonType = value;
 
           // entity.childCollection
@@ -213,7 +213,7 @@ class _CreateFieldsState extends State<CreateFields> {
       return WillPopScope(
         child: Scaffold(
           drawer: CustomDrawer(
-            phone: _state.getCurrentUser().ph,
+            phone: _state!.getCurrentUser()!.ph,
           ),
           appBar: widget.showAppBar
               ? CustomAppBarWithBackButton(
@@ -323,12 +323,12 @@ class _CreateFieldsState extends State<CreateFields> {
                                 setState(() {
                                   _mailSecLine = _msgController.text;
                                   _mailBody =
-                                      _mailFirstline + "\n" + _mailSecLine;
+                                      _mailFirstline! + "\n" + _mailSecLine;
                                 });
                               },
                             ),
                             Text(
-                              (_errMsg != null) ? _errMsg : "",
+                              (_errMsg != null) ? _errMsg! : "",
                               style: errorTextStyle,
                             ),
                           ],
@@ -349,7 +349,7 @@ class _CreateFieldsState extends State<CreateFields> {
                               padding: EdgeInsets.all(5),
                               // alignment: Alignment.center,
                               shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[200]),
+                                  side: BorderSide(color: Colors.blueGrey[200]!),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(5.0))),
                               color: btnColor,
@@ -373,22 +373,22 @@ class _CreateFieldsState extends State<CreateFields> {
                               ),
 
                               onPressed: () {
-                                if (_state.getConfigurations().whatsappPhone !=
+                                if (_state!.getConfigurations()!.whatsappPhone !=
                                         null &&
-                                    _state.getConfigurations().whatsappPhone !=
+                                    _state!.getConfigurations()!.whatsappPhone !=
                                         "") {
                                   try {
                                     launchWhatsApp(
                                         message: whatsappContactUsMsg,
-                                        phone: _state
-                                            .getConfigurations()
+                                        phone: _state!
+                                            .getConfigurations()!
                                             .whatsappPhone);
                                   } catch (error) {
                                     Utils.showMyFlushbar(
                                         context,
                                         Icons.error,
                                         Duration(seconds: 5),
-                                        "Could not connect to the WhatsApp number ${_state.getConfigurations().whatsappPhone} !!",
+                                        "Could not connect to the WhatsApp number ${_state!.getConfigurations()!.whatsappPhone} !!",
                                         "Try again later");
                                   }
                                 } else {
@@ -415,7 +415,7 @@ class _CreateFieldsState extends State<CreateFields> {
                               color: btnColor,
                               textColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[200]),
+                                  side: BorderSide(color: Colors.blueGrey[200]!),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(5.0))),
                               splashColor: highlightColor,
@@ -429,13 +429,13 @@ class _CreateFieldsState extends State<CreateFields> {
                                 //       ? _validate = true
                                 //       : _validate = false;
                                 // });
-                                String subjectOfMail = (_reasonType != null)
+                                String? subjectOfMail = (_reasonType != null)
                                     ? _reasonType
                                     : 'Write what\s this about';
                                 if (_errMsg == null) {
                                   if (_mailBody == null) _mailBody = "";
                                   _launchURL(
-                                      _state.getConfigurations().contactEmail,
+                                      _state!.getConfigurations()!.contactEmail,
                                       subjectOfMail,
                                       _mailBody);
                                 }

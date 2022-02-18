@@ -36,15 +36,15 @@ import 'package:intl/intl.dart';
 import '../constants.dart';
 
 class ShowSlotsPage extends StatefulWidget {
-  final MetaEntity metaEntity;
+  final MetaEntity? metaEntity;
   final DateTime dateTime;
   final String forPage;
 
   ShowSlotsPage(
-      {Key key,
-      @required this.metaEntity,
-      @required this.dateTime,
-      @required this.forPage})
+      {Key? key,
+      required this.metaEntity,
+      required this.dateTime,
+      required this.forPage})
       : super(key: key);
 
   @override
@@ -53,57 +53,57 @@ class ShowSlotsPage extends StatefulWidget {
 
 class _ShowSlotsPageState extends State<ShowSlotsPage> {
   bool _initCompleted = false;
-  String errMsg;
-  String _storeId;
-  String _token;
-  String _errorMessage;
-  DateTime _date;
-  String _dateFormatted;
-  String dt;
-  List<Slot> _slotList;
+  String? errMsg;
+  String? _storeId;
+  String? _token;
+  String? _errorMessage;
+  late DateTime _date;
+  late String _dateFormatted;
+  String? dt;
+  List<Slot>? _slotList;
   final dateFormat = new DateFormat('dd');
-  Slot selectedSlot;
-  Slot bookedSlot;
-  String _storeName;
-  String _userId;
-  String _strDateForSlot;
+  Slot? selectedSlot;
+  Slot? bookedSlot;
+  String? _storeName;
+  String? _userId;
+  String? _strDateForSlot;
 
   String title = "Book Slot";
-  GlobalState _gs;
-  MetaEntity metaEntity;
-  Entity parentEntity;
+  GlobalState? _gs;
+  MetaEntity? metaEntity;
+  Entity? parentEntity;
   DateTime currDateTime = DateTime.now();
   bool enableVideoChat = false;
-  bool entitySupportsVideo = false;
-  bool entitySupportsOffline = false;
+  bool? entitySupportsVideo = false;
+  bool? entitySupportsOffline = false;
   int numOfTokensByUser = 0;
   List<String> bookedSlots = [];
-  EntitySlots entitySlot;
-  TokenCounter tokenCounter;
-  Map<String, int> _tokensMap = new Map<String, int>();
-  int maxAllowedTokensForUser;
+  EntitySlots? entitySlot;
+  TokenCounter? tokenCounter;
+  Map<String?, int> _tokensMap = new Map<String?, int>();
+  int? maxAllowedTokensForUser;
 
   @override
   void initState() {
     metaEntity = widget.metaEntity;
     _date = widget.dateTime;
-    _storeId = metaEntity.entityId;
-    _storeName = metaEntity.name;
+    _storeId = metaEntity!.entityId;
+    _storeName = metaEntity!.name;
 
     super.initState();
 
     getGlobalState().whenComplete(() {
       _loadSlots();
-      entitySupportsVideo = (metaEntity.allowOnlineAppointment == null)
+      entitySupportsVideo = (metaEntity!.allowOnlineAppointment == null)
           ? false
-          : metaEntity.allowOnlineAppointment;
-      entitySupportsOffline = (metaEntity.allowWalkinAppointment == null)
+          : metaEntity!.allowOnlineAppointment;
+      entitySupportsOffline = (metaEntity!.allowWalkinAppointment == null)
           ? false
-          : metaEntity.allowWalkinAppointment;
+          : metaEntity!.allowWalkinAppointment;
       enableVideoChat =
-          (entitySupportsVideo && !entitySupportsOffline) ? true : false;
-      if (metaEntity.parentId != null) {
-        getEntityDetails(metaEntity.parentId)
+          (entitySupportsVideo! && !entitySupportsOffline!) ? true : false;
+      if (metaEntity!.parentId != null) {
+        getEntityDetails(metaEntity!.parentId)
             .then((value) => parentEntity = value);
       }
     });
@@ -115,17 +115,17 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     _dateFormatted = dtFormat.format(_date);
 
     //Fetch details from server
-    getSlotsListForEntity(metaEntity, _date).then((slotListTuple) {
+    getSlotsListForEntity(metaEntity!, _date).then((slotListTuple) {
       _slotList = slotListTuple.item2;
       entitySlot = slotListTuple.item1;
 
       maxAllowedTokensForUser = (entitySlot != null)
-          ? entitySlot.maxTokensByUserInDay
-          : metaEntity.maxTokensByUserInDay;
-      _gs
-          .getTokenService()
+          ? entitySlot!.maxTokensByUserInDay
+          : metaEntity!.maxTokensByUserInDay;
+      _gs!
+          .getTokenService()!
           .getTokenCounterForEntity(
-              widget.metaEntity.entityId, widget.dateTime.year.toString())
+              widget.metaEntity!.entityId!, widget.dateTime.year.toString())
           .then((value) {
         slotsStatusUpdate(value, null, null);
         setState(() {
@@ -156,11 +156,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     _gs = await GlobalState.getGlobalState();
   }
 
-  Widget _noSlotsPage(String msg) {
+  Widget _noSlotsPage(String? msg) {
     return WillPopScope(
       child: Scaffold(
         drawer: CustomDrawer(
-          phone: _gs.getCurrentUser().ph,
+          phone: _gs!.getCurrentUser()!.ph,
         ),
         appBar: CustomAppBar(
           titleTxt: title,
@@ -181,8 +181,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     );
   }
 
-  Future<Entity> getEntityDetails(String id) async {
-    var tup = await _gs.getEntity(id);
+  Future<Entity?> getEntityDetails(String? id) async {
+    var tup = await _gs!.getEntity(id);
     if (tup != null) {
       return tup.item1;
     }
@@ -198,19 +198,19 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         return _noSlotsPage(errMsg);
       } else {
         Widget pageHeader = Text(
-          _storeName,
+          _storeName!,
           style: TextStyle(
             fontSize: 23,
             color: Colors.black,
           ),
         );
-        String bookingDate;
-        String bookingTime;
+        String? bookingDate;
+        String? bookingTime;
         if (selectedSlot != null) {
           bookingDate =
-              DateFormat.yMMMEd().format(selectedSlot.dateTime).toString();
+              DateFormat.yMMMEd().format(selectedSlot!.dateTime!).toString();
           bookingTime =
-              DateFormat.Hm().format(selectedSlot.dateTime).toString();
+              DateFormat.Hm().format(selectedSlot!.dateTime!).toString();
         }
 
         dynamic backRoute;
@@ -218,24 +218,24 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         if (widget.forPage == 'ChildSearch')
           backRoute = SearchChildEntityPage(
             pageName: "Search",
-            parentName: parentEntity.name,
-            childList: parentEntity.childEntities,
-            parentId: parentEntity.entityId,
+            parentName: parentEntity!.name,
+            childList: parentEntity!.childEntities,
+            parentId: parentEntity!.entityId,
           );
         if (widget.forPage == 'FavsSearch')
           backRoute = SearchChildEntityPage(
             pageName: "FavsSearch",
-            parentName: parentEntity.name,
-            childList: parentEntity.childEntities,
-            parentId: parentEntity.entityId,
+            parentName: parentEntity!.name,
+            childList: parentEntity!.childEntities,
+            parentId: parentEntity!.entityId,
           );
         if (widget.forPage == 'FavsList') backRoute = FavsListPage();
 
         return WillPopScope(
           child: Scaffold(
             drawer: CustomDrawer(
-                phone: _gs.getCurrentUser() != null
-                    ? _gs.getCurrentUser().ph
+                phone: _gs!.getCurrentUser() != null
+                    ? _gs!.getCurrentUser()!.ph
                     : ""),
             appBar: CustomAppBarWithBackButton(
                 titleTxt: _storeName, backRoute: backRoute),
@@ -244,7 +244,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               child: Container(
                 child: Column(
                   children: <Widget>[
-                    if (entitySupportsVideo)
+                    if (entitySupportsVideo!)
                       Container(
                         width: MediaQuery.of(context).size.width * .95,
                         child: Column(
@@ -285,13 +285,13 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                 )
                               ],
                             ),
-                            if (entitySupportsVideo && !entitySupportsOffline)
+                            if (entitySupportsVideo! && !entitySupportsOffline!)
                               Text(
                                 INFORMATION_ONLY_ONLINE_CONSULTATION + '\n',
                                 style: TextStyle(
                                     fontSize: 11, color: Colors.indigo),
                               ),
-                            if (entitySupportsVideo && entitySupportsOffline)
+                            if (entitySupportsVideo! && entitySupportsOffline!)
                               Text(
                                 INFORMATION_RECOMMEND_ONLINE_CONSULTATION +
                                     '\n',
@@ -348,8 +348,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                               color: Colors.white,
                                               fontSize: 13),
                                         )
-                                      : (isBooked(selectedSlot.dateTime,
-                                              metaEntity.entityId))
+                                      : (isBooked(selectedSlot!.dateTime,
+                                              metaEntity!.entityId))
                                           ? AutoSizeText(
                                               'You already have a booking at $bookingTime on $bookingDate',
                                               minFontSize: 8,
@@ -378,7 +378,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                           padding: EdgeInsets.symmetric(horizontal: 5),
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount: _slotList.length,
+                          itemCount: _slotList!.length,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 4,
@@ -487,7 +487,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                               ),
                               (_errorMessage != null
                                   ? Text(
-                                      _errorMessage,
+                                      _errorMessage!,
                                       style: TextStyle(color: Colors.red),
                                     )
                                   : Container()),
@@ -582,25 +582,25 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     }
   }
 
-  bool isSelected(DateTime dateTime) {
+  bool isSelected(DateTime? dateTime) {
     if (selectedSlot != null) {
-      if (dateTime.compareTo(selectedSlot.dateTime) == 0) return true;
+      if (dateTime!.compareTo(selectedSlot!.dateTime!) == 0) return true;
     }
     return false;
   }
 
-  bool isBooked(DateTime dateTime, String entityId) {
+  bool isBooked(DateTime? dateTime, String? entityId) {
     int bookedTokens = 0;
     int cancelledTokens = 0;
     if (entitySlot != null) {
-      for (Slot sl in entitySlot.slots) {
-        if (sl.dateTime.hour == dateTime.hour &&
-            sl.dateTime.minute == dateTime.minute) {
-          for (UserTokens uts in sl.tokens) {
-            if (uts.userId == _gs.getCurrentUser().ph) {
+      for (Slot sl in entitySlot!.slots!) {
+        if (sl.dateTime!.hour == dateTime!.hour &&
+            sl.dateTime!.minute == dateTime.minute) {
+          for (UserTokens? uts in sl.tokens!) {
+            if (uts!.userId == _gs!.getCurrentUser()!.ph) {
               bookedTokens++;
             }
-            for (UserToken ut in uts.tokens) {
+            for (UserToken ut in uts.tokens!) {
               if (ut.number == -1) {
                 cancelledTokens++;
               }
@@ -622,13 +622,13 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   slotsStatusUpdate(
-      TokenCounter counter, Slot bookedSlot, EntitySlots entitySlots) {
+      TokenCounter? counter, Slot? bookedSlot, EntitySlots? entitySlots) {
     if (counter != null) {
-      int updatedIndex;
-      for (int i = 0; i <= _slotList.length - 1; i++) {
+      int? updatedIndex;
+      for (int i = 0; i <= _slotList!.length - 1; i++) {
 //Update SlotList with new Slot details.
         if (bookedSlot != null) {
-          if (_slotList[i].dateTime.difference(bookedSlot.dateTime).inSeconds ==
+          if (_slotList![i].dateTime!.difference(bookedSlot.dateTime!).inSeconds ==
               0) {
             updatedIndex = i;
             break;
@@ -641,29 +641,29 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         }
       }
       if (updatedIndex != null) {
-        for (Slot sl in entitySlots.slots) {
-          if (sl.dateTime.compareTo(bookedSlot.dateTime) == 0) {
-            _slotList[updatedIndex] = sl;
+        for (Slot sl in entitySlots!.slots!) {
+          if (sl.dateTime!.compareTo(bookedSlot!.dateTime!) == 0) {
+            _slotList![updatedIndex] = sl;
             break;
           }
         }
       }
 
-      for (int i = 0; i <= _slotList.length - 1; i++) {
-        List<String> slotIdVals = Utils.isNotNullOrEmpty(_slotList[i].slotId)
-            ? _slotList[i].slotId.split('#')
+      for (int i = 0; i <= _slotList!.length - 1; i++) {
+        List<String> slotIdVals = Utils.isNotNullOrEmpty(_slotList![i].slotId)
+            ? _slotList![i].slotId!.split('#')
             : null;
         String slotId = slotIdVals[1] + '#' + slotIdVals[2];
-        if (counter.slotWiseStats.containsKey(slotId)) {
-          TokenStats slotStats = counter.slotWiseStats[slotId];
+        if (counter.slotWiseStats!.containsKey(slotId)) {
+          TokenStats slotStats = counter.slotWiseStats![slotId]!;
 
           int numberOfBookingsLeft = (entitySlot != null
-                  ? entitySlot.maxAllowed
-                  : widget.metaEntity.maxAllowed) -
-              (slotStats.numberOfTokensCreated -
-                  slotStats.numberOfTokensCancelled);
+                  ? entitySlot!.maxAllowed
+                  : widget.metaEntity!.maxAllowed)! -
+              (slotStats.numberOfTokensCreated! -
+                  slotStats.numberOfTokensCancelled!);
           //   if (_tokensMap.containsKey(_slotList[i].slotId)) {
-          _tokensMap[_slotList[i].slotId] = numberOfBookingsLeft;
+          _tokensMap[_slotList![i].slotId] = numberOfBookingsLeft;
           //  }
         }
       }
@@ -671,15 +671,15 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   Widget _buildGridItem(BuildContext context, int index) {
-    Slot sl = _slotList[index];
-    String hrs = Utils.formatTime(sl.dateTime.hour.toString());
-    String mnts = Utils.formatTime(sl.dateTime.minute.toString());
-    bool isBookedFlg = isBooked(sl.dateTime, metaEntity.entityId);
+    Slot sl = _slotList![index];
+    String hrs = Utils.formatTime(sl.dateTime!.hour.toString());
+    String mnts = Utils.formatTime(sl.dateTime!.minute.toString());
+    bool isBookedFlg = isBooked(sl.dateTime, metaEntity!.entityId);
     return Column(
       children: <Widget>[
         Container(
           child: MaterialButton(
-            elevation: (isDisabled(sl.dateTime))
+            elevation: (isDisabled(sl.dateTime!))
                 ? 0
                 : ((isSelected(sl.dateTime) == true) ? 0.0 : 3.0),
             padding: EdgeInsets.all(2),
@@ -687,7 +687,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               hrs + ':' + mnts,
               style: TextStyle(
                 fontSize: 12,
-                color: isDisabled(sl.dateTime)
+                color: isDisabled(sl.dateTime!)
                     ? Colors.grey[500]
                     : (isBookedFlg ? Colors.white : primaryDarkColor),
                 // textDirection: TextDirection.ltr,
@@ -695,7 +695,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               ),
             ),
             autofocus: false,
-            color: (isDisabled(sl.dateTime))
+            color: (isDisabled(sl.dateTime!))
                 ? disabledColor
                 : ((isBookedFlg)
                     ? Colors.greenAccent[700]
@@ -716,8 +716,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                     // side: BorderSide(color: Colors.white),
                   ),
             onPressed: () {
-              if (!isDisabled(sl.dateTime)) {
-                if (isBooked(sl.dateTime, metaEntity.entityId)) {
+              if (!isDisabled(sl.dateTime!)) {
+                if (isBooked(sl.dateTime, metaEntity!.entityId)) {
                   Utils.showMyFlushbar(
                       context,
                       Icons.info_outline,
@@ -747,8 +747,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   (_tokensMap.containsKey(sl.slotId)
                           ? _tokensMap[sl.slotId]
                           : (entitySlot != null
-                              ? entitySlot.maxAllowed
-                              : metaEntity.maxAllowed))
+                              ? entitySlot!.maxAllowed
+                              : metaEntity!.maxAllowed))
                       .toString(),
                   // (sl.totalBooked -
                   //         (sl.totalCancelled != null ? sl.totalCancelled : 0))
@@ -776,9 +776,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   void bookSlot() {
-    _gs.initializeNotification();
+    _gs!.initializeNotification();
 
-    if (maxAllowedTokensForUser <= bookedSlots.length) {
+    if (maxAllowedTokensForUser! <= bookedSlots.length) {
       //Max tokens already booked, then user cant book further slots.
       Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
           maxTokenLimitReached, maxTokenLimitReachedSub);
@@ -787,12 +787,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       return;
     }
     bool showForm = false;
-    if (!Utils.isNullOrEmpty(metaEntity.forms)) {
-      if (metaEntity.forms.length >= 1) {
+    if (!Utils.isNullOrEmpty(metaEntity!.forms)) {
+      if (metaEntity!.forms!.length >= 1) {
         // Check if forms are not in deleted state
 
-        for (var form in metaEntity.forms) {
-          if (form.isActive) {
+        for (var form in metaEntity!.forms!) {
+          if (form.isActive!) {
             showForm = true;
           }
         }
@@ -800,9 +800,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           //Show Booking request form SELECTION page
           Navigator.of(context).push(new MaterialPageRoute(
               builder: (BuildContext context) => BookingFormSelection(
-                  entityId: metaEntity.entityId,
+                  entityId: metaEntity!.entityId,
                   entity: null,
-                  preferredSlotTime: selectedSlot.dateTime,
+                  preferredSlotTime: selectedSlot!.dateTime,
                   isFullAccess: false,
                   forUser: true,
                   backRoute: SearchEntityPage(),
@@ -819,14 +819,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           ),
           slotBooking,
           takingMoment);
-      _gs.addBooking(metaEntity, selectedSlot, enableVideoChat).then((value) {
+      _gs!.addBooking(metaEntity, selectedSlot!, enableVideoChat).then((value) {
         if (value == null) {
           showFlushBar();
           selectedSlot = null;
           setState(() {});
           return;
         } else {
-          UserTokens tokens;
+          UserTokens? tokens;
           Triplet<UserTokens, TokenCounter, EntitySlots> tuple = value;
           tokens = tuple.item1;
           tokenCounter = tuple.item2;
@@ -836,19 +836,19 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           //selectedSlot.slotId  = entitySlot.e
           slotsStatusUpdate(tokenCounter, selectedSlot, entitySlot);
 
-          _gs.getNotificationService().registerTokenNotification(tokens);
+          _gs!.getNotificationService()!.registerTokenNotification(tokens!);
 
           //update in global State
-          selectedSlot.totalBooked++;
+          selectedSlot!.totalBooked++;
 
-          _token = tokens.tokens.last.getDisplayName();
+          _token = tokens.tokens!.last.getDisplayName();
           final dtFormat = new DateFormat(dateDisplayFormat);
-          String _dateFormatted = dtFormat.format(selectedSlot.dateTime);
+          String _dateFormatted = dtFormat.format(selectedSlot!.dateTime!);
 
           String slotTiming =
-              Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
+              Utils.formatTime(selectedSlot!.dateTime!.hour.toString()) +
                   ':' +
-                  Utils.formatTime(selectedSlot.dateTime.minute.toString());
+                  Utils.formatTime(selectedSlot!.dateTime!.minute.toString());
 
           String msg = enableVideoChat ? tokenTextH2Online : tokenTextH2Walkin;
 
@@ -902,7 +902,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       flushbarStyle: FlushbarStyle.FLOATING,
       reverseAnimationCurve: Curves.decelerate,
       forwardAnimationCurve: Curves.easeInToLinear,
-      backgroundColor: Colors.blueGrey[500],
+      backgroundColor: Colors.blueGrey[500]!,
       boxShadows: [
         BoxShadow(
             color: primaryAccentColor,

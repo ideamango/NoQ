@@ -8,7 +8,7 @@ import '../widget/page_animation.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final int barIndex;
-  CustomBottomBar({Key key, @required this.barIndex}) : super(key: key);
+  CustomBottomBar({Key? key, required this.barIndex}) : super(key: key);
   @override
   _CustomBottomBarState createState() => _CustomBottomBarState();
 }
@@ -36,19 +36,19 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
-          title: Text('Home'),
+          label: 'Home',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.search),
-          title: Text('Search'),
+          label: 'Search',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.favorite),
-          title: Text('Favourites'),
+          label: 'Favourites',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),
-          title: Text('My Account'),
+          label: 'My Account',
         ),
       ],
       unselectedItemColor: unselectedColor,

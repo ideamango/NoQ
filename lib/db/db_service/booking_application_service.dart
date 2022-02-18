@@ -32,10 +32,10 @@ import '../../tuple.dart';
 //Store ApplicationID and BookingFormID, BookingFormName with the Token object
 
 class BookingApplicationService {
-  FirebaseApp _fb;
-  GlobalState _gs;
+  FirebaseApp? _fb;
+  GlobalState? _gs;
 
-  BookingApplicationService(FirebaseApp firebaseApp, GlobalState gs) {
+  BookingApplicationService(FirebaseApp? firebaseApp, GlobalState? gs) {
     _fb = firebaseApp;
     _gs = gs;
   }
@@ -44,31 +44,31 @@ class BookingApplicationService {
     if (_fb == null) {
       return FirebaseFirestore.instance;
     } else {
-      return FirebaseFirestore.instanceFor(app: _fb);
+      return FirebaseFirestore.instanceFor(app: _fb!);
     }
   }
 
   FirebaseAuth getFirebaseAuth() {
     if (_fb == null) return FirebaseAuth.instance;
-    return FirebaseAuth.instanceFor(app: _fb);
+    return FirebaseAuth.instanceFor(app: _fb!);
   }
 
-  Future<BookingApplication> getApplication(String applicationId) async {
+  Future<BookingApplication?> getApplication(String? applicationId) async {
     FirebaseFirestore fStore = getFirestore();
     if (!Utils.isNotNullOrEmpty(applicationId)) {
       return null;
     }
 
     //TODO: Security - only the user who has submitted the Application or the Admin/Manager of the Entity should be able to access the application
-    BookingApplication ba;
+    BookingApplication? ba;
     try {
       final DocumentReference appRef =
-          fStore.doc('bookingApplications/' + applicationId);
+          fStore.doc('bookingApplications/' + applicationId!);
 
       DocumentSnapshot doc = await appRef.get();
 
       if (doc.exists) {
-        Map<String, dynamic> map = doc.data();
+        Map<String, dynamic>? map = doc.data();
 
         ba = BookingApplication.fromJson(map);
       }
@@ -83,17 +83,17 @@ class BookingApplicationService {
   }
 
   Future<List<Tuple<BookingApplication, DocumentSnapshot>>> getApplications(
-      String bookingFormID,
-      String entityId,
-      ApplicationStatus status,
-      String userId,
-      Map<String, dynamic> singleValueFields,
-      List<MultiValuedQuery> multipleValueFields,
-      List<RangeQuery> rangeQueries,
-      String orderByFieldName,
-      bool isDescending,
-      DocumentSnapshot firstRecord, //for previous page
-      DocumentSnapshot lastRecord, //for next page
+      String? bookingFormID,
+      String? entityId,
+      ApplicationStatus? status,
+      String? userId,
+      Map<String, dynamic>? singleValueFields,
+      List<MultiValuedQuery>? multipleValueFields,
+      List<RangeQuery>? rangeQueries,
+      String? orderByFieldName,
+      bool? isDescending,
+      DocumentSnapshot? firstRecord, //for previous page
+      DocumentSnapshot? lastRecord, //for next page
       int takeCount) async {
     //TODO: Security - only the Admin/Manager of the Entity should be able to access the applications OR Super admin of the Global BookingForm
 
@@ -128,7 +128,7 @@ class BookingApplicationService {
 
     if (multipleValueFields != null) {
       for (MultiValuedQuery multiValuedQuery in multipleValueFields) {
-        if (multiValuedQuery.partialMatch) {
+        if (multiValuedQuery.partialMatch!) {
           query = query.where(multiValuedQuery.key,
               arrayContainsAny: multiValuedQuery.values);
         } else {
@@ -143,7 +143,7 @@ class BookingApplicationService {
     }
 
     if (Utils.isNotNullOrEmpty(orderByFieldName)) {
-      query = query.orderBy(orderByFieldName, descending: isDescending);
+      query = query.orderBy(orderByFieldName, descending: isDescending!);
     }
     //TODO - takeCount coming as null
     if (takeCount > 0) {
@@ -166,7 +166,7 @@ class BookingApplicationService {
             Tuple<BookingApplication, QueryDocumentSnapshot>(
                 item1: BookingApplication.fromJson(doc.data()), item2: doc);
         applications.add(tup);
-        print(tup.item1.id);
+        print(tup.item1!.id);
       }
     }
 
@@ -184,8 +184,8 @@ class BookingApplicationService {
   //To be done by the Applicant
   //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
   Future<Triplet<UserToken, TokenCounter, EntitySlots>> submitApplication(
-      BookingApplication ba, MetaEntity metaEntity,
-      [bool enableVideoChat = false]) async {
+      BookingApplication? ba, MetaEntity? metaEntity,
+      [bool? enableVideoChat = false]) async {
     //Security: BookingApplication (Application Status by the applicant can be only Null, New, Cancelled), other statuses are reserved for the Manager/Admin
     //Case 1: Create the BookingApplication object in the Applications collection
     //Case 2: Create if not already created the BookingApplicationsOverview, and update the total counter and new counter
@@ -198,27 +198,27 @@ class BookingApplicationService {
       throw Exception("Insufficient arguments to submit the application");
     }
 
-    Exception e;
+    Exception? e;
 
-    UserToken tok;
+    UserToken? tok;
 
     bool isSuccess = false;
     DateTime now = DateTime.now();
 
-    final User user = getFirebaseAuth().currentUser;
+    final User user = getFirebaseAuth().currentUser!;
     FirebaseFirestore fStore = getFirestore();
-    String userPhone = user.phoneNumber;
-    BookingForm bf;
-    BookingApplication baDraft;
-    BookingApplicationCounter localCounter;
-    TokenCounter tokenCounter;
-    EntitySlots es;
+    String? userPhone = user.phoneNumber;
+    BookingForm? bf;
+    BookingApplication? baDraft;
+    BookingApplicationCounter? localCounter;
+    TokenCounter? tokenCounter;
+    EntitySlots? es;
     //BookingApplicationCounter globalCounter;
 
-    String bookingApplicationId = ba.id;
-    String bookingFormId = ba.bookingFormId;
+    String bookingApplicationId = ba.id!;
+    String bookingFormId = ba.bookingFormId!;
     String localCounterId =
-        bookingFormId + "#" + metaEntity.entityId + "#" + now.year.toString();
+        bookingFormId + "#" + metaEntity.entityId! + "#" + now.year.toString();
     //String globalCounterId = bookingFormId + "#" + now.year.toString();
 
     final DocumentReference applicationRef =
@@ -242,7 +242,7 @@ class BookingApplicationService {
         now.day.toString();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
+      Map<String, dynamic>? map = doc.data();
 
       bf = BookingForm.fromJson(map);
     } else {
@@ -257,7 +257,7 @@ class BookingApplicationService {
 
         if (applicationSnapshot.exists) {
           baDraft = BookingApplication.fromJson(applicationSnapshot.data());
-          if (baDraft.timeOfSubmission != null) {
+          if (baDraft!.timeOfSubmission != null) {
             throw new Exception(
                 "Application is already submitted, can't submit again.");
           }
@@ -294,31 +294,31 @@ class BookingApplicationService {
 
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
-          Map<String, dynamic> map = localCounterSnapshot.data();
+          Map<String, dynamic>? map = localCounterSnapshot.data();
           localCounter = BookingApplicationCounter.fromJson(map);
         } else {
           localCounter = new BookingApplicationCounter(
               bookingFormId: bookingFormId, entityId: metaEntity.entityId);
         }
 
-        if (localCounter.dailyStats == null) {
-          localCounter.dailyStats = Map<String, ApplicationStats>();
+        if (localCounter!.dailyStats == null) {
+          localCounter!.dailyStats = Map<String, ApplicationStats>();
         }
 
-        if (!localCounter.dailyStats.containsKey(dailyStatsKey)) {
+        if (!localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
           ApplicationStats todayStats = new ApplicationStats();
-          localCounter.dailyStats[dailyStatsKey] = todayStats;
+          localCounter!.dailyStats![dailyStatsKey] = todayStats;
         }
 
-        if (bf.autoApproved) {
+        if (bf!.autoApproved!) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfApproved++;
           //   globalCounter.dailyStats[dailyStatsKey].numberOfNew++;
           //   globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
           // }
-          localCounter.numberOfApproved++;
-          localCounter.dailyStats[dailyStatsKey].numberOfNew++;
-          localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+          localCounter!.numberOfApproved++;
+          localCounter!.dailyStats![dailyStatsKey]!.numberOfNew++;
+          localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved++;
           ba.approvedBy = SYSTEM;
           ba.notesOnApproval = AUTO_APPROVED;
           ba.status = ApplicationStatus.APPROVED;
@@ -328,30 +328,30 @@ class BookingApplicationService {
           //   globalCounter.numberOfNew++;
           //   globalCounter.dailyStats[dailyStatsKey].numberOfNew++;
           // }
-          localCounter.numberOfNew++;
-          localCounter.dailyStats[dailyStatsKey].numberOfNew++;
+          localCounter!.numberOfNew++;
+          localCounter!.dailyStats![dailyStatsKey]!.numberOfNew++;
         }
         // if (globalCounter != null) {
         //   globalCounter.totalApplications++;
         // }
-        localCounter.totalApplications++;
+        localCounter!.totalApplications++;
 
         //if auto approved, then generate the token
-        if (bf.appointmentRequired &&
-            bf.autoApproved &&
-            bf.generateTokenOnApproval) {
+        if (bf.appointmentRequired! &&
+            bf.autoApproved! &&
+            bf.generateTokenOnApproval!) {
           //generate the token
           Triplet<UserTokens, TokenCounter, EntitySlots> triplet;
-          UserTokens toks;
+          UserTokens? toks;
           try {
-            triplet = await _gs.getTokenService().generateTokenInTransaction(
+            triplet = await _gs!.getTokenService()!.generateTokenInTransaction(
                 tx,
-                userPhone,
+                userPhone!,
                 metaEntity,
-                ba.preferredSlotTiming,
+                ba.preferredSlotTiming!,
                 ba.id,
                 ba.bookingFormId,
-                ba.responseForm.formName,
+                ba.responseForm!.formName,
                 enableVideoChat);
             toks = triplet.item1;
             tokenCounter = triplet.item2;
@@ -360,18 +360,18 @@ class BookingApplicationService {
             throw e;
           }
 
-          UserToken lastTok = toks.tokens[toks.tokens.length - 1];
+          UserToken lastTok = toks!.tokens![toks.tokens!.length - 1];
           ba.tokenId = lastTok.getID();
 
           //HACK: by accessing bookings of GS to add this new Token, so that it apears immediately in users list
-          _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
+          _gs!.bookings!.add(new Tuple<UserToken, DocumentSnapshot>(
               item1: lastTok, item2: null));
           tok = lastTok;
         }
 
         ba.isOnlineModeOfInteraction = enableVideoChat;
-        tx.set(applicationRef, ba.toJson());
-        tx.set(localCounterRef, localCounter.toJson());
+        tx.set(applicationRef, ba.toJson() as Map<String, dynamic>);
+        tx.set(localCounterRef, localCounter!.toJson());
         // if (globalCounter != null) {
         //   tx.set(globalCounterRef, globalCounter.toJson());
         // }
@@ -394,12 +394,12 @@ class BookingApplicationService {
     });
 
     if (e != null) {
-      throw e;
+      throw e!;
     }
 
     if (tok != null) {
       //auto generated Token is issued, create a notification
-      _gs.getNotificationService().registerTokenNotification(tok.parent);
+      _gs!.getNotificationService()!.registerTokenNotification(tok!.parent!);
     }
     return new Triplet(item1: tok, item2: tokenCounter, item3: es);
   }
@@ -417,17 +417,17 @@ class BookingApplicationService {
     bool isSuccess = false;
     DateTime now = DateTime.now();
 
-    final User user = getFirebaseAuth().currentUser;
+    final User user = getFirebaseAuth().currentUser!;
     FirebaseFirestore fStore = getFirestore();
-    String userPhone = user.phoneNumber;
-    Exception e;
-    UserTokens cancelledTokens;
-    UserToken cancelledTok;
-    TokenCounter tokenCounter;
+    String? userPhone = user.phoneNumber;
+    Exception? e;
+    UserTokens? cancelledTokens;
+    UserToken? cancelledTok;
+    TokenCounter? tokenCounter;
 
-    BookingApplication ba;
+    BookingApplication? ba;
 
-    BookingApplicationCounter localCounter;
+    BookingApplicationCounter? localCounter;
     //BookingApplicationCounter globalCounter;
 
     String bookingApplicationId = applicationId;
@@ -435,7 +435,7 @@ class BookingApplicationService {
     final DocumentReference applicationRef =
         fStore.doc('bookingApplications/' + bookingApplicationId);
 
-    Triplet<UserToken, TokenCounter, EntitySlots> triplet;
+    Triplet<UserToken, TokenCounter, EntitySlots>? triplet;
 
     // final DocumentReference bookingFormRef =
     //     fStore.doc('bookingForms/' + bookingFormId);
@@ -458,12 +458,12 @@ class BookingApplicationService {
               "Application does not exists, it can't be cancelled");
         }
 
-        ApplicationStatus existingStatus = ba.status;
+        ApplicationStatus? existingStatus = ba!.status;
 
-        String bookingFormId = ba.bookingFormId;
+        String bookingFormId = ba!.bookingFormId!;
 
         String localCounterId =
-            bookingFormId + "#" + ba.entityId + "#" + now.year.toString();
+            bookingFormId + "#" + ba!.entityId! + "#" + now.year.toString();
         //String globalCounterId = bookingFormId + "#" + now.year.toString();
 
         final DocumentReference localCounterRef =
@@ -473,11 +473,11 @@ class BookingApplicationService {
         // final DocumentReference globalCounterRef =
         //     fStore.doc('counter/' + globalCounterId);
 
-        ba.status = ApplicationStatus.CANCELLED;
-        ba.timeOfCancellation = DateTime.now();
-        ba.notesOnCancellation = notesOnCancellation;
+        ba!.status = ApplicationStatus.CANCELLED;
+        ba!.timeOfCancellation = DateTime.now();
+        ba!.notesOnCancellation = notesOnCancellation;
 
-        if (ba.responseForm.isSystemTemplate) {
+        if (ba!.responseForm!.isSystemTemplate!) {
           // DocumentSnapshot globalCounterSnapshot =
           //     await tx.get(globalCounterRef);
           //global counters have to be update or created
@@ -501,44 +501,44 @@ class BookingApplicationService {
 
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
-          Map<String, dynamic> map = localCounterSnapshot.data();
+          Map<String, dynamic>? map = localCounterSnapshot.data();
           localCounter = BookingApplicationCounter.fromJson(map);
         } else {
           localCounter = new BookingApplicationCounter(
-              bookingFormId: bookingFormId, entityId: ba.entityId);
+              bookingFormId: bookingFormId, entityId: ba!.entityId);
         }
 
-        if (localCounter.dailyStats == null) {
-          localCounter.dailyStats = Map<String, ApplicationStats>();
+        if (localCounter!.dailyStats == null) {
+          localCounter!.dailyStats = Map<String, ApplicationStats>();
         }
 
-        if (!localCounter.dailyStats.containsKey(dailyStatsKey)) {
+        if (!localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
           ApplicationStats todayStats = new ApplicationStats();
-          localCounter.dailyStats[dailyStatsKey] = todayStats;
+          localCounter!.dailyStats![dailyStatsKey] = todayStats;
         }
 
         // if (globalCounter != null) {
         //   globalCounter.numberOfCancelled++;
         //   globalCounter.dailyStats[dailyStatsKey].numberOfCancelled++;
         // }
-        localCounter.numberOfCancelled++;
-        localCounter.dailyStats[dailyStatsKey].numberOfCancelled++;
+        localCounter!.numberOfCancelled++;
+        localCounter!.dailyStats![dailyStatsKey]!.numberOfCancelled++;
 
         //token id should be stored as part of the application
-        if (Utils.isNotNullOrEmpty(ba.tokenId)) {
+        if (Utils.isNotNullOrEmpty(ba!.tokenId)) {
           //token id format - Selenium-Covid-Vacination-Center#2021~2~17#10~30#9898989899#2
 
           Tuple<String, int> tokenIdSplitted =
-              Utils.getTokenIdWithoutNumber(ba.tokenId);
-          String tokenIdWithoutNumber = tokenIdSplitted.item1;
-          int tokenNumber = tokenIdSplitted.item2;
+              Utils.getTokenIdWithoutNumber(ba!.tokenId!);
+          String tokenIdWithoutNumber = tokenIdSplitted.item1!;
+          int? tokenNumber = tokenIdSplitted.item2;
 
           //cancel the token
-          triplet = await _gs.getTokenService().cancelTokenInTransaction(
+          triplet = await _gs!.getTokenService()!.cancelTokenInTransaction(
               tx, userPhone, tokenIdWithoutNumber, tokenNumber);
-          cancelledTok = triplet.item1;
-          tokenCounter = triplet.item2;
-          cancelledTokens = cancelledTok.parent;
+          cancelledTok = triplet!.item1;
+          tokenCounter = triplet!.item2;
+          cancelledTokens = cancelledTok!.parent;
 
           //update the GlobalState bookings collection with the cancelled token
           // int index = -1;
@@ -572,47 +572,47 @@ class BookingApplicationService {
           //   globalCounter.numberOfApproved--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfApproved--;
+            localCounter!.numberOfApproved--;
           }
         } else if (existingStatus == ApplicationStatus.NEW) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfNew--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfNew--;
+            localCounter!.numberOfNew--;
           }
         } else if (existingStatus == ApplicationStatus.COMPLETED) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfCompleted--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfCompleted--;
+            localCounter!.numberOfCompleted--;
           }
         } else if (existingStatus == ApplicationStatus.INPROCESS) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfInProcess--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfInProcess--;
+            localCounter!.numberOfInProcess--;
           }
         } else if (existingStatus == ApplicationStatus.ONHOLD) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfPutOnHold--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfPutOnHold--;
+            localCounter!.numberOfPutOnHold--;
           }
         } else if (existingStatus == ApplicationStatus.REJECTED) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfRejected--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfRejected--;
+            localCounter!.numberOfRejected--;
           }
         }
 
-        tx.set(applicationRef, ba.toJson());
-        tx.set(localCounterRef, localCounter.toJson());
+        tx.set(applicationRef, ba!.toJson() as Map<String, dynamic>);
+        tx.set(localCounterRef, localCounter!.toJson());
         // if (globalCounter != null) {
         //   tx.set(globalCounterRef, globalCounter.toJson());
         // }
@@ -634,14 +634,14 @@ class BookingApplicationService {
     });
 
     if (e != null) {
-      throw e;
+      throw e!;
     }
 
     // if (isSuccess && cancelledTokens != null && cancelledTok != null) {
     //   _gs.getNotificationService().unRegisterTokenNotification(cancelledTok);
     // }
     return new Triplet<UserToken, TokenCounter, EntitySlots>(
-        item1: cancelledTok, item2: tokenCounter, item3: triplet.item3);
+        item1: cancelledTok, item2: tokenCounter, item3: triplet!.item3);
   }
 
   //To be called by Manager of the Entity who has restricted rights or by the Admin
@@ -649,7 +649,7 @@ class BookingApplicationService {
   //MaxTokenReachedByUserPerSlotException, SlotFullException, MaxTokenReachedByUserPerDayException,
   Future<Triplet<BookingApplication, TokenCounter, EntitySlots>>
       updateApplicationStatus(String applicationId, ApplicationStatus status,
-          String note, MetaEntity metaEntity, DateTime tokenTime,
+          String note, MetaEntity? metaEntity, DateTime? tokenTime,
           [bool enableVideoChat = false]) async {
     //TODO Security: Application Status, Time of Respective Status Change and Status can only be updated by the Entity Manager/Entity Admin
     //TODO Security: Once submitted for review, the Application can't be edited by the Applicant
@@ -668,26 +668,26 @@ class BookingApplicationService {
     //For testing
     //if (applicationId != null) return false;
     //For testing
-    Exception e;
+    Exception? e;
     DateTime now = DateTime.now();
 
-    final User user = getFirebaseAuth().currentUser;
+    final User user = getFirebaseAuth().currentUser!;
     FirebaseFirestore fStore = getFirestore();
-    String userPhone = user.phoneNumber;
-    String requestingUser;
-    BookingForm bf;
-    BookingApplication application;
-    BookingApplicationCounter localCounter;
+    String? userPhone = user.phoneNumber;
+    String? requestingUser;
+    BookingForm? bf;
+    BookingApplication? application;
+    BookingApplicationCounter? localCounter;
     //BookingApplicationCounter globalCounter;
-    ApplicationStatus existingStatus;
-    UserTokens cancelledTokens;
-    UserToken cancelledToken;
+    ApplicationStatus? existingStatus;
+    UserTokens? cancelledTokens;
+    UserToken? cancelledToken;
 
     String localCounterId;
     //String globalCounterId;
     bool requestProcessed = false;
-    TokenCounter tokenCounter;
-    EntitySlots es;
+    TokenCounter? tokenCounter;
+    EntitySlots? es;
 
     String dailyStatsKey = now.year.toString() +
         "~" +
@@ -704,11 +704,11 @@ class BookingApplicationService {
 
         if (applicationSnapshot.exists) {
           application = BookingApplication.fromJson(applicationSnapshot.data());
-          existingStatus = application.status;
-          bf = application.responseForm;
-          if (application.timeOfSubmission == null ||
-              application.status == ApplicationStatus.CANCELLED ||
-              application.status == status) {
+          existingStatus = application!.status;
+          bf = application!.responseForm;
+          if (application!.timeOfSubmission == null ||
+              application!.status == ApplicationStatus.CANCELLED ||
+              application!.status == status) {
             throw new Exception(
                 "Application is not submitted yet or it's in the cancelled state or same status is sent again");
           }
@@ -716,9 +716,9 @@ class BookingApplicationService {
           throw new Exception("Application does not exist");
         }
 
-        String entityId = application.entityId;
-        String bookingFormId = application.bookingFormId;
-        requestingUser = application.userId;
+        String entityId = application!.entityId!;
+        String bookingFormId = application!.bookingFormId!;
+        requestingUser = application!.userId;
 
         localCounterId =
             bookingFormId + "#" + entityId + "#" + now.year.toString();
@@ -744,15 +744,15 @@ class BookingApplicationService {
 
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
-          Map<String, dynamic> map = localCounterSnapshot.data();
+          Map<String, dynamic>? map = localCounterSnapshot.data();
           localCounter = BookingApplicationCounter.fromJson(map);
         }
 
         //setting up the mandatory fields on the Application object
         if (status == ApplicationStatus.APPROVED) {
-          application.timeOfApproval = now;
-          application.notesOnApproval = note;
-          application.approvedBy = userPhone;
+          application!.timeOfApproval = now;
+          application!.notesOnApproval = note;
+          application!.approvedBy = userPhone;
           // if (globalCounter != null) {
           //   globalCounter.numberOfApproved++;
           //   if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -764,31 +764,31 @@ class BookingApplicationService {
           //   }
           // }
           if (localCounter != null) {
-            localCounter.numberOfApproved++;
-            if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
-              localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+            localCounter!.numberOfApproved++;
+            if (localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved++;
             } else {
               ApplicationStats todayStats = new ApplicationStats();
-              localCounter.dailyStats[dailyStatsKey] = todayStats;
-              localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+              localCounter!.dailyStats![dailyStatsKey] = todayStats;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved++;
             }
           }
 
           //TODO: generate the token and send the notification to the applicant
           //generate the token
           //send notification
-          UserTokens toks;
+          UserTokens? toks;
           Triplet<UserTokens, TokenCounter, EntitySlots> triplet;
-          if (bf.generateTokenOnApproval && bf.appointmentRequired) {
+          if (bf!.generateTokenOnApproval! && bf!.appointmentRequired!) {
             try {
-              triplet = await _gs.getTokenService().generateTokenInTransaction(
+              triplet = await _gs!.getTokenService()!.generateTokenInTransaction(
                   tx,
-                  requestingUser,
-                  metaEntity,
-                  tokenTime,
-                  application.id,
-                  application.bookingFormId,
-                  application.responseForm.formName,
+                  requestingUser!,
+                  metaEntity!,
+                  tokenTime!,
+                  application!.id,
+                  application!.bookingFormId,
+                  application!.responseForm!.formName,
                   enableVideoChat);
               toks = triplet.item1;
               tokenCounter = triplet.item2;
@@ -797,13 +797,13 @@ class BookingApplicationService {
               throw e;
             }
 
-            UserToken lastTok = toks.tokens[toks.tokens.length - 1];
-            application.tokenId = lastTok.getID();
+            UserToken lastTok = toks!.tokens![toks.tokens!.length - 1];
+            application!.tokenId = lastTok.getID();
           }
         } else if (status == ApplicationStatus.COMPLETED) {
-          application.timeOfCompletion = now;
-          application.notesOnCompletion = note;
-          application.completedBy = userPhone;
+          application!.timeOfCompletion = now;
+          application!.notesOnCompletion = note;
+          application!.completedBy = userPhone;
           // if (globalCounter != null) {
           //   globalCounter.numberOfCompleted++;
           //   if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -815,19 +815,19 @@ class BookingApplicationService {
           //   }
           // }
           if (localCounter != null) {
-            localCounter.numberOfCompleted++;
-            if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
-              localCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
+            localCounter!.numberOfCompleted++;
+            if (localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfCompleted++;
             } else {
               ApplicationStats todayStats = new ApplicationStats();
-              localCounter.dailyStats[dailyStatsKey] = todayStats;
-              localCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
+              localCounter!.dailyStats![dailyStatsKey] = todayStats;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfCompleted++;
             }
           }
         } else if (status == ApplicationStatus.INPROCESS) {
-          application.timeOfInProcess = now;
-          application.notesInProcess = note;
-          application.processedBy = userPhone;
+          application!.timeOfInProcess = now;
+          application!.notesInProcess = note;
+          application!.processedBy = userPhone;
           // if (globalCounter != null) {
           //   globalCounter.numberOfInProcess++;
           //   if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -839,19 +839,19 @@ class BookingApplicationService {
           //   }
           // }
           if (localCounter != null) {
-            localCounter.numberOfInProcess++;
-            if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
-              localCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
+            localCounter!.numberOfInProcess++;
+            if (localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfInProcess++;
             } else {
               ApplicationStats todayStats = new ApplicationStats();
-              localCounter.dailyStats[dailyStatsKey] = todayStats;
-              localCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
+              localCounter!.dailyStats![dailyStatsKey] = todayStats;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfInProcess++;
             }
           }
         } else if (status == ApplicationStatus.ONHOLD) {
-          application.timeOfPuttingOnHold = now;
-          application.notesOnPuttingOnHold = note;
-          application.putOnHoldBy = userPhone;
+          application!.timeOfPuttingOnHold = now;
+          application!.notesOnPuttingOnHold = note;
+          application!.putOnHoldBy = userPhone;
           // if (globalCounter != null) {
           //   globalCounter.numberOfPutOnHold++;
           //   if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -862,7 +862,7 @@ class BookingApplicationService {
           //     globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
           //   }
           // }
-          if (application.tokenId != null &&
+          if (application!.tokenId != null &&
               existingStatus == ApplicationStatus.APPROVED) {
             //this means that the application was approved earlier (auto or by admin),
             //but now has been put on hold, resulting into the cancellation of the token
@@ -871,32 +871,32 @@ class BookingApplicationService {
             //If the status is Completed, there is no point of cancelling the Token
             //if the Application is new, the Token hasn't been generated yet
             Tuple<String, int> tokenIdSplitted =
-                Utils.getTokenIdWithoutNumber(application.tokenId);
-            String tokenIdWithoutNumber = tokenIdSplitted.item1;
-            int tokenNumber = tokenIdSplitted.item2;
-            Triplet<UserToken, TokenCounter, EntitySlots> triplet;
-            triplet = await _gs.getTokenService().cancelTokenInTransaction(
+                Utils.getTokenIdWithoutNumber(application!.tokenId!);
+            String tokenIdWithoutNumber = tokenIdSplitted.item1!;
+            int? tokenNumber = tokenIdSplitted.item2;
+            Triplet<UserToken, TokenCounter, EntitySlots>? triplet;
+            triplet = await _gs!.getTokenService()!.cancelTokenInTransaction(
                 tx, userPhone, tokenIdWithoutNumber, tokenNumber);
-            cancelledToken = triplet.item1;
+            cancelledToken = triplet!.item1;
             tokenCounter = triplet.item2;
-            cancelledTokens = cancelledToken.parent;
+            cancelledTokens = cancelledToken!.parent;
             es = triplet.item3;
           }
 
           if (localCounter != null) {
-            localCounter.numberOfPutOnHold++;
-            if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
-              localCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
+            localCounter!.numberOfPutOnHold++;
+            if (localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfPutOnHold++;
             } else {
               ApplicationStats todayStats = new ApplicationStats();
-              localCounter.dailyStats[dailyStatsKey] = todayStats;
-              localCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
+              localCounter!.dailyStats![dailyStatsKey] = todayStats;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfPutOnHold++;
             }
           }
         } else if (status == ApplicationStatus.REJECTED) {
-          application.timeOfRejection = now;
-          application.notesOnRejection = note;
-          application.rejectedBy = userPhone;
+          application!.timeOfRejection = now;
+          application!.notesOnRejection = note;
+          application!.rejectedBy = userPhone;
           // if (globalCounter != null) {
           //   globalCounter.numberOfRejected++;
           //   if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -908,29 +908,29 @@ class BookingApplicationService {
           //   }
           // }
 
-          if (application.tokenId != null &&
+          if (application!.tokenId != null &&
               existingStatus == ApplicationStatus.APPROVED) {
             Tuple<String, int> tokenIdSplitted =
-                Utils.getTokenIdWithoutNumber(application.tokenId);
-            String tokenIdWithoutNumber = tokenIdSplitted.item1;
-            int tokenNumber = tokenIdSplitted.item2;
-            Triplet<UserToken, TokenCounter, EntitySlots> triplet;
-            triplet = await _gs.getTokenService().cancelTokenInTransaction(
+                Utils.getTokenIdWithoutNumber(application!.tokenId!);
+            String tokenIdWithoutNumber = tokenIdSplitted.item1!;
+            int? tokenNumber = tokenIdSplitted.item2;
+            Triplet<UserToken, TokenCounter, EntitySlots>? triplet;
+            triplet = await _gs!.getTokenService()!.cancelTokenInTransaction(
                 tx, userPhone, tokenIdWithoutNumber, tokenNumber);
-            cancelledToken = triplet.item1;
+            cancelledToken = triplet!.item1;
             tokenCounter = triplet.item2;
             es = triplet.item3;
-            cancelledTokens = cancelledToken.parent;
+            cancelledTokens = cancelledToken!.parent;
           }
 
           if (localCounter != null) {
-            localCounter.numberOfRejected++;
-            if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
-              localCounter.dailyStats[dailyStatsKey].numberOfRejected++;
+            localCounter!.numberOfRejected++;
+            if (localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfRejected++;
             } else {
               ApplicationStats todayStats = new ApplicationStats();
-              localCounter.dailyStats[dailyStatsKey] = todayStats;
-              localCounter.dailyStats[dailyStatsKey].numberOfRejected++;
+              localCounter!.dailyStats![dailyStatsKey] = todayStats;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfRejected++;
             }
           }
         }
@@ -940,49 +940,49 @@ class BookingApplicationService {
           //   globalCounter.numberOfApproved--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfApproved--;
+            localCounter!.numberOfApproved--;
           }
         } else if (existingStatus == ApplicationStatus.NEW) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfNew--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfNew--;
+            localCounter!.numberOfNew--;
           }
         } else if (existingStatus == ApplicationStatus.COMPLETED) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfCompleted--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfCompleted--;
+            localCounter!.numberOfCompleted--;
           }
         } else if (existingStatus == ApplicationStatus.INPROCESS) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfInProcess--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfInProcess--;
+            localCounter!.numberOfInProcess--;
           }
         } else if (existingStatus == ApplicationStatus.ONHOLD) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfPutOnHold--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfPutOnHold--;
+            localCounter!.numberOfPutOnHold--;
           }
         } else if (existingStatus == ApplicationStatus.REJECTED) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfRejected--;
           // }
           if (localCounter != null) {
-            localCounter.numberOfRejected--;
+            localCounter!.numberOfRejected--;
           }
         }
 
-        application.status = status;
+        application!.status = status;
 
-        tx.set(applicationRef, application.toJson());
-        tx.set(localCounterRef, localCounter.toJson());
+        tx.set(applicationRef, application!.toJson() as Map<String, dynamic>);
+        tx.set(localCounterRef, localCounter!.toJson());
         // if (globalCounter != null) {
         //   tx.set(globalCounterRef, globalCounter.toJson());
         // }
@@ -1003,15 +1003,15 @@ class BookingApplicationService {
     });
 
     if (e != null) {
-      throw e;
+      throw e!;
     }
 
     return new Triplet<BookingApplication, TokenCounter, EntitySlots>(
         item1: application, item2: tokenCounter, item3: es);
   }
 
-  Future<BookingApplicationCounter> getApplicationsOverview(
-      String bookingFormId, String entityId, int year) async {
+  Future<BookingApplicationCounter?> getApplicationsOverview(
+      String? bookingFormId, String? entityId, int year) async {
     //entityId is optional param, assuming that bookingForm is Global Form/System form
     //if entityId is present, that means the counter is local to the Entity
 
@@ -1024,17 +1024,17 @@ class BookingApplicationService {
     }
 
     FirebaseFirestore fStore = getFirestore();
-    BookingApplicationCounter counter;
+    BookingApplicationCounter? counter;
 
     final DocumentReference counterRef = fStore.doc('counter/' +
         (Utils.isNotNullOrEmpty(entityId)
-            ? bookingFormId + "#" + entityId + "#" + year.toString()
-            : bookingFormId + "#" + year.toString()));
+            ? bookingFormId! + "#" + entityId! + "#" + year.toString()
+            : bookingFormId! + "#" + year.toString()));
 
     DocumentSnapshot doc = await counterRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
+      Map<String, dynamic>? map = doc.data();
       counter = BookingApplicationCounter.fromJson(map);
     } else {
       counter = BookingApplicationCounter(
@@ -1048,12 +1048,12 @@ class BookingApplicationService {
   Future<bool> saveBookingForm(BookingForm bf) async {
     FirebaseFirestore fStore = getFirestore();
 
-    final DocumentReference formRef = fStore.doc('bookingForms/' + bf.id);
+    final DocumentReference formRef = fStore.doc('bookingForms/' + bf.id!);
 
     DocumentSnapshot doc = await formRef.get();
-    BookingForm form;
+    BookingForm? form;
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
+      Map<String, dynamic>? map = doc.data();
 
       form = BookingForm.fromJson(map);
     }
@@ -1068,9 +1068,9 @@ class BookingApplicationService {
     return true;
   }
 
-  Future<BookingForm> getBookingForm(String formId) async {
+  Future<BookingForm?> getBookingForm(String formId) async {
     FirebaseFirestore fStore = getFirestore();
-    BookingForm form;
+    BookingForm? form;
 
     final DocumentReference formRef = fStore.doc('bookingForms/' + formId);
 
@@ -1078,7 +1078,7 @@ class BookingApplicationService {
       DocumentSnapshot doc = await formRef.get();
 
       if (doc.exists) {
-        Map<String, dynamic> map = doc.data();
+        Map<String, dynamic>? map = doc.data();
         form = BookingForm.fromJson(map);
       }
     } catch (e) {

@@ -32,16 +32,16 @@ import 'package:eventify/eventify.dart' as Eventify;
 import '../enum/entity_role.dart';
 
 class ManageEmployeePage extends StatefulWidget {
-  final MetaEntity metaEntity;
-  final DateTime defaultDate;
+  final MetaEntity? metaEntity;
+  final DateTime? defaultDate;
   final dynamic backRoute;
   final bool isManager;
   ManageEmployeePage(
-      {Key key,
-      @required this.metaEntity,
-      @required this.defaultDate,
-      @required this.backRoute,
-      @required this.isManager})
+      {Key? key,
+      required this.metaEntity,
+      required this.defaultDate,
+      required this.backRoute,
+      required this.isManager})
       : super(key: key);
   @override
   _ManageEmployeePageState createState() => _ManageEmployeePageState();
@@ -50,29 +50,29 @@ class ManageEmployeePage extends StatefulWidget {
 class _ManageEmployeePageState extends State<ManageEmployeePage> {
   List<Employee> managersList = [];
   List<Employee> executiveList = [];
-  MetaEntity metaEntity;
+  MetaEntity? metaEntity;
   List<Widget> contactRowWidgets = [];
   List<Widget> execRowWidgets = [];
   List<Widget> contactRowWidgetsNew = [];
   bool _initCompleted = false;
-  GlobalState _gs;
-  Entity entity;
-  Eventify.Listener removeManagerListener;
-  Eventify.Listener removeExecListener;
-  PersistentBottomSheetController bottomSheetController;
+  GlobalState? _gs;
+  Entity? entity;
+  Eventify.Listener? removeManagerListener;
+  Eventify.Listener? removeExecListener;
+  PersistentBottomSheetController? bottomSheetController;
   final employeeListPagekey = new GlobalKey<ScaffoldState>();
   TextEditingController _adminItemController = new TextEditingController();
-  List<String> adminsList = [];
+  List<String?> adminsList = [];
   final GlobalKey<FormFieldState> adminPhoneKey =
       new GlobalKey<FormFieldState>();
-  String _item;
+  String? _item;
   @override
   void initState() {
     super.initState();
     metaEntity = this.widget.metaEntity;
     getGlobalState().whenComplete(() {
-      _gs.getEntity(metaEntity.entityId, true).then((value) {
-        entity = value.item1;
+      _gs!.getEntity(metaEntity!.entityId, true).then((value) {
+        entity = value!.item1;
         initializeEntity().whenComplete(() {
           setState(() {
             _initCompleted = true;
@@ -94,8 +94,8 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     EventBus.unregisterEvent(removeManagerListener);
   }
 
-  String handleUpsertEmployeeErrors(dynamic error, String phone) {
-    String msg;
+  String? handleUpsertEmployeeErrors(dynamic error, String phone) {
+    String? msg;
     switch (error.runtimeType) {
       case AccessDeniedException:
         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
@@ -252,8 +252,8 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
   //   });
   // }
 
-  void _removeServiceRow(String currItem) {
-    removeAdmin(entity.entityId, currItem).then((delStatus) {
+  void _removeServiceRow(String? currItem) {
+    removeAdmin(entity!.entityId, currItem).then((delStatus) {
       if (delStatus) {
         setState(() {
           adminsList.remove(currItem);
@@ -296,7 +296,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     return GestureDetector(
         onTap: () {
           // categoryType = type;
-          bottomSheetController.close();
+          bottomSheetController!.close();
           bottomSheetController = null;
           //   Navigator.of(context).pop();
           // setState(() {
@@ -386,16 +386,16 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       //   //_regNumController.text = entityPrivateList.registrationNumber;
       // }
 
-      if (!(Utils.isNullOrEmpty(entity.admins))) {
-        entity.admins.forEach((k) {
+      if (!(Utils.isNullOrEmpty(entity!.admins))) {
+        entity!.admins!.forEach((k) {
           adminsList.add(k.ph);
         });
       }
 
-      if (!(Utils.isNullOrEmpty(entity.managers))) {
-        managersList.addAll(entity.managers);
+      if (!(Utils.isNullOrEmpty(entity!.managers))) {
+        managersList.addAll(entity!.managers!);
 
-        entity.managers.forEach((element) {
+        entity!.managers!.forEach((element) {
           contactRowWidgets.add(new ContactRow(
             contact: element,
             empType: EntityRole.Manager,
@@ -406,8 +406,8 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
           ));
         });
       }
-      if (!(Utils.isNullOrEmpty(entity.executives))) {
-        executiveList.addAll(entity.executives);
+      if (!(Utils.isNullOrEmpty(entity!.executives))) {
+        executiveList.addAll(entity!.executives!);
         executiveList.forEach((element) {
           execRowWidgets.add(new ContactRow(
             contact: element,
@@ -539,9 +539,9 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     //adminsList.forEach((phone) {
     Employee emp = new Employee();
     emp.ph = phone;
-    _gs
-        .getEntityService()
-        .upsertEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin)
+    _gs!
+        .getEntityService()!
+        .upsertEmployee(widget.metaEntity!.entityId!, emp, EntityRole.Admin)
         .then((retVal) {
       if (retVal == null) {
         Utils.showMyFlushbar(
@@ -568,7 +568,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
           adminsList.insert(0, phone);
         });
       }
-    }).onError((error, stackTrace) {
+    }).onError((dynamic error, stackTrace) {
       handleUpsertEmployeeErrors(error, phone);
     });
     // });
@@ -580,9 +580,9 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     return true;
   }
 
-  Widget _buildServiceItem(String newAdminRowItem) {
+  Widget _buildServiceItem(String? newAdminRowItem) {
     TextEditingController itemNameController = new TextEditingController();
-    itemNameController.text = newAdminRowItem;
+    itemNameController.text = newAdminRowItem!;
     double cardMargin = MediaQuery.of(context).size.width * .03;
     return Container(
       height: 25,
@@ -698,7 +698,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
           hintStyle: textInputTextStyle),
       validator: Utils.validateMobileField,
       onChanged: (value) {
-        adminPhoneKey.currentState.validate();
+        adminPhoneKey.currentState!.validate();
 
         setState(() {
           _item = '+91' + value;
@@ -706,7 +706,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         });
       },
       onSaved: (newValue) {
-        _item = '+91' + newValue;
+        _item = '+91' + newValue!;
       },
     );
     if (_initCompleted)
@@ -730,7 +730,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                 Navigator.of(context).pop();
               },
             ),
-            title: Text(Utils.getEntityTypeDisplayName(entity.type),
+            title: Text(Utils.getEntityTypeDisplayName(entity!.type)!,
                 style: whiteBoldTextStyle1),
           ),
           body: Container(
@@ -745,7 +745,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                       margin: EdgeInsets.all(5),
                       padding: EdgeInsets.all(0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.white,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -867,7 +867,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                       margin: EdgeInsets.all(5),
                       padding: EdgeInsets.all(0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.white,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -980,7 +980,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                       margin: EdgeInsets.all(5),
                       padding: EdgeInsets.all(0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.white,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1113,7 +1113,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                                               .text;
                                                       bool result =
                                                           adminPhoneKey
-                                                              .currentState
+                                                              .currentState!
                                                               .validate();
                                                       if (result) {
                                                         bool error = false;
@@ -1231,7 +1231,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         ),
         onWillPop: () async {
           if (bottomSheetController != null) {
-            bottomSheetController.close();
+            bottomSheetController!.close();
             bottomSheetController = null;
             return false;
           } else {
@@ -1270,7 +1270,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
 
   showCategorySheet() {
     bottomSheetController =
-        employeeListPagekey.currentState.showBottomSheet<Null>(
+        employeeListPagekey.currentState!.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
         height: MediaQuery.of(context).size.height * .4,
@@ -1291,7 +1291,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                           color: headerBarColor,
                         ),
                         onPressed: () {
-                          bottomSheetController.close();
+                          bottomSheetController!.close();
                           bottomSheetController = null;
                           // Navigator.of(context).pop();
                         }),
@@ -1348,7 +1348,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       elevation: 30,
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.blueGrey[200]),
+          side: BorderSide(color: Colors.blueGrey[200]!),
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
     );

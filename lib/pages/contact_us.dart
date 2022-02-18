@@ -14,7 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsPage extends StatefulWidget {
   final bool showAppBar;
-  ContactUsPage({Key key, @required this.showAppBar}) : super(key: key);
+  ContactUsPage({Key? key, required this.showAppBar}) : super(key: key);
 
   @override
   _ContactUsPageState createState() => _ContactUsPageState();
@@ -26,16 +26,16 @@ class _ContactUsPageState extends State<ContactUsPage> {
   TextEditingController _phController = new TextEditingController();
   final GlobalKey<FormFieldState> phnKey = new GlobalKey<FormFieldState>();
   TextEditingController _msgController = new TextEditingController();
-  String _reasonType;
+  String? _reasonType;
   List<String> attachments = [];
-  String _mailBody;
-  String _altPh;
-  String _mailFirstline;
-  String _mailSecLine;
+  String? _mailBody;
+  String? _altPh;
+  String? _mailFirstline;
+  String? _mailSecLine;
   bool _validate = false;
-  String _errMsg;
+  String? _errMsg;
   bool initCompleted = false;
-  GlobalState _state;
+  GlobalState? _state;
 
   @override
   void initState() {
@@ -59,7 +59,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
     super.dispose();
   }
 
-  String validateText(String value) {
+  String? validateText(String value) {
     if (value == null || value == "") {
       return 'Please enter your message';
     }
@@ -67,7 +67,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
     return null;
   }
 
-  _launchURL(String toMailId, String subject, String body) async {
+  _launchURL(String? toMailId, String? subject, String? body) async {
     var url = 'mailto:$toMailId?subject=$subject&body=$body';
     if (await canLaunch(url)) {
       launch(url).then((value) => Utils.showMyFlushbar(
@@ -133,7 +133,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
               borderSide: BorderSide(color: Colors.orange)),
         ),
         // validator: validateText,
-        onSaved: (String value) {
+        onSaved: (String? value) {
           //entity.address.zipcode = value;
           print("saved address");
         },
@@ -162,7 +162,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
             _mailFirstline = (_phController.text.isNotEmpty) ? _altPh : " ";
           });
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           //entity.address.zipcode = value;
           print("saved address");
         },
@@ -185,7 +185,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                 ),
                 value: _reasonType,
                 isDense: true,
-                onChanged: (newValue) {
+                onChanged: (dynamic newValue) {
                   setState(() {
                     _reasonType = newValue;
                     state.didChange(newValue);
@@ -204,7 +204,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
             ),
           );
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           _reasonType = value;
 
           // entity.childCollection
@@ -218,7 +218,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           drawer: CustomDrawer(
-            phone: _state.getCurrentUser().ph,
+            phone: _state!.getCurrentUser()!.ph,
           ),
           appBar: widget.showAppBar
               ? CustomAppBarWithBackButton(
@@ -334,14 +334,14 @@ class _ContactUsPageState extends State<ContactUsPage> {
                               setState(() {
                                 _mailSecLine = _msgController.text;
                                 _mailBody = (_mailFirstline != null)
-                                    ? _mailFirstline + "\n" + _mailSecLine
+                                    ? _mailFirstline! + "\n" + _mailSecLine!
                                     : _mailSecLine;
                               });
                             },
                           ),
                         ),
                         Text(
-                          (_errMsg != null) ? _errMsg : "",
+                          (_errMsg != null) ? _errMsg! : "",
                           style: errorTextStyle,
                         ),
                         verticalSpacer,
@@ -360,7 +360,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 // alignment: Alignment.center,
                                 shape: RoundedRectangleBorder(
                                     side:
-                                        BorderSide(color: Colors.blueGrey[200]),
+                                        BorderSide(color: Colors.blueGrey[200]!),
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5.0))),
                                 color: btnColor,
@@ -384,27 +384,27 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 ),
 
                                 onPressed: () {
-                                  if (_state
-                                              .getConfigurations()
+                                  if (_state!
+                                              .getConfigurations()!
                                               .whatsappPhone !=
                                           null &&
-                                      _state
-                                              .getConfigurations()
+                                      _state!
+                                              .getConfigurations()!
                                               .whatsappPhone !=
                                           "") {
                                     try {
                                       launchWhatsApp(
                                           message:
                                               'Hello, This is ${_nameController.text}. \nIt\'s a $_reasonType regarding LESSs app.\nIt is \"${_msgController.text}\".',
-                                          phone: _state
-                                              .getConfigurations()
+                                          phone: _state!
+                                              .getConfigurations()!
                                               .whatsappPhone);
                                     } catch (error) {
                                       Utils.showMyFlushbar(
                                           context,
                                           Icons.error,
                                           Duration(seconds: 5),
-                                          "Could not connect to the WhatsApp number ${_state.getConfigurations().whatsappPhone} !!",
+                                          "Could not connect to the WhatsApp number ${_state!.getConfigurations()!.whatsappPhone} !!",
                                           "Try again later");
                                     }
                                   } else {
@@ -432,7 +432,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 textColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                     side:
-                                        BorderSide(color: Colors.blueGrey[200]),
+                                        BorderSide(color: Colors.blueGrey[200]!),
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5.0))),
                                 splashColor: highlightColor,
@@ -446,13 +446,13 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                   //       ? _validate = true
                                   //       : _validate = false;
                                   // });
-                                  String subjectOfMail = (_reasonType != null)
+                                  String? subjectOfMail = (_reasonType != null)
                                       ? _reasonType
                                       : 'Write what\s this about';
                                   if (_errMsg == null) {
                                     if (_mailBody == null) _mailBody = "";
                                     _launchURL(
-                                        _state.getConfigurations().contactEmail,
+                                        _state!.getConfigurations()!.contactEmail,
                                         subjectOfMail,
                                         _mailBody);
                                   }

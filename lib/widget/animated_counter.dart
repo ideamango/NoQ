@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import '../style.dart';
 
 class AnimatedCount extends ImplicitlyAnimatedWidget {
-  final int count;
+  final int? count;
   final TextStyle textStyle;
 
   AnimatedCount(
-      {Key key,
-      @required this.count,
-      @required Duration duration,
-      @required this.textStyle,
+      {Key? key,
+      required this.count,
+      required Duration duration,
+      required this.textStyle,
       Curve curve = Curves.linear})
       : super(duration: duration, curve: curve, key: key);
 
@@ -20,12 +20,12 @@ class AnimatedCount extends ImplicitlyAnimatedWidget {
 }
 
 class _AnimatedCountState extends AnimatedWidgetBaseState<AnimatedCount> {
-  IntTween _count;
+  IntTween? _count;
 
   @override
   Widget build(BuildContext context) {
     return AutoSizeText(
-      _count.evaluate(animation).toString(),
+      _count!.evaluate(animation).toString(),
       maxLines: 1,
       minFontSize: 12,
       overflow: TextOverflow.ellipsis,
@@ -36,6 +36,6 @@ class _AnimatedCountState extends AnimatedWidgetBaseState<AnimatedCount> {
   @override
   void forEachTween(TweenVisitor visitor) {
     _count = visitor(
-        _count, widget.count, (dynamic value) => new IntTween(begin: value));
+        _count, widget.count!, (dynamic value) => new IntTween(begin: value)) as IntTween?;
   }
 }

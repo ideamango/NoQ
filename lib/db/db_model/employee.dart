@@ -2,17 +2,17 @@ import './app_user.dart';
 import '../../utils.dart';
 
 class Employee {
-  String id;
-  String name;
-  String employeeId;
-  String ph;
-  int shiftStartHour;
-  int shiftStartMinute;
-  int shiftEndHour;
-  int shiftEndMinute;
-  List<String> daysOff;
+  String? id;
+  String? name;
+  String? employeeId;
+  String? ph;
+  int? shiftStartHour;
+  int? shiftStartMinute;
+  int? shiftEndHour;
+  int? shiftEndMinute;
+  List<String>? daysOff;
 
-  String altPhone;
+  String? altPhone;
 
   Employee(
       {this.id,
@@ -41,10 +41,10 @@ class Employee {
         altPhone: json['altPhone']);
   }
 
-  static List<String> convertList(List<dynamic> list) {
+  static List<String> convertList(List<dynamic>? list) {
     List<String> newList = new List();
     if (Utils.isNullOrEmpty(list)) return newList;
-    for (dynamic day in list) {
+    for (dynamic day in list!) {
       newList.add(day.toString());
     }
     return newList;

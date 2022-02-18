@@ -28,29 +28,29 @@ class ManageEntityListPage extends StatefulWidget {
 }
 
 class _ManageEntityListPageState extends State<ManageEntityListPage> {
-  List<MetaEntity> metaEntitiesList;
-  Entity entity;
-  EntityType _entityType;
-  ScrollController _scrollController;
-  double itemSize;
-  List<String> entityTypes;
-  GlobalState _gs;
+  List<MetaEntity?>? metaEntitiesList;
+  Entity? entity;
+  EntityType? _entityType;
+  ScrollController? _scrollController;
+  double? itemSize;
+  List<String>? entityTypes;
+  GlobalState? _gs;
   bool stateInitFinished = false;
 
   bool _initCompleted = false;
-  EntityType categoryType;
-  PersistentBottomSheetController bottomSheetController;
+  EntityType? categoryType;
+  PersistentBottomSheetController? bottomSheetController;
   final manageEntityListPagekey = new GlobalKey<ScaffoldState>();
   //Eventify.Listener _eventListener;
 
-  Widget _buildCategoryItem(BuildContext context, EntityType type) {
-    String name = Utils.getEntityTypeDisplayName(type);
+  Widget _buildCategoryItem(BuildContext context, EntityType? type) {
+    String name = Utils.getEntityTypeDisplayName(type)!;
     Widget image = Utils.getEntityTypeImage(type, 30);
 
     return GestureDetector(
         onTap: () {
           categoryType = type;
-          bottomSheetController.close();
+          bottomSheetController!.close();
           bottomSheetController = null;
           //   Navigator.of(context).pop();
           setState(() {
@@ -140,26 +140,26 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   initialize() async {
     await getGlobalState();
     metaEntitiesList = [];
-    if (!Utils.isNullOrEmpty(_gs.getCurrentUser().entities)) {
+    if (!Utils.isNullOrEmpty(_gs!.getCurrentUser()!.entities)) {
       //Check if entity is child and parent os same entity is also enlisted in entities then dont show child.
       // Show only first level entities to user.
-      for (MetaEntity m in _gs.getCurrentUser().entities) {
+      for (MetaEntity? m in _gs!.getCurrentUser()!.entities!) {
         bool isAdminOfParent = false;
-        if (m.parentId != null) {
-          for (MetaEntity parent in _gs.getCurrentUser().entities) {
-            if (parent.entityId == m.parentId) {
+        if (m!.parentId != null) {
+          for (MetaEntity? parent in _gs!.getCurrentUser()!.entities!) {
+            if (parent!.entityId == m.parentId) {
               isAdminOfParent = true;
               break;
             }
           }
         }
         if (!isAdminOfParent) {
-          metaEntitiesList.add(m);
+          metaEntitiesList!.add(m);
         }
       }
     }
 
-    entityTypes = _gs.getConfigurations().entityTypes;
+    entityTypes = _gs!.getConfigurations()!.entityTypes;
     setState(() {
       stateInitFinished = true;
     });
@@ -167,23 +167,23 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
 
   void _addNewServiceRow() {
     Entity entity = Utils.createEntity(_entityType);
-    _gs.putEntity(entity, false);
-    MetaEntity metaEn = entity.getMetaEntity();
+    _gs!.putEntity(entity, false);
+    MetaEntity? metaEn = entity.getMetaEntity();
     //itemSize = MediaQuery.of(context).size.height * .29;
     setState(() {
-      metaEntitiesList.add(metaEn);
+      metaEntitiesList!.add(metaEn);
     });
 
-    if (_scrollController.hasClients)
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+    if (_scrollController!.hasClients)
+      _scrollController!.animateTo(_scrollController!.position.maxScrollExtent,
           curve: Curves.easeInToLinear, duration: Duration(milliseconds: 200));
   }
 
   @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients)
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      if (_scrollController!.hasClients)
+        _scrollController!.jumpTo(_scrollController!.position.maxScrollExtent);
     });
     String title = pageTitleManageEntityList;
     if (_initCompleted) {
@@ -242,11 +242,11 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                           return Container(
                             margin: EdgeInsets.only(bottom: 5),
                             child: EntityRow(
-                              metaEntity: metaEntitiesList[index],
+                              metaEntity: metaEntitiesList![index],
                             ),
                           );
                         },
-                        itemCount: metaEntitiesList.length,
+                        itemCount: metaEntitiesList!.length,
                       ),
                     ),
                   ),
@@ -258,7 +258,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
         ),
         onWillPop: () async {
           if (bottomSheetController != null) {
-            bottomSheetController.close();
+            bottomSheetController!.close();
             bottomSheetController = null;
             return false;
           } else {
@@ -295,7 +295,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
 
   showCategorySheet() {
     bottomSheetController =
-        manageEntityListPagekey.currentState.showBottomSheet<Null>(
+        manageEntityListPagekey.currentState!.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
         height: MediaQuery.of(context).size.height * .7,
@@ -316,7 +316,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                           color: headerBarColor,
                         ),
                         onPressed: () {
-                          bottomSheetController.close();
+                          bottomSheetController!.close();
                           bottomSheetController = null;
                           // Navigator.of(context).pop();
                         }),
@@ -345,7 +345,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                   padding: EdgeInsets.all(0),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: _gs.getActiveEntityTypes().length,
+                  itemCount: _gs!.getActiveEntityTypes().length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 10.0,
@@ -359,7 +359,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                         //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                         child: Center(
                           child: _buildCategoryItem(
-                              context, _gs.getActiveEntityTypes()[index]),
+                              context, _gs!.getActiveEntityTypes()[index]),
                         ),
                       ),
                     );
@@ -373,7 +373,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
       elevation: 30,
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.blueGrey[200]),
+          side: BorderSide(color: Colors.blueGrey[200]!),
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
     );

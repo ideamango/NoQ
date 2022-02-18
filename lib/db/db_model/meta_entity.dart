@@ -52,44 +52,44 @@ class MetaEntity {
   MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
-  String entityId;
-  String name;
-  EntityType type;
-  int advanceDays;
-  bool isPublic;
-  List<String> closedOn;
-  int breakStartHour;
-  int breakStartMinute;
-  int breakEndHour;
-  int breakEndMinute;
-  int startTimeHour;
-  int startTimeMinute;
-  int endTimeHour;
-  int endTimeMinute;
-  bool isActive;
-  double distance;
-  String address;
-  double lat;
-  double lon;
-  int slotDuration;
-  int maxAllowed;
-  String whatsapp;
-  String parentId;
-  String upiId;
-  String upiPhoneNumber;
-  String upiQRImagePath;
-  Offer offer;
-  String phone;
-  bool hasChildren;
-  bool isBookable;
-  List<MetaForm> forms;
-  int maxTokensPerSlotByUser;
-  int maxPeoplePerToken;
-  String parentGroupId;
-  String supportEmail;
-  int maxTokensByUserInDay;
-  bool allowOnlineAppointment;
-  bool allowWalkinAppointment;
+  String? entityId;
+  String? name;
+  EntityType? type;
+  int? advanceDays;
+  bool? isPublic;
+  List<String>? closedOn;
+  int? breakStartHour;
+  int? breakStartMinute;
+  int? breakEndHour;
+  int? breakEndMinute;
+  int? startTimeHour;
+  int? startTimeMinute;
+  int? endTimeHour;
+  int? endTimeMinute;
+  bool? isActive;
+  double? distance;
+  String? address;
+  double? lat;
+  double? lon;
+  int? slotDuration;
+  int? maxAllowed;
+  String? whatsapp;
+  String? parentId;
+  String? upiId;
+  String? upiPhoneNumber;
+  String? upiQRImagePath;
+  Offer? offer;
+  String? phone;
+  bool? hasChildren;
+  bool? isBookable;
+  List<MetaForm>? forms;
+  int? maxTokensPerSlotByUser;
+  int? maxPeoplePerToken;
+  String? parentGroupId;
+  String? supportEmail;
+  int? maxTokensByUserInDay;
+  bool? allowOnlineAppointment;
+  bool? allowWalkinAppointment;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -134,28 +134,28 @@ class MetaEntity {
         allowWalkinAppointment: json['allowWalkinAppointment']);
   }
 
-  static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
+  static List<String> convertToClosedOnArrayFromJson(List<dynamic>? daysJson) {
     List<String> days = [];
     if (daysJson == null) return days;
 
-    for (String day in daysJson) {
+    for (String day in daysJson as Iterable<String>) {
       days.add(day);
     }
     return days;
   }
 
-  static List<MetaForm> convertToMetaFormsFromJson(List<dynamic> metaFormJson) {
+  static List<MetaForm> convertToMetaFormsFromJson(List<dynamic>? metaFormJson) {
     List<MetaForm> metaForms = [];
     if (metaFormJson == null) return metaForms;
 
-    for (Map<String, dynamic> json in metaFormJson) {
+    for (Map<String, dynamic> json in metaFormJson as Iterable<Map<String, dynamic>>) {
       MetaForm metaEnt = MetaForm.fromJson(json);
       metaForms.add(metaEnt);
     }
     return metaForms;
   }
 
-  List<dynamic> metaFormsToJson(List<MetaForm> metaForms) {
+  List<dynamic> metaFormsToJson(List<MetaForm>? metaForms) {
     List<dynamic> usersJson = [];
     if (metaForms == null) return usersJson;
     for (MetaForm meta in metaForms) {
@@ -189,7 +189,7 @@ class MetaEntity {
         'upiId': upiId,
         'upiPhoneNumber': upiPhoneNumber,
         'upiQRImagePath': upiQRImagePath,
-        'offer': offer != null ? offer.toJson() : null,
+        'offer': offer != null ? offer!.toJson() : null,
         'phone': phone,
         'hasChildren': hasChildren,
         'isBookable': isBookable,
@@ -234,14 +234,14 @@ class MetaEntity {
       if (this.closedOn != null && metaEnt.closedOn != null) {
         int matchCount = 0;
 
-        for (String day in this.closedOn) {
-          for (String val in metaEnt.closedOn) {
+        for (String day in this.closedOn!) {
+          for (String val in metaEnt.closedOn!) {
             if (day == val) {
               matchCount++;
             }
           }
         }
-        if (matchCount == this.closedOn.length) {
+        if (matchCount == this.closedOn!.length) {
           return true;
         }
       }

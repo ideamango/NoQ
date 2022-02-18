@@ -23,9 +23,9 @@ import '../../constants.dart';
 import '../../enum/entity_role.dart';
 
 class EntityService {
-  FirebaseApp _fb;
+  FirebaseApp? _fb;
 
-  EntityService(FirebaseApp firebaseApp) {
+  EntityService(FirebaseApp? firebaseApp) {
     _fb = firebaseApp;
   }
 
@@ -33,13 +33,13 @@ class EntityService {
     if (_fb == null) {
       return FirebaseFirestore.instance;
     } else {
-      return FirebaseFirestore.instanceFor(app: _fb);
+      return FirebaseFirestore.instanceFor(app: _fb!);
     }
   }
 
   FirebaseAuth getFirebaseAuth() {
     if (_fb == null) return FirebaseAuth.instance;
-    return FirebaseAuth.instanceFor(app: _fb);
+    return FirebaseAuth.instanceFor(app: _fb!);
   }
 
   Future<bool> updateEntityForms(String entityId) async {
@@ -47,17 +47,17 @@ class EntityService {
   }
 
   Future<bool> upsertEntity(Entity entity) async {
-    User user = getFirebaseAuth().currentUser;
-    String regNum = entity.regNum;
+    User user = getFirebaseAuth().currentUser!;
+    String? regNum = entity.regNum;
 
     FirebaseFirestore fStore = getFirestore();
     final DocumentReference entityRef =
-        fStore.doc('entities/' + entity.entityId);
+        fStore.doc('entities/' + entity.entityId!);
 
     final DocumentReference entityPrivateRef =
-        fStore.doc('entities/' + entity.entityId + '/private_data/private');
+        fStore.doc('entities/' + entity.entityId! + '/private_data/private');
 
-    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
+    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber!);
 
     bool isSuccess = false;
 
@@ -74,20 +74,20 @@ class EntityService {
           currentUser = new AppUser(
               id: user.uid, ph: user.phoneNumber, name: user.displayName);
         } else {
-          currentUser = AppUser.fromJson(usrDoc.data());
+          currentUser = AppUser.fromJson(usrDoc.data()!);
         }
 
-        Entity existingEntity;
-        EntityPrivate ePrivate;
+        Entity? existingEntity;
+        EntityPrivate? ePrivate;
 
         if (entityDoc.exists) {
           //check if the current user is admin else it is not allowed
-          Map<String, dynamic> map = entityDoc.data();
+          Map<String, dynamic>? map = entityDoc.data();
           existingEntity = Entity.fromJson(map);
           ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
           //if (existingEntity.isAdmin(fireUser.uid) == -1) {
-          if (ePrivate.roles[user.phoneNumber] !=
+          if (ePrivate!.roles![user.phoneNumber] !=
               EnumToString.convertToString(EntityRole.Admin)) {
             throw new AccessDeniedException(
                 "User is not admin and can't update the entity");
@@ -103,27 +103,27 @@ class EntityService {
           entity.verificationStatus = VERIFICATION_PENDING;
         }
 
-        MetaEntity me = entity.getMetaEntity();
+        MetaEntity? me = entity.getMetaEntity();
 
         if (currentUser.getAdminIndex(entity.entityId) == -1) {
           //add the meta-entity to the user, if not already present - will happen when the entity is new
           if (currentUser.entities == null) {
             currentUser.entities = [];
           }
-          currentUser.entities.add(entity.getMetaEntity());
+          currentUser.entities!.add(entity.getMetaEntity());
           if (currentUser.entityVsRole == null) {
-            currentUser.entityVsRole = new Map<String, EntityRole>();
+            currentUser.entityVsRole = new Map<String?, EntityRole>();
           }
-          currentUser.entityVsRole[entity.entityId] = EntityRole.Admin;
+          currentUser.entityVsRole![entity.entityId] = EntityRole.Admin;
         } else {
           //will happen when entity exists i.e. update scenario and current user is the admin,
           //then check for the meta-entity if anything is modified
           //update the user with the udated meta-entity
           if (existingEntity != null &&
-              !me.isEqual(existingEntity.getMetaEntity())) {
+              !me!.isEqual(existingEntity.getMetaEntity()!)) {
             int index = currentUser.getAdminIndex(entity.entityId);
-            currentUser.entities[index] = entity.getMetaEntity();
-            currentUser.entityVsRole[entity.entityId] = EntityRole.Admin;
+            currentUser.entities![index] = entity.getMetaEntity();
+            currentUser.entityVsRole![entity.entityId] = EntityRole.Admin;
           }
         }
 
@@ -135,8 +135,8 @@ class EntityService {
         }
 
         int existingIndexInAdmin = -1;
-        for (int index = 0; index < entity.admins.length; index++) {
-          if (entity.admins[index].ph == emp.ph) {
+        for (int index = 0; index < entity.admins!.length; index++) {
+          if (entity.admins![index].ph == emp.ph) {
             existingIndexInAdmin = index;
             break;
           }
@@ -144,7 +144,7 @@ class EntityService {
 
         if (existingIndexInAdmin == -1) {
           //current employee is admin (creating the entity) and does not exist in the Entity Admins collection already
-          entity.admins.add(emp);
+          entity.admins!.add(emp);
         } else {
           //do not need to update existing employee info, as Entity might already have more details
           //entity.admins[existingIndexInAdmin] = emp;
@@ -154,26 +154,26 @@ class EntityService {
         List<AppUser> employees = [];
 
         //for (MetaUser usr of the entity i.e. admins/managers/execs) {
-        for (String adminPhone in ePrivate.roles.keys) {
-          DocumentReference userRef = fStore.doc('users/' + adminPhone);
+        for (String? adminPhone in ePrivate.roles!.keys) {
+          DocumentReference userRef = fStore.doc('users/' + adminPhone!);
           DocumentSnapshot userDoc = await tx.get(userRef);
 
           if (userDoc.exists) {
-            AppUser u = AppUser.fromJson(userDoc.data());
+            AppUser u = AppUser.fromJson(userDoc.data()!);
             int indexOfEntityInUser = -1;
             bool entityExistsInUser = false;
-            for (MetaEntity me in u.entities) {
+            for (MetaEntity? me in u.entities!) {
               indexOfEntityInUser++;
-              if (me.entityId == entity.entityId) {
+              if (me!.entityId == entity.entityId) {
                 entityExistsInUser = true;
                 break;
               }
             }
 
             if (entityExistsInUser) {
-              MetaEntity existingME = u.entities[indexOfEntityInUser];
-              if (!me.isEqual(existingME)) {
-                u.entities[indexOfEntityInUser] = entity.getMetaEntity();
+              MetaEntity existingME = u.entities![indexOfEntityInUser]!;
+              if (!me!.isEqual(existingME)) {
+                u.entities![indexOfEntityInUser] = entity.getMetaEntity();
                 employees.add(u);
               }
             }
@@ -182,7 +182,7 @@ class EntityService {
 
         //step3: update employees with the modified Entity Ref
         for (AppUser u in employees) {
-          DocumentReference userRef = fStore.doc('users/' + u.ph);
+          DocumentReference userRef = fStore.doc('users/' + u.ph!);
           tx.set(userRef, u.toJson());
         }
 
@@ -208,25 +208,25 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<Entity> getEntity(String entityId) async {
+  Future<Entity?> getEntity(String entityId) async {
     FirebaseFirestore fStore = getFirestore();
-    Entity entity;
+    Entity? entity;
 
     final DocumentReference entityRef = fStore.doc('entities/' + entityId);
 
     DocumentSnapshot doc = await entityRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
+      Map<String, dynamic>? map = doc.data();
       entity = Entity.fromJson(map);
     }
 
     return entity;
   }
 
-  Future<EntityPrivate> getEntityPrivate(String entityId) async {
+  Future<EntityPrivate?> getEntityPrivate(String entityId) async {
     FirebaseFirestore fStore = getFirestore();
-    EntityPrivate entityPrivate;
+    EntityPrivate? entityPrivate;
 
     final DocumentReference entityPrivateRef =
         fStore.doc('entities/' + entityId + '/private_data/private');
@@ -234,7 +234,7 @@ class EntityService {
     DocumentSnapshot doc = await entityPrivateRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
+      Map<String, dynamic>? map = doc.data();
       entityPrivate = EntityPrivate.fromJson(map);
     }
 
@@ -242,15 +242,15 @@ class EntityService {
   }
 
   Future<bool> deleteEntity(String entityId) async {
-    User user = getFirebaseAuth().currentUser;
+    User? user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
     bool isSuccess = false;
 
-    AccessDeniedException accessDeniedException;
-    EntityDeletionDeniedChildExistsException
+    AccessDeniedException? accessDeniedException;
+    EntityDeletionDeniedChildExistsException?
         entityDeletionDeniedChildExistsException;
 
-    NotAdminParentEntityException notAdminParentEntityException;
+    NotAdminParentEntityException? notAdminParentEntityException;
 
     //STEPS:
     //1. Do not allow delete if the childEntities exist
@@ -262,7 +262,7 @@ class EntityService {
     DocumentReference entityRef = fStore.doc('entities/' + entityId);
     final DocumentReference entityPrivateRef =
         fStore.doc('entities/' + entityId + '/private_data/private');
-    DocumentReference parentEntityRef;
+    DocumentReference? parentEntityRef;
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -273,36 +273,36 @@ class EntityService {
               "Given entity does not exist");
         }
 
-        Entity ent = Entity.fromJson(entityDoc.data());
+        Entity ent = Entity.fromJson(entityDoc.data())!;
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
-        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
+        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data())!;
 
-        if (ePrivate.roles[user.phoneNumber] !=
+        if (ePrivate.roles![user!.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
           accessDeniedException =
               new AccessDeniedException("This user can't delete the Entity");
-          throw accessDeniedException;
+          throw accessDeniedException!;
         }
 
-        if (ent.childEntities.length > 0) {
+        if (ent.childEntities!.length > 0) {
           entityDeletionDeniedChildExistsException =
               new EntityDeletionDeniedChildExistsException(
                   "Parent Entity can't be deleted until all it's child entities are deleted");
-          throw entityDeletionDeniedChildExistsException;
+          throw entityDeletionDeniedChildExistsException!;
         }
 
-        Entity parentEnt;
+        Entity? parentEnt;
 
         if (ent.parentId != null) {
           //remove the childEntity from the parentEntity
-          parentEntityRef = fStore.doc('entities/' + ent.parentId);
-          DocumentSnapshot parentEntityDoc = await tx.get(parentEntityRef);
+          parentEntityRef = fStore.doc('entities/' + ent.parentId!);
+          DocumentSnapshot parentEntityDoc = await tx.get(parentEntityRef!);
 
           parentEnt = Entity.fromJson(parentEntityDoc.data());
 
           //check if the user is admin for the partent entity, if no throw the exception
           bool isParentAdmin = false;
-          for (Employee admin in parentEnt.admins) {
+          for (Employee admin in parentEnt!.admins!) {
             if (admin.ph == user.phoneNumber) {
               isParentAdmin = true;
             }
@@ -311,20 +311,20 @@ class EntityService {
           if (!isParentAdmin) {
             notAdminParentEntityException = new NotAdminParentEntityException(
                 "Current user is not admin of the Parent Entity, hence can't delete the Child Entity");
-            throw notAdminParentEntityException;
+            throw notAdminParentEntityException!;
           }
 
           int index = -1;
           bool childExistInParentEntity = false;
-          for (MetaEntity childMeta in parentEnt.childEntities) {
+          for (MetaEntity? childMeta in parentEnt.childEntities!) {
             index++;
-            if (childMeta.entityId == entityId) {
+            if (childMeta!.entityId == entityId) {
               childExistInParentEntity = true;
               break;
             }
           }
           if (childExistInParentEntity) {
-            parentEnt.childEntities.removeAt(index);
+            parentEnt.childEntities!.removeAt(index);
           }
         }
 
@@ -332,26 +332,26 @@ class EntityService {
         List<AppUser> employees = [];
 
         //for (MetaUser usr of the entity i.e. admins/managers/execs) {
-        for (String adminPhone in ePrivate.roles.keys) {
-          DocumentReference userRef = fStore.doc('users/' + adminPhone);
+        for (String? adminPhone in ePrivate.roles!.keys) {
+          DocumentReference userRef = fStore.doc('users/' + adminPhone!);
           DocumentSnapshot userDoc = await tx.get(userRef);
 
           if (userDoc.exists) {
-            AppUser u = AppUser.fromJson(userDoc.data());
+            AppUser u = AppUser.fromJson(userDoc.data()!);
             int indexOfEntityInUser = -1;
             bool entityExistsInUser = false;
-            for (MetaEntity me in u.entities) {
+            for (MetaEntity? me in u.entities!) {
               indexOfEntityInUser++;
-              if (me.entityId == entityId) {
+              if (me!.entityId == entityId) {
                 entityExistsInUser = true;
                 break;
               }
             }
 
             if (entityExistsInUser) {
-              u.entities.removeAt(indexOfEntityInUser);
-              if (u.entityVsRole.containsKey(entityId)) {
-                u.entityVsRole.remove(entityId);
+              u.entities!.removeAt(indexOfEntityInUser);
+              if (u.entityVsRole!.containsKey(entityId)) {
+                u.entityVsRole!.remove(entityId);
               }
               employees.add(u);
             }
@@ -361,12 +361,12 @@ class EntityService {
         //step2: Update the parent if exists
         if (parentEntityRef != null) {
           //if user is not admin of Parent this call will fail at DB level
-          tx.set(parentEntityRef, parentEnt.toJson());
+          tx.set(parentEntityRef!, parentEnt!.toJson());
         }
 
         //step3: update employees with the Entity Ref
         for (AppUser u in employees) {
-          DocumentReference userRef = fStore.doc('users/' + u.ph);
+          DocumentReference userRef = fStore.doc('users/' + u.ph!);
           tx.set(userRef, u.toJson());
         }
 
@@ -380,38 +380,38 @@ class EntityService {
     });
 
     if (accessDeniedException != null) {
-      throw accessDeniedException;
+      throw accessDeniedException!;
     }
 
     if (entityDeletionDeniedChildExistsException != null) {
-      throw entityDeletionDeniedChildExistsException;
+      throw entityDeletionDeniedChildExistsException!;
     }
 
     if (notAdminParentEntityException != null) {
-      throw notAdminParentEntityException;
+      throw notAdminParentEntityException!;
     }
 
     return isSuccess;
   }
 
-  Future<Entity> upsertEmployee(
+  Future<Entity?> upsertEmployee(
       String entityId, Employee employee, EntityRole role) async {
-    User user = getFirebaseAuth().currentUser;
+    User? user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
-    String phone = employee.ph;
+    String phone = employee.ph!;
     if (!Utils.isNotNullOrEmpty(phone)) {
       throw new Exception("Phone of Employee can't be null");
     }
 
-    AccessDeniedException accessDeniedException;
-    CantRemoveAdminWithOneAdminException cantRemoveAdminWithOneAdminException;
-    ExistingUserRoleUpdateException existingUserRoleUpdateException;
+    AccessDeniedException? accessDeniedException;
+    CantRemoveAdminWithOneAdminException? cantRemoveAdminWithOneAdminException;
+    ExistingUserRoleUpdateException? existingUserRoleUpdateException;
 
     String roleStr = EnumToString.convertToString(role);
 
     AppUser u;
     bool isSuccess = true;
-    Entity entity;
+    Entity? entity;
 
     final DocumentReference userRef = fStore.doc('users/' + phone);
     final DocumentReference entityRef = fStore.doc('entities/' + entityId);
@@ -427,64 +427,64 @@ class EntityService {
         }
 
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
-        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
+        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data())!;
 
-        Entity ent = Entity.fromJson(entityDoc.data());
+        Entity? ent = Entity.fromJson(entityDoc.data());
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[user.phoneNumber] !=
+        if (ePrivate.roles![user!.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
           accessDeniedException = new AccessDeniedException(
               "User is not admin, hence can't add other users");
-          throw accessDeniedException;
+          throw accessDeniedException!;
         }
         String strRole = EnumToString.convertToString(role);
 
-        if (ePrivate.roles.containsKey(employee.ph) &&
-            ePrivate.roles[employee.ph] != strRole) {
+        if (ePrivate.roles!.containsKey(employee.ph) &&
+            ePrivate.roles![employee.ph] != strRole) {
           String message =
-              "User already exists with $phone in ${ePrivate.roles[employee.ph]} role.";
+              "User already exists with $phone in ${ePrivate.roles![employee.ph]} role.";
           existingUserRoleUpdateException =
               new ExistingUserRoleUpdateException(message);
-          throw existingUserRoleUpdateException;
+          throw existingUserRoleUpdateException!;
         }
 
         DocumentSnapshot usrDoc = await tx.get(userRef);
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = AppUser.fromJson(usrDoc.data());
+          u = AppUser.fromJson(usrDoc.data()!);
           if (u.entities == null) {
             u.entities = [];
           }
 
           bool entityAlreadyExistsInUser = false;
-          for (MetaEntity meta in u.entities) {
-            if (meta.entityId == ent.entityId) {
+          for (MetaEntity? meta in u.entities!) {
+            if (meta!.entityId == ent!.entityId) {
               entityAlreadyExistsInUser = true;
               break;
             }
           }
           if (!entityAlreadyExistsInUser) {
-            u.entities.add(ent.getMetaEntity());
+            u.entities!.add(ent!.getMetaEntity());
           }
           if (u.entityVsRole == null) {
-            u.entityVsRole = new Map<String, EntityRole>();
+            u.entityVsRole = new Map<String?, EntityRole>();
           }
 
-          u.entityVsRole[ent.entityId] = role;
+          u.entityVsRole![ent!.entityId] = role;
         } else {
           // a new user will be added in the user table for that phone number
           u = new AppUser(id: null, ph: phone, name: employee.name);
           u.entities = [];
-          u.entities.add(ent.getMetaEntity());
+          u.entities!.add(ent!.getMetaEntity());
           if (u.entityVsRole == null) {
-            u.entityVsRole = new Map<String, EntityRole>();
+            u.entityVsRole = new Map<String?, EntityRole>();
           }
-          u.entityVsRole[ent.entityId] = role;
+          u.entityVsRole![ent.entityId] = role;
         }
 
-        ePrivate.roles[phone] = roleStr;
+        ePrivate.roles![phone] = roleStr;
 
         //add this Employee to the Entity
         //if already exists in any of the collection, remove it and then update
@@ -502,59 +502,59 @@ class EntityService {
 
         //------
         int existingIndexInAdmin = -1;
-        for (int index = 0; index < ent.admins.length; index++) {
-          if (ent.admins[index].ph == employee.ph) {
+        for (int index = 0; index < ent.admins!.length; index++) {
+          if (ent.admins![index].ph == employee.ph) {
             existingIndexInAdmin = index;
             break;
           }
         }
 
         if (existingIndexInAdmin > -1) {
-          ent.admins.removeAt(existingIndexInAdmin);
+          ent.admins!.removeAt(existingIndexInAdmin);
         }
         //------
         int existingIndexInManager = -1;
-        for (int index = 0; index < ent.managers.length; index++) {
-          if (ent.managers[index].ph == employee.ph) {
+        for (int index = 0; index < ent.managers!.length; index++) {
+          if (ent.managers![index].ph == employee.ph) {
             existingIndexInManager = index;
             break;
           }
         }
 
         if (existingIndexInManager > -1) {
-          ent.managers.removeAt(existingIndexInManager);
+          ent.managers!.removeAt(existingIndexInManager);
         }
         //------
         int existingIndexInExecutive = -1;
-        for (int index = 0; index < ent.executives.length; index++) {
-          if (ent.executives[index].ph == employee.ph) {
+        for (int index = 0; index < ent.executives!.length; index++) {
+          if (ent.executives![index].ph == employee.ph) {
             existingIndexInExecutive = index;
             break;
           }
         }
 
         if (existingIndexInExecutive > -1) {
-          ent.executives.removeAt(existingIndexInExecutive);
+          ent.executives!.removeAt(existingIndexInExecutive);
         }
 
         //------
 
         if (role == EntityRole.Admin) {
-          ent.admins.add(employee);
+          ent.admins!.add(employee);
         }
 
         if (role == EntityRole.Manager) {
-          ent.managers.add(employee);
+          ent.managers!.add(employee);
         }
 
         if (role == EntityRole.Executive) {
-          ent.executives.add(employee);
+          ent.executives!.add(employee);
         }
 
-        if (ent.admins.length == 0) {
+        if (ent.admins!.length == 0) {
           cantRemoveAdminWithOneAdminException =
               CantRemoveAdminWithOneAdminException("Entity cant have no admin");
-          throw cantRemoveAdminWithOneAdminException;
+          throw cantRemoveAdminWithOneAdminException!;
         }
 
         tx.set(userRef, u.toJson());
@@ -569,15 +569,15 @@ class EntityService {
     });
 
     if (existingUserRoleUpdateException != null) {
-      throw existingUserRoleUpdateException;
+      throw existingUserRoleUpdateException!;
     }
 
     if (accessDeniedException != null) {
-      throw accessDeniedException;
+      throw accessDeniedException!;
     }
 
     if (cantRemoveAdminWithOneAdminException != null) {
-      throw cantRemoveAdminWithOneAdminException;
+      throw cantRemoveAdminWithOneAdminException!;
     }
 
     return entity;
@@ -589,27 +589,27 @@ class EntityService {
     //ChildEntity Meta should be added/updated in the parentEntity
     //ChildEntity should have parentEntityId set on the parentId attribute
     FirebaseFirestore fStore = getFirestore();
-    User user = getFirebaseAuth().currentUser;
-    String childRegNum = childEntity.regNum;
+    User user = getFirebaseAuth().currentUser!;
+    String? childRegNum = childEntity.regNum;
 
     final DocumentReference entityRef =
         fStore.doc('entities/' + parentEntityId);
 
     final DocumentReference childRef =
-        fStore.doc('entities/' + childEntity.entityId);
+        fStore.doc('entities/' + childEntity.entityId!);
 
-    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
+    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber!);
 
     final DocumentReference parentEntityPrivateRef =
         fStore.doc('entities/' + parentEntityId + '/private_data/private');
 
     final DocumentReference childEntityPrivateRef = fStore
-        .doc('entities/' + childEntity.entityId + '/private_data/private');
+        .doc('entities/' + childEntity.entityId! + '/private_data/private');
 
-    Entity parentEntity;
-    EntityPrivate parentEntityPrivate;
+    Entity? parentEntity;
+    EntityPrivate? parentEntityPrivate;
 
-    EntityPrivate childEntityPrivate;
+    EntityPrivate? childEntityPrivate;
 
     bool isSuccess = false;
 
@@ -619,7 +619,7 @@ class EntityService {
 
         if (parentEntityDoc.exists) {
           //check if the current user is admin
-          Map<String, dynamic> map = parentEntityDoc.data();
+          Map<String, dynamic>? map = parentEntityDoc.data();
           parentEntity = Entity.fromJson(map);
 
           DocumentSnapshot parentEntityPrivateDoc =
@@ -629,7 +629,7 @@ class EntityService {
               EntityPrivate.fromJson(parentEntityPrivateDoc.data());
 
           //if (parentEntity.isAdmin(fireUser.uid) == -1) {
-          if (parentEntityPrivate.roles[user.phoneNumber] !=
+          if (parentEntityPrivate!.roles![user.phoneNumber] !=
               EnumToString.convertToString(EntityRole.Admin)) {
             throw new AccessDeniedException(
                 "User is not admin and can't update the entity");
@@ -638,18 +638,18 @@ class EntityService {
           bool childEntityAlreadyExistInParent = false;
           int count = -1;
 
-          for (MetaEntity meta in parentEntity.childEntities) {
+          for (MetaEntity? meta in parentEntity!.childEntities!) {
             count++;
-            if (meta.entityId == childEntity.entityId) {
+            if (meta!.entityId == childEntity.entityId) {
               childEntityAlreadyExistInParent = true;
               break;
             }
           }
 
           if (childEntityAlreadyExistInParent) {
-            parentEntity.childEntities[count] = childEntity.getMetaEntity();
+            parentEntity!.childEntities![count] = childEntity.getMetaEntity();
           } else {
-            parentEntity.childEntities.add(childEntity.getMetaEntity());
+            parentEntity!.childEntities!.add(childEntity.getMetaEntity());
           }
 
           DocumentSnapshot childEntityDoc = await tx.get(childRef);
@@ -665,7 +665,7 @@ class EntityService {
 
             //int userIndex = existingChildEntity.isAdmin(fireUser.uid);
             //if (userIndex == -1) {
-            if (childEntityPrivate.roles[user.phoneNumber] !=
+            if (childEntityPrivate!.roles![user.phoneNumber] !=
                 EnumToString.convertToString(EntityRole.Admin)) {
               throw new AccessDeniedException(
                   "User is not admin of existing child entity");
@@ -684,7 +684,7 @@ class EntityService {
           DocumentSnapshot userDoc = await tx.get(userRef);
           AppUser usr;
           if (userDoc.exists) {
-            usr = AppUser.fromJson(userDoc.data());
+            usr = AppUser.fromJson(userDoc.data()!);
           } else {
             //user should exist, as this user is the admin of the parent entity
             throw new UserDoesNotExistsException("User does not exist");
@@ -692,31 +692,31 @@ class EntityService {
 
           bool entityExist = false;
           int childEntityIndex = -1;
-          for (MetaEntity me in usr.entities) {
+          for (MetaEntity? me in usr.entities!) {
             childEntityIndex++;
-            if (me.entityId == childEntity.entityId) {
+            if (me!.entityId == childEntity.entityId) {
               entityExist = true;
               break;
             }
           }
 
-          MetaEntity childMetaEntity = childEntity.getMetaEntity();
+          MetaEntity? childMetaEntity = childEntity.getMetaEntity();
 
           if (!entityExist) {
-            usr.entities.add(childMetaEntity);
+            usr.entities!.add(childMetaEntity);
           } else {
-            usr.entities[childEntityIndex] = childMetaEntity;
+            usr.entities![childEntityIndex] = childMetaEntity;
           }
-          usr.entityVsRole[childEntity.entityId] = EntityRole.Admin;
+          usr.entityVsRole![childEntity.entityId] = EntityRole.Admin;
 
           tx.set(userRef, usr.toJson());
 
-          tx.set(entityRef, parentEntity.toJson());
+          tx.set(entityRef, parentEntity!.toJson());
 
           //Updating the private of the Partent Entity is not required as nothing is changed here
           //tx.set(parentEntityPrivateRef, parentEntityPrivate.toJson());
 
-          tx.set(childEntityPrivateRef, childEntityPrivate.toJson());
+          tx.set(childEntityPrivateRef, childEntityPrivate!.toJson());
 
           if (childEntity.createdAt != null) {
             //its a existing Entity
@@ -747,26 +747,26 @@ class EntityService {
   }
 
   //Throws: CantRemoveAdminWithOneAdminException, AccessDeniedException,
-  Future<Entity> removeEmployee(String entityId, String phone) async {
+  Future<Entity?> removeEmployee(String? entityId, String? phone) async {
     //check of the current user is admin
     //remove from the user.entities collection
     //remove from the entity.admin collection
-    User user = getFirebaseAuth().currentUser;
+    User? user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
 
     AppUser u;
     bool isSuccess = true;
-    Entity entity;
+    Entity? entity;
     if (phone == null) {
       return null;
     }
 
-    AccessDeniedException accessDeniedException;
-    EntityDoesNotExistsException entityDoesNotExistsException;
-    CantRemoveAdminWithOneAdminException cantRemoveAdminWithOneAdminException;
+    AccessDeniedException? accessDeniedException;
+    EntityDoesNotExistsException? entityDoesNotExistsException;
+    CantRemoveAdminWithOneAdminException? cantRemoveAdminWithOneAdminException;
 
     final DocumentReference userRef = fStore.doc('users/' + phone);
-    final DocumentReference entityRef = fStore.doc('entities/' + entityId);
+    final DocumentReference entityRef = fStore.doc('entities/' + entityId!);
     final DocumentReference entityPrivateRef =
         fStore.doc('entities/' + entityId + '/private_data/private');
 
@@ -778,22 +778,22 @@ class EntityService {
         if (!ePrivateDoc.exists) {
           entityDoesNotExistsException = EntityDoesNotExistsException(
               "Admin can't be added for the entity which does not exist");
-          throw entityDoesNotExistsException;
+          throw entityDoesNotExistsException!;
         }
 
-        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
+        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data())!;
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[user.phoneNumber] !=
+        if (ePrivate.roles![user!.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
           accessDeniedException = AccessDeniedException(
               "User is not admin, hence can't remove another user");
-          throw accessDeniedException;
+          throw accessDeniedException!;
         }
 
         int adminCount = 0;
-        ePrivate.roles.forEach((key, value) {
+        ePrivate.roles!.forEach((key, value) {
           if (value == EnumToString.convertToString(EntityRole.Admin)) {
             adminCount++;
           }
@@ -805,35 +805,35 @@ class EntityService {
               CantRemoveAdminWithOneAdminException(
                   "User can't remove self, when only one admin is present with the Entity");
 
-          throw cantRemoveAdminWithOneAdminException;
+          throw cantRemoveAdminWithOneAdminException!;
         }
 
         DocumentSnapshot entityDoc = await tx.get(entityRef);
-        Entity ent = Entity.fromJson(entityDoc.data());
+        Entity? ent = Entity.fromJson(entityDoc.data());
 
         DocumentSnapshot usrDoc = await tx.get(userRef);
         bool entityAlreadyExistsInUser = false;
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = AppUser.fromJson(usrDoc.data());
+          u = AppUser.fromJson(usrDoc.data()!);
           if (u.entities == null) {
             u.entities = [];
           }
 
           int count = -1;
-          for (MetaEntity meta in u.entities) {
+          for (MetaEntity? meta in u.entities!) {
             count++;
-            if (meta.entityId == entityId) {
+            if (meta!.entityId == entityId) {
               entityAlreadyExistsInUser = true;
               break;
             }
           }
           if (entityAlreadyExistsInUser) {
-            u.entities.removeAt(count);
+            u.entities!.removeAt(count);
 
-            if (u.entityVsRole.containsKey(entityId)) {
-              u.entityVsRole.remove(entityId);
+            if (u.entityVsRole!.containsKey(entityId)) {
+              u.entityVsRole!.remove(entityId);
             }
             tx.set(userRef, u.toJson());
           }
@@ -843,47 +843,47 @@ class EntityService {
 
         bool entityUpdated = false;
 
-        if (ent.admins != null) {
+        if (ent!.admins != null) {
           int existingIndexInAdmin = -1;
-          for (int index = 0; index < ent.admins.length; index++) {
-            if (ent.admins[index].ph == phone) {
+          for (int index = 0; index < ent.admins!.length; index++) {
+            if (ent.admins![index].ph == phone) {
               existingIndexInAdmin = index;
               break;
             }
           }
 
           if (existingIndexInAdmin > -1) {
-            ent.admins.removeAt(existingIndexInAdmin);
+            ent.admins!.removeAt(existingIndexInAdmin);
             entityUpdated = true;
           }
         }
 
         if (ent.managers != null) {
           int existingIndexInManager = -1;
-          for (int index = 0; index < ent.managers.length; index++) {
-            if (ent.managers[index].ph == phone) {
+          for (int index = 0; index < ent.managers!.length; index++) {
+            if (ent.managers![index].ph == phone) {
               existingIndexInManager = index;
               break;
             }
           }
 
           if (existingIndexInManager > -1) {
-            ent.managers.removeAt(existingIndexInManager);
+            ent.managers!.removeAt(existingIndexInManager);
             entityUpdated = true;
           }
         }
 
         if (ent.executives != null) {
           int existingIndexInExecutive = -1;
-          for (int index = 0; index < ent.executives.length; index++) {
-            if (ent.executives[index].ph == phone) {
+          for (int index = 0; index < ent.executives!.length; index++) {
+            if (ent.executives![index].ph == phone) {
               existingIndexInExecutive = index;
               break;
             }
           }
 
           if (existingIndexInExecutive > -1) {
-            ent.executives.removeAt(existingIndexInExecutive);
+            ent.executives!.removeAt(existingIndexInExecutive);
             entityUpdated = true;
           }
         }
@@ -892,8 +892,8 @@ class EntityService {
           tx.set(entityRef, ent.toJson());
         }
 
-        if (ePrivate.roles.containsKey(phone)) {
-          ePrivate.roles.remove(phone);
+        if (ePrivate.roles!.containsKey(phone)) {
+          ePrivate.roles!.remove(phone);
           tx.set(entityPrivateRef, ePrivate.toJson());
         }
 
@@ -905,28 +905,28 @@ class EntityService {
     });
 
     if (entityDoesNotExistsException != null) {
-      throw entityDoesNotExistsException;
+      throw entityDoesNotExistsException!;
     }
 
     if (cantRemoveAdminWithOneAdminException != null) {
-      throw cantRemoveAdminWithOneAdminException;
+      throw cantRemoveAdminWithOneAdminException!;
     }
 
     if (accessDeniedException != null) {
-      throw accessDeniedException;
+      throw accessDeniedException!;
     }
 
     return entity;
   }
 
-  Future<bool> addEntityToUserFavourite(MetaEntity me) async {
-    User user = getFirebaseAuth().currentUser;
+  Future<bool> addEntityToUserFavourite(MetaEntity? me) async {
+    User user = getFirebaseAuth().currentUser!;
     FirebaseFirestore fStore = getFirestore();
 
     AppUser u;
     bool isSuccess = true;
 
-    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
+    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber!);
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -934,20 +934,20 @@ class EntityService {
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = AppUser.fromJson(usrDoc.data());
+          u = AppUser.fromJson(usrDoc.data()!);
           if (u.favourites == null) {
             u.favourites = [];
           }
 
           bool entityAlreadyExistsInUser = false;
-          for (MetaEntity meta in u.favourites) {
-            if (meta.entityId == me.entityId) {
+          for (MetaEntity? meta in u.favourites!) {
+            if (meta!.entityId == me!.entityId) {
               entityAlreadyExistsInUser = true;
               break;
             }
           }
           if (!entityAlreadyExistsInUser) {
-            u.favourites.add(me);
+            u.favourites!.add(me);
             tx.set(userRef, u.toJson());
           }
         } else {
@@ -963,14 +963,14 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<bool> removeEntityFromUserFavourite(String entityId) async {
-    User user = getFirebaseAuth().currentUser;
+  Future<bool> removeEntityFromUserFavourite(String? entityId) async {
+    User user = getFirebaseAuth().currentUser!;
     FirebaseFirestore fStore = getFirestore();
 
     AppUser u;
     bool isSuccess = true;
 
-    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
+    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber!);
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -978,20 +978,20 @@ class EntityService {
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = AppUser.fromJson(usrDoc.data());
+          u = AppUser.fromJson(usrDoc.data()!);
           if (u.favourites == null) {
-            u.favourites = new List<MetaEntity>();
+            u.favourites = new List<MetaEntity?>();
           }
 
           int index = -1;
-          for (MetaEntity meta in u.favourites) {
+          for (MetaEntity? meta in u.favourites!) {
             index++;
-            if (meta.entityId == entityId) {
+            if (meta!.entityId == entityId) {
               break;
             }
           }
           if (index != -1) {
-            u.favourites.removeAt(index);
+            u.favourites!.removeAt(index);
             tx.set(userRef, u.toJson());
           }
         } else {
@@ -1007,7 +1007,7 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<List<Entity>> search(String name, EntityType entityType, double lat,
+  Future<List<Entity>> search(String? name, EntityType? entityType, double lat,
       double lon, int radius, int pageNumber, int pageSize) async {
     double rad = radius.toDouble();
     List<Entity> entities = [];
@@ -1019,7 +1019,7 @@ class EntityService {
       name = name.toLowerCase();
     }
 
-    String type;
+    String? type;
     if (entityType != null) {
       type = entityType
           .toString()
@@ -1056,10 +1056,10 @@ class EntityService {
 
     try {
       for (DocumentSnapshot ds in await stream.first) {
-        Entity me = Entity.fromJson(ds.data());
+        Entity me = Entity.fromJson(ds.data())!;
         me.distance = center.distance(
-            lat: me.coordinates.geopoint.latitude,
-            lng: me.coordinates.geopoint.longitude);
+            lat: me.coordinates!.geopoint!.latitude,
+            lng: me.coordinates!.geopoint!.longitude);
         entities.add(me);
       }
     } catch (e) {

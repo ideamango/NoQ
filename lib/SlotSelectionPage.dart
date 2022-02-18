@@ -20,17 +20,17 @@ import 'package:intl/intl.dart';
 import './constants.dart';
 
 class SlotSelectionPage extends StatefulWidget {
-  final MetaEntity metaEntity;
-  final DateTime dateTime;
+  final MetaEntity? metaEntity;
+  final DateTime? dateTime;
   final String forAdmin;
-  final TokenCounter tokenCounter;
+  final TokenCounter? tokenCounter;
 
   SlotSelectionPage(
-      {Key key,
-      @required this.metaEntity,
-      @required this.dateTime,
-      @required this.forAdmin,
-      @required this.tokenCounter})
+      {Key? key,
+      required this.metaEntity,
+      required this.dateTime,
+      required this.forAdmin,
+      required this.tokenCounter})
       : super(key: key);
 
   @override
@@ -39,45 +39,45 @@ class SlotSelectionPage extends StatefulWidget {
 
 class _SlotSelectionPageState extends State<SlotSelectionPage> {
   bool _initCompleted = false;
-  String errMsg;
-  String _storeId;
-  String _token;
-  String _errorMessage;
-  DateTime _date;
-  String _dateFormatted;
-  String dt;
-  List<Slot> _slotList;
+  String? errMsg;
+  String? _storeId;
+  String? _token;
+  String? _errorMessage;
+  DateTime? _date;
+  late String _dateFormatted;
+  String? dt;
+  List<Slot>? _slotList;
   final dateFormat = new DateFormat('dd');
-  Slot selectedSlot;
-  Slot bookedSlot;
-  String _storeName;
-  String _userId;
-  String _strDateForSlot;
+  Slot? selectedSlot;
+  Slot? bookedSlot;
+  String? _storeName;
+  String? _userId;
+  String? _strDateForSlot;
   bool _showProgressInd = false;
 
   String title = "Book Slot";
-  GlobalState _gs;
+  GlobalState? _gs;
   bool _gsInitFinished = false;
-  MetaEntity metaEn;
-  MetaEntity entity;
-  Entity parentEntity;
+  MetaEntity? metaEn;
+  MetaEntity? entity;
+  Entity? parentEntity;
   DateTime currDateTime = DateTime.now();
-  DateTime slotSelectionDate;
-  Map<String, int> _tokensMap = new Map<String, int>();
-  int maxAllowed;
+  DateTime? slotSelectionDate;
+  Map<String?, int> _tokensMap = new Map<String?, int>();
+  int? maxAllowed;
 
   @override
   void initState() {
     super.initState();
     entity = widget.metaEntity;
     _date = widget.dateTime;
-    _storeId = entity.entityId;
-    _storeName = entity.name;
-    maxAllowed = widget.metaEntity.maxAllowed;
+    _storeId = entity!.entityId;
+    _storeName = entity!.name;
+    maxAllowed = widget.metaEntity!.maxAllowed;
     if (_date != null) {
       // Check if preferred date is later than today,
       //if not show as already expired date and show todays time-slots
-      if (_date.compareTo(currDateTime) >= 0) {
+      if (_date!.compareTo(currDateTime) >= 0) {
         print("preferred slot is later than todays date");
         slotSelectionDate = _date;
       } else {
@@ -86,11 +86,11 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
         slotSelectionDate = currDateTime;
       }
     }
-    if (entity.parentId != null) {
-      getEntityDetails(entity.parentId).then((value) => parentEntity = value);
+    if (entity!.parentId != null) {
+      getEntityDetails(entity!.parentId).then((value) => parentEntity = value);
     }
     getGlobalState().whenComplete(() {
-      _loadSlots(_date).then((value) => numberOfBookingsInSlot(_date));
+      _loadSlots(_date!).then((value) => numberOfBookingsInSlot(_date!));
     });
   }
 
@@ -100,9 +100,9 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
     _dateFormatted = dtFormat.format(datetime);
 
     //Fetch details from server
-    getSlotsListForEntity(entity, datetime).then((slotListTuple) {
-      for (Slot s in slotListTuple.item2) {
-        if (s.dateTime.compareTo(slotSelectionDate) == 0) {
+    getSlotsListForEntity(entity!, datetime).then((slotListTuple) {
+      for (Slot s in slotListTuple.item2!) {
+        if (s.dateTime!.compareTo(slotSelectionDate!) == 0) {
           selectedSlot = s;
         }
       }
@@ -131,19 +131,19 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
   }
 
   void numberOfBookingsInSlot(DateTime time) {
-    getSlotsListForEntity(widget.metaEntity, time).then((slotListTuple) {
-      List<Slot> list = slotListTuple.item2;
+    getSlotsListForEntity(widget.metaEntity!, time).then((slotListTuple) {
+      List<Slot>? list = slotListTuple.item2;
       if (widget.tokenCounter != null) {
-        for (int i = 0; i <= list.length - 1; i++) {
-          List<String> slotIdVals = Utils.isNotNullOrEmpty(list[i].slotId)
-              ? list[i].slotId.split('#')
+        for (int i = 0; i <= list!.length - 1; i++) {
+          List<String>? slotIdVals = Utils.isNotNullOrEmpty(list[i].slotId)
+              ? list[i].slotId!.split('#')
               : null;
           if (!Utils.isNullOrEmpty(slotIdVals)) {
-            String slotId = slotIdVals[1] + '#' + slotIdVals[2];
-            TokenStats slotStats = widget.tokenCounter.slotWiseStats[slotId];
-            int numberOfBookingsLeft = widget.metaEntity.maxAllowed -
-                (slotStats.numberOfTokensCreated -
-                    slotStats.numberOfTokensCancelled);
+            String slotId = slotIdVals![1] + '#' + slotIdVals[2];
+            TokenStats slotStats = widget.tokenCounter!.slotWiseStats![slotId]!;
+            int numberOfBookingsLeft = widget.metaEntity!.maxAllowed! -
+                (slotStats.numberOfTokensCreated! -
+                    slotStats.numberOfTokensCancelled!);
             _tokensMap[list[i].slotId] = numberOfBookingsLeft;
           }
         }
@@ -156,11 +156,11 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
     _gsInitFinished = true;
   }
 
-  Widget _noSlotsPage(String msg) {
+  Widget _noSlotsPage(String? msg) {
     return WillPopScope(
       child: Scaffold(
         drawer: CustomDrawer(
-          phone: _gs.getCurrentUser().ph,
+          phone: _gs!.getCurrentUser()!.ph,
         ),
         appBar: CustomAppBar(
           titleTxt: title,
@@ -181,8 +181,8 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
     );
   }
 
-  Future<Entity> getEntityDetails(String id) async {
-    var tup = await _gs.getEntity(id);
+  Future<Entity?> getEntityDetails(String? id) async {
+    var tup = await _gs!.getEntity(id);
     if (tup != null) {
       return tup.item1;
     }
@@ -196,31 +196,31 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
         return _noSlotsPage(errMsg);
       else {
         Widget pageHeader = Text(
-          _storeName,
+          _storeName!,
           style: TextStyle(
             fontSize: 23,
             color: Colors.black,
           ),
         );
-        String bookingDate;
-        String bookingTime;
+        String? bookingDate;
+        String? bookingTime;
         if (selectedSlot != null) {
           bookingDate =
-              DateFormat.yMMMEd().format(selectedSlot.dateTime).toString();
+              DateFormat.yMMMEd().format(selectedSlot!.dateTime!).toString();
           bookingTime =
-              DateFormat.Hm().format(selectedSlot.dateTime).toString();
+              DateFormat.Hm().format(selectedSlot!.dateTime!).toString();
         }
 
         return WillPopScope(
           child: Scaffold(
             drawer: CustomDrawer(
-              phone: _gs.getCurrentUser().ph,
+              phone: _gs!.getCurrentUser()!.ph,
             ),
             body: Padding(
               padding: const EdgeInsets.fromLTRB(6, 26, 6, 6),
               child: Container(
                 decoration: BoxDecoration(
-                    border: Border.all(color: borderColor),
+                    border: Border.all(color: borderColor!),
                     color: Colors.white,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -244,7 +244,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                   Icon(
                                     Icons.arrow_back_ios,
                                     size: 20,
-                                    color: (slotSelectionDate
+                                    color: (slotSelectionDate!
                                                 .compareTo(currDateTime) >=
                                             0)
                                         ? Colors.white
@@ -252,7 +252,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                   ),
                                   Text("Prev",
                                       style: TextStyle(
-                                          color: (slotSelectionDate.compareTo(
+                                          color: (slotSelectionDate!.compareTo(
                                                       currDateTime) >=
                                                   0)
                                               ? Colors.white
@@ -261,12 +261,12 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                               ),
                               onPressed: () {
                                 print(
-                                    slotSelectionDate.compareTo(currDateTime));
-                                if (slotSelectionDate.compareTo(currDateTime) >
+                                    slotSelectionDate!.compareTo(currDateTime));
+                                if (slotSelectionDate!.compareTo(currDateTime) >
                                     0) {
-                                  slotSelectionDate = slotSelectionDate
+                                  slotSelectionDate = slotSelectionDate!
                                       .subtract(Duration(days: 1));
-                                  _loadSlots(slotSelectionDate);
+                                  _loadSlots(slotSelectionDate!);
                                 } else {
                                   Utils.showMyFlushbar(
                                       context,
@@ -295,8 +295,8 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 13),
                                       )
-                                    : (isBooked(selectedSlot.dateTime,
-                                            entity.entityId))
+                                    : (isBooked(selectedSlot!.dateTime,
+                                            entity!.entityId))
                                         ? AutoSizeText(
                                             'You already have a booking at $bookingTime on $bookingDate',
                                             minFontSize: 8,
@@ -325,12 +325,12 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                 children: [
                                   Text("Next",
                                       style: TextStyle(
-                                        color: (slotSelectionDate
+                                        color: (slotSelectionDate!
                                                     .add(Duration(days: 1))
                                                     .compareTo(currDateTime.add(
                                                         Duration(
-                                                            days: entity
-                                                                .advanceDays))) >=
+                                                            days: entity!
+                                                                .advanceDays!))) >=
                                                 0)
                                             ? Colors.blueGrey[300]
                                             : Colors.white,
@@ -338,12 +338,12 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                   Icon(
                                     Icons.arrow_forward_ios,
                                     size: 20,
-                                    color: (slotSelectionDate
+                                    color: (slotSelectionDate!
                                                 .add(Duration(days: 1))
                                                 .compareTo(currDateTime.add(
                                                     Duration(
-                                                        days: entity
-                                                            .advanceDays))) >=
+                                                        days: entity!
+                                                            .advanceDays!))) >=
                                             0)
                                         ? Colors.blueGrey[300]
                                         : Colors.white,
@@ -353,7 +353,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                               onPressed: () {
                                 print("Printn nextttt");
                                 print(currDateTime);
-                                print(entity.advanceDays);
+                                print(entity!.advanceDays);
 
                                 // DateTime newDate = new DateTime(
                                 //     slotSelectionDate
@@ -370,10 +370,10 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                 // print(newDate);
                                 // print(selectedSlot.dateTime.hour.toString);
                                 // print(selectedSlot.dateTime.minute.toString);
-                                if (slotSelectionDate
+                                if (slotSelectionDate!
                                         .add(Duration(days: 1))
                                         .compareTo(currDateTime.add(Duration(
-                                            days: entity.advanceDays))) >=
+                                            days: entity!.advanceDays!))) >=
                                     0) {
                                   Utils.showMyFlushbar(
                                       context,
@@ -385,8 +385,8 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                   print("Gretaer than 0");
                                 } else {
                                   slotSelectionDate =
-                                      slotSelectionDate.add(Duration(days: 1));
-                                  _loadSlots(slotSelectionDate);
+                                      slotSelectionDate!.add(Duration(days: 1));
+                                  _loadSlots(slotSelectionDate!);
                                 }
 
                                 // print(slotSelectionDate
@@ -412,7 +412,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                           padding: EdgeInsets.symmetric(horizontal: 5),
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount: _slotList.length,
+                          itemCount: _slotList!.length,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 4,
@@ -501,7 +501,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                   color: Colors.white,
                                   shape: RoundedRectangleBorder(
                                       side: BorderSide(
-                                          color: Colors.blueGrey[500]),
+                                          color: Colors.blueGrey[500]!),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(5.0))),
                                   splashColor: highlightColor,
@@ -534,7 +534,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                   splashColor: highlightColor,
                                   shape: RoundedRectangleBorder(
                                       side: BorderSide(
-                                          color: Colors.blueGrey[500]),
+                                          color: Colors.blueGrey[500]!),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(5.0))),
                                   child: Text(
@@ -549,7 +549,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                               ),
                               (_errorMessage != null
                                   ? Text(
-                                      _errorMessage,
+                                      _errorMessage!,
                                       style: TextStyle(color: Colors.red),
                                     )
                                   : Container()),
@@ -653,22 +653,22 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
     }
   }
 
-  bool isSelected(DateTime dateTime) {
+  bool isSelected(DateTime? dateTime) {
     if (selectedSlot != null) {
-      if (dateTime.compareTo(selectedSlot.dateTime) == 0) return true;
+      if (dateTime!.compareTo(selectedSlot!.dateTime!) == 0) return true;
     }
     return false;
   }
 
-  bool isBooked(DateTime dateTime, String entityId) {
-    if (_gs.bookings == null) {
+  bool isBooked(DateTime? dateTime, String? entityId) {
+    if (_gs!.bookings == null) {
       return false;
     }
 
-    for (int i = 0; i < _gs.bookings.length; i++) {
-      if (_gs.bookings[i].item1.parent.entityId == entityId &&
-          _gs.bookings[i].item1.parent.dateTime == dateTime) {
-        if (_gs.bookings[i].item1.number != -1) return true;
+    for (int i = 0; i < _gs!.bookings!.length; i++) {
+      if (_gs!.bookings![i].item1!.parent!.entityId == entityId &&
+          _gs!.bookings![i].item1!.parent!.dateTime == dateTime) {
+        if (_gs!.bookings![i].item1!.number != -1) return true;
       }
     }
     return false;
@@ -681,15 +681,15 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
 
   Widget _buildGridItem(BuildContext context, int index) {
     //TODO: Check what information coming from server, then process and use it.
-    Slot sl = _slotList[index];
-    String hrs = Utils.formatTime(sl.dateTime.hour.toString());
-    String mnts = Utils.formatTime(sl.dateTime.minute.toString());
-    bool isBookedFlg = isBooked(sl.dateTime, entity.entityId);
+    Slot sl = _slotList![index];
+    String hrs = Utils.formatTime(sl.dateTime!.hour.toString());
+    String mnts = Utils.formatTime(sl.dateTime!.minute.toString());
+    bool isBookedFlg = isBooked(sl.dateTime, entity!.entityId);
     return Column(
       children: <Widget>[
         Container(
           child: MaterialButton(
-            elevation: (isDisabled(sl.dateTime))
+            elevation: (isDisabled(sl.dateTime!))
                 ? 0
                 : ((isSelected(sl.dateTime) == true) ? 0.0 : 10.0),
             padding: EdgeInsets.all(2),
@@ -697,14 +697,14 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
               hrs + ':' + mnts,
               style: TextStyle(
                 fontSize: 12,
-                color: isDisabled(sl.dateTime)
+                color: isDisabled(sl.dateTime!)
                     ? Colors.grey[500]
                     : primaryDarkColor,
               ),
             ),
 
             autofocus: false,
-            color: (isDisabled(sl.dateTime))
+            color: (isDisabled(sl.dateTime!))
                 ? disabledColor
                 : ((sl.isFull != true && isSelected(sl.dateTime) == true)
                     ? highlightColor
@@ -727,7 +727,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                     // side: BorderSide(color: Colors.white),
                   ),
             onPressed: () {
-              if (!isDisabled(sl.dateTime)) {
+              if (!isDisabled(sl.dateTime!)) {
 //Check if booking form is required then take request else show form.
                 // if (Utils.isNotNullOrEmpty(entity.forms)) {
                 //   //Show Booking request form
@@ -741,7 +741,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                 //               )));
                 // } else
                 {
-                  if (isBooked(sl.dateTime, entity.entityId)) {
+                  if (isBooked(sl.dateTime, entity!.entityId)) {
                     Utils.showMyFlushbar(
                         context,
                         Icons.info_outline,
@@ -755,7 +755,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                       //unselect previously selected slot
                       //TODO Smita: Update preferred selected slot also.
                       selectedSlot = sl;
-                      slotSelectionDate = selectedSlot.dateTime;
+                      slotSelectionDate = selectedSlot!.dateTime;
                       print(slotSelectionDate);
                       // = new DateTime()
                     });
@@ -875,7 +875,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
       flushbarStyle: FlushbarStyle.FLOATING,
       reverseAnimationCurve: Curves.decelerate,
       forwardAnimationCurve: Curves.easeInToLinear,
-      backgroundColor: Colors.blueGrey[500],
+      backgroundColor: Colors.blueGrey[500]!,
       boxShadows: [
         BoxShadow(
             color: primaryAccentColor,

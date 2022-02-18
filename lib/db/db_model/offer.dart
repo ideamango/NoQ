@@ -3,10 +3,10 @@ class Offer {
 
   //SlotId is entityID#20~06~01#9~30
 
-  String message;
-  DateTime startDateTime;
-  DateTime endDateTime;
-  String coupon;
+  String? message;
+  DateTime? startDateTime;
+  DateTime? endDateTime;
+  String? coupon;
 
   Map<String, dynamic> toJson() => {
         'message': message,
@@ -15,7 +15,7 @@ class Offer {
         'coupon': coupon
       };
 
-  static Offer fromJson(Map<String, dynamic> json) {
+  static Offer? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }

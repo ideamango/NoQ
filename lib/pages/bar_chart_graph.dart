@@ -10,15 +10,15 @@ import '../db/db_model/user_token.dart';
 class BarChartGraph extends StatefulWidget {
   //final String chartLength;
   final Map<String, TokenStats> dataMap;
-  final MetaEntity metaEn;
+  final MetaEntity? metaEn;
   // final List<BarChartModel> tokenCreatedData;
   // final List<BarChartModel> tokenCancelledData;
 
   const BarChartGraph(
-      {Key key,
+      {Key? key,
       //  @required this.chartLength,
-      @required this.dataMap,
-      @required this.metaEn
+      required this.dataMap,
+      required this.metaEn
       // @required this.tokenCreatedData,
       // @required this.tokenCancelledData,
       })
@@ -29,8 +29,8 @@ class BarChartGraph extends StatefulWidget {
 }
 
 class BarChartGraphState extends State<BarChartGraph> {
-  List<BarChartModel> _barChartList;
-  Map<String, TokenStats> _dataMap;
+  List<BarChartModel>? _barChartList;
+  late Map<String, TokenStats> _dataMap;
   final List<BarChartModel> tokenCancelledData = [];
   final List<BarChartModel> tokenCreatedData = [];
   @override
@@ -43,12 +43,12 @@ class BarChartGraphState extends State<BarChartGraph> {
       tokenCreatedData.add(BarChartModel(
         timeSlot: key,
         numOfTokens: value.numberOfTokensCreated,
-        color: charts.ColorUtil.fromDartColor(Colors.tealAccent[400]),
+        color: charts.ColorUtil.fromDartColor(Colors.tealAccent[400]!),
       ));
       tokenCancelledData.add(BarChartModel(
         timeSlot: key,
         numOfTokens: value.numberOfTokensCancelled,
-        color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
+        color: charts.ColorUtil.fromDartColor(Colors.orange[200]!),
       ));
       //colorCount++;
     });
@@ -69,13 +69,13 @@ class BarChartGraphState extends State<BarChartGraph> {
 
   @override
   Widget build(BuildContext context) {
-    List<charts.Series<BarChartModel, String>> series = [
+    List<charts.Series<BarChartModel, String?>> series = [
       charts.Series(
         id: "Booked",
         data: tokenCreatedData,
         domainFn: (BarChartModel series, _) => series.timeSlot,
         measureFn: (BarChartModel series, _) => series.numOfTokens,
-        colorFn: (BarChartModel series, _) => series.color,
+        colorFn: (BarChartModel series, _) => series.color!,
         labelAccessorFn: (BarChartModel series, _) => '${series.numOfTokens}',
       ),
       charts.Series(
@@ -83,7 +83,7 @@ class BarChartGraphState extends State<BarChartGraph> {
         data: tokenCancelledData,
         domainFn: (BarChartModel series, _) => series.timeSlot,
         measureFn: (BarChartModel series, _) => series.numOfTokens,
-        colorFn: (BarChartModel series, _) => series.color,
+        colorFn: (BarChartModel series, _) => series.color!,
         labelAccessorFn: (BarChartModel series, _) => '${series.numOfTokens}',
       ),
     ];
@@ -118,7 +118,7 @@ class BarChartGraphState extends State<BarChartGraph> {
             ),
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-            itemCount: _barChartList.length,
+            itemCount: _barChartList!.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 height: MediaQuery.of(context).size.height * .8,

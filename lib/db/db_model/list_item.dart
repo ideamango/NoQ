@@ -1,9 +1,9 @@
 class ListItem {
   ListItem({this.itemName, this.isDone});
 
-  String itemName;
+  String? itemName;
 
-  bool isDone;
+  bool? isDone;
 
   Map<String, dynamic> toJson() => {'itemName': itemName, 'isDone': isDone};
 

@@ -14,71 +14,65 @@ description: Book your peace of mind with Less
 version: 1.0.0+2
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  map_launcher: ^0.4.4
-  #Added http for accessing APIs for data
-  
-  pinput: ^0.2.3
-  path_provider: ^2.0.2
-  shared_preferences: ^0.5.7
-  flutter_datetime_picker: ^1.5.1
-  weekday_selector_formfield: ^1.0.4   
-  json_annotation: ^3.1.0 
-  intl: ^0.17.0
-  progress_dialog: ^1.2.4
-  url_launcher: ^6.0.0-nullsafety.6
-  geolocator: 7.0.3
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  auto_size_text: ^3.0.0
+  app_review: 2.1.1+1
+  #Replace this as non-null not supported
+  barcode_scan2: ^4.2.0
+  another_flushbar: ^1.10.20
+  carousel_slider: ^4.0.0    
+  charts_flutter: ^0.12.0  
   cupertino_icons: ^1.0.0 
-  cloud_firestore: 1.0.6
-  geoflutterfire: 3.0.0-nullsafety.2
-  google_sign_in: ^4.5.5
+  cloud_firestore: ^1.0.6
+  eventify: ^1.0.0  
+  email_validator: ^2.0.1
+  enum_to_string: ^2.0.1
+  flutter_staggered_grid_view: ^0.6.1
+  flutter_local_notifications: 5.0.0+1 
+  flutter_native_timezone: ^1.0.4
+  firebase_remote_config: 0.10.0-dev.1
+  firebase_messaging: 9.1.2
   firebase_core: ^1.1.0
   firebase_crashlytics: 2.0.1
   firebase_auth: ^1.1.2
   firebase_dynamic_links: 2.0.1
   firebase_storage: ^8.0.4
-  uuid: ^2.2.2
- #Added for QR code scan and generate
-  barcode_scan_fix: ^1.0.2
-  qr_flutter: ^3.2.0
-  share: ^0.6.5+4 
-  #Flushbar
-  another_flushbar: ^1.10.20
-  #forcarousel
-  carousel_slider: ^2.3.1  
-  eventify: ^0.1.4
+  flutter_datetime_picker: ^1.5.1
+  geolocator: 7.0.3  
+  geoflutterfire: 3.0.0-nullsafety.2
+  google_sign_in: ^5.2.3
+  intl: ^0.17.0 
+  json_annotation: ^4.4.0 
+  map_launcher: ^2.2.1+1  
+  pinput: ^1.2.2
+  path_provider: ^2.0.2
+  #Replace this as non-null not supported
+  progress_dialog: ^1.2.4
   package_info: ^2.0.0
-  flutter_local_notifications: 5.0.0+1
-  #flutter_local_notifications: ^6.0.0
-  flutter_native_timezone: ^1.0.4
-  app_review: 2.1.1+1
-  auto_size_text: ^2.1.0
-  video_player: ^1.0.1
-  http: 0.13.1
-  enum_to_string: ^2.0.1
-  flutter_staggered_grid_view: ^0.3.2
-  image_picker: ^0.7.4
-  firebase_messaging: 9.1.2
-  email_validator: ^1.0.6
-  charts_flutter: ^0.10.0
-  pie_chart: ^4.0.1
-  firebase_remote_config: 0.10.0-dev.1
-  upi_pay: ^0.2.4
+  pie_chart: ^5.1.0 
+  shared_preferences: ^2.0.13
+  qr_flutter: ^4.0.0
+  share: ^2.0.4   
+  http: 0.13.1 
+  image_picker: ^0.7.4 
+  upi_pay: ^1.0.1
+  url_launcher: ^6.0.0-nullsafety.6  
+  uuid: ^3.0.5
+  video_player: ^2.2.18
   version: ^2.0.0
-  
-  
+  #Replace this as non-null not supported
+  weekday_selector_formfield: ^1.0.4
+  collection: ^1.15.0-nullsafety.4    
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^1.0.0
-  json_serializable: ^3.2.0
+  build_runner: ^2.1.7
+  json_serializable: ^6.1.4
 
 
 # For information on the generic Dart part of this file, see the

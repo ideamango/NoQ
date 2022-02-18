@@ -32,13 +32,13 @@ import '../userHomePage.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
 class SearchChildEntityPage extends StatefulWidget {
-  final String pageName;
-  final List<MetaEntity> childList;
-  final String parentName;
-  final String parentId;
-  final EntityType parentType;
+  final String? pageName;
+  final List<MetaEntity?>? childList;
+  final String? parentName;
+  final String? parentId;
+  final EntityType? parentType;
   SearchChildEntityPage(
-      {Key key,
+      {Key? key,
       this.pageName,
       this.childList,
       this.parentName,
@@ -55,25 +55,25 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
-  SharedPreferences _prefs;
-  GlobalState _globalState;
-  List<Entity> _stores = new List<Entity>();
+  SharedPreferences? _prefs;
+  GlobalState? _globalState;
+  List<Entity?> _stores = new List<Entity?>();
   //List<Entity> _pastSearches = new List<Entity>();
   List<Entity> _searchResultstores = new List<Entity>();
-  String _entityType;
+  String? _entityType;
   String _searchInAll = 'Search in All';
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
-  PersistentBottomSheetController childBottomSheetController;
-  PersistentBottomSheetController childContactUsSheetController;
-  PersistentBottomSheetController childPlaceDetailsSheetController;
+  PersistentBottomSheetController? childBottomSheetController;
+  PersistentBottomSheetController? childContactUsSheetController;
+  PersistentBottomSheetController? childPlaceDetailsSheetController;
 
   bool showFab = true;
-  String categoryType;
+  String? categoryType;
   // Map<String, String> categoryList = new Map<String, String>();
-  double fontSize;
+  late double fontSize;
   var sideInfoGrp = new AutoSizeGroup();
-  List<String> searchTypes = new List<String>();
+  List<String>? searchTypes = new List<String>();
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
@@ -83,28 +83,28 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     color: Colors.white,
   );
   final keyChildSearch = new GlobalKey<ScaffoldState>();
-  TextEditingController _searchTextController;
-  List<Entity> _list;
+  TextEditingController? _searchTextController;
+  List<Entity>? _list;
   //"initial, searching,done"
   String _isSearching = "initial";
   String _searchText = "";
   String searchType = "";
-  String pageName;
-  GlobalState _gs;
+  String? pageName;
+  GlobalState? _gs;
   bool stateInitFinished = false;
-  String messageTitle;
-  String messageSubTitle;
-  String _dynamicLink;
-  String title;
-  String _fromPage;
-  List<Entity> enList = new List<Entity>();
-  ScrollController _selectCategoryBtnController;
-  Widget _msgOnboard;
-  AnimationController controller;
-  Animation<Offset> offset;
-  Eventify.Listener _eventListener;
-  AnimationController _animationController;
-  Animation animation;
+  String? messageTitle;
+  String? messageSubTitle;
+  String? _dynamicLink;
+  late String title;
+  String? _fromPage;
+  List<Entity?> enList = new List<Entity?>();
+  ScrollController? _selectCategoryBtnController;
+  Widget? _msgOnboard;
+  late AnimationController controller;
+  late Animation<Offset> offset;
+  Eventify.Listener? _eventListener;
+  late AnimationController _animationController;
+  late Animation animation;
 
   //List<String> searchTypes;
 
@@ -120,9 +120,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     _isSearching = "initial";
     _fromPage = widget.pageName;
 
-    title = "Places inside " + widget.parentName;
+    title = "Places inside " + widget.parentName!;
     getGlobalState().whenComplete(() {
-      searchTypes = _gs.getConfigurations().entityTypes;
+      searchTypes = _gs!.getConfigurations()!.entityTypes;
       getEntitiesList().whenComplete(() {
         if (this.mounted) {
           setState(() {
@@ -141,12 +141,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
           .animate(controller);
 
       _selectCategoryBtnController = new ScrollController();
-      _selectCategoryBtnController.addListener(() {
-        if (_selectCategoryBtnController.position.userScrollDirection ==
+      _selectCategoryBtnController!.addListener(() {
+        if (_selectCategoryBtnController!.position.userScrollDirection ==
             ScrollDirection.reverse) {
-          if (_selectCategoryBtnController.position.atEdge) {
-            print(_selectCategoryBtnController.position.pixels);
-            if (_selectCategoryBtnController.position.pixels != 0) {
+          if (_selectCategoryBtnController!.position.atEdge) {
+            print(_selectCategoryBtnController!.position.pixels);
+            if (_selectCategoryBtnController!.position.pixels != 0) {
               print("ITS AT LAST POSITIUON");
               setState(() {
                 controller.forward();
@@ -154,7 +154,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
             }
           }
         } else {
-          if (_selectCategoryBtnController.position.userScrollDirection ==
+          if (_selectCategoryBtnController!.position.userScrollDirection ==
               ScrollDirection.forward) {
             print("ITS Going up");
             setState(() {
@@ -169,7 +169,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   @override
   void dispose() {
     _animationController.dispose();
-    _selectCategoryBtnController.dispose();
+    _selectCategoryBtnController!.dispose();
     EventBus.unregisterEvent(_eventListener);
     print("Search page dispose called...");
     super.dispose();
@@ -181,15 +181,15 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     });
   }
 
-  Widget _buildCategoryItem(BuildContext context, EntityType type) {
-    String name = Utils.getEntityTypeDisplayName(type);
+  Widget _buildCategoryItem(BuildContext context, EntityType? type) {
+    String name = Utils.getEntityTypeDisplayName(type)!;
     Widget image = Utils.getEntityTypeImage(type, 30);
 
     return GestureDetector(
         onTap: () {
           categoryType = name;
           if (childBottomSheetController != null) {
-            childBottomSheetController.close();
+            childBottomSheetController!.close();
             childBottomSheetController = null;
           }
           EventBus.fireEvent(
@@ -214,17 +214,17 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
   Future<void> getEntitiesList() async {
     if (!Utils.isNullOrEmpty(widget.childList)) {
-      for (int i = 0; i < widget.childList.length; i++) {
-        Tuple<Entity, bool> value =
-            await _gs.getEntity(widget.childList[i].entityId);
+      for (int i = 0; i < widget.childList!.length; i++) {
+        Tuple<Entity, bool>? value =
+            await _gs!.getEntity(widget.childList![i]!.entityId);
         if (value == null) {
           continue;
         }
 
-        Entity entity = value.item1;
+        Entity? entity = value.item1;
 
         if (value != null) {
-          if (entity.isActive != null) if (entity.isActive) enList.add(entity);
+          if (entity!.isActive != null) if (entity.isActive!) enList.add(entity);
         }
       }
     }
@@ -240,7 +240,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       if (event == null) {
         return;
       }
-      String categoryType = event.eventData;
+      String? categoryType = event.eventData as String?;
       setState(() {
         _entityType = categoryType;
         _isSearching = "searching";
@@ -265,12 +265,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     }
   }
 
-  bool isFavourite(MetaEntity en) {
-    List<MetaEntity> favs = _gs.getCurrentUser().favourites;
+  bool isFavourite(MetaEntity? en) {
+    List<MetaEntity?>? favs = _gs!.getCurrentUser()!.favourites;
     if (Utils.isNullOrEmpty(favs)) return false;
 
-    for (int i = 0; i < favs.length; i++) {
-      if (favs[i].entityId == en.entityId) {
+    for (int i = 0; i < favs!.length; i++) {
+      if (favs[i]!.entityId == en!.entityId) {
         return true;
       }
     }
@@ -280,24 +280,24 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   void toggleFavorite(Entity strData) {
 //Check if its already User fav
     bool isFav = false;
-    MetaEntity en = strData.getMetaEntity();
+    MetaEntity? en = strData.getMetaEntity();
     isFav = isFavourite(en);
     if (isFav) {
-      _gs.removeFavourite(en).then((value) => setState(() {}));
+      _gs!.removeFavourite(en).then((value) => setState(() {}));
       setState(() {});
     } else {
-      _gs.addFavourite(en).then((value) => setState(() {}));
+      _gs!.addFavourite(en).then((value) => setState(() {}));
       setState(() {});
     }
 
     print("toggle done");
   }
 
-  generateLinkAndShareWithParams(String entityId, String name) async {
+  generateLinkAndShareWithParams(String? entityId, String name) async {
     String msgTitle = entityShareByUserHeading + name;
     String msgBody = entityShareByUserMessage;
     Utils.generateLinkAndShare(entityId, msgTitle, msgBody,
-        _gs.getConfigurations().packageName, _gs.getConfigurations().iOSAppId);
+        _gs!.getConfigurations()!.packageName!, _gs!.getConfigurations()!.iOSAppId);
   }
 
   Widget _emptySearchPage() {
@@ -334,13 +334,13 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         ),
                       ),
                       onTap: () {
-                        _searchTextController.text = "";
+                        _searchTextController!.text = "";
                         Utils.generateLinkAndShare(
                             null,
                             appShareWithOwnerHeading,
                             appShareWithOwnerMessage,
-                            _gs.getConfigurations().packageName,
-                            _gs.getConfigurations().iOSAppId);
+                            _gs!.getConfigurations()!.packageName!,
+                            _gs!.getConfigurations()!.iOSAppId);
                       },
                     ),
                     InkWell(
@@ -353,7 +353,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         ),
                       ),
                       onTap: () {
-                        _searchTextController.text = "";
+                        _searchTextController!.text = "";
 
                         showContactUsSheet();
                       },
@@ -368,9 +368,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     );
   }
 
-  showPlaceDetailsSheet(Entity str) {
+  showPlaceDetailsSheet(Entity? str) {
     childPlaceDetailsSheetController =
-        keyChildSearch.currentState.showBottomSheet<Null>(
+        keyChildSearch.currentState!.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
         height: MediaQuery.of(context).size.height * .6,
@@ -391,7 +391,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                           color: headerBarColor,
                         ),
                         onPressed: () {
-                          childPlaceDetailsSheetController.close();
+                          childPlaceDetailsSheetController!.close();
                           childPlaceDetailsSheetController = null;
                           // Navigator.of(context).pop();
                         }),
@@ -400,7 +400,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width * .8,
                       child: Text(
-                        str.name,
+                        str!.name!,
                         style: TextStyle(
                             color: Colors.blueGrey[800],
                             fontFamily: 'RalewayRegular',
@@ -422,12 +422,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       elevation: 30,
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.blueGrey[200]),
+          side: BorderSide(color: Colors.blueGrey[200]!),
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
     );
     showFoatingActionButton(false);
-    childPlaceDetailsSheetController.closed.then((value) {
+    childPlaceDetailsSheetController!.closed.then((value) {
       showFoatingActionButton(true);
     });
 
@@ -436,7 +436,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
   showContactUsSheet() {
     childContactUsSheetController =
-        keyChildSearch.currentState.showBottomSheet<Null>(
+        keyChildSearch.currentState!.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
         height: MediaQuery.of(context).size.height * .87,
@@ -457,7 +457,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                           color: headerBarColor,
                         ),
                         onPressed: () {
-                          childContactUsSheetController.close();
+                          childContactUsSheetController!.close();
                           childContactUsSheetController = null;
                           // Navigator.of(context).pop();
                         }),
@@ -488,12 +488,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       elevation: 30,
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.blueGrey[200]),
+          side: BorderSide(color: Colors.blueGrey[200]!),
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
     );
     showFoatingActionButton(false);
-    childContactUsSheetController.closed.then((value) {
+    childContactUsSheetController!.closed.then((value) {
       showFoatingActionButton(true);
     });
   }
@@ -665,7 +665,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   onPressed: () {
                     //TODO: correct search end
                     searchBoxClicked = false;
-                    _searchTextController.clear();
+                    _searchTextController!.clear();
                     _searchText = "";
                     setState(() {
                       messageTitle = "";
@@ -688,22 +688,22 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
               hintStyle:
                   new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
           onChanged: (value) {
-            if (_searchTextController.text.isEmpty) {
+            if (_searchTextController!.text.isEmpty) {
               if (_entityType == null)
                 setState(() {
                   _isSearching = "initial";
                   _searchText = "";
                 });
               else {
-                _searchText = _searchTextController.text;
+                _searchText = _searchTextController!.text;
                 _buildSearchList();
               }
             } else {
-              if (_searchTextController.text.length >= 3) {
+              if (_searchTextController!.text.length >= 3) {
                 setState(() {
                   messageTitle = "";
                   _isSearching = "searching";
-                  _searchText = _searchTextController.text;
+                  _searchText = _searchTextController!.text;
                   _buildSearchList();
                 });
               }
@@ -789,7 +789,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                             ),
                             onTap: () {
                               setState(() {
-                                _searchTextController.clear();
+                                _searchTextController!.clear();
                                 messageTitle = "";
                                 _isSearching = "searching";
                                 _searchText = "";
@@ -895,7 +895,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     elevation: 30,
                     backgroundColor: btnColor,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[200]),
+                        side: BorderSide(color: Colors.blueGrey[200]!),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Container(
                       child: Text(
@@ -906,7 +906,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     ),
                     onPressed: () {
                       childBottomSheetController =
-                          keyChildSearch.currentState.showBottomSheet<Null>(
+                          keyChildSearch.currentState!.showBottomSheet<Null>(
                         (context) => Container(
                           color: Colors.cyan[50],
                           height: MediaQuery.of(context).size.height * .5,
@@ -930,7 +930,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                             color: headerBarColor,
                                           ),
                                           onPressed: () {
-                                            childBottomSheetController.close();
+                                            childBottomSheetController!.close();
                                             childBottomSheetController = null;
                                             //Navigator.of(context).pop();
                                           }),
@@ -961,7 +961,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                     padding: EdgeInsets.all(0),
                                     scrollDirection: Axis.vertical,
                                     shrinkWrap: true,
-                                    itemCount: _gs
+                                    itemCount: _gs!
                                         .getActiveChildEntityTypes(
                                             widget.parentType)
                                         .length,
@@ -984,7 +984,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                           child: Center(
                                             child: _buildCategoryItem(
                                                 context,
-                                                _gs.getActiveChildEntityTypes(
+                                                _gs!.getActiveChildEntityTypes(
                                                     widget.parentType)[index]),
                                           ),
                                         ),
@@ -999,13 +999,13 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         elevation: 30,
                         clipBehavior: Clip.hardEdge,
                         shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.blueGrey[200]),
+                            side: BorderSide(color: Colors.blueGrey[200]!),
                             borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(20.0),
                                 topRight: Radius.circular(20.0))),
                       );
                       showFoatingActionButton(false);
-                      childBottomSheetController.closed.then((value) {
+                      childBottomSheetController!.closed.then((value) {
                         showFoatingActionButton(true);
                       });
                     },
@@ -1021,15 +1021,15 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     //    context, Icons.info, Duration(seconds: 3), "dsfvsfg", "");
     // ignore: unnecessary_statements
     if (childBottomSheetController != null) {
-      childBottomSheetController.close();
+      childBottomSheetController!.close();
       childBottomSheetController = null;
       return false;
     } else if (childContactUsSheetController != null) {
-      childContactUsSheetController.close();
+      childContactUsSheetController!.close();
       childContactUsSheetController = null;
       return false;
     } else if (childPlaceDetailsSheetController != null) {
-      childPlaceDetailsSheetController.close();
+      childPlaceDetailsSheetController!.close();
       childPlaceDetailsSheetController = null;
       return false;
     } else {
@@ -1040,7 +1040,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     }
   }
 
-  Widget _buildItem(Entity str) {
+  Widget _buildItem(Entity? str) {
     _prepareDateList();
     print('after buildDateGrid called');
     return Card(
@@ -1058,7 +1058,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   alignment: Alignment.center,
                   height: MediaQuery.of(context).size.width * .09,
                   width: MediaQuery.of(context).size.width * .09,
-                  child: Utils.getEntityTypeImage(str.type, 30)),
+                  child: Utils.getEntityTypeImage(str!.type, 30)),
               Container(
                 width: MediaQuery.of(context).size.width * .8,
                 padding: EdgeInsets.all(2),
@@ -1111,9 +1111,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                   ),
                                 ),
                                 (str.allowOnlineAppointment != null)
-                                    ? (str.allowOnlineAppointment
+                                    ? (str.allowOnlineAppointment!
                                         ? FadeTransition(
-                                            opacity: animation,
+                                            opacity: animation as Animation<double>,
                                             child: GestureDetector(
                                               onTap: () {
                                                 Utils.showMyFlushbar(
@@ -1172,7 +1172,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                             EnumToString.convertToString(
                                                 str.type))
                                         ? Utils.getEntityTypeDisplayName(
-                                            str.type)
+                                            str.type)!
                                         : "",
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -1331,8 +1331,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                             margin: EdgeInsets.zero,
                             width: MediaQuery.of(context).size.width * .65,
                             child: AutoSizeText(
-                              (Utils.getFormattedAddress(str.address) != "")
-                                  ? Utils.getFormattedAddress(str.address)
+                              (Utils.getFormattedAddress(str.address!) != "")
+                                  ? Utils.getFormattedAddress(str.address!)
                                   : "No Address found",
                               maxLines: 1,
                               minFontSize: 12,
@@ -1345,7 +1345,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                               width: MediaQuery.of(context).size.width * .13,
                               child: Text(
                                 (str.distance != null)
-                                    ? str.distance.toStringAsFixed(1) + ' Km'
+                                    ? str.distance!.toStringAsFixed(1) + ' Km'
                                     : "",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
@@ -1359,7 +1359,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     ),
                     SizedBox(height: 5),
                     if (str.isBookable != null && str.isActive != null)
-                      if (str.isBookable && str.isActive)
+                      if (str.isBookable! && str.isActive!)
                         Container(
                             width: MediaQuery.of(context).size.width * .78,
                             //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
@@ -1392,7 +1392,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       padding: EdgeInsets.only(left: 3),
                       width: MediaQuery.of(context).size.width * .82,
                       child: Text(
-                        str.offer.message,
+                        str.offer!.message!,
                         maxLines: 1,
                         //  minFontSize: 12,
                         overflow: TextOverflow.ellipsis,
@@ -1427,7 +1427,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     padding: EdgeInsets.all(5),
                     // alignment: Alignment.center,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[200]),
+                        side: BorderSide(color: Colors.blueGrey[200]!),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     color: Colors.white,
                     splashColor: highlightColor,
@@ -1472,7 +1472,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     elevation: 5,
                     padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[200]),
+                        side: BorderSide(color: Colors.blueGrey[200]!),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     color: Colors.white,
                     splashColor: highlightColor,
@@ -1517,7 +1517,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       elevation: 5,
                       padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[200]),
+                          side: BorderSide(color: Colors.blueGrey[200]!),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       color: Colors.white,
                       splashColor: highlightColor,
@@ -1528,12 +1528,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       ),
                       onPressed: () {
                         try {
-                          if (str.coordinates.geopoint.latitude != null)
+                          if (str.coordinates!.geopoint!.latitude != null)
                             launchURL(
                                 str.name,
-                                Utils.getFormattedAddress(str.address),
-                                str.coordinates.geopoint.latitude,
-                                str.coordinates.geopoint.longitude);
+                                Utils.getFormattedAddress(str.address!),
+                                str.coordinates!.geopoint!.latitude,
+                                str.coordinates!.geopoint!.longitude);
                           else {
                             Utils.showMyFlushbar(context, Icons.error,
                                 Duration(seconds: 5), locationNotFound, "");
@@ -1558,7 +1558,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       elevation: 5,
                       padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[200]),
+                          side: BorderSide(color: Colors.blueGrey[200]!),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       color: Colors.white,
                       splashColor: highlightColor,
@@ -1568,7 +1568,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         size: 25,
                       ),
                       onPressed: () {
-                        generateLinkAndShareWithParams(str.entityId, str.name);
+                        generateLinkAndShareWithParams(str.entityId, str.name!);
                       },
                     )),
                 Container(
@@ -1580,7 +1580,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     elevation: 5,
                     padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[200]),
+                        side: BorderSide(color: Colors.blueGrey[200]!),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     color: Colors.white,
                     splashColor: highlightColor,
@@ -1598,7 +1598,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    if (str.getMetaEntity().hasChildren)
+                    if (str.getMetaEntity()!.hasChildren!)
                       Container(
                         padding: EdgeInsets.all(0),
                         margin: EdgeInsets.all(0),
@@ -1667,13 +1667,13 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     );
   }
 
-  void showSlots(Entity store, DateTime dateTime) {
+  void showSlots(Entity? store, DateTime dateTime) {
     print(_fromPage);
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => ShowSlotsPage(
-                  metaEntity: store.getMetaEntity(),
+                  metaEntity: store!.getMetaEntity(),
                   dateTime: dateTime,
                   forPage: "ChildSearch",
                 )));
@@ -1681,8 +1681,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     print('After showDialog:');
   }
 
-  List<Widget> _buildDateGridItems(Entity store, String sid, String sname,
-      List<String> daysClosed, int advanceDays) {
+  List<Widget> _buildDateGridItems(Entity? store, String? sid, String? sname,
+      List<String>? daysClosed, int? advanceDays) {
     bool isClosed = false;
     bool isBookingAllowed = false;
     String dayOfWeek;
@@ -1690,12 +1690,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     var dateWidgets = List<Widget>();
     for (var date in _dateList) {
       daysCounter++;
-      if (daysCounter <= advanceDays) {
+      if (daysCounter <= advanceDays!) {
         isBookingAllowed = true;
       } else
         isBookingAllowed = false;
 
-      for (String str in daysClosed) {
+      for (String str in daysClosed!) {
         if (str.toLowerCase() ==
             DateFormat('EEEE').format(date).toLowerCase()) {
           isClosed = true;
@@ -1718,16 +1718,16 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     return dateWidgets;
   }
 
-  Widget buildDateItem(Entity store, String sid, String sname, bool isClosed,
-      bool isBookingAllowed, int advanceDays, DateTime dt, String dayOfWeek) {
+  Widget buildDateItem(Entity? store, String? sid, String? sname, bool isClosed,
+      bool isBookingAllowed, int? advanceDays, DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
 
-    if (_gs.bookings != null) {
-      for (Tuple<UserToken, DocumentSnapshot> obj in (_gs.bookings)) {
+    if (_gs!.bookings != null) {
+      for (Tuple<UserToken, DocumentSnapshot> obj in _gs!.bookings!) {
         if ((compareDateFormat.format(dt).compareTo(
-                    compareDateFormat.format(obj.item1.parent.dateTime)) ==
+                    compareDateFormat.format(obj.item1!.parent!.dateTime!)) ==
                 0) &&
-            (obj.item1.parent.entityId == sid && obj.item1.number != -1)) {
+            (obj.item1!.parent!.entityId == sid && obj.item1!.number != -1)) {
           dateBooked = true;
         }
       }
@@ -1929,7 +1929,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   // }
 
   Future<void> _buildSearchList() async {
-    List<Entity> searchList = new List<Entity>();
+    List<Entity?> searchList = new List<Entity?>();
     if ((!Utils.isNotNullOrEmpty(_entityType) &&
         !Utils.isNotNullOrEmpty(_searchText))) {
       _stores.clear();
@@ -1940,22 +1940,22 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       return;
     } else {
       for (int i = 0; i < enList.length; i++) {
-        Entity en = enList.elementAt(i);
+        Entity? en = enList.elementAt(i);
 
         if ((Utils.isNotNullOrEmpty(_entityType) &&
             Utils.isNotNullOrEmpty(_searchText))) {
-          if (en.type == _entityType &&
-              en.name.toLowerCase().contains(_searchText.toLowerCase())) {
+          if (en!.type == _entityType &&
+              en.name!.toLowerCase().contains(_searchText.toLowerCase())) {
             searchList.add(en);
           }
         } else if ((!Utils.isNotNullOrEmpty(_entityType) &&
             Utils.isNotNullOrEmpty(_searchText))) {
-          if (en.name.toLowerCase().contains(_searchText.toLowerCase())) {
+          if (en!.name!.toLowerCase().contains(_searchText.toLowerCase())) {
             searchList.add(en);
           }
         } else if ((Utils.isNotNullOrEmpty(_entityType) &&
             !Utils.isNotNullOrEmpty(_searchText))) {
-          if (Utils.getEntityTypeDisplayName(en.type) == _entityType) {
+          if (Utils.getEntityTypeDisplayName(en!.type) == _entityType) {
             searchList.add(en);
           }
         }
@@ -1975,13 +1975,13 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   style: TextStyle(color: Colors.blue),
                   recognizer: new TapGestureRecognizer()
                     ..onTap = () {
-                      _searchTextController.text = "";
+                      _searchTextController!.text = "";
                       Utils.generateLinkAndShare(
                           null,
                           appShareWithOwnerHeading,
                           appShareWithOwnerMessage,
-                          _gs.getConfigurations().packageName,
-                          _gs.getConfigurations().iOSAppId);
+                          _gs!.getConfigurations()!.packageName!,
+                          _gs!.getConfigurations()!.iOSAppId);
                     },
                 ),
                 TextSpan(text: notFoundMsg5),
@@ -1991,7 +1991,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     style: TextStyle(color: Colors.blue),
                     recognizer: new TapGestureRecognizer()
                       ..onTap = () {
-                        _searchTextController.text = "";
+                        _searchTextController!.text = "";
                         Navigator.push(
                             context,
                             MaterialPageRoute(

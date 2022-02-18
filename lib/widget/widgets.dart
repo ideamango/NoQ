@@ -28,7 +28,7 @@ showDialogForPlaceDetails(
     GlobalState.getGlobalState().then((value) {
       state = value;
       state.getEntity(metaEntity.entityId);
-    });
+    } as FutureOr<_> Function(GlobalState?));
   }
 
   showDialog(
@@ -62,7 +62,7 @@ showDialogForPlaceDetails(
                       width: MediaQuery.of(context).size.width * .6,
                       alignment: Alignment.center,
                       child: Text(
-                        entity.name,
+                        entity.name!,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.blueGrey[800],

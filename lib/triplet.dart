@@ -1,7 +1,7 @@
 class Triplet<T1, T2, T3> {
-  T1 item1;
-  T2 item2;
-  T3 item3;
+  T1? item1;
+  T2? item2;
+  T3? item3;
 
   Triplet({this.item1, this.item2, this.item3});
 

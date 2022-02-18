@@ -16,19 +16,19 @@ class ShareAppPage extends StatefulWidget {
 }
 
 class _ShareAppPageState extends State<ShareAppPage> {
-  Uri dynamicLink;
-  String inviteText;
+  Uri? dynamicLink;
+  late String inviteText;
 
   String inviteSubject = "Invite friends via..";
   bool _initCompleted = false;
-  String iosAppId;
-  String packageId;
+  String? iosAppId;
+  String? packageId;
   @override
   void initState() {
     super.initState();
     GlobalState.getGlobalState().then((value) {
-      iosAppId = value.getConfigurations().iOSAppId;
-      packageId = value.getConfigurations().packageName;
+      iosAppId = value!.getConfigurations()!.iOSAppId;
+      packageId = value.getConfigurations()!.packageName;
     });
   }
 
@@ -90,7 +90,7 @@ class _ShareAppPageState extends State<ShareAppPage> {
                                       "Preparing the information..",
                                       "");
                                   Utils.createDynamicLinkWithParams(null,
-                                          appShareHeading, packageId, iosAppId)
+                                          appShareHeading, packageId!, iosAppId)
                                       .then((value) {
                                     setState(() {
                                       dynamicLink = value;
@@ -98,7 +98,7 @@ class _ShareAppPageState extends State<ShareAppPage> {
                                           "\n" +
                                           dynamicLink.toString();
                                       final RenderBox box =
-                                          context.findRenderObject();
+                                          context.findRenderObject() as RenderBox;
                                       try {
                                         Share.share(inviteText,
                                             subject: inviteSubject,

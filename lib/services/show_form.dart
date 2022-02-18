@@ -25,16 +25,16 @@ import 'package:email_validator/email_validator.dart';
 import 'package:path/path.dart' as pathfile;
 
 class EntityForm extends StatefulWidget {
-  final MetaEntity metaEntity;
-  final String bookingFormId;
-  final DateTime preferredSlotTime;
+  final MetaEntity? metaEntity;
+  final String? bookingFormId;
+  final DateTime? preferredSlotTime;
   final dynamic backRoute;
   EntityForm(
-      {Key key,
-      @required this.metaEntity,
-      @required this.bookingFormId,
-      @required this.preferredSlotTime,
-      @required this.backRoute})
+      {Key? key,
+      required this.metaEntity,
+      required this.bookingFormId,
+      required this.preferredSlotTime,
+      required this.backRoute})
       : super(key: key);
 
   @override
@@ -43,12 +43,12 @@ class EntityForm extends StatefulWidget {
 
 class _EntityFormState extends State<EntityForm> {
   TextEditingController _fieldController = new TextEditingController();
-  Map<String, TextEditingController> listOfControllers =
-      new Map<String, TextEditingController>();
+  Map<String?, TextEditingController> listOfControllers =
+      new Map<String?, TextEditingController>();
 
   final GlobalKey<FormState> _bookingFormKey = new GlobalKey<FormState>();
   List<TextEditingController> _controllers = new List();
-  BookingForm dummyForm;
+  BookingForm? dummyForm;
   final itemSize = 100.0;
   List<String> dumList = new List<String>();
 
@@ -56,38 +56,38 @@ class _EntityFormState extends State<EntityForm> {
 
   //List<File> _medCondsProofimages = [];
   bool validateField = false;
-  Map<String, Widget> listOfWidgets = new Map<String, Widget>();
+  Map<String?, Widget> listOfWidgets = new Map<String?, Widget>();
   Map<String, List> listOfFieldTypes = new Map<String, List>();
   String dateString = "Start Date";
-  String validationErrMsg;
-  List<Field> listOfFields;
-  String _phCountryCode;
+  String? validationErrMsg;
+  late List<Field> listOfFields;
+  String? _phCountryCode;
 
   String flushStatus = "Empty";
-  Flushbar flush;
-  bool _wasButtonClicked;
+  Flushbar? flush;
+  bool? _wasButtonClicked;
 
-  BookingApplication bookingApplication;
-  GlobalState _gs;
+  BookingApplication? bookingApplication;
+  GlobalState? _gs;
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
-      _gs
-          .getApplicationService()
-          .getBookingForm(widget.bookingFormId)
+      _gs!
+          .getApplicationService()!
+          .getBookingForm(widget.bookingFormId!)
           .then((value) {
         dummyForm = value;
         bookingApplication = new BookingApplication();
         //slot
-        bookingApplication.preferredSlotTiming = widget.preferredSlotTime;
+        bookingApplication!.preferredSlotTiming = widget.preferredSlotTime;
 
         //bookingFormId
-        bookingApplication.bookingFormId = widget.bookingFormId;
-        bookingApplication.entityId = widget.metaEntity.entityId;
-        bookingApplication.userId = _gs.getCurrentUser().id;
-        bookingApplication.status = ApplicationStatus.NEW;
-        bookingApplication.responseForm = dummyForm;
+        bookingApplication!.bookingFormId = widget.bookingFormId;
+        bookingApplication!.entityId = widget.metaEntity!.entityId;
+        bookingApplication!.userId = _gs!.getCurrentUser()!.id;
+        bookingApplication!.status = ApplicationStatus.NEW;
+        bookingApplication!.responseForm = dummyForm;
         print("Booking application set");
         initPage();
         setState(() {
@@ -98,7 +98,7 @@ class _EntityFormState extends State<EntityForm> {
   }
 
   void initPage() {
-    listOfFields = dummyForm.getFormFields();
+    listOfFields = dummyForm!.getFormFields();
     Widget newField;
     for (int i = 0; i < listOfFields.length; i++) {
       Field field = listOfFields[i];
@@ -109,16 +109,16 @@ class _EntityFormState extends State<EntityForm> {
 
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
-    _phCountryCode = _gs.getConfigurations().phCountryCode;
+    _phCountryCode = _gs!.getConfigurations()!.phCountryCode;
   }
 
-  Future<DateTime> pickDate(BuildContext context) async {
-    DateTime date = await showDatePicker(
+  Future<DateTime?> pickDate(BuildContext context) async {
+    DateTime? date = await showDatePicker(
       context: context,
       firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
       lastDate: DateTime.now(),
       initialDate: DateTime.now(),
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
@@ -126,14 +126,14 @@ class _EntityFormState extends State<EntityForm> {
             ),
             dialogBackgroundColor: Colors.white,
           ),
-          child: child,
+          child: child!,
         );
       },
     );
     return date;
   }
 
-  String validateText(String value) {
+  String? validateText(String? value) {
     if (validateField) {
       if (value == null || value == "") {
         return 'Field is empty';
@@ -153,11 +153,11 @@ class _EntityFormState extends State<EntityForm> {
     switch (field.type) {
       case FieldType.TEXT:
         {
-          FormInputFieldText textField = field;
+          FormInputFieldText textField = field as FormInputFieldText;
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -178,7 +178,7 @@ class _EntityFormState extends State<EntityForm> {
                           title: Row(
                             children: <Widget>[
                               Text(
-                                field.label,
+                                field.label!,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 15),
                               ),
@@ -195,7 +195,7 @@ class _EntityFormState extends State<EntityForm> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(field.infoMessage,
+                                    child: Text(field.infoMessage!,
                                         style: buttonXSmlTextStyle),
                                   ),
                                 ],
@@ -220,10 +220,10 @@ class _EntityFormState extends State<EntityForm> {
                                   ? AutovalidateMode.always
                                   : AutovalidateMode.disabled,
                               validator: (value) {
-                                String valText = validateText(value);
-                                if (textField.isEmail) {
+                                String? valText = validateText(value);
+                                if (textField.isEmail!) {
                                   return (valText == null)
-                                      ? (EmailValidator.validate(value)
+                                      ? (EmailValidator.validate(value!)
                                           ? null
                                           : "Please enter a valid email")
                                       : valText;
@@ -241,7 +241,7 @@ class _EntityFormState extends State<EntityForm> {
                               onChanged: (String value) {
                                 return;
                               },
-                              onSaved: (String value) {},
+                              onSaved: (String? value) {},
                             ),
                           ),
                         ],
@@ -254,11 +254,11 @@ class _EntityFormState extends State<EntityForm> {
         break;
       case FieldType.DATETIME:
         {
-          FormInputFieldDateTime newDateField = field;
+          FormInputFieldDateTime newDateField = field as FormInputFieldDateTime;
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -280,7 +280,7 @@ class _EntityFormState extends State<EntityForm> {
                           title: Row(
                             children: <Widget>[
                               Text(
-                                field.label,
+                                field.label!,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 15),
                               ),
@@ -297,7 +297,7 @@ class _EntityFormState extends State<EntityForm> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(field.infoMessage,
+                                    child: Text(field.infoMessage!,
                                         style: buttonXSmlTextStyle),
                                   ),
                                 ],
@@ -336,7 +336,7 @@ class _EntityFormState extends State<EntityForm> {
                                             value.month.toString() +
                                             " / " +
                                             value.year.toString();
-                                        listOfControllers[newDateField.label]
+                                        listOfControllers[newDateField.label]!
                                             .text = dateString;
                                       });
                                       newDateField.responseDateTime = value;
@@ -348,7 +348,7 @@ class _EntityFormState extends State<EntityForm> {
                               onChanged: (String value) {
                                 print(value);
                               },
-                              onSaved: (String value) {
+                              onSaved: (String? value) {
                                 print(value);
                               },
                             ),
@@ -458,11 +458,11 @@ class _EntityFormState extends State<EntityForm> {
       //   break;
       case FieldType.PHONE:
         {
-          FormInputFieldPhone phone = field;
+          FormInputFieldPhone phone = field as FormInputFieldPhone;
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -484,7 +484,7 @@ class _EntityFormState extends State<EntityForm> {
                       title: Row(
                         children: <Widget>[
                           Text(
-                            phone.label,
+                            phone.label!,
                             style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
                           SizedBox(width: 5),
@@ -500,7 +500,7 @@ class _EntityFormState extends State<EntityForm> {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(phone.infoMessage,
+                                child: Text(phone.infoMessage!,
                                     style: buttonXSmlTextStyle),
                               ),
                             ],
@@ -540,11 +540,11 @@ class _EntityFormState extends State<EntityForm> {
                             },
                             onChanged: (value) {
                               if (value != "")
-                                phone.responsePhone = _phCountryCode + (value);
+                                phone.responsePhone = _phCountryCode! + (value);
                             },
-                            onSaved: (String value) {
+                            onSaved: (String? value) {
                               if (value != "")
-                                phone.responsePhone = _phCountryCode + (value);
+                                phone.responsePhone = _phCountryCode! + value!;
                             },
                           )),
                     ],
@@ -560,7 +560,7 @@ class _EntityFormState extends State<EntityForm> {
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -582,7 +582,7 @@ class _EntityFormState extends State<EntityForm> {
                           title: Row(
                             children: <Widget>[
                               Text(
-                                field.label,
+                                field.label!,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 15),
                               ),
@@ -599,7 +599,7 @@ class _EntityFormState extends State<EntityForm> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(field.infoMessage,
+                                    child: Text(field.infoMessage!,
                                         style: buttonXSmlTextStyle),
                                   ),
                                 ],
@@ -629,7 +629,7 @@ class _EntityFormState extends State<EntityForm> {
                               onChanged: (String value) {
                                 print(value);
                               },
-                              onSaved: (String value) {
+                              onSaved: (String? value) {
                                 print(value);
                               },
                             ),
@@ -644,12 +644,12 @@ class _EntityFormState extends State<EntityForm> {
         break;
       case FieldType.OPTIONS:
         {
-          FormInputFieldOptions newOptionsField = field;
+          FormInputFieldOptions newOptionsField = field as FormInputFieldOptions;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -671,7 +671,7 @@ class _EntityFormState extends State<EntityForm> {
                       title: Row(
                         children: <Widget>[
                           Text(
-                            newOptionsField.label,
+                            newOptionsField.label!,
                             style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
                           SizedBox(width: 5),
@@ -687,7 +687,7 @@ class _EntityFormState extends State<EntityForm> {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(newOptionsField.infoMessage,
+                                child: Text(newOptionsField.infoMessage!,
                                     style: buttonXSmlTextStyle),
                               ),
                             ],
@@ -705,20 +705,20 @@ class _EntityFormState extends State<EntityForm> {
                         children: [
                           Expanded(
                             child: Wrap(
-                              children: newOptionsField.options
+                              children: newOptionsField.options!
                                   .map((item) => GestureDetector(
                                       onTap: () {
-                                        if (newOptionsField.responseValues
+                                        if (newOptionsField.responseValues!
                                             .contains(item)) {
-                                          newOptionsField.responseValues
+                                          newOptionsField.responseValues!
                                               .remove(item);
                                         } else {
                                           if (newOptionsField.isMultiSelect ==
                                               false) {
-                                            newOptionsField.responseValues
+                                            newOptionsField.responseValues!
                                                 .clear();
                                           }
-                                          newOptionsField.responseValues
+                                          newOptionsField.responseValues!
                                               .add(item);
                                         }
 
@@ -727,10 +727,10 @@ class _EntityFormState extends State<EntityForm> {
                                       child: Container(
                                           decoration: new BoxDecoration(
                                               border: Border.all(
-                                                  color: Colors.blueGrey[200]),
+                                                  color: Colors.blueGrey[200]!),
                                               shape: BoxShape.rectangle,
                                               color: (newOptionsField
-                                                      .responseValues
+                                                      .responseValues!
                                                       .contains(item))
                                                   ? highlightColor
                                                   : Colors.cyan[50],
@@ -757,12 +757,12 @@ class _EntityFormState extends State<EntityForm> {
         break;
       case FieldType.ATTACHMENT:
         {
-          FormInputFieldAttachment attsField = field;
+          FormInputFieldAttachment attsField = field as FormInputFieldAttachment;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -784,7 +784,7 @@ class _EntityFormState extends State<EntityForm> {
                       title: Row(
                         children: <Widget>[
                           Text(
-                            attsField.label,
+                            attsField.label!,
                             style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
                           SizedBox(width: 5),
@@ -800,7 +800,7 @@ class _EntityFormState extends State<EntityForm> {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(attsField.infoMessage,
+                                child: Text(attsField.infoMessage!,
                                     style: buttonXSmlTextStyle),
                               ),
                             ],
@@ -844,12 +844,12 @@ class _EntityFormState extends State<EntityForm> {
                                         padding: EdgeInsets.only(bottom: 5),
                                         child: showImageList(
                                             context,
-                                            attsField.responseFilePaths[index],
+                                            attsField.responseFilePaths![index],
                                             attsField.responseFilePaths),
                                       );
                                     },
                                     itemCount:
-                                        attsField.responseFilePaths.length,
+                                        attsField.responseFilePaths!.length,
                                   ),
                                 ),
                           Row(
@@ -865,7 +865,7 @@ class _EntityFormState extends State<EntityForm> {
                                     captureImage(false).then((value) {
                                       if (value != null) {
                                         // _medCondsProofimages.add(value);
-                                        attsField.responseFilePaths
+                                        attsField.responseFilePaths!
                                             .add(value.path);
                                       }
                                       setState(() {});
@@ -881,7 +881,7 @@ class _EntityFormState extends State<EntityForm> {
                                     captureImage(true).then((value) {
                                       if (value != null) {
                                         // _medCondsProofimages.add(value);
-                                        attsField.responseFilePaths
+                                        attsField.responseFilePaths!
                                             .add(value.path);
                                       }
                                       setState(() {});
@@ -901,12 +901,12 @@ class _EntityFormState extends State<EntityForm> {
         break;
       case FieldType.OPTIONS_ATTACHMENTS:
         {
-          FormInputFieldOptionsWithAttachments optsAttsField = field;
+          FormInputFieldOptionsWithAttachments optsAttsField = field as FormInputFieldOptionsWithAttachments;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -928,7 +928,7 @@ class _EntityFormState extends State<EntityForm> {
                       title: Row(
                         children: <Widget>[
                           Text(
-                            optsAttsField.label,
+                            optsAttsField.label!,
                             style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
                           SizedBox(width: 5),
@@ -944,7 +944,7 @@ class _EntityFormState extends State<EntityForm> {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(optsAttsField.infoMessage,
+                                child: Text(optsAttsField.infoMessage!,
                                     style: buttonXSmlTextStyle),
                               ),
                             ],
@@ -962,20 +962,20 @@ class _EntityFormState extends State<EntityForm> {
                         children: [
                           Expanded(
                             child: Wrap(
-                              children: optsAttsField.options
+                              children: optsAttsField.options!
                                   .map((item) => GestureDetector(
                                       onTap: () {
-                                        if (optsAttsField.responseValues
+                                        if (optsAttsField.responseValues!
                                             .contains(item)) {
-                                          optsAttsField.responseValues
+                                          optsAttsField.responseValues!
                                               .remove(item);
                                         } else {
                                           if (optsAttsField.isMultiSelect ==
                                               false) {
-                                            optsAttsField.responseValues
+                                            optsAttsField.responseValues!
                                                 .clear();
                                           }
-                                          optsAttsField.responseValues
+                                          optsAttsField.responseValues!
                                               .add(item);
                                         }
 
@@ -984,10 +984,10 @@ class _EntityFormState extends State<EntityForm> {
                                       child: Container(
                                           decoration: new BoxDecoration(
                                               border: Border.all(
-                                                  color: Colors.blueGrey[200]),
+                                                  color: Colors.blueGrey[200]!),
                                               shape: BoxShape.rectangle,
                                               color: (optsAttsField
-                                                      .responseValues
+                                                      .responseValues!
                                                       .contains(item))
                                                   ? highlightColor
                                                   : Colors.cyan[50],
@@ -1038,12 +1038,12 @@ class _EntityFormState extends State<EntityForm> {
                                         child: showImageList(
                                             context,
                                             optsAttsField
-                                                .responseFilePaths[index],
+                                                .responseFilePaths![index],
                                             optsAttsField.responseFilePaths),
                                       );
                                     },
                                     itemCount:
-                                        optsAttsField.responseFilePaths.length,
+                                        optsAttsField.responseFilePaths!.length,
                                   ),
                                 ),
                           Row(
@@ -1059,7 +1059,7 @@ class _EntityFormState extends State<EntityForm> {
                                     captureImage(false).then((value) {
                                       if (value != null) {
                                         //  _medCondsProofimages.add(value);
-                                        optsAttsField.responseFilePaths
+                                        optsAttsField.responseFilePaths!
                                             .add(value.path);
                                       }
                                       setState(() {});
@@ -1075,7 +1075,7 @@ class _EntityFormState extends State<EntityForm> {
                                     captureImage(true).then((value) {
                                       if (value != null) {
                                         //  _medCondsProofimages.add(value);
-                                        optsAttsField.responseFilePaths
+                                        optsAttsField.responseFilePaths!
                                             .add(value.path);
                                       }
                                       setState(() {});
@@ -1098,7 +1098,7 @@ class _EntityFormState extends State<EntityForm> {
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1120,7 +1120,7 @@ class _EntityFormState extends State<EntityForm> {
                           title: Row(
                             children: <Widget>[
                               Text(
-                                field.label,
+                                field.label!,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 15),
                               ),
@@ -1137,7 +1137,7 @@ class _EntityFormState extends State<EntityForm> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(field.infoMessage,
+                                    child: Text(field.infoMessage!,
                                         style: buttonXSmlTextStyle),
                                   ),
                                 ],
@@ -1165,7 +1165,7 @@ class _EntityFormState extends State<EntityForm> {
                             onChanged: (String value) {
                               print(value);
                             },
-                            onSaved: (String value) {
+                            onSaved: (String? value) {
                               print(value);
                             },
                           ),
@@ -1185,10 +1185,10 @@ class _EntityFormState extends State<EntityForm> {
     );
   }
 
-  Future<File> captureImage(bool gallery) async {
+  Future<File?> captureImage(bool gallery) async {
     ImagePicker picker = ImagePicker();
-    PickedFile pickedFile;
-    File newImageFile;
+    PickedFile? pickedFile;
+    File? newImageFile;
 
     if (gallery) {
       pickedFile = await picker.getImage(
@@ -1213,7 +1213,7 @@ class _EntityFormState extends State<EntityForm> {
   }
 
   Widget showImageList(
-      BuildContext context, String imageUrl, List<String> filesList) {
+      BuildContext context, String imageUrl, List<String>? filesList) {
     File image = File(imageUrl);
     return Stack(
       alignment: AlignmentDirectional.topEnd,
@@ -1232,10 +1232,10 @@ class _EntityFormState extends State<EntityForm> {
               Utils.showConfirmationDialog(
                       context, "Are you sure you want to delete this image?")
                   .then((value) {
-                if (value) {
+                if (value!) {
                   print('REMOVE path in responsePaths $imageUrl');
                   setState(() {
-                    filesList.removeWhere((element) => element == imageUrl);
+                    filesList!.removeWhere((element) => element == imageUrl);
 
                     // idProofField.responseFilePaths
                     //     .removeWhere((element) => element == imageUrl.path);
@@ -1253,7 +1253,7 @@ class _EntityFormState extends State<EntityForm> {
       String localPath, String targetFileName) async {
     File localImage = File(localPath);
 
-    Reference ref = _gs.firebaseStorage.ref().child('$targetFileName');
+    Reference ref = _gs!.firebaseStorage!.ref().child('$targetFileName');
 
     await ref.putFile(localImage);
 
@@ -1262,11 +1262,11 @@ class _EntityFormState extends State<EntityForm> {
 
   bool validateMandatoryFields() {
     for (int i = 0; i < listOfFields.length; i++) {
-      if (listOfFields[i].isMandatory) {
+      if (listOfFields[i].isMandatory!) {
         if (!Utils.isNotNullOrEmpty(
-            listOfControllers[listOfFields[i].label].text)) {
+            listOfControllers[listOfFields[i].label]!.text)) {
           validationErrMsg =
-              validationErrMsg + "\n ${listOfFields[i].label} cannot be empty.";
+              validationErrMsg! + "\n ${listOfFields[i].label} cannot be empty.";
         }
       }
     }
@@ -1283,7 +1283,7 @@ class _EntityFormState extends State<EntityForm> {
 
     validationErrMsg = "";
 
-    if (_bookingFormKey.currentState.validate()) {
+    if (_bookingFormKey.currentState!.validate()) {
       Utils.showMyFlushbar(
           context,
           Icons.info_outline,
@@ -1298,29 +1298,29 @@ class _EntityFormState extends State<EntityForm> {
 
 //TODO SMITA - Check AGAIN if selected slot is stil available else prompt user to select another one.
 
-      _bookingFormKey.currentState.save();
+      _bookingFormKey.currentState!.save();
 
       //TODO : Smita - Upload all images to firebase storage.
       List<Field> listOfFields =
-          bookingApplication.responseForm.getFormFields();
+          bookingApplication!.responseForm!.getFormFields();
 
       for (int i = 0; i < listOfFields.length; i++) {
         switch (listOfFields[i].type) {
           case FieldType.ATTACHMENT:
             List<String> targetPaths = List<String>();
             for (String path in (listOfFields[i] as FormInputFieldAttachment)
-                .responseFilePaths) {
+                .responseFilePaths!) {
               String fileName = pathfile.basename(path);
               print(fileName);
 
               String targetFileName =
-                  '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
+                  '${bookingApplication!.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs!.getCurrentUser()!.id}#$fileName';
 
               String targetPath =
                   await uploadFilesToServer(path, targetFileName);
               print(targetPath);
               targetPaths.add(targetPath);
-              (bookingApplication.responseForm.getFormFields()[i]
+              (bookingApplication!.responseForm!.getFormFields()[i]
                       as FormInputFieldAttachment)
                   .responseFilePaths = targetPaths;
             }
@@ -1331,18 +1331,18 @@ class _EntityFormState extends State<EntityForm> {
             List<String> targetPaths = List<String>();
             for (String path
                 in (listOfFields[i] as FormInputFieldOptionsWithAttachments)
-                    .responseFilePaths) {
+                    .responseFilePaths!) {
               String fileName = pathfile.basename(path);
               print(fileName);
 
               String targetFileName =
-                  '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
+                  '${bookingApplication!.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs!.getCurrentUser()!.id}#$fileName';
 
               String targetPath =
                   await uploadFilesToServer(path, targetFileName);
               print(targetPath);
               targetPaths.add(targetPath);
-              (bookingApplication.responseForm.getFormFields()[i]
+              (bookingApplication!.responseForm!.getFormFields()[i]
                       as FormInputFieldOptionsWithAttachments)
                   .responseFilePaths = targetPaths;
             }
@@ -1367,8 +1367,8 @@ class _EntityFormState extends State<EntityForm> {
 
       //   frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
 
-      _gs
-          .getApplicationService()
+      _gs!
+          .getApplicationService()!
           .submitApplication(bookingApplication, widget.metaEntity)
           .then((value) {
         if (value != null) {
@@ -1533,7 +1533,7 @@ class _EntityFormState extends State<EntityForm> {
                 print("flush already running");
               },
             ),
-            title: Text(dummyForm.formName,
+            title: Text(dummyForm!.formName!,
                 style: TextStyle(color: Colors.white, fontSize: 16)),
           ),
           body: Center(
@@ -1721,10 +1721,10 @@ class _EntityFormState extends State<EntityForm> {
                             //   height: MediaQuery.of(context).size.height * .55,
                             width: MediaQuery.of(context).size.width * .95,
                             child: buildChildItem(
-                                dummyForm.getFormFields()[index], index, false),
+                                dummyForm!.getFormFields()[index], index, false),
                           );
                         },
-                        itemCount: dummyForm.getFormFields().length,
+                        itemCount: dummyForm!.getFormFields().length,
                       ),
                     ),
                     RaisedButton(

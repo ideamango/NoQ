@@ -8,54 +8,54 @@ class BookingApplication {
   BookingApplication({this.entityId, this.responseForm});
 
   //SlotId is entityID#20~06~01#9~30
-  String id = Uuid().v1();
-  String bookingFormId;
+  String? id = Uuid().v1();
+  String? bookingFormId;
 
   //when the Application status is Approved, then the token is assigned
-  String tokenId;
-  String entityId;
-  String entityName;
-  String userId;
-  ApplicationStatus status;
+  String? tokenId;
+  String? entityId;
+  String? entityName;
+  String? userId;
+  ApplicationStatus? status;
 
-  DateTime timeOfSubmission;
-  String notesOnSubmission;
+  DateTime? timeOfSubmission;
+  String? notesOnSubmission;
 
-  DateTime timeOfInProcess;
-  String notesInProcess;
-  String processedBy;
+  DateTime? timeOfInProcess;
+  String? notesInProcess;
+  String? processedBy;
 
-  DateTime timeOfApproval;
-  String notesOnApproval;
-  String approvedBy;
+  DateTime? timeOfApproval;
+  String? notesOnApproval;
+  String? approvedBy;
 
-  DateTime timeOfRejection;
-  String notesOnRejection;
-  String rejectedBy;
+  DateTime? timeOfRejection;
+  String? notesOnRejection;
+  String? rejectedBy;
 
-  DateTime timeOfPuttingOnHold;
-  String notesOnPuttingOnHold;
-  String putOnHoldBy;
+  DateTime? timeOfPuttingOnHold;
+  String? notesOnPuttingOnHold;
+  String? putOnHoldBy;
 
-  DateTime timeOfCompletion;
-  String notesOnCompletion;
-  String completedBy;
+  DateTime? timeOfCompletion;
+  String? notesOnCompletion;
+  String? completedBy;
 
-  DateTime timeOfCancellation;
-  String notesOnCancellation;
+  DateTime? timeOfCancellation;
+  String? notesOnCancellation;
 
-  BookingForm responseForm;
+  BookingForm? responseForm;
 
-  DateTime preferredSlotTiming;
+  DateTime? preferredSlotTiming;
 
-  String notes;
+  String? notes;
 
-  bool isOnlineModeOfInteraction;
+  bool? isOnlineModeOfInteraction;
 
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> map = {
+  Map<String?, dynamic> toJson() {
+    Map<String?, dynamic> map = {
       'id': id,
-      'responseForm': responseForm.toJson(),
+      'responseForm': responseForm!.toJson(),
       'bookingFormId': bookingFormId,
       'tokenId': tokenId,
       'entityId': entityId,
@@ -63,81 +63,81 @@ class BookingApplication {
       'userId': userId,
       'status': EnumToString.convertToString(status),
       'timeOfSubmission': (timeOfSubmission != null)
-          ? timeOfSubmission.millisecondsSinceEpoch
+          ? timeOfSubmission!.millisecondsSinceEpoch
           : null,
       'notesOnSubmission': notesOnSubmission,
       'timeOfInProcess': (timeOfInProcess != null)
-          ? timeOfInProcess.millisecondsSinceEpoch
+          ? timeOfInProcess!.millisecondsSinceEpoch
           : null,
       'notesInProcess': notesInProcess,
       'processedBy': processedBy,
       'timeOfApproval': (timeOfApproval != null)
-          ? timeOfApproval.millisecondsSinceEpoch
+          ? timeOfApproval!.millisecondsSinceEpoch
           : null,
       'notesOnApproval': notesOnApproval,
       'approvedBy': approvedBy,
       'timeOfRejection': (timeOfRejection != null)
-          ? timeOfRejection.millisecondsSinceEpoch
+          ? timeOfRejection!.millisecondsSinceEpoch
           : null,
       'notesOnRejection': notesOnRejection,
       'rejectedBy': rejectedBy,
       'timeOfPuttingOnHold': (timeOfPuttingOnHold != null)
-          ? timeOfPuttingOnHold.millisecondsSinceEpoch
+          ? timeOfPuttingOnHold!.millisecondsSinceEpoch
           : null,
       'notesOnPuttingOnHold': notesOnPuttingOnHold,
       'putOnHoldBy': putOnHoldBy,
       'timeOfCompletion': (timeOfCompletion != null)
-          ? timeOfCompletion.millisecondsSinceEpoch
+          ? timeOfCompletion!.millisecondsSinceEpoch
           : null,
       'notesOnCompletion': notesOnCompletion,
       'completedBy': completedBy,
       'timeOfCancellation': (timeOfCancellation != null)
-          ? timeOfCancellation.millisecondsSinceEpoch
+          ? timeOfCancellation!.millisecondsSinceEpoch
           : null,
       'notesOnCancellation': notesOnCancellation,
       'preferredSlotTiming': (preferredSlotTiming != null)
-          ? preferredSlotTiming.millisecondsSinceEpoch
+          ? preferredSlotTiming!.millisecondsSinceEpoch
           : null,
       'notes': notes,
       'isOnlineModeOfInteraction': isOnlineModeOfInteraction
     };
 
-    for (Field f in responseForm.getFormFields()) {
+    for (Field f in responseForm!.getFormFields()) {
       if (f.type == FieldType.TEXT) {
-        FormInputFieldText t = f;
+        FormInputFieldText t = f as FormInputFieldText;
         map[t.key] = t.response;
       } else if (f.type == FieldType.NUMBER) {
-        FormInputFieldNumber t = f;
+        FormInputFieldNumber t = f as FormInputFieldNumber;
         map[t.key] = t.response;
       } else if (f.type == FieldType.INT) {
-        FormInputFieldInt t = f;
+        FormInputFieldInt t = f as FormInputFieldInt;
         map[t.key] = t.response;
       } else if (f.type == FieldType.OPTIONS) {
-        FormInputFieldOptions t = f;
-        List<String> fieldValueIds = [];
-        for (Value val in t.responseValues) {
+        FormInputFieldOptions t = f as FormInputFieldOptions;
+        List<String?> fieldValueIds = [];
+        for (Value val in t.responseValues!) {
           fieldValueIds.add(val.key);
         }
         map[t.key] = fieldValueIds;
       } else if (f.type == FieldType.ATTACHMENT) {
-        FormInputFieldAttachment t = f;
+        FormInputFieldAttachment t = f as FormInputFieldAttachment;
       } else if (f.type == FieldType.DATETIME) {
-        FormInputFieldDateTime t = f;
+        FormInputFieldDateTime t = f as FormInputFieldDateTime;
         map[t.key] = t.responseDateTime;
       } else if (f.type == FieldType.PHONE) {
-        FormInputFieldPhone t = f;
+        FormInputFieldPhone t = f as FormInputFieldPhone;
         map[t.key] = t.responsePhone;
       } else if (f.type == FieldType.OPTIONS_ATTACHMENTS) {
-        FormInputFieldOptionsWithAttachments t = f;
-        List<String> fieldValueIds = [];
+        FormInputFieldOptionsWithAttachments t = f as FormInputFieldOptionsWithAttachments;
+        List<String?> fieldValueIds = [];
         if (t.responseValues != null) {
-          for (Value val in t.responseValues) {
+          for (Value val in t.responseValues!) {
             fieldValueIds.add(val.key);
           }
         }
         map[t.key] = fieldValueIds;
       } else if (f.type == FieldType.BOOL) {
-        FormInputFieldBool t = f;
+        FormInputFieldBool t = f as FormInputFieldBool;
         map[t.key] = t.response;
       }
     }
@@ -145,10 +145,10 @@ class BookingApplication {
     return map;
   }
 
-  static BookingApplication fromJson(Map<String, dynamic> json) {
+  static BookingApplication? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
 
-    BookingForm bf = BookingForm.fromJson(json['responseForm']);
+    BookingForm bf = BookingForm.fromJson(json['responseForm'])!;
     BookingApplication ba =
         BookingApplication(entityId: json['entityId'], responseForm: bf);
     ba.bookingFormId = bf.id;
@@ -217,21 +217,21 @@ class BookingApplication {
 class BookingApplicationCounter {
   BookingApplicationCounter({this.bookingFormId, this.entityId});
 
-  String id = Uuid().v1();
-  String bookingFormId;
-  String
+  String? id = Uuid().v1();
+  String? bookingFormId;
+  String?
       entityId; //this will be null for the global applications record for a global bookingFormId (i.e. which is shared across the Entities)
 
-  int totalApplications = 0;
-  int numberOfNew = 0;
-  int numberOfApproved = 0;
-  int numberOfRejected = 0;
-  int numberOfPutOnHold = 0;
-  int numberOfInProcess = 0;
-  int numberOfCompleted = 0;
-  int numberOfCancelled = 0;
+  int? totalApplications = 0;
+  int? numberOfNew = 0;
+  int? numberOfApproved = 0;
+  int? numberOfRejected = 0;
+  int? numberOfPutOnHold = 0;
+  int? numberOfInProcess = 0;
+  int? numberOfCompleted = 0;
+  int? numberOfCancelled = 0;
 
-  Map<String, ApplicationStats> dailyStats; //key should be year#month#day
+  Map<String, ApplicationStats>? dailyStats; //key should be year#month#day
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -248,7 +248,7 @@ class BookingApplicationCounter {
         'dailyStats': convertFromMap(dailyStats)
       };
 
-  static BookingApplicationCounter fromJson(Map<String, dynamic> json) {
+  static BookingApplicationCounter? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
 
     BookingApplicationCounter overview = BookingApplicationCounter(
@@ -267,8 +267,8 @@ class BookingApplicationCounter {
     return overview;
   }
 
-  Map<String, dynamic> convertFromMap(
-      Map<String, ApplicationStats> dailyStats) {
+  Map<String, dynamic>? convertFromMap(
+      Map<String, ApplicationStats>? dailyStats) {
     if (dailyStats == null) {
       return null;
     }
@@ -289,13 +289,13 @@ class BookingApplicationCounter {
 }
 
 class ApplicationStats {
-  int numberOfNew = 0;
-  int numberOfApproved = 0;
-  int numberOfRejected = 0;
-  int numberOfPutOnHold = 0;
-  int numberOfInProcess = 0;
-  int numberOfCompleted = 0;
-  int numberOfCancelled = 0;
+  int? numberOfNew = 0;
+  int? numberOfApproved = 0;
+  int? numberOfRejected = 0;
+  int? numberOfPutOnHold = 0;
+  int? numberOfInProcess = 0;
+  int? numberOfCompleted = 0;
+  int? numberOfCancelled = 0;
 
   Map<String, dynamic> toJson() => {
         'numberOfNew': numberOfNew,

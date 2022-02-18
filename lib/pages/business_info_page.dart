@@ -22,7 +22,7 @@ import '../widget/weekday_selector.dart';
 
 class ManageTokens extends StatefulWidget {
   final MetaEntity metaEntity;
-  ManageTokens({Key key, @required this.metaEntity}) : super(key: key);
+  ManageTokens({Key? key, required this.metaEntity}) : super(key: key);
   @override
   _ManageTokensState createState() => _ManageTokensState();
 }
@@ -33,12 +33,12 @@ class _ManageTokensState extends State<ManageTokens> {
   List<String> attachments = [];
 
   bool initCompleted = false;
-  GlobalState _gs;
+  GlobalState? _gs;
   DateTime currentDate = DateTime.now();
-  List<Slot> _slotList;
-  Map<String, List<UserToken>> _tokensMap = new Map<String, List<UserToken>>();
+  List<Slot>? _slotList;
+  Map<String?, List<UserToken>?> _tokensMap = new Map<String?, List<UserToken>?>();
   bool slotsLoaded = false;
-  DateTime dateForLoadingSlots;
+  late DateTime dateForLoadingSlots;
   @override
   void initState() {
     super.initState();
@@ -93,23 +93,23 @@ class _ManageTokensState extends State<ManageTokens> {
       padding: EdgeInsets.all(0),
       child: Card(
           child: Container(
-              padding: EdgeInsets.all(10), child: Text(token.parent.userId))),
+              padding: EdgeInsets.all(10), child: Text(token.parent!.userId!))),
     );
   }
 
   Widget buildItem(Slot slot) {
-    List<UserToken> tokens = _tokensMap[slot.slotId];
-    String fromTime = Utils.formatTime(slot.dateTime.hour.toString()) +
+    List<UserToken>? tokens = _tokensMap[slot.slotId];
+    String fromTime = Utils.formatTime(slot.dateTime!.hour.toString()) +
         " : " +
-        Utils.formatTime(slot.dateTime.minute.toString());
+        Utils.formatTime(slot.dateTime!.minute.toString());
 
-    String toTime = Utils.formatTime(slot.dateTime
-            .add(new Duration(minutes: slot.slotDuration))
+    String toTime = Utils.formatTime(slot.dateTime!
+            .add(new Duration(minutes: slot.slotDuration!))
             .hour
             .toString()) +
         " : " +
-        Utils.formatTime(slot.dateTime
-            .add(new Duration(minutes: slot.slotDuration))
+        Utils.formatTime(slot.dateTime!
+            .add(new Duration(minutes: slot.slotDuration!))
             .minute
             .toString());
 
@@ -153,10 +153,10 @@ class _ManageTokensState extends State<ManageTokens> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
                                     //  height: MediaQuery.of(context).size.height * .3,
-                                    child: buildChildItem(tokens[index]),
+                                    child: buildChildItem(tokens![index]),
                                   );
                                 },
-                                itemCount: tokens.length,
+                                itemCount: tokens!.length,
                               ),
                             ),
                           ),
@@ -174,15 +174,15 @@ class _ManageTokensState extends State<ManageTokens> {
   }
 
   Widget loadSlotsForDate(DateTime date) {
-    List<Slot> _slotListForDate;
+    List<Slot>? _slotListForDate;
     getSlotsListForEntity(widget.metaEntity, date).then((slotListTuple) async {
       _slotListForDate = slotListTuple.item2;
-      for (int i = 0; i <= _slotListForDate.length - 1; i++) {
-        List<UserToken> tokensForThisSlot = await _gs
-            .getTokenService()
-            .getAllTokensForSlot(_slotListForDate[i].slotId);
+      for (int i = 0; i <= _slotListForDate!.length - 1; i++) {
+        List<UserToken>? tokensForThisSlot = await _gs!
+            .getTokenService()!
+            .getAllTokensForSlot(_slotListForDate![i].slotId);
         if (!Utils.isNullOrEmpty(tokensForThisSlot))
-          _tokensMap[_slotListForDate[i].slotId] = tokensForThisSlot;
+          _tokensMap[_slotListForDate![i].slotId] = tokensForThisSlot;
       }
       return Container(
         child: Column(
@@ -204,10 +204,10 @@ class _ManageTokensState extends State<ManageTokens> {
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                             //  height: MediaQuery.of(context).size.height * .3,
-                            child: buildItem(_slotListForDate[index]),
+                            child: buildItem(_slotListForDate![index]),
                           );
                         },
-                        itemCount: _slotListForDate.length,
+                        itemCount: _slotListForDate!.length,
                       ),
                     ),
                   ),
@@ -277,10 +277,10 @@ class _ManageTokensState extends State<ManageTokens> {
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
                           //  height: MediaQuery.of(context).size.height * .3,
-                          child: buildItem(_slotList[index]),
+                          child: buildItem(_slotList![index]),
                         );
                       },
-                      itemCount: _slotList.length,
+                      itemCount: _slotList!.length,
                     ),
                   ),
                 ),
@@ -289,13 +289,13 @@ class _ManageTokensState extends State<ManageTokens> {
     );
   }
 
-  Future<DateTime> pickDate(BuildContext context) async {
-    DateTime date = await showDatePicker(
+  Future<DateTime?> pickDate(BuildContext context) async {
+    DateTime? date = await showDatePicker(
       context: context,
       firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
       lastDate: DateTime.now(),
       initialDate: DateTime.now(),
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
@@ -303,20 +303,20 @@ class _ManageTokensState extends State<ManageTokens> {
             ),
             dialogBackgroundColor: Colors.white,
           ),
-          child: child,
+          child: child!,
         );
       },
     );
     return date;
   }
 
-  Future<DateTime> pickAnyDate(BuildContext context) async {
-    DateTime date = await showDatePicker(
+  Future<DateTime?> pickAnyDate(BuildContext context) async {
+    DateTime? date = await showDatePicker(
       context: context,
       firstDate: DateTime.now().subtract(Duration(days: 365)),
       lastDate: DateTime.now().add(Duration(days: 60)),
       initialDate: DateTime.now(),
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
@@ -324,7 +324,7 @@ class _ManageTokensState extends State<ManageTokens> {
             ),
             dialogBackgroundColor: Colors.white,
           ),
-          child: child,
+          child: child!,
         );
       },
     );

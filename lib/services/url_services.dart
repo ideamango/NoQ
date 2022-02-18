@@ -9,54 +9,54 @@ import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
-launchURL(String title, String addr, double lat, double long) async {
+launchURL(String? title, String? addr, double lat, double long) async {
   final description = addr;
   final coords = Coords(lat, long);
   final availableMaps = await MapLauncher.installedMaps;
   print(availableMaps);
 
   if (Platform.isIOS) {
-    if (await MapLauncher.isMapAvailable(MapType.google)) {
+    if (await (MapLauncher.isMapAvailable(MapType.google) as FutureOr<bool>)) {
       await MapLauncher.launchMap(
         mapType: MapType.google,
         coords: coords,
-        title: title,
+        title: title!,
         description:
             "", //in Iphone not opening with lat,lon but instead with the name
       );
-    } else if (await MapLauncher.isMapAvailable(MapType.apple)) {
+    } else if (await (MapLauncher.isMapAvailable(MapType.apple) as FutureOr<bool>)) {
       await MapLauncher.launchMap(
         mapType: MapType.apple,
         coords: coords,
-        title: title,
+        title: title!,
         description: description,
       );
-    } else if (await MapLauncher.isMapAvailable(MapType.amap)) {
+    } else if (await (MapLauncher.isMapAvailable(MapType.amap) as FutureOr<bool>)) {
       await MapLauncher.launchMap(
         mapType: MapType.apple,
         coords: coords,
-        title: title,
+        title: title!,
         description: description,
       );
     }
-  } else if (await MapLauncher.isMapAvailable(MapType.google)) {
+  } else if (await (MapLauncher.isMapAvailable(MapType.google) as FutureOr<bool>)) {
     await MapLauncher.launchMap(
       mapType: MapType.google,
       coords: coords,
-      title: title,
+      title: title!,
       description: description,
     );
   } else {
     await availableMaps.first.showMarker(
       coords: coords,
-      title: title,
+      title: title!,
       description: description,
     );
   }
   print("Maps launched");
 }
 
-Future<bool> launchMail(String toMailId, String subject, String body) async {
+Future<bool> launchMail(String? toMailId, String subject, String body) async {
   var url = 'mailto:$toMailId?subject=$subject&body=$body';
   if (await canLaunch(url)) {
     launch(url).then((value) {
@@ -69,7 +69,7 @@ Future<bool> launchMail(String toMailId, String subject, String body) async {
   }
 }
 
-callPhone(String phone) async {
+callPhone(String? phone) async {
   String phoneStr = "tel://$phone";
   if (await UrlLauncher.canLaunch(phoneStr)) {
     await UrlLauncher.launch(phoneStr);
@@ -79,8 +79,8 @@ callPhone(String phone) async {
 }
 
 void launchWhatsApp({
-  @required String phone,
-  @required String message,
+  required String? phone,
+  required String message,
 }) async {
   String url() {
     if (Platform.isIOS) {
@@ -134,7 +134,7 @@ void launchWhatsApp({
 
 //     return appId ?? '';
 //   }
-Future<String> openRateReviewForIos(String appId, bool forReview) async {
+Future<String> openRateReviewForIos(String? appId, bool forReview) async {
   String reviewUrl;
   if (forReview)
     reviewUrl = 'itunes.apple.com/app/id$appId?mt=8&action=write-review';
@@ -158,13 +158,13 @@ Future<String> openRateReviewForIos(String appId, bool forReview) async {
   // } finally {}
 }
 
-PackageInfo _packageInfo;
-String _appCountry;
-String _appBundle;
-String _appId;
-Future<String> getIosAppId({
-  String countryCode,
-  String bundleId,
+PackageInfo? _packageInfo;
+String? _appCountry;
+String? _appBundle;
+String? _appId;
+Future<String?> getIosAppId({
+  String? countryCode,
+  String? bundleId,
 }) async {
   // If bundle name is not provided
   // then fetch and return the app ID from cache (if available)
@@ -178,9 +178,9 @@ Future<String> getIosAppId({
   }
 
   // Else fetch from AppStore
-  final String id = bundleId ?? (await getBundleName());
+  final String id = bundleId ?? (await (getBundleName() as FutureOr<String>));
   final String country = countryCode ?? _appCountry ?? '';
-  String appId;
+  String? appId;
 
   if (id.isNotEmpty) {
     try {
@@ -201,7 +201,7 @@ Future<String> getIosAppId({
   return appId ?? '';
 }
 
-Future<String> openGooglePlay(String bundle) async {
+Future<String> openGooglePlay(String? bundle) async {
   final markerUrl = 'market://details?id=$bundle';
   if (await canLaunch(markerUrl)) {
     print('launching store page');
@@ -219,7 +219,7 @@ Future<String> openGooglePlay(String bundle) async {
 }
 
 void launchPlayStore(
-    {String packageName, String iOSAppId, bool forReview}) async {
+    {String? packageName, String? iOSAppId, bool? forReview}) async {
   //TODO change bundle /app id
   //packageName = "com.bigbasket.mobileapp";
   //app id for google photos
@@ -227,7 +227,7 @@ void launchPlayStore(
   //TODO  End
   // final appId =  getIosAppId() ?? '';
   if (Platform.isIOS) {
-    openRateReviewForIos(iOSAppId, forReview);
+    openRateReviewForIos(iOSAppId, forReview!);
   } else if (Platform.isAndroid) {
     openGooglePlay(packageName);
     // return "https://play.google.com/store/apps/details?id=" + packageName;
@@ -240,20 +240,20 @@ void launchPlayStore(
   // }
 }
 
-Future<PackageInfo> getPackageInfo() async {
+Future<PackageInfo?> getPackageInfo() async {
   _packageInfo ??= await PackageInfo.fromPlatform();
 
-  print('App Name: ${_packageInfo.appName}\n'
-      'Package Name: ${_packageInfo.packageName}\n'
-      'Version: ${_packageInfo.version}\n'
-      'Build Number: ${_packageInfo.buildNumber}');
+  print('App Name: ${_packageInfo!.appName}\n'
+      'Package Name: ${_packageInfo!.packageName}\n'
+      'Version: ${_packageInfo!.version}\n'
+      'Build Number: ${_packageInfo!.buildNumber}');
 
   return _packageInfo;
 }
 
 /// Get app bundle name
 
-Future<String> getBundleName() async {
+Future<String?> getBundleName() async {
   _appBundle ??= (await getPackageInfo())?.packageName ?? '';
   return _appBundle;
 }

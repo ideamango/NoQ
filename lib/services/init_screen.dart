@@ -12,7 +12,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashState extends State<SplashScreen> {
-  GlobalState _state;
+  GlobalState? _state;
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class SplashState extends State<SplashScreen> {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => (_state.getAuthService()).handleAuth(),
+          builder: (context) => _state!.getAuthService()!.handleAuth(),
         ));
   }
 
@@ -93,7 +93,7 @@ class SplashState extends State<SplashScreen> {
                 // verticalSpacer,
                 CircularProgressIndicator(
                   backgroundColor: primaryAccentColor,
-                  valueColor: AlwaysStoppedAnimation<Color>(borderColor),
+                  valueColor: AlwaysStoppedAnimation<Color?>(borderColor),
                   strokeWidth: 2,
                 )
               ],

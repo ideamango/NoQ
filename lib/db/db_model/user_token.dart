@@ -25,25 +25,25 @@ class UserTokens {
       this.isOnlineAppointment,
       this.createdOn});
 
-  String slotId; //entityID#20~06~01#9~30
-  String entityId;
-  String userId;
-  DateTime dateTime;
-  int maxAllowed;
-  int slotDuration;
-  String entityName;
-  double lat;
-  double lon;
-  String entityWhatsApp;
-  String phone;
-  int rNum;
-  String address;
-  List<UserToken> tokens;
-  String upiId;
-  String upiPhoneNumber;
-  String upiQRImagePath;
-  bool isOnlineAppointment;
-  DateTime createdOn;
+  String? slotId; //entityID#20~06~01#9~30
+  String? entityId;
+  String? userId;
+  DateTime? dateTime;
+  int? maxAllowed;
+  int? slotDuration;
+  String? entityName;
+  double? lat;
+  double? lon;
+  String? entityWhatsApp;
+  String? phone;
+  int? rNum;
+  String? address;
+  List<UserToken>? tokens;
+  String? upiId;
+  String? upiPhoneNumber;
+  String? upiQRImagePath;
+  bool? isOnlineAppointment;
+  DateTime? createdOn;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -51,7 +51,7 @@ class UserTokens {
         'slotId': slotId,
         'entityId': entityId,
         'userId': userId,
-        'dateTime': dateTime != null ? dateTime.millisecondsSinceEpoch : null,
+        'dateTime': dateTime != null ? dateTime!.millisecondsSinceEpoch : null,
         'maxAllowed': maxAllowed,
         'slotDuration': slotDuration,
         'entityName': entityName,
@@ -69,7 +69,7 @@ class UserTokens {
         'createdOn': createdOn
       };
 
-  static UserTokens fromJson(Map<String, dynamic> json) {
+  static UserTokens? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     UserTokens tokens = new UserTokens(
         slotId: json['slotId'],
@@ -97,44 +97,44 @@ class UserTokens {
                 json['createdOn'].seconds * 1000)
             : null);
 
-    for (UserToken token in tokens.tokens) {
+    for (UserToken token in tokens.tokens!) {
       token.parent = tokens;
     }
 
     return tokens;
   }
 
-  static List<UserToken> convertToTokensFromJson(List<dynamic> toksJson) {
+  static List<UserToken> convertToTokensFromJson(List<dynamic>? toksJson) {
     List<UserToken> toks = [];
     if (toksJson == null) return toks;
 
-    for (Map<String, dynamic> json in toksJson) {
+    for (Map<String, dynamic> json in toksJson as Iterable<Map<String, dynamic>>) {
       UserToken sl = UserToken.fromJson(json);
       toks.add(sl);
     }
     return toks;
   }
 
-  List<dynamic> tokensToJson(List<UserToken> toks) {
+  List<dynamic> tokensToJson(List<UserToken>? toks) {
     List<dynamic> tokensJson = [];
     if (toks == null) return tokensJson;
-    for (UserToken tok in tokens) {
+    for (UserToken tok in tokens!) {
       tokensJson.add(tok.toJson());
     }
     return tokensJson;
   }
 
-  String getTokenId() {
+  String? getTokenId() {
     if (slotId == null || userId == null) {
       return null;
     }
-    return slotId + '#' + userId;
+    return slotId! + '#' + userId!;
   }
 
   String getDisplayNamePrefix() {
-    String name = entityName.substring(0, 3).toUpperCase();
+    String name = entityName!.substring(0, 3).toUpperCase();
     DateFormat formatter = DateFormat('-yyMMdd-kkmm-');
-    String formattedDate = formatter.format(dateTime);
+    String formattedDate = formatter.format(dateTime!);
 
     String prefix = name + formattedDate;
     return prefix;
@@ -145,7 +145,7 @@ class UserTokens {
     //E.g. BAT-200708-0930-10
 
     List<String> tokenNames = [];
-    for (UserToken tok in tokens) {
+    for (UserToken tok in tokens!) {
       tokenNames.add(tok.getDisplayName());
     }
 
@@ -166,7 +166,7 @@ class UserTokens {
     List<ListItem> items = [];
     if (Utils.isNullOrEmpty(listItemsJson)) return items;
 
-    for (Map<String, dynamic> json in listItemsJson) {
+    for (Map<String, dynamic> json in listItemsJson as Iterable<Map<String, dynamic>>) {
       ListItem item = ListItem.fromJson(json);
       items.add(item);
     }
@@ -191,17 +191,17 @@ class UserToken {
       this.parent,
       this.numberBeforeCancellation});
 
-  Order order;
-  int number;
-  String applicationId;
-  String bookingFormId;
-  String bookingFormName;
-  UserTokens parent;
-  int numberBeforeCancellation;
+  Order? order;
+  int? number;
+  String? applicationId;
+  String? bookingFormId;
+  String? bookingFormName;
+  UserTokens? parent;
+  int? numberBeforeCancellation;
 
   Map<String, dynamic> toJson() => {
         'number': number,
-        'order': order != null ? order.toJson() : null,
+        'order': order != null ? order!.toJson() : null,
         'applicationId': applicationId,
         'bookingFormId': bookingFormId,
         'bookingFormName': bookingFormName,
@@ -221,13 +221,13 @@ class UserToken {
 
   String getDisplayName() {
     if (number == -1) {
-      return parent.getDisplayNamePrefix() +
+      return parent!.getDisplayNamePrefix() +
           numberBeforeCancellation.toString();
     }
-    return parent.getDisplayNamePrefix() + number.toString();
+    return parent!.getDisplayNamePrefix() + number.toString();
   }
 
-  int getNumber() {
+  int? getNumber() {
     if (number == -1) {
       return numberBeforeCancellation;
     }
@@ -236,15 +236,15 @@ class UserToken {
 
   String getID() {
     if (number == -1) {
-      return parent.getTokenId() + "#" + numberBeforeCancellation.toString();
+      return parent!.getTokenId()! + "#" + numberBeforeCancellation.toString();
     }
-    return parent.getTokenId() + "#" + number.toString();
+    return parent!.getTokenId()! + "#" + number.toString();
   }
 }
 
 class TokenStats {
-  int numberOfTokensCreated = 0;
-  int numberOfTokensCancelled = 0;
+  int? numberOfTokensCreated = 0;
+  int? numberOfTokensCancelled = 0;
 
   Map<String, dynamic> toJson() => {
         'numberOfTokensCreated': numberOfTokensCreated,
@@ -265,20 +265,20 @@ class TokenStats {
 class TokenCounter {
   TokenCounter({this.entityId, this.year});
 
-  String entityId;
-  String year;
+  String? entityId;
+  String? year;
 
-  Map<String, TokenStats>
+  Map<String, TokenStats>?
       slotWiseStats; //key should be year~month~day#slot-time
 
   Map<String, dynamic> toJson() => {
-        'id': entityId + "#" + year,
+        'id': entityId! + "#" + year!,
         'entityId': entityId,
         'year': year,
         'slotWiseStats': convertFromMap(slotWiseStats)
       };
 
-  static TokenCounter fromJson(Map<String, dynamic> json) {
+  static TokenCounter? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
 
     TokenCounter overview =
@@ -288,7 +288,7 @@ class TokenCounter {
     return overview;
   }
 
-  Map<String, dynamic> convertFromMap(Map<String, TokenStats> dailyStats) {
+  Map<String, dynamic>? convertFromMap(Map<String, TokenStats>? dailyStats) {
     if (dailyStats == null) {
       return null;
     }
@@ -302,11 +302,11 @@ class TokenCounter {
 
   TokenStats getTokenStatsForMonth(int month) {
     TokenStats ts = new TokenStats();
-    slotWiseStats.forEach((key, value) {
+    slotWiseStats!.forEach((key, value) {
       int tokenMonth = int.parse(key.split('~')[1]);
       if (tokenMonth == month) {
-        ts.numberOfTokensCreated += value.numberOfTokensCreated;
-        ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+        ts.numberOfTokensCreated += value.numberOfTokensCreated!;
+        ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
       }
     });
 
@@ -315,15 +315,15 @@ class TokenCounter {
 
   TokenStats getTokenStatsForDay(DateTime date) {
     TokenStats ts = new TokenStats();
-    slotWiseStats.forEach((key, value) {
+    slotWiseStats!.forEach((key, value) {
       String tokenDate = (key.split('#')[0]);
       List<String> dateList = tokenDate.split('~');
 
       if (int.parse(dateList[0]) == date.year &&
           int.parse(dateList[1]) == date.month &&
           int.parse(dateList[2]) == date.day) {
-        ts.numberOfTokensCreated += value.numberOfTokensCreated;
-        ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+        ts.numberOfTokensCreated += value.numberOfTokensCreated!;
+        ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
       }
     });
 
@@ -332,17 +332,17 @@ class TokenCounter {
 
   Map<String, TokenStats> getTokenStatsMonthWiseForYear() {
     Map<String, TokenStats> map = new Map<String, TokenStats>();
-    slotWiseStats.forEach((key, value) {
+    slotWiseStats!.forEach((key, value) {
       String tokenMonth = key.split('#')[1];
       if (map.containsKey(tokenMonth)) {
-        TokenStats ts = map[tokenMonth];
-        ts.numberOfTokensCreated += value.numberOfTokensCreated;
-        ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+        TokenStats ts = map[tokenMonth]!;
+        ts.numberOfTokensCreated += value.numberOfTokensCreated!;
+        ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
       } else {
         TokenStats ts = new TokenStats();
         map[tokenMonth] = ts;
-        ts.numberOfTokensCreated += value.numberOfTokensCreated;
-        ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+        ts.numberOfTokensCreated += value.numberOfTokensCreated!;
+        ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
       }
     });
 
@@ -351,19 +351,19 @@ class TokenCounter {
 
   Map<String, TokenStats> getTokenStatsDayWiseForMonth(int month) {
     Map<String, TokenStats> dayWiseStats = Map<String, TokenStats>();
-    slotWiseStats.forEach((key, value) {
+    slotWiseStats!.forEach((key, value) {
       String tokenDate = (key.split('#')[0]);
       String slot = (key.split('#')[1]);
       List<String> dateList = tokenDate.split('~');
       String day = (dateList[2]);
       if (int.parse(dateList[1]) == month) {
         if (dayWiseStats.containsKey(day)) {
-          dayWiseStats[day].numberOfTokensCreated =
-              dayWiseStats[day].numberOfTokensCreated +
-                  value.numberOfTokensCreated;
-          dayWiseStats[day].numberOfTokensCancelled =
-              dayWiseStats[day].numberOfTokensCancelled +
-                  value.numberOfTokensCancelled;
+          dayWiseStats[day]!.numberOfTokensCreated =
+              dayWiseStats[day]!.numberOfTokensCreated! +
+                  value.numberOfTokensCreated!;
+          dayWiseStats[day]!.numberOfTokensCancelled =
+              dayWiseStats[day]!.numberOfTokensCancelled! +
+                  value.numberOfTokensCancelled!;
         } else {
           dayWiseStats[day.toString()] = value;
         }
@@ -373,14 +373,14 @@ class TokenCounter {
     return dayWiseStats;
   }
 
-  Map<String, TokenStats> getTokenStatsSlotWiseForDay(DateTime date) {
+  Map<String, TokenStats> getTokenStatsSlotWiseForDay(DateTime? date) {
     Map<String, TokenStats> slotWiseStatsForDay = Map<String, TokenStats>();
-    slotWiseStats.forEach((key, value) {
+    slotWiseStats!.forEach((key, value) {
       String tokenDate = (key.split('#')[0]);
       String slot = (key.split('#')[1]);
       List<String> dateList = tokenDate.split('~');
 
-      if (int.parse(dateList[0]) == date.year &&
+      if (int.parse(dateList[0]) == date!.year &&
           int.parse(dateList[1]) == date.month &&
           int.parse(dateList[2]) == date.day) {
         slotWiseStatsForDay[slot] = value;
@@ -392,9 +392,9 @@ class TokenCounter {
 
   TokenStats getTokenStatsForYear() {
     TokenStats ts = new TokenStats();
-    slotWiseStats.forEach((key, value) {
-      ts.numberOfTokensCreated += value.numberOfTokensCreated;
-      ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+    slotWiseStats!.forEach((key, value) {
+      ts.numberOfTokensCreated += value.numberOfTokensCreated!;
+      ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
     });
 
     return ts;
@@ -405,7 +405,7 @@ class TokenCounter {
     Map<String, TokenStats> slotWiseStatsForRange =
         new Map<String, TokenStats>();
 
-    slotWiseStats.forEach((key, value) {
+    slotWiseStats!.forEach((key, value) {
       int tokenYear = int.parse(key.split('#')[0]);
       int tokenMonth = int.parse(key.split('#')[1]);
       int tokenDay = int.parse(key.split('#')[2]);
@@ -415,13 +415,13 @@ class TokenCounter {
 
       if (dt.isAfter(to) && dt.isBefore(from)) {
         if (slotWiseStatsForRange.containsKey(timeSlot)) {
-          TokenStats ts = slotWiseStatsForRange[timeSlot];
-          ts.numberOfTokensCreated += value.numberOfTokensCreated;
-          ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+          TokenStats ts = slotWiseStatsForRange[timeSlot]!;
+          ts.numberOfTokensCreated += value.numberOfTokensCreated!;
+          ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
         } else {
           TokenStats ts = new TokenStats();
-          ts.numberOfTokensCreated += value.numberOfTokensCreated;
-          ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+          ts.numberOfTokensCreated += value.numberOfTokensCreated!;
+          ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
           slotWiseStatsForRange[timeSlot] = ts;
         }
       }

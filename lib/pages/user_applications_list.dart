@@ -27,11 +27,11 @@ import '../widget/page_animation.dart';
 import '../widget/widgets.dart';
 
 class UserApplicationsList extends StatefulWidget {
-  final BookingApplication ba;
+  final BookingApplication? ba;
 
   UserApplicationsList({
-    Key key,
-    @required this.ba,
+    Key? key,
+    required this.ba,
   }) : super(key: key);
   @override
   _UserApplicationsListState createState() => _UserApplicationsListState();
@@ -39,32 +39,32 @@ class UserApplicationsList extends StatefulWidget {
 
 class _UserApplicationsListState extends State<UserApplicationsList> {
   bool initCompleted = false;
-  GlobalState _gs;
+  GlobalState? _gs;
 
-  List<UserToken> tokens;
-  String entityName;
-  DateTime bookingTime;
-  DateTime tokenDateTime;
+  List<UserToken?>? tokens;
+  String? entityName;
+  DateTime? bookingTime;
+  DateTime? tokenDateTime;
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       //get Token details from GS
-      if (Utils.isNotNullOrEmpty(widget.ba.tokenId)) {
-        List<Tuple<UserToken, DocumentSnapshot>> listOfAllTokens = _gs.bookings;
+      if (Utils.isNotNullOrEmpty(widget.ba!.tokenId)) {
+        List<Tuple<UserToken, DocumentSnapshot>>? listOfAllTokens = _gs!.bookings;
         if (!Utils.isNullOrEmpty(listOfAllTokens)) {
           tokens = [];
-          for (var token in listOfAllTokens) {
-            if (token.item1.getID() == widget.ba.tokenId) {
-              tokens.add(token.item1);
+          for (var token in listOfAllTokens!) {
+            if (token.item1!.getID() == widget.ba!.tokenId) {
+              tokens!.add(token.item1);
             }
           }
         }
       }
       if (!Utils.isNullOrEmpty(tokens)) {
-        entityName = tokens[0].parent.entityName;
-        bookingTime = tokens[0].parent.dateTime;
-        tokenDateTime = tokens[0].parent.dateTime;
+        entityName = tokens![0]!.parent!.entityName;
+        bookingTime = tokens![0]!.parent!.dateTime;
+        tokenDateTime = tokens![0]!.parent!.dateTime;
       }
       setState(() {
         initCompleted = true;
@@ -77,15 +77,15 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
   }
 
   shareQr(MetaEntity metaEntity) {
-    Entity en;
-    _gs.getEntity(metaEntity.entityId, false).then((value) {
-      bool isSavedOnServer = true;
+    Entity? en;
+    _gs!.getEntity(metaEntity.entityId, false).then((value) {
+      bool? isSavedOnServer = true;
       if (value != null) {
         en = value.item1;
         isSavedOnServer = value.item2;
       }
 
-      if (!isSavedOnServer) {
+      if (!isSavedOnServer!) {
         Utils.showMyFlushbar(
             context,
             Icons.info,
@@ -99,7 +99,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
           uniqueTokenIdentifier: null,
           entityName: metaEntity.name,
           backRoute: "UserAppsList",
-          baId: widget.ba.id,
+          baId: widget.ba!.id,
         )));
       }
     });
@@ -1144,14 +1144,14 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
       switch (field.type) {
         case FieldType.TEXT:
           {
-            FormInputFieldText newfield = field;
+            FormInputFieldText newfield = field as FormInputFieldText;
             fieldWidget = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   //width: cardWidth * .12,
                   child: AutoSizeText(
-                    newfield.label,
+                    newfield.label!,
                     group: labelGroup,
                     minFontSize: 10,
                     maxFontSize: 11,
@@ -1169,7 +1169,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                   child: AutoSizeText(
                     Utils.isStrNullOrEmpty(newfield.response)
                         ? 'No Data'
-                        : newfield.response,
+                        : newfield.response!,
                     group: responseGroup,
                     minFontSize: 12,
                     maxFontSize: 14,
@@ -1188,14 +1188,14 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
           break;
         case FieldType.NUMBER:
           {
-            FormInputFieldNumber newfield = field;
+            FormInputFieldNumber newfield = field as FormInputFieldNumber;
             fieldWidget = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   //width: cardWidth * .12,
                   child: AutoSizeText(
-                    newfield.label,
+                    newfield.label!,
                     group: labelGroup,
                     minFontSize: 10,
                     maxFontSize: 11,
@@ -1230,14 +1230,14 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
           break;
         case FieldType.INT:
           {
-            FormInputFieldNumber newfield = field;
+            FormInputFieldNumber newfield = field as FormInputFieldNumber;
             fieldWidget = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   //width: cardWidth * .12,
                   child: AutoSizeText(
-                    newfield.label,
+                    newfield.label!,
                     group: labelGroup,
                     minFontSize: 10,
                     maxFontSize: 11,
@@ -1272,14 +1272,14 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
           break;
         case FieldType.PHONE:
           {
-            FormInputFieldPhone newfield = field;
+            FormInputFieldPhone newfield = field as FormInputFieldPhone;
             fieldWidget = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   //width: cardWidth * .12,
                   child: AutoSizeText(
-                    newfield.label,
+                    newfield.label!,
                     group: labelGroup,
                     minFontSize: 10,
                     maxFontSize: 11,
@@ -1314,7 +1314,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
 
         case FieldType.DATETIME:
           {
-            FormInputFieldDateTime newfield = field;
+            FormInputFieldDateTime newfield = field as FormInputFieldDateTime;
             //TODO Smita - Add case if field is Age
             fieldWidget = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1322,7 +1322,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                 SizedBox(
                   //width: cardWidth * .12,
                   child: AutoSizeText(
-                    newfield.label,
+                    newfield.label!,
                     group: labelGroup,
                     minFontSize: 10,
                     maxFontSize: 11,
@@ -1338,10 +1338,10 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                   //  width: cardWidth * .4,
                   //height: cardHeight * .1,
                   child: AutoSizeText(
-                    (newfield.yearOnly)
-                        ? newfield.responseDateTime.year.toString()
+                    newfield.yearOnly!
+                        ? newfield.responseDateTime!.year.toString()
                         : DateFormat('dd-MM-yyyy')
-                            .format(newfield.responseDateTime)
+                            .format(newfield.responseDateTime!)
                             .toString(),
                     group: responseGroup,
                     minFontSize: 12,
@@ -1358,16 +1358,16 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
           break;
         case FieldType.OPTIONS:
           {
-            FormInputFieldOptions newfield = field;
+            FormInputFieldOptions newfield = field as FormInputFieldOptions;
             //If field is multi-select then concatenate responses and show.
 
-            String responseVals;
-            for (Value val in newfield.responseValues) {
+            String? responseVals;
+            for (Value val in newfield.responseValues!) {
               if (Utils.isStrNullOrEmpty(responseVals)) responseVals = "";
               if (responseVals == "")
                 responseVals = val.value.toString();
               else
-                responseVals = responseVals + ' | ' + val.value.toString();
+                responseVals = responseVals! + ' | ' + val.value.toString();
             }
             if (Utils.isStrNullOrEmpty(responseVals))
               responseVals = "No Data Found";
@@ -1378,7 +1378,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                 SizedBox(
                   //width: cardWidth * .12,
                   child: AutoSizeText(
-                    newfield.label,
+                    newfield.label!,
                     group: labelGroup,
                     minFontSize: 10,
                     maxFontSize: 11,
@@ -1394,7 +1394,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                   //  width: cardWidth * .4,
                   //height: cardHeight * .1,
                   child: AutoSizeText(
-                    responseVals,
+                    responseVals!,
                     group: responseGroup,
                     minFontSize: 12,
                     maxFontSize: 14,
@@ -1412,16 +1412,16 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
           break;
         case FieldType.OPTIONS_ATTACHMENTS:
           {
-            FormInputFieldOptionsWithAttachments newfield = field;
-            String responseVals;
-            for (Value val in newfield.responseValues) {
+            FormInputFieldOptionsWithAttachments newfield = field as FormInputFieldOptionsWithAttachments;
+            String? responseVals;
+            for (Value val in newfield.responseValues!) {
               if (!Utils.isNotNullOrEmpty(responseVals)) {
                 responseVals = "";
               }
               if (responseVals == "")
-                responseVals = responseVals + val.value.toString();
+                responseVals = responseVals! + val.value.toString();
               else
-                responseVals = responseVals + " | " + val.value.toString();
+                responseVals = responseVals! + " | " + val.value.toString();
             }
 
             //  responseVals = newfield.responseValues.toString();
@@ -1436,7 +1436,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     SizedBox(
                       //width: cardWidth * .12,
                       child: AutoSizeText(
-                        newfield.label,
+                        newfield.label!,
                         group: labelGroup,
                         minFontSize: 10,
                         maxFontSize: 11,
@@ -1509,8 +1509,8 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
     return fieldWidget;
   }
 
-  Future<bool> cancelBooking(BuildContext context) async {
-    bool cancelVal = await showDialog(
+  Future<bool?> cancelBooking(BuildContext context) async {
+    bool? cancelVal = await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (_) => AlertDialog(
@@ -1590,7 +1590,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
     //   listOfControllers[ba.id] = new TextEditingController();
     // }
 
-    listOfMeta.addAll(ba.responseForm
+    listOfMeta.addAll(ba.responseForm!
         .getFormFields()
         .where((element) => element.isMeta == true));
 
@@ -1675,7 +1675,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                   child: AutoSizeText(
                                     ((ba.preferredSlotTiming != null)
                                         ? DateFormat('yyyy-MM-dd – HH:mm')
-                                            .format(ba.timeOfSubmission)
+                                            .format(ba.timeOfSubmission!)
                                         : "None"),
                                     // group: medCondGroup,
                                     minFontSize: 12,
@@ -1737,7 +1737,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     margin: EdgeInsets.fromLTRB(5, 8, 5, 0),
                     width: MediaQuery.of(context).size.width * .9,
                     child: AutoSizeText(
-                      ba.entityName.toUpperCase(),
+                      ba.entityName!.toUpperCase(),
                       minFontSize: 12,
                       maxFontSize: 16,
                       overflow: TextOverflow.ellipsis,
@@ -1758,7 +1758,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     margin: EdgeInsets.fromLTRB(5, 0, 5, 5),
                     width: MediaQuery.of(context).size.width * .9,
                     child: AutoSizeText(
-                      ba.responseForm.formName,
+                      ba.responseForm!.formName!,
                       minFontSize: 10,
                       maxFontSize: 16,
                       overflow: TextOverflow.ellipsis,
@@ -1776,12 +1776,12 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                 width: MediaQuery.of(context).size.width * .9,
                 // color: Colors.cyan[100],
                 decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blueGrey[100]),
+                    border: Border.all(color: Colors.blueGrey[100]!),
                     color: Colors.white,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.all(Radius.circular(5.0))),
                 child: ListView.builder(
-                  itemCount: tokens.length,
+                  itemCount: tokens!.length,
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   // reverse: true,
@@ -1806,7 +1806,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                   ),
                                 ),
                                 AutoSizeText(
-                                  ('${tokens[index].getDisplayName()}'),
+                                  ('${tokens![index]!.getDisplayName()}'),
                                   minFontSize: 9,
                                   maxFontSize: 15,
                                   maxLines: 1,
@@ -1852,7 +1852,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                 ),
                                 horizontalSpacer,
                                 AutoSizeText(
-                                  ('${DateFormat('yyyy-MM-dd – HH:mm').format(tokens[index].parent.dateTime)}'),
+                                  ('${DateFormat('yyyy-MM-dd – HH:mm').format(tokens![index]!.parent!.dateTime!)}'),
                                   // group: medCondGroup,
                                   minFontSize: 9,
                                   maxFontSize: 15,
@@ -1894,7 +1894,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                 width: MediaQuery.of(context).size.width * .9,
                 // color: Colors.cyan[100],
                 decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blueGrey[100]),
+                    border: Border.all(color: Colors.blueGrey[100]!),
                     color: Colors.white,
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1953,7 +1953,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     child: AutoSizeText(
                       ((ba.preferredSlotTiming != null)
                           ? DateFormat('yyyy-MM-dd – HH:mm')
-                              .format(ba.preferredSlotTiming)
+                              .format(ba.preferredSlotTiming!)
                           : "None"),
                       // group: medCondGroup,
                       minFontSize: 12,
@@ -2004,7 +2004,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                               margin: EdgeInsets.zero,
                               padding: EdgeInsets.zero,
                               child: AutoSizeText(
-                                (ba.isOnlineModeOfInteraction)
+                                ba.isOnlineModeOfInteraction!
                                     ? 'Online'
                                     : 'Walk-in',
                                 minFontSize: 12,
@@ -2020,14 +2020,14 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                           ],
                         ),
                       ),
-                      (ba.isOnlineModeOfInteraction)
+                      ba.isOnlineModeOfInteraction!
                           ? GestureDetector(
                               onTap: () {
                                 //Whatsapp launch
 
                                 if (tokenDateTime != null) {
                                   Duration timeDiff =
-                                      DateTime.now().difference(tokenDateTime);
+                                      DateTime.now().difference(tokenDateTime!);
                                   if (timeDiff.inMinutes <= -1) {
                                     print("Diff more");
                                     Utils.showMyFlushbar(
@@ -2036,7 +2036,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                         Duration(seconds: 5),
                                         yourTurnUserMessage1,
                                         yourTurnUserMessage2);
-                                  } else if (tokenDateTime
+                                  } else if (tokenDateTime!
                                       .isBefore(DateTime.now())) {
                                     Utils.showMyFlushbar(
                                         context,
@@ -2045,12 +2045,12 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                         "Could not start WhatsApp call as this Booking has already expired.",
                                         "Please contact Owner/Manager of this Place");
                                   } else {
-                                    String phoneNo = ba.userId;
+                                    String? phoneNo = ba.userId;
                                     if (phoneNo != null && phoneNo != "") {
                                       try {
                                         launchWhatsApp(
                                             message: whatsappMessageToPlaceOwner +
-                                                '${Utils.getTokenDisplayName(ba.entityName, ba.tokenId)}' +
+                                                '${Utils.getTokenDisplayName(ba.entityName!, ba.tokenId!)}' +
                                                 "\n\n<Type your message here..>",
                                             phone: phoneNo);
                                       } catch (error) {
@@ -2114,9 +2114,9 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                 ],
               ),
             ),
-            if (widget.ba.status != ApplicationStatus.CANCELLED &&
-                widget.ba.status != ApplicationStatus.REJECTED &&
-                widget.ba.status != ApplicationStatus.COMPLETED)
+            if (widget.ba!.status != ApplicationStatus.CANCELLED &&
+                widget.ba!.status != ApplicationStatus.REJECTED &&
+                widget.ba!.status != ApplicationStatus.COMPLETED)
               Container(
                 // width: MediaQuery.of(context).size.width * .8,
                 margin: EdgeInsets.all(9),
@@ -2133,14 +2133,14 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                           .then((remarks) {
                         //Update application status change on server.
                         // if (Utils.isNotNullOrEmpty(remarks)) {
-                        if ((remarks[1])) {
+                        if ((remarks![1])) {
                           ba.notesOnCancellation = (remarks[0]);
-                          _gs
-                              .withDrawApplication(widget.ba.id, remarks[0])
+                          _gs!
+                              .withDrawApplication(widget.ba!.id, remarks[0])
                               .then((value) {
-                            widget.ba.notesOnCancellation = remarks[0];
+                            widget.ba!.notesOnCancellation = remarks[0];
                             setState(() {
-                              widget.ba.status = ApplicationStatus.CANCELLED;
+                              widget.ba!.status = ApplicationStatus.CANCELLED;
                             });
 
                             Utils.showMyFlushbar(
@@ -2174,7 +2174,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                           )
                         ])),
               ),
-            if (widget.ba.status == ApplicationStatus.CANCELLED)
+            if (widget.ba!.status == ApplicationStatus.CANCELLED)
               Container(
                   width: MediaQuery.of(context).size.width * .85,
                   margin: EdgeInsets.all(9),
@@ -2195,8 +2195,8 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                           width: MediaQuery.of(context).size.width * .36,
                           child: AutoSizeText(
                             Utils.isNotNullOrEmpty(
-                                    widget.ba.notesOnCancellation)
-                                ? widget.ba.notesOnCancellation
+                                    widget.ba!.notesOnCancellation)
+                                ? widget.ba!.notesOnCancellation!
                                 : 'No Comments found.',
                             maxLines: null,
                             style: TextStyle(color: Colors.black, fontSize: 10),
@@ -2485,7 +2485,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
   @override
   Widget build(BuildContext context) {
     if (initCompleted)
-      return Center(child: _buildItem(widget.ba));
+      return Center(child: _buildItem(widget.ba!));
     else {
       return Center(
         child: Column(

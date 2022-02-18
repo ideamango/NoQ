@@ -21,19 +21,19 @@ import '../widget/weekday_selector.dart';
 import '../enum/entity_role.dart';
 
 class ContactRow extends StatefulWidget {
-  final Entity entity;
+  final Entity? entity;
   final EntityRole empType;
   final Employee contact;
-  final List<Employee> list;
+  final List<Employee>? list;
   final bool isManager;
   final bool existingContact;
   ContactRow(
-      {Key key,
-      @required this.entity,
-      @required this.empType,
-      @required this.contact,
-      @required this.isManager,
-      @required this.existingContact,
+      {Key? key,
+      required this.entity,
+      required this.empType,
+      required this.contact,
+      required this.isManager,
+      required this.existingContact,
       this.list})
       : super(key: key);
   @override
@@ -42,7 +42,7 @@ class ContactRow extends StatefulWidget {
 
 class ContactRowState extends State<ContactRow> {
   bool _isValid = false;
-  Employee contact;
+  Employee? contact;
   TextEditingController _ctNameController = TextEditingController();
   TextEditingController _ctEmpIdController = TextEditingController();
   TextEditingController _ctPhn1controller = TextEditingController();
@@ -53,12 +53,12 @@ class ContactRowState extends State<ContactRow> {
   final GlobalKey<FormFieldState> phn1Key = new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> phn2Key = new GlobalKey<FormFieldState>();
 
-  List<String> _daysOff;
+  List<String>? _daysOff;
   bool _initCompleted = false;
-  List<days> _closedOnDays;
-  Entity _entity;
-  List<Employee> _list;
-  GlobalState _gs;
+  List<days>? _closedOnDays;
+  Entity? _entity;
+  List<Employee>? _list;
+  GlobalState? _gs;
   bool showLoading = false;
   bool existingContact = false;
 
@@ -82,39 +82,39 @@ class ContactRowState extends State<ContactRow> {
 
   void initializeContactDetails() {
     if (contact != null) {
-      _ctNameController.text = contact.name;
-      _ctEmpIdController.text = contact.employeeId;
+      _ctNameController.text = contact!.name!;
+      _ctEmpIdController.text = contact!.employeeId!;
       _ctPhn1controller.text =
-          contact.ph != null ? contact.ph.substring(3) : "";
+          contact!.ph != null ? contact!.ph!.substring(3) : "";
       _ctPhn2controller.text =
-          contact.altPhone != null ? contact.altPhone.substring(3) : "";
-      if (contact.shiftStartHour != null && contact.shiftStartMinute != null)
+          contact!.altPhone != null ? contact!.altPhone!.substring(3) : "";
+      if (contact!.shiftStartHour != null && contact!.shiftStartMinute != null)
         _ctAvlFromTimeController.text =
-            Utils.formatTime(contact.shiftStartHour.toString()) +
+            Utils.formatTime(contact!.shiftStartHour.toString()) +
                 ':' +
-                Utils.formatTime(contact.shiftStartMinute.toString());
-      if (contact.shiftEndHour != null && contact.shiftEndMinute != null)
+                Utils.formatTime(contact!.shiftStartMinute.toString());
+      if (contact!.shiftEndHour != null && contact!.shiftEndMinute != null)
         _ctAvlTillTimeController.text =
-            Utils.formatTime(contact.shiftEndHour.toString()) +
+            Utils.formatTime(contact!.shiftEndHour.toString()) +
                 ':' +
-                Utils.formatTime(contact.shiftEndMinute.toString());
-      _daysOff = (contact.daysOff) ?? [];
+                Utils.formatTime(contact!.shiftEndMinute.toString());
+      _daysOff = (contact!.daysOff) ?? [];
     }
     // if (_daysOff.length == 0) {
     //   _daysOff.add('days.sunday');
     // }
     _closedOnDays = [];
-    _closedOnDays = Utils.convertStringsToDays(_daysOff);
+    _closedOnDays = Utils.convertStringsToDays(_daysOff!);
   }
 
-  String validateText(String value) {
+  String? validateText(String? value) {
     if (value == null) {
       return 'Field is empty';
     }
     return null;
   }
 
-  String validateTime(String value) {
+  String? validateTime(String? value) {
     if (value == null) {
       return 'Field is empty';
     }
@@ -143,7 +143,7 @@ class ContactRowState extends State<ContactRow> {
     }
   }
 
-  handleUpsertEmployeeErrors(dynamic error, String phone) {
+  handleUpsertEmployeeErrors(dynamic error, String? phone) {
     switch (error.runtimeType) {
       case AccessDeniedException:
         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
@@ -195,11 +195,11 @@ class ContactRowState extends State<ContactRow> {
           CommonStyle.textFieldStyle(labelTextStr: "Name*", hintTextStr: ""),
       validator: validateText,
       onChanged: (String value) {
-        contact.name = value;
+        contact!.name = value;
         setState(() {});
       },
-      onSaved: (String value) {
-        contact.name = value;
+      onSaved: (String? value) {
+        contact!.name = value;
       },
     );
     final ctEmpIdField = TextFormField(
@@ -214,10 +214,10 @@ class ContactRowState extends State<ContactRow> {
           labelTextStr: "Employee Id", hintTextStr: ""),
       validator: validateText,
       onChanged: (String value) {
-        contact.employeeId = value;
+        contact!.employeeId = value;
       },
-      onSaved: (String value) {
-        contact.employeeId = value;
+      onSaved: (String? value) {
+        contact!.employeeId = value;
       },
     );
     final ctPhn1Field = TextFormField(
@@ -234,8 +234,8 @@ class ContactRowState extends State<ContactRow> {
           prefixText: '+91', labelTextStr: "Primary Phone*", hintTextStr: ""),
       validator: Utils.validateMobileField,
       onChanged: (String value) {
-        phn1Key.currentState.validate();
-        contact.ph = "+91" + value;
+        phn1Key.currentState!.validate();
+        contact!.ph = "+91" + value;
       },
       onTap: () {
         if (existingContact)
@@ -247,7 +247,7 @@ class ContactRowState extends State<ContactRow> {
               "Remove this employee and add another employee with different phone number");
       },
       onSaved: (value) {
-        contact.ph = "+91" + value;
+        contact!.ph = "+91" + value!;
       },
     );
     final ctPhn2Field = TextFormField(
@@ -263,11 +263,11 @@ class ContactRowState extends State<ContactRow> {
           prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
       validator: Utils.validateMobileField,
       onChanged: (String value) {
-        phn2Key.currentState.validate();
-        contact.altPhone = "+91" + value;
+        phn2Key.currentState!.validate();
+        contact!.altPhone = "+91" + value;
       },
       onSaved: (value) {
-        contact.altPhone = "+91" + value;
+        contact!.altPhone = "+91" + value!;
       },
     );
     final ctAvlFromTimeField = TextFormField(
@@ -295,8 +295,8 @@ class ContactRowState extends State<ContactRow> {
           _ctAvlFromTimeController.text = time.toLowerCase();
           if (_ctAvlFromTimeController.text != "") {
             List<String> time = _ctAvlFromTimeController.text.split(':');
-            contact.shiftStartHour = int.parse(time[0]);
-            contact.shiftStartMinute = int.parse(time[1]);
+            contact!.shiftStartHour = int.parse(time[0]);
+            contact!.shiftStartMinute = int.parse(time[1]);
           }
         }, currentTime: DateTime.now());
       },
@@ -329,14 +329,14 @@ class ContactRowState extends State<ContactRow> {
       onChanged: (String value) {
         //TODO: test the values
         List<String> time = value.split(':');
-        contact.shiftStartHour = int.parse(time[0]);
-        contact.shiftStartMinute = int.parse(time[1]);
+        contact!.shiftStartHour = int.parse(time[0]);
+        contact!.shiftStartMinute = int.parse(time[1]);
       },
-      onSaved: (String value) {
+      onSaved: (String? value) {
         //TODO: test the values
-        List<String> time = value.split(':');
-        contact.shiftStartHour = int.parse(time[0]);
-        contact.shiftStartMinute = int.parse(time[1]);
+        List<String> time = value!.split(':');
+        contact!.shiftStartHour = int.parse(time[0]);
+        contact!.shiftStartMinute = int.parse(time[1]);
       },
     );
     final ctAvlTillTimeField = TextFormField(
@@ -363,8 +363,8 @@ class ContactRowState extends State<ContactRow> {
           _ctAvlTillTimeController.text = time.toLowerCase();
           if (_ctAvlTillTimeController.text != "") {
             List<String> time = _ctAvlTillTimeController.text.split(':');
-            contact.shiftEndHour = int.parse(time[0]);
-            contact.shiftEndMinute = int.parse(time[1]);
+            contact!.shiftEndHour = int.parse(time[0]);
+            contact!.shiftEndMinute = int.parse(time[1]);
           }
         }, currentTime: DateTime.now());
       },
@@ -379,10 +379,10 @@ class ContactRowState extends State<ContactRow> {
       onChanged: (String value) {
         //TODO: test the values
         List<String> time = value.split(':');
-        contact.shiftEndHour = int.parse(time[0]);
-        contact.shiftEndMinute = int.parse(time[1]);
+        contact!.shiftEndHour = int.parse(time[0]);
+        contact!.shiftEndMinute = int.parse(time[1]);
       },
-      onSaved: (String value) {},
+      onSaved: (String? value) {},
     );
     final daysOffField = Padding(
       padding: EdgeInsets.only(top: 12, bottom: 8),
@@ -427,13 +427,13 @@ class ContactRowState extends State<ContactRow> {
                 return;
               } else {
                 print("Days off: " + days.toString());
-                _daysOff.clear();
+                _daysOff!.clear();
                 days.forEach((element) {
                   var day = element.toString().substring(5);
-                  _daysOff.add(day);
+                  _daysOff!.add(day);
                 });
-                contact.daysOff = _daysOff;
-                print(_daysOff.length);
+                contact!.daysOff = _daysOff;
+                print(_daysOff!.length);
                 print(_daysOff.toString());
               }
             },
@@ -445,7 +445,7 @@ class ContactRowState extends State<ContactRow> {
     return Container(
       margin: EdgeInsets.all(12),
       decoration: BoxDecoration(
-          border: Border.all(color: headerBarColor),
+          border: Border.all(color: headerBarColor!),
           color: Colors.white,
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -461,8 +461,8 @@ class ContactRowState extends State<ContactRow> {
           initiallyExpanded: widget.existingContact ? false : true,
           //Check if contact is not yet saved, CONTACT would be null, check before accessing.
           title: Text(
-            Utils.isNotNullOrEmpty(contact.name)
-                ? contact.name
+            Utils.isNotNullOrEmpty(contact!.name)
+                ? contact!.name!
                 : EnumToString.convertToString(widget.empType),
             style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
           ),
@@ -556,22 +556,22 @@ class ContactRowState extends State<ContactRow> {
                                           });
                                           if (widget.empType ==
                                               EntityRole.Manager) {
-                                            String removeThisId;
+                                            String? removeThisId;
                                             for (int i = 0;
-                                                i < _list.length;
+                                                i < _list!.length;
                                                 i++) {
-                                              if (_list[i].id == contact.id) {
-                                                removeThisId = contact.id;
-                                                print(_list[i].id);
+                                              if (_list![i].id == contact!.id) {
+                                                removeThisId = contact!.id;
+                                                print(_list![i].id);
                                                 break;
                                               }
                                             }
                                             if (removeThisId != null) {
                                               if (existingContact) {
-                                                _gs
+                                                _gs!
                                                     .removeEmployee(
-                                                  widget.entity.entityId,
-                                                  contact.ph,
+                                                  widget.entity!.entityId,
+                                                  contact!.ph,
                                                 )
                                                     .then((retVal) {
                                                   // setState(() {
@@ -600,7 +600,7 @@ class ContactRowState extends State<ContactRow> {
                                                     showLoading = false;
                                                     // _entity.managers.removeWhere(
                                                     //     (element) => element.id == removeThisId);
-                                                    _list.removeWhere(
+                                                    _list!.removeWhere(
                                                         (element) =>
                                                             element.id ==
                                                             removeThisId);
@@ -609,7 +609,7 @@ class ContactRowState extends State<ContactRow> {
                                                         null,
                                                         removeThisId);
                                                   });
-                                                }).onError((error, stackTrace) {
+                                                }).onError((dynamic error, stackTrace) {
                                                   handleRemoveEmployee(error);
                                                 });
                                               } else {
@@ -625,7 +625,7 @@ class ContactRowState extends State<ContactRow> {
                                                     successGreenSnackBar);
                                                 // _entity.managers.removeWhere(
                                                 //     (element) => element.id == removeThisId);
-                                                _list.removeWhere((element) =>
+                                                _list!.removeWhere((element) =>
                                                     element.id == removeThisId);
                                                 // _entity.managers.removeWhere(
                                                 //     (element) =>
@@ -649,13 +649,13 @@ class ContactRowState extends State<ContactRow> {
                                             }
                                           } else if (widget.empType ==
                                               EntityRole.Executive) {
-                                            String removeThisId;
+                                            String? removeThisId;
                                             for (int i = 0;
-                                                i < _list.length;
+                                                i < _list!.length;
                                                 i++) {
-                                              if (_list[i].id == contact.id) {
-                                                removeThisId = contact.id;
-                                                print(_list[i].id);
+                                              if (_list![i].id == contact!.id) {
+                                                removeThisId = contact!.id;
+                                                print(_list![i].id);
                                                 break;
                                               }
                                             }
@@ -663,10 +663,10 @@ class ContactRowState extends State<ContactRow> {
                                             if (removeThisId != null) {
                                               if (existingContact) {
                                                 //TODO call remove employee from Global state
-                                                _gs
+                                                _gs!
                                                     .removeEmployee(
-                                                  widget.entity.entityId,
-                                                  contact.ph,
+                                                  widget.entity!.entityId,
+                                                  contact!.ph,
                                                 )
                                                     .then((retVal) {
                                                   if (retVal) {
@@ -690,7 +690,7 @@ class ContactRowState extends State<ContactRow> {
                                                     //   contact = null;
                                                     // _entity.managers.removeWhere(
                                                     //     (element) => element.id == removeThisId);
-                                                    _list.removeWhere(
+                                                    _list!.removeWhere(
                                                         (element) =>
                                                             element.id ==
                                                             removeThisId);
@@ -699,7 +699,7 @@ class ContactRowState extends State<ContactRow> {
                                                         null,
                                                         removeThisId);
                                                   });
-                                                }).onError((error, stackTrace) {
+                                                }).onError((dynamic error, stackTrace) {
                                                   handleRemoveEmployee(error);
                                                 });
                                               } else {
@@ -714,7 +714,7 @@ class ContactRowState extends State<ContactRow> {
                                                     "Executive Removed Successfully!",
                                                     "",
                                                     successGreenSnackBar);
-                                                _list.removeWhere((element) =>
+                                                _list!.removeWhere((element) =>
                                                     element.id == removeThisId);
                                                 setState(() {
                                                   showLoading = false;
@@ -796,9 +796,9 @@ class ContactRowState extends State<ContactRow> {
                                         } else {
                                           //CHECK whether name and primary phone is entered.
                                           if (Utils.isStrNullOrEmpty(
-                                                  contact.name) ||
+                                                  contact!.name) ||
                                               Utils.isStrNullOrEmpty(
-                                                  contact.ph)) {
+                                                  contact!.ph)) {
                                             Utils.showMyFlushbar(
                                                 context,
                                                 Icons.info,
@@ -811,8 +811,8 @@ class ContactRowState extends State<ContactRow> {
 // Another employee with same number is not allowed
 
                                           int count = 0;
-                                          _list.forEach((element) {
-                                            if (element.ph == contact.ph) {
+                                          _list!.forEach((element) {
+                                            if (element.ph == contact!.ph) {
                                               count++;
                                             }
                                           });
@@ -830,10 +830,10 @@ class ContactRowState extends State<ContactRow> {
                                             showLoading = true;
                                           });
 
-                                          _gs
+                                          _gs!
                                               .addEmployee(
-                                                  widget.entity.entityId,
-                                                  contact,
+                                                  widget.entity!.entityId!,
+                                                  contact!,
                                                   widget.empType)
                                               .then((retVal) {
                                             if (retVal) {
@@ -851,12 +851,12 @@ class ContactRowState extends State<ContactRow> {
                                                   "",
                                                   successGreenSnackBar);
                                             }
-                                          }).onError((error, stackTrace) {
+                                          }).onError((dynamic error, stackTrace) {
                                             setState(() {
                                               showLoading = false;
                                             });
                                             handleUpsertEmployeeErrors(
-                                                error, contact.ph);
+                                                error, contact!.ph);
                                           });
                                         }
                                       }),

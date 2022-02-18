@@ -5,8 +5,8 @@ import '../db_model/configurations.dart';
 import '../exceptions/access_denied_exception.dart';
 
 class ConfigurationService {
-  FirebaseApp _fb;
-  ConfigurationService(FirebaseApp fb) {
+  FirebaseApp? _fb;
+  ConfigurationService(FirebaseApp? fb) {
     _fb = fb;
   }
 
@@ -14,17 +14,17 @@ class ConfigurationService {
     if (_fb == null) {
       return FirebaseFirestore.instance;
     } else {
-      return FirebaseFirestore.instanceFor(app: _fb);
+      return FirebaseFirestore.instanceFor(app: _fb!);
     }
   }
 
   FirebaseAuth getFirebaseAuth() {
     if (_fb == null) return FirebaseAuth.instance;
-    return FirebaseAuth.instanceFor(app: _fb);
+    return FirebaseAuth.instanceFor(app: _fb!);
   }
 
-  Future<Configurations> getConfigurations() async {
-    final User fireUser = getFirebaseAuth().currentUser;
+  Future<Configurations?> getConfigurations() async {
+    final User? fireUser = getFirebaseAuth().currentUser;
 
     if (fireUser == null) {
       throw new AccessDeniedException(
@@ -36,7 +36,7 @@ class ConfigurationService {
     final DocumentReference confRef = fStore.doc('conf/configurations');
 
     DocumentSnapshot doc = await confRef.get();
-    Configurations conf;
+    Configurations? conf;
 
     if (doc.exists) {
       conf = Configurations.fromJson(doc.data());

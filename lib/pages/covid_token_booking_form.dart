@@ -37,11 +37,11 @@ class CovidTokenBookingFormPage extends StatefulWidget {
   final DateTime preferredSlotTime;
   final dynamic backRoute;
   CovidTokenBookingFormPage(
-      {Key key,
-      @required this.metaEntity,
-      @required this.bookingFormId,
-      @required this.preferredSlotTime,
-      @required this.backRoute})
+      {Key? key,
+      required this.metaEntity,
+      required this.bookingFormId,
+      required this.preferredSlotTime,
+      required this.backRoute})
       : super(key: key);
   @override
   _CovidTokenBookingFormPageState createState() =>
@@ -64,7 +64,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   double _width = 0;
   double _height = 0;
   EdgeInsets _margin = EdgeInsets.fromLTRB(0, 0, 0, 0);
-  Widget _text;
+  Widget? _text;
   bool _isExpanded = false;
   bool _publicExpandClick = false;
   bool _activeExpandClick = false;
@@ -114,32 +114,32 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   //TextEditingController _ctPhn1controller = TextEditingController();
 
   TextEditingController _adminItemController = new TextEditingController();
-  String _item;
+  String? _item;
 
   //ContactPerson Fields
 
   Employee cp1 = new Employee();
   Address adrs = new Address();
 
-  MetaEntity metaEntity;
+  MetaEntity? metaEntity;
 
-  ScrollController _scrollController;
+  ScrollController? _scrollController;
   final itemSize = 80.0;
 
   //bool _autoPopulate = false;
 
-  String _currentCity;
-  String _postalCode;
-  String _country;
-  String _subArea;
-  String _state;
-  String _mainArea;
+  String? _currentCity;
+  String? _postalCode;
+  String? _country;
+  String? _subArea;
+  String? _state;
+  String? _mainArea;
 
 //  String _entityType;
-  String state;
+  String? state;
 
   bool addNewClicked = false;
-  String _roleType;
+  String? _roleType;
 
   bool getEntityDone = false;
   bool _initCompleted = false;
@@ -147,27 +147,27 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   bool isPublic = false;
   bool isActive = false;
   bool isBookable = false;
-  Position pos;
-  GlobalState _gs;
-  String _phCountryCode;
+  Position? pos;
+  GlobalState? _gs;
+  String? _phCountryCode;
 
   List<File> _idProofimages = [];
   List<File> _frontLineProofimages = [];
   List<File> _medCondsProofimages = [];
   //File _image; // Used only if you need a single picture
   // String _downloadUrl;
-  BookingForm bookingForm;
-  List<Field> fields;
-  BookingApplication bookingApplication;
-  FormInputFieldText nameInput;
-  FormInputFieldDateTime dobInput;
-  FormInputFieldPhone primaryPhone;
-  FormInputFieldText notesInput;
+  BookingForm? bookingForm;
+  List<Field>? fields;
+  BookingApplication? bookingApplication;
+  FormInputFieldText? nameInput;
+  late FormInputFieldDateTime dobInput;
+  FormInputFieldPhone? primaryPhone;
+  FormInputFieldText? notesInput;
 
-  String _idProofType;
-  FormInputFieldOptionsWithAttachments idProofField;
-  FormInputFieldOptionsWithAttachments frontlineWorkerField;
-  FormInputFieldOptionsWithAttachments medConditionsField;
+  String? _idProofType;
+  late FormInputFieldOptionsWithAttachments idProofField;
+  late FormInputFieldOptionsWithAttachments frontlineWorkerField;
+  late FormInputFieldOptionsWithAttachments medConditionsField;
   List<Item> idProofTypesList = List<Item>();
   List<Item> frontlineTypesList = List<Item>();
   List<Item> medConditionsList = List<Item>();
@@ -200,8 +200,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   }
 
   initBookingForm() async {
-    _gs
-        .getApplicationService()
+    _gs!
+        .getApplicationService()!
         .getBookingForm(widget.bookingFormId)
         .then((value) {
       if (value == null) {
@@ -209,54 +209,54 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
       } else {
         bookingForm = value;
-        for (Field f in bookingForm.getFormFields()) {
+        for (Field f in bookingForm!.getFormFields()) {
           if (f.key == "KEY10")
-            nameInput = f;
+            nameInput = f as FormInputFieldText?;
           else if (f.key == "KEY20")
-            dobInput = f;
+            dobInput = f as FormInputFieldDateTime;
           else if (f.key == "KEY30") {
-            medConditionsField = f; //Validate this field
+            medConditionsField = f as FormInputFieldOptionsWithAttachments; //Validate this field
             medConditionsField.responseValues = new List<Value>();
-            for (int i = 0; i < medConditionsField.options.length; i++) {
+            for (int i = 0; i < medConditionsField.options!.length; i++) {
               if (medConditionsField.defaultValueIndex == i)
                 medConditionsList
-                    .add(Item(medConditionsField.options[i], true));
+                    .add(Item(medConditionsField.options![i], true));
               else
                 medConditionsList
-                    .add(Item(medConditionsField.options[i], false));
+                    .add(Item(medConditionsField.options![i], false));
             }
             medConditionsField.responseFilePaths = new List<String>();
           } else if (f.key == "KEY40") {
-            frontlineWorkerField = f;
+            frontlineWorkerField = f as FormInputFieldOptionsWithAttachments;
             frontlineWorkerField.responseValues = new List<Value>();
-            for (int i = 0; i < frontlineWorkerField.options.length; i++) {
+            for (int i = 0; i < frontlineWorkerField.options!.length; i++) {
               if (frontlineWorkerField.defaultValueIndex == i)
                 frontlineTypesList
-                    .add(Item(frontlineWorkerField.options[i], true));
+                    .add(Item(frontlineWorkerField.options![i], true));
               else
                 frontlineTypesList
-                    .add(Item(frontlineWorkerField.options[i], false));
+                    .add(Item(frontlineWorkerField.options![i], false));
             }
             frontlineWorkerField.responseFilePaths = new List<String>();
           } else if (f.key == "KEY50") {
-            idProofField = f;
+            idProofField = f as FormInputFieldOptionsWithAttachments;
             idProofField.responseValues = new List<Value>();
-            for (Value val in idProofField.options) {
+            for (Value val in idProofField.options!) {
               idProofTypesList.add(Item(val, false));
             }
             idProofField.responseFilePaths = new List<String>();
-          } else if (f.key == "KEY60") primaryPhone = f;
+          } else if (f.key == "KEY60") primaryPhone = f as FormInputFieldPhone?;
         }
         bookingApplication = new BookingApplication();
         //slot
-        bookingApplication.preferredSlotTiming = widget.preferredSlotTime;
+        bookingApplication!.preferredSlotTiming = widget.preferredSlotTime;
 
         //bookingFormId
-        bookingApplication.bookingFormId = widget.bookingFormId;
-        bookingApplication.entityId = metaEntity.entityId;
-        bookingApplication.userId = _gs.getCurrentUser().id;
-        bookingApplication.status = ApplicationStatus.NEW;
-        bookingApplication.responseForm = bookingForm;
+        bookingApplication!.bookingFormId = widget.bookingFormId;
+        bookingApplication!.entityId = metaEntity!.entityId;
+        bookingApplication!.userId = _gs!.getCurrentUser()!.id;
+        bookingApplication!.status = ApplicationStatus.NEW;
+        bookingApplication!.responseForm = bookingForm;
         print("Booking application set");
         setState(() {
           _initCompleted = true;
@@ -312,10 +312,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       return true;
   }
 
-  Future<File> captureImage(bool gallery) async {
+  Future<File?> captureImage(bool gallery) async {
     ImagePicker picker = ImagePicker();
-    PickedFile pickedFile;
-    File newImageFile;
+    PickedFile? pickedFile;
+    File? newImageFile;
 
     if (gallery) {
       pickedFile = await picker.getImage(
@@ -341,24 +341,24 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
   addIdProofFiles(File newImage) {
     _idProofimages.add(newImage);
-    idProofField.responseFilePaths.add(newImage.path);
+    idProofField.responseFilePaths!.add(newImage.path);
   }
 
   addFrontlineFiles(File newImage) {
     _frontLineProofimages.add(newImage);
-    frontlineWorkerField.responseFilePaths.add(newImage.path);
+    frontlineWorkerField.responseFilePaths!.add(newImage.path);
   }
 
   addMedCondsFiles(File newImage) {
     _medCondsProofimages.add(newImage);
-    medConditionsField.responseFilePaths.add(newImage.path);
+    medConditionsField.responseFilePaths!.add(newImage.path);
   }
 
   Future<String> uploadFilesToServer(
       String localPath, String targetFileName) async {
     File localImage = File(localPath);
 
-    Reference ref = _gs.firebaseStorage.ref().child('$targetFileName');
+    Reference ref = _gs!.firebaseStorage!.ref().child('$targetFileName');
 
     await ref.putFile(localImage);
 
@@ -367,10 +367,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
-    _phCountryCode = _gs.getConfigurations().phCountryCode;
+    _phCountryCode = _gs!.getConfigurations()!.phCountryCode;
   }
 
-  String validateText(String value) {
+  String? validateText(String? value) {
     if (validateField) {
       if (value == null || value == "") {
         return 'Field is empty';
@@ -380,9 +380,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       return null;
   }
 
-  _getAddressFromLatLng(Position position) async {
+  _getAddressFromLatLng(Position? position) async {
     setState(() {
-      _latController.text = position.latitude.toString();
+      _latController.text = position!.latitude.toString();
       _lonController.text = position.longitude.toString();
     });
   }
@@ -392,13 +392,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     _lonController.text = "";
   }
 
-  Future<DateTime> pickDate(BuildContext context) async {
-    DateTime date = await showDatePicker(
+  Future<DateTime?> pickDate(BuildContext context) async {
+    DateTime? date = await showDatePicker(
       context: context,
       firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
       lastDate: DateTime.now(),
       initialDate: DateTime.now(),
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
@@ -406,7 +406,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
             ),
             dialogBackgroundColor: Colors.white,
           ),
-          child: child,
+          child: child!,
         );
       },
     );
@@ -432,7 +432,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
               Utils.showConfirmationDialog(
                       context, "Are you sure you want to delete this image?")
                   .then((value) {
-                if (value) {
+                if (value!) {
                   print('REMOVE path in responsePaths $imageUrl');
                   setState(() {
                     filesList.removeWhere((element) => element == imageUrl);
@@ -463,14 +463,14 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         controller: _nameController,
         keyboardType: TextInputType.text,
         decoration: CommonStyle.textFieldStyle(
-            labelTextStr: nameInput != null ? nameInput.label : "",
+            labelTextStr: nameInput != null ? nameInput!.label : "",
             hintTextStr: "Please enter your name as per Government ID proof"),
         validator: validateText,
         onChanged: (String value) {
-          nameInput.response = value;
+          nameInput!.response = value;
         },
-        onSaved: (String value) {
-          nameInput.response = value;
+        onSaved: (String? value) {
+          nameInput!.response = value;
         },
       );
 
@@ -510,7 +510,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         onChanged: (String value) {
           //  checkOfferDetailsFilled();
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           //  dobInput.responseDateTime = DateTime.parse(value);
           // checkOfferDetailsFilled();
         },
@@ -526,8 +526,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         keyboardType: TextInputType.multiline,
         maxLength: null,
         maxLines: 3,
-        onSaved: (String value) {
-          bookingApplication.notes = value;
+        onSaved: (String? value) {
+          bookingApplication!.notes = value;
         },
       );
 
@@ -563,10 +563,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                               });
                             }
                             if (item.isSelected == true)
-                              frontlineWorkerField.responseValues
+                              frontlineWorkerField.responseValues!
                                   .remove(item.value);
                             else
-                              frontlineWorkerField.responseValues
+                              frontlineWorkerField.responseValues!
                                   .add(item.value);
 
                             setState(() {
@@ -576,7 +576,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                           child: Container(
                               decoration: new BoxDecoration(
                                   border:
-                                      Border.all(color: Colors.blueGrey[200]),
+                                      Border.all(color: Colors.blueGrey[200]!),
                                   shape: BoxShape.rectangle,
                                   color: (!item.isSelected)
                                       ? Colors.cyan[50]
@@ -618,10 +618,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                             }
 
                             if (item.isSelected == true) {
-                              idProofField.responseValues.remove(item.value);
+                              idProofField.responseValues!.remove(item.value);
                               _idProofType = null;
                             } else {
-                              idProofField.responseValues.add(item.value);
+                              idProofField.responseValues!.add(item.value);
                               _idProofType = item.value.value;
                             }
                             setState(() {
@@ -631,7 +631,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                           child: Container(
                               decoration: new BoxDecoration(
                                   border:
-                                      Border.all(color: Colors.blueGrey[200]),
+                                      Border.all(color: Colors.blueGrey[200]!),
                                   shape: BoxShape.rectangle,
                                   color: (!item.isSelected)
                                       ? Colors.cyan[50]
@@ -758,8 +758,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                             bool newSelectionValue = !(item.isSelected);
 
                             if (item.value ==
-                                medConditionsField.options[
-                                    medConditionsField.defaultValueIndex]) {
+                                medConditionsField.options![
+                                    medConditionsField.defaultValueIndex!]) {
                               if (!Utils.isNullOrEmpty(
                                       medConditionsField.responseValues) &&
                                   item.isSelected == false) {
@@ -787,10 +787,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                               });
                             }
                             if (item.isSelected == true)
-                              medConditionsField.responseValues
+                              medConditionsField.responseValues!
                                   .remove(item.value);
                             else {
-                              medConditionsField.responseValues.add(item.value);
+                              medConditionsField.responseValues!.add(item.value);
                             }
 
                             setState(() {
@@ -800,7 +800,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                           child: Container(
                               decoration: new BoxDecoration(
                                   border:
-                                      Border.all(color: Colors.blueGrey[200]),
+                                      Border.all(color: Colors.blueGrey[200]!),
                                   shape: BoxShape.rectangle,
                                   color: (!item.isSelected)
                                       ? Colors.cyan[50]
@@ -857,7 +857,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         decoration: InputDecoration(
           prefixText: '+91',
           labelText:
-              (primaryPhone != null) ? primaryPhone.label : "Name of Applicant",
+              (primaryPhone != null) ? primaryPhone!.label : "Name of Applicant",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -874,11 +874,11 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         },
         onChanged: (value) {
           if (value != "")
-            primaryPhone.responsePhone = _phCountryCode + (value);
+            primaryPhone!.responsePhone = _phCountryCode! + (value);
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           if (value != "")
-            primaryPhone.responsePhone = _phCountryCode + (value);
+            primaryPhone!.responsePhone = _phCountryCode! + value!;
         },
       );
       // final alternatePhoneField = TextFormField(
@@ -1121,8 +1121,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 //           print("saved address");
 //         },
 //       );
-      Flushbar flush;
-      bool _wasButtonClicked;
+      Flushbar? flush;
+      bool? _wasButtonClicked;
 
       saveRoute() async {
         setState(() {
@@ -1144,17 +1144,17 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
               Colors.white,
               true);
 
-          _tokenBookingDetailsFormKey.currentState.save();
+          _tokenBookingDetailsFormKey.currentState!.save();
 
           // bookingApplication.preferredSlotTiming =
           //TODO:Save Files and then submit application with the updated file path
           List<String> idProofTargetPaths = List<String>();
-          for (String path in idProofField.responseFilePaths) {
+          for (String path in idProofField.responseFilePaths!) {
             String fileName = basename(path);
             print(fileName);
 
             String targetFileName =
-                '${bookingApplication.id}#${idProofField.id}#${_gs.getCurrentUser().id}#$fileName';
+                '${bookingApplication!.id}#${idProofField.id}#${_gs!.getCurrentUser()!.id}#$fileName';
 
             String targetPath = await uploadFilesToServer(path, targetFileName);
             print(targetPath);
@@ -1164,12 +1164,12 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           idProofField.responseFilePaths = idProofTargetPaths;
 
           List<String> medCondsTargetPaths = List<String>();
-          for (String path in medConditionsField.responseFilePaths) {
+          for (String path in medConditionsField.responseFilePaths!) {
             String fileName = basename(path);
             print(fileName);
 
             String targetFileName =
-                '${bookingApplication.id}#${medConditionsField.id}#${_gs.getCurrentUser().id}#$fileName';
+                '${bookingApplication!.id}#${medConditionsField.id}#${_gs!.getCurrentUser()!.id}#$fileName';
 
             String targetPath = await uploadFilesToServer(path, targetFileName);
             print(targetPath);
@@ -1178,12 +1178,12 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           medConditionsField.responseFilePaths = medCondsTargetPaths;
 
           List<String> frontLineTargetPaths = [];
-          for (String path in frontlineWorkerField.responseFilePaths) {
+          for (String path in frontlineWorkerField.responseFilePaths!) {
             String fileName = basename(path);
             print(fileName);
 
             String targetFileName =
-                '${bookingApplication.id}#${frontlineWorkerField.id}#${_gs.getCurrentUser().id}#$fileName';
+                '${bookingApplication!.id}#${frontlineWorkerField.id}#${_gs!.getCurrentUser()!.id}#$fileName';
 
             String targetPath = await uploadFilesToServer(path, targetFileName);
             print(targetPath);
@@ -1192,8 +1192,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
           frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
 
-          _gs
-              .getApplicationService()
+          _gs!
+              .getApplicationService()!
               .submitApplication(bookingApplication, metaEntity)
               .then((value) {
             if (value != null) {
@@ -1238,7 +1238,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       }
 
       void useCurrLocation() {
-        Position pos;
+        Position? pos;
         Utils.getCurrLocation().then((value) {
           pos = value;
           if (pos == null)
@@ -1272,7 +1272,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     flushbarStyle: FlushbarStyle.GROUNDED,
                     reverseAnimationCurve: Curves.decelerate,
                     forwardAnimationCurve: Curves.easeInToLinear,
-                    backgroundColor: Colors.cyan[200],
+                    backgroundColor: Colors.cyan[200]!,
                     boxShadows: [
                       BoxShadow(
                           color: Colors.cyan,
@@ -1288,7 +1288,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     showProgressIndicator: true,
                     progressIndicatorBackgroundColor: Colors.blueGrey[900],
                     progressIndicatorValueColor:
-                        new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
+                        new AlwaysStoppedAnimation<Color?>(Colors.cyan[500]) as Animation<Color>?,
                     routeBlur: 10.0,
                     titleText: Text(
                       "Are you sure you want to leave this page?",
@@ -1312,7 +1312,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                           padding: EdgeInsets.all(0),
                           onPressed: () {
                             flushStatus = "Empty";
-                            flush.dismiss(false); // result = true
+                            flush!.dismiss(false); // result = true
                           },
                           child: Text(
                             "No",
@@ -1325,7 +1325,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                           padding: EdgeInsets.all(0),
                           onPressed: () {
                             flushStatus = "Empty";
-                            flush.dismiss(true); // result = true
+                            flush!.dismiss(true); // result = true
                           },
                           child: Text(
                             "Yes",
@@ -1348,7 +1348,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     ..show(context).then((result) {
                       _wasButtonClicked = result;
                       flushStatus = "Empty";
-                      if (_wasButtonClicked) processGoBackWithTimer();
+                      if (_wasButtonClicked!) processGoBackWithTimer();
                     });
                 }
 
@@ -1364,13 +1364,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
               bottom: true,
               child: new Form(
                 key: _tokenBookingDetailsFormKey,
-                autovalidate: _autoValidate,
+                autovalidateMode:AutovalidateMode.onUserInteraction,
                 child: new ListView(
                   padding: const EdgeInsets.all(5.0),
                   children: <Widget>[
                     Container(
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1445,7 +1445,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     ),
                     Container(
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1467,7 +1467,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                     title: Row(
                                       children: <Widget>[
                                         Text(
-                                          frontlineWorkerField.label,
+                                          frontlineWorkerField.label!,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 15),
@@ -1569,7 +1569,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     ),
                     Container(
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1591,7 +1591,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                     title: Row(
                                       children: <Widget>[
                                         Text(
-                                          idProofField.label,
+                                          idProofField.label!,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 15),
@@ -1612,7 +1612,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                           children: <Widget>[
                                             Expanded(
                                               child: Text(
-                                                  idProofField.infoMessage,
+                                                  idProofField.infoMessage!,
                                                   style: buttonXSmlTextStyle),
                                             ),
                                           ],
@@ -1693,7 +1693,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     ),
                     Container(
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1716,7 +1716,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                     title: Row(
                                       children: <Widget>[
                                         Text(
-                                          medConditionsField.label,
+                                          medConditionsField.label!,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 15),
@@ -1739,7 +1739,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                             Expanded(
                                               child: Text(
                                                   medConditionsField
-                                                      .infoMessage,
+                                                      .infoMessage!,
                                                   style: buttonXSmlTextStyle),
                                             ),
                                           ],
@@ -2048,7 +2048,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     Container(
                       padding: EdgeInsets.only(left: 5.0, right: 5),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -2058,18 +2058,18 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     SizedBox(
                       height: 7,
                     ),
-                    (Utils.isNotNullOrEmpty(bookingForm.footerMsg)
+                    (Utils.isNotNullOrEmpty(bookingForm!.footerMsg)
                         ? Container(
                             padding: EdgeInsets.only(left: 5.0, right: 5),
                             decoration: BoxDecoration(
-                                border: Border.all(color: containerColor),
+                                border: Border.all(color: containerColor!),
                                 color: Colors.grey[50],
                                 shape: BoxShape.rectangle,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(5.0))),
                             //padding: EdgeInsets.all(5.0),
                             child: Text(
-                              bookingForm.footerMsg,
+                              bookingForm!.footerMsg!,
                               // bookingForm.footerMsg,
                               style: TextStyle(
                                   color: Colors.orangeAccent.shade700,
@@ -2163,7 +2163,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 class Item {
   Value value;
   bool isSelected;
-  String lastSelected;
+  String? lastSelected;
 
   Item(this.value, this.isSelected);
 }

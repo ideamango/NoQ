@@ -26,9 +26,9 @@ class ShowUserApplicationDetails extends StatefulWidget {
   final dynamic backRoute;
 
   ShowUserApplicationDetails({
-    Key key,
-    @required this.bookingApplication,
-    @required this.backRoute,
+    Key? key,
+    required this.bookingApplication,
+    required this.backRoute,
   }) : super(key: key);
   @override
   _ShowUserApplicationDetailsState createState() =>
@@ -38,10 +38,10 @@ class ShowUserApplicationDetails extends StatefulWidget {
 class _ShowUserApplicationDetailsState
     extends State<ShowUserApplicationDetails> {
   bool initCompleted = false;
-  GlobalState _gs;
-  List<BookingApplication> list;
+  GlobalState? _gs;
+  List<BookingApplication>? list;
   // TextEditingController notesController = new TextEditingController();
-  MetaEntity metaEntity;
+  MetaEntity? metaEntity;
   bool isEnabled = true;
   bool showLoading = false;
   @override
@@ -86,35 +86,35 @@ class _ShowUserApplicationDetailsState
   List<Item> idProofTypes = List<Item>();
   List<Value> medConditionsStrList = List<Value>();
   List<Item> medConditions = List<Item>();
-  Map<String, TextEditingController> listOfControllers =
-      new Map<String, TextEditingController>();
+  Map<String?, TextEditingController> listOfControllers =
+      new Map<String?, TextEditingController>();
 
   //File _image; // Used only if you need a single picture
   // String _downloadUrl;
-  BookingForm bookingForm;
-  List<Field> fields;
+  BookingForm? bookingForm;
+  late List<Field?> fields;
 
-  FormInputFieldText nameInput;
-  FormInputFieldDateTime dobInput;
-  FormInputFieldText primaryPhone;
-  FormInputFieldText alternatePhone;
-  String _idProofType;
-  FormInputFieldOptionsWithAttachments idProofField;
-  FormInputFieldOptions healthDetailsInput;
-  FormInputFieldText healthDetailsDesc;
-  FormInputFieldText latInput;
-  FormInputFieldText lonInput;
-  FormInputFieldText addressInput;
-  FormInputFieldText addresslandmark;
-  FormInputFieldText addressLocality;
-  FormInputFieldText addressCity;
-  FormInputFieldText addressState;
-  FormInputFieldText addressCountry;
-  FormInputFieldText notesInput;
-  FormInputFieldText addressPin;
+  FormInputFieldText? nameInput;
+  FormInputFieldDateTime? dobInput;
+  FormInputFieldText? primaryPhone;
+  FormInputFieldText? alternatePhone;
+  String? _idProofType;
+  FormInputFieldOptionsWithAttachments? idProofField;
+  FormInputFieldOptions? healthDetailsInput;
+  FormInputFieldText? healthDetailsDesc;
+  FormInputFieldText? latInput;
+  FormInputFieldText? lonInput;
+  FormInputFieldText? addressInput;
+  FormInputFieldText? addresslandmark;
+  FormInputFieldText? addressLocality;
+  FormInputFieldText? addressCity;
+  FormInputFieldText? addressState;
+  FormInputFieldText? addressCountry;
+  FormInputFieldText? notesInput;
+  FormInputFieldText? addressPin;
 
   initBookingForm() {
-    fields = List<Field>();
+    fields = List<Field?>();
     idProofTypesStrList.add(Value('Passport'));
     idProofTypesStrList.add(Value('Driving License'));
     idProofTypesStrList.add(Value('Aadhar'));
@@ -144,29 +144,29 @@ class _ShowUserApplicationDetailsState
     });
     nameInput = FormInputFieldText("Name of Person", true,
         "Please enter your name as per Government ID proof", 50);
-    nameInput.response = "SMITA Agarwal";
+    nameInput!.response = "SMITA Agarwal";
 
     dobInput = FormInputFieldDateTime(
       "Date of Birth",
       true,
       "Please select your Date of Birth",
     );
-    dobInput.responseDateTime =
+    dobInput!.responseDateTime =
         DateTime.now().subtract(Duration(days: 365 * 30));
 
     primaryPhone = FormInputFieldText(
         "Primary Contact Number", true, "Primary Contact Number", 10);
-    primaryPhone.response = "9611009823";
+    primaryPhone!.response = "9611009823";
 
     alternatePhone = FormInputFieldText(
         "Alternate Contact Number", false, "Alternate Contact Number", 10);
-    alternatePhone.response = "9611005523";
+    alternatePhone!.response = "9611005523";
 
     idProofField = FormInputFieldOptionsWithAttachments("Id Proof", true,
         "Please upload Government Id proof", idProofTypesStrList, false);
-    idProofField.responseFilePaths = List<String>();
-    idProofField.responseValues = new List<Value>();
-    idProofField.responseValues.add(Value("DL"));
+    idProofField!.responseFilePaths = List<String>();
+    idProofField!.responseValues = new List<Value>();
+    idProofField!.responseValues!.add(Value("DL"));
 
     healthDetailsInput = FormInputFieldOptions(
         "Medical Conditions",
@@ -174,24 +174,24 @@ class _ShowUserApplicationDetailsState
         "Please select all known medical conditions you have",
         medConditionsStrList,
         true);
-    healthDetailsInput.responseValues = new List<Value>();
-    healthDetailsInput.responseValues.add(Value("liver"));
-    healthDetailsInput.responseValues.add(Value("heart"));
+    healthDetailsInput!.responseValues = new List<Value>();
+    healthDetailsInput!.responseValues!.add(Value("liver"));
+    healthDetailsInput!.responseValues!.add(Value("heart"));
 
     healthDetailsDesc = FormInputFieldText(
         "Decription of medical conditions (optional)",
         false,
         "Decription of medical conditions (optional)",
         200);
-    healthDetailsDesc.response = "Migraine";
+    healthDetailsDesc!.response = "Migraine";
 
     latInput = FormInputFieldText(
         "Current Location Latitude", false, "Current Location Latitude", 20);
-    latInput.response = "HOMe0023";
+    latInput!.response = "HOMe0023";
 
     lonInput = FormInputFieldText(
         "Current Location Longitude", false, "Current Location Longitude", 20);
-    lonInput.response = "Lon";
+    lonInput!.response = "Lon";
 
     fields.add(nameInput);
     fields.add(dobInput);
@@ -280,7 +280,7 @@ class _ShowUserApplicationDetailsState
       switch (field.type) {
         case FieldType.TEXT:
           {
-            FormInputFieldText newfield = field;
+            FormInputFieldText newfield = field as FormInputFieldText;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
               //  height: MediaQuery.of(context).size.height * .08,
@@ -313,7 +313,7 @@ class _ShowUserApplicationDetailsState
                 // keyboardType: TextInputType.multiline,
               ),
             );
-            listOfControllers[field.label].text =
+            listOfControllers[field.label]!.text =
                 Utils.isStrNullOrEmpty(newfield.response)
                     ? 'No Data'
                     : newfield.response.toString();
@@ -321,7 +321,7 @@ class _ShowUserApplicationDetailsState
           break;
         case FieldType.NUMBER:
           {
-            FormInputFieldNumber newfield = field;
+            FormInputFieldNumber newfield = field as FormInputFieldNumber;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
               height: MediaQuery.of(context).size.height * .08,
@@ -353,13 +353,13 @@ class _ShowUserApplicationDetailsState
                 // keyboardType: TextInputType.text,
               ),
             );
-            listOfControllers[field.label].text =
+            listOfControllers[field.label]!.text =
                 (newfield.response.toString());
           }
           break;
         case FieldType.INT:
           {
-            FormInputFieldInt newfield = field;
+            FormInputFieldInt newfield = field as FormInputFieldInt;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
               height: MediaQuery.of(context).size.height * .08,
@@ -391,13 +391,13 @@ class _ShowUserApplicationDetailsState
                 // keyboardType: TextInputType.text,
               ),
             );
-            listOfControllers[field.label].text =
+            listOfControllers[field.label]!.text =
                 (newfield.response.toString());
           }
           break;
         case FieldType.PHONE:
           {
-            FormInputFieldPhone newfield = field;
+            FormInputFieldPhone newfield = field as FormInputFieldPhone;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
               height: MediaQuery.of(context).size.height * .08,
@@ -429,7 +429,7 @@ class _ShowUserApplicationDetailsState
                 //keyboardType: TextInputType.multiline,
               ),
             );
-            listOfControllers[field.label].text =
+            listOfControllers[field.label]!.text =
                 Utils.isNotNullOrEmpty(newfield.responsePhone)
                     ? "+91 ${newfield.responsePhone.toString()}"
                     : "";
@@ -438,7 +438,7 @@ class _ShowUserApplicationDetailsState
 
         case FieldType.DATETIME:
           {
-            FormInputFieldDateTime newfield = field;
+            FormInputFieldDateTime newfield = field as FormInputFieldDateTime;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .9,
               height: MediaQuery.of(context).size.height * .08,
@@ -450,7 +450,7 @@ class _ShowUserApplicationDetailsState
                   color: Colors.indigo[900],
                 ),
                 decoration: InputDecoration(
-                  labelText: (newfield.isAge) ? "Age" : newfield.label,
+                  labelText: newfield.isAge! ? "Age" : newfield.label,
                   labelStyle: TextStyle(
                       fontSize: 13,
                       color: Colors.blueGrey[500],
@@ -463,14 +463,14 @@ class _ShowUserApplicationDetailsState
                 ),
               ),
             );
-            listOfControllers[field.label].text = (newfield.yearOnly)
-                ? newfield.responseDateTime.year.toString()
+            listOfControllers[field.label]!.text = newfield.yearOnly!
+                ? newfield.responseDateTime!.year.toString()
                 : newfield.responseDateTime.toString();
           }
           break;
         case FieldType.OPTIONS:
           {
-            FormInputFieldOptions newfield = field;
+            FormInputFieldOptions newfield = field as FormInputFieldOptions;
             fieldWidget = Container(
               width: MediaQuery.of(context).size.width * .9,
               // height: MediaQuery.of(context).size.height * .08,
@@ -505,30 +505,30 @@ class _ShowUserApplicationDetailsState
             );
             String conds = "";
 
-            if (newfield.isMultiSelect) {
+            if (newfield.isMultiSelect!) {
               if (Utils.isNullOrEmpty(newfield.responseValues)) {
                 conds = "None";
               }
-              for (int i = 0; i < newfield.responseValues.length; i++) {
+              for (int i = 0; i < newfield.responseValues!.length; i++) {
                 if (conds != "")
-                  conds = conds + "  |  " + newfield.responseValues[i].value;
+                  conds = conds + "  |  " + newfield.responseValues![i].value;
                 else
-                  conds = conds + newfield.responseValues[i].value.toString();
+                  conds = conds + newfield.responseValues![i].value.toString();
               }
             } else {
               if (Utils.isNullOrEmpty(newfield.responseValues)) {
                 conds = "None";
               } else {
-                conds = newfield.responseValues[0].value.toString();
+                conds = newfield.responseValues![0].value.toString();
               }
             }
 
-            listOfControllers[field.label].text = conds;
+            listOfControllers[field.label]!.text = conds;
           }
           break;
         case FieldType.ATTACHMENT:
           {
-            FormInputFieldAttachment newfield = field;
+            FormInputFieldAttachment newfield = field as FormInputFieldAttachment;
 
             fieldWidget = Container(
               padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
@@ -562,18 +562,18 @@ class _ShowUserApplicationDetailsState
                       ),
                     ),
                   ),
-                  (newfield.responseFilePaths.length > 0)
+                  (newfield.responseFilePaths!.length > 0)
                       ? Wrap(
-                          children: newfield.responseFilePaths
+                          children: newfield.responseFilePaths!
                               .map((item) => GestureDetector(
                                     onTap: () {
-                                      Image image;
+                                      Image? image;
                                       try {
                                         image = Image.network(
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent loadingProgress) {
+                                              ImageChunkEvent? loadingProgress) {
                                             if (loadingProgress == null)
                                               return child;
                                             return Center(
@@ -584,7 +584,7 @@ class _ShowUserApplicationDetailsState
                                                     ? loadingProgress
                                                             .cumulativeBytesLoaded /
                                                         loadingProgress
-                                                            .expectedTotalBytes
+                                                            .expectedTotalBytes!
                                                     : null,
                                               ),
                                             );
@@ -613,7 +613,7 @@ class _ShowUserApplicationDetailsState
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent loadingProgress) {
+                                              ImageChunkEvent? loadingProgress) {
                                             if (loadingProgress == null)
                                               return child;
                                             return Center(
@@ -624,7 +624,7 @@ class _ShowUserApplicationDetailsState
                                                     ? loadingProgress
                                                             .cumulativeBytesLoaded /
                                                         loadingProgress
-                                                            .expectedTotalBytes
+                                                            .expectedTotalBytes!
                                                     : null,
                                               ),
                                             );
@@ -668,7 +668,7 @@ class _ShowUserApplicationDetailsState
           break;
         case FieldType.OPTIONS_ATTACHMENTS:
           {
-            FormInputFieldOptionsWithAttachments newfield = field;
+            FormInputFieldOptionsWithAttachments newfield = field as FormInputFieldOptionsWithAttachments;
 
             fieldWidget = Container(
               padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
@@ -710,18 +710,18 @@ class _ShowUserApplicationDetailsState
                       //  keyboardType: TextInputType.multiline,
                     ),
                   ),
-                  (newfield.responseFilePaths.length > 0)
+                  (newfield.responseFilePaths!.length > 0)
                       ? Wrap(
-                          children: newfield.responseFilePaths
+                          children: newfield.responseFilePaths!
                               .map((item) => GestureDetector(
                                     onTap: () {
-                                      Image image;
+                                      Image? image;
                                       try {
                                         image = Image.network(
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent loadingProgress) {
+                                              ImageChunkEvent? loadingProgress) {
                                             if (loadingProgress == null)
                                               return child;
                                             return Center(
@@ -732,7 +732,7 @@ class _ShowUserApplicationDetailsState
                                                     ? loadingProgress
                                                             .cumulativeBytesLoaded /
                                                         loadingProgress
-                                                            .expectedTotalBytes
+                                                            .expectedTotalBytes!
                                                     : null,
                                               ),
                                             );
@@ -761,7 +761,7 @@ class _ShowUserApplicationDetailsState
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent loadingProgress) {
+                                              ImageChunkEvent? loadingProgress) {
                                             if (loadingProgress == null)
                                               return child;
                                             return Center(
@@ -772,7 +772,7 @@ class _ShowUserApplicationDetailsState
                                                     ? loadingProgress
                                                             .cumulativeBytesLoaded /
                                                         loadingProgress
-                                                            .expectedTotalBytes
+                                                            .expectedTotalBytes!
                                                     : null,
                                               ),
                                             );
@@ -788,24 +788,24 @@ class _ShowUserApplicationDetailsState
                 ],
               ),
             );
-            String conds = "";
+            String? conds = "";
 
             if (Utils.isNullOrEmpty(newfield.responseValues)) {
               conds = "None";
             } else {
-              if (newfield.isMultiSelect) {
-                for (int i = 0; i < newfield.responseValues.length; i++) {
+              if (newfield.isMultiSelect!) {
+                for (int i = 0; i < newfield.responseValues!.length; i++) {
                   if (conds != "")
-                    conds = conds + "  &  " + newfield.responseValues[i].value;
+                    conds = conds! + "  &  " + newfield.responseValues![i].value;
                   else
-                    conds = conds + newfield.responseValues[i].value;
+                    conds = conds! + newfield.responseValues![i].value;
                 }
               } else {
-                if (newfield.responseValues.length > 0)
-                  conds = newfield.responseValues[0].value;
+                if (newfield.responseValues!.length > 0)
+                  conds = newfield.responseValues![0].value;
               }
             }
-            listOfControllers[field.label].text = conds;
+            listOfControllers[field.label]!.text = conds!;
           }
           break;
         default:
@@ -927,10 +927,10 @@ class _ShowUserApplicationDetailsState
                       padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
                       //  height: MediaQuery.of(context).size.height * .3,
                       child: buildChildItem(
-                          ba.responseForm.getFormFields()[index]),
+                          ba.responseForm!.getFormFields()[index]),
                     );
                   },
-                  itemCount: ba.responseForm.getFormFields().length,
+                  itemCount: ba.responseForm!.getFormFields().length,
                 ),
               ),
               Container(
@@ -960,12 +960,12 @@ class _ShowUserApplicationDetailsState
                           .then((remarks) {
                         //Update application status change on server.
                         // if (Utils.isNotNullOrEmpty(remarks)) {
-                        if ((remarks[1])) {
+                        if ((remarks![1])) {
                           widget.bookingApplication.notesOnCancellation =
                               (Utils.isNotNullOrEmpty(remarks[0])
                                   ? remarks[0]
                                   : "");
-                          _gs
+                          _gs!
                               .withDrawApplication(
                                   widget.bookingApplication.id, remarks[0])
                               .then((value) {

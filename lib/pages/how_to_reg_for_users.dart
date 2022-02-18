@@ -9,15 +9,15 @@ class HowToRegForUsers extends StatefulWidget {
 }
 
 class _HowToRegForUsersState extends State<HowToRegForUsers> {
-  GlobalState _gs;
-  String videoPath;
+  GlobalState? _gs;
+  String? videoPath;
   bool initCompleted = false;
   @override
   void initState() {
     super.initState();
     GlobalState.getGlobalState().then((value) {
       _gs = value;
-      videoPath = _gs.getConfigurations().userBookingVideoLink;
+      videoPath = _gs!.getConfigurations()!.userBookingVideoLink;
       setState(() {
         initCompleted = true;
       });

@@ -23,9 +23,9 @@ class CustomExpansionTile extends StatefulWidget {
   /// the tile to reveal or hide the [children]. The [initiallyExpanded] property must
   /// be non-null.
   const CustomExpansionTile({
-    Key key,
+    Key? key,
     this.leading,
-    @required this.title,
+    required this.title,
     this.backgroundColor,
     this.onExpansionChanged,
     this.children = const <Widget>[],
@@ -37,7 +37,7 @@ class CustomExpansionTile extends StatefulWidget {
   /// A widget to display before the title.
   ///
   /// Typically a [CircleAvatar] widget.
-  final Widget leading;
+  final Widget? leading;
 
   /// The primary content of the list item.
   ///
@@ -49,7 +49,7 @@ class CustomExpansionTile extends StatefulWidget {
   /// When the tile starts expanding, this function is called with the value
   /// true. When the tile starts collapsing, this function is called with
   /// the value false.
-  final ValueChanged<bool> onExpansionChanged;
+  final ValueChanged<bool>? onExpansionChanged;
 
   /// The widgets that are displayed when the tile expands.
   ///
@@ -57,10 +57,10 @@ class CustomExpansionTile extends StatefulWidget {
   final List<Widget> children;
 
   /// The color to display behind the sublist when expanded.
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
   /// A widget to display instead of a rotating arrow icon.
-  final Widget trailing;
+  final Widget? trailing;
 
   /// Specifies if the list tile is initially expanded (true) or collapsed (false, the default).
   final bool initiallyExpanded;
@@ -71,14 +71,14 @@ class CustomExpansionTile extends StatefulWidget {
 
 class _CustomExpansionTileState extends State<CustomExpansionTile>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  CurvedAnimation _easeOutAnimation;
-  CurvedAnimation _easeInAnimation;
-  ColorTween _borderColor;
-  ColorTween _headerColor;
-  ColorTween _iconColor;
-  ColorTween _backgroundColor;
-  Animation<double> _iconTurns;
+  late AnimationController _controller;
+  late CurvedAnimation _easeOutAnimation;
+  late CurvedAnimation _easeInAnimation;
+  late ColorTween _borderColor;
+  ColorTween? _headerColor;
+  ColorTween? _iconColor;
+  late ColorTween _backgroundColor;
+  Animation<double>? _iconTurns;
 
   bool _isExpanded = false;
 
@@ -121,13 +121,13 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
       PageStorage.of(context)?.writeState(context, _isExpanded);
     });
     if (widget.onExpansionChanged != null)
-      widget.onExpansionChanged(_isExpanded);
+      widget.onExpansionChanged!(_isExpanded);
   }
 
-  Widget _buildChildren(BuildContext context, Widget child) {
+  Widget _buildChildren(BuildContext context, Widget? child) {
     final Color borderSideColor =
         _borderColor.evaluate(_easeOutAnimation) ?? Colors.transparent;
-    final Color titleColor = _headerColor.evaluate(_easeInAnimation);
+    final Color? titleColor = _headerColor!.evaluate(_easeInAnimation);
 
     return Container(
       decoration: BoxDecoration(
@@ -141,7 +141,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
         //mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           IconTheme.merge(
-            data: IconThemeData(color: _iconColor.evaluate(_easeInAnimation)),
+            data: IconThemeData(color: _iconColor!.evaluate(_easeInAnimation)),
             child: Container(
               padding: EdgeInsets.fromLTRB(6, 4, 0, 0),
               height: MediaQuery.of(context).size.width * .08,
@@ -181,7 +181,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
     final ThemeData theme = Theme.of(context);
     _borderColor.end = theme.dividerColor;
     _headerColor
-      ..begin = theme.textTheme.subhead.color
+      ..begin = theme.textTheme.subtitle1!.color
       ..end = theme.accentColor;
     _iconColor
       ..begin = theme.unselectedWidgetColor

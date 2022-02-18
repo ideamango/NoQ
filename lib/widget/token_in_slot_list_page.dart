@@ -27,23 +27,23 @@ import 'widgets.dart';
 
 class TokensInSlot extends StatefulWidget {
   final String slotKey;
-  final TokenStats stats;
-  final List<UserToken> tokensList;
-  final DateTime date;
+  final TokenStats? stats;
+  final List<UserToken?> tokensList;
+  final DateTime? date;
   final DateDisplayFormat format;
-  final MetaEntity metaEntity;
+  final MetaEntity? metaEntity;
   final bool isReadOnly;
   final dynamic backRoute;
   TokensInSlot(
-      {Key key,
-      @required this.slotKey,
-      @required this.stats,
-      @required this.tokensList,
-      @required this.date,
-      @required this.format,
-      @required this.metaEntity,
-      @required this.isReadOnly,
-      @required this.backRoute})
+      {Key? key,
+      required this.slotKey,
+      required this.stats,
+      required this.tokensList,
+      required this.date,
+      required this.format,
+      required this.metaEntity,
+      required this.isReadOnly,
+      required this.backRoute})
       : super(key: key);
   @override
   _TokensInSlotState createState() => _TokensInSlotState();
@@ -51,15 +51,15 @@ class TokensInSlot extends StatefulWidget {
 
 class _TokensInSlotState extends State<TokensInSlot>
     with TickerProviderStateMixin {
-  GlobalState _gs;
+  GlobalState? _gs;
   bool initCompleted = false;
-  List<UserToken> listOfTokens = new List<UserToken>();
-  String timeSlot;
-  String slotId;
-  String dateTime;
+  List<UserToken?> listOfTokens = new List<UserToken?>();
+  late String timeSlot;
+  String? slotId;
+  String? dateTime;
   final dtFormat = new DateFormat(dateDisplayFormat);
-  AnimationController _animationController;
-  Animation animation;
+  late AnimationController _animationController;
+  late Animation animation;
   @override
   void initState() {
     super.initState();
@@ -69,15 +69,15 @@ class _TokensInSlotState extends State<TokensInSlot>
     _animationController.repeat(reverse: true);
     animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
     timeSlot = widget.slotKey.replaceAll('~', ':');
-    dateTime = widget.date.year.toString() +
+    dateTime = widget.date!.year.toString() +
         '~' +
-        widget.date.month.toString() +
+        widget.date!.month.toString() +
         '~' +
-        widget.date.day.toString() +
+        widget.date!.day.toString() +
         '#' +
         widget.slotKey.replaceAll(':', '~');
     print(dateTime);
-    slotId = widget.metaEntity.entityId + "#" + dateTime;
+    slotId = widget.metaEntity!.entityId! + "#" + dateTime!;
     getGlobalState().whenComplete(() {
       // _gs.getTokenService().getAllTokensForSlot(slotId).then((list) {
       listOfTokens = widget.tokensList;
@@ -113,7 +113,7 @@ class _TokensInSlotState extends State<TokensInSlot>
           Container(
               width: MediaQuery.of(context).size.width * .4,
               padding: EdgeInsets.all(8),
-              child: Text(token.parent.userId,
+              child: Text(token.parent!.userId!,
                   style: TextStyle(
                       //fontFamily: "RalewayRegular",
                       color: Colors.blueGrey[800],
@@ -122,7 +122,7 @@ class _TokensInSlotState extends State<TokensInSlot>
             Container(
                 width: MediaQuery.of(context).size.width * .4,
                 padding: EdgeInsets.all(8),
-                child: Text(token.bookingFormName,
+                child: Text(token.bookingFormName!,
                     style: TextStyle(
                         //fontFamily: "RalewayRegular",
                         color: Colors.blueGrey[800],
@@ -173,7 +173,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                   children: [
                     AutoSizeText(
                       "Booked - " +
-                          widget.stats.numberOfTokensCreated.toString() +
+                          widget.stats!.numberOfTokensCreated.toString() +
                           ", ",
                       minFontSize: 8,
                       maxFontSize: 13,
@@ -181,7 +181,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                     ),
                     AutoSizeText(
                       "Cancelled - " +
-                          widget.stats.numberOfTokensCancelled.toString(),
+                          widget.stats!.numberOfTokensCancelled.toString(),
                       minFontSize: 8,
                       maxFontSize: 13,
                       style: TextStyle(color: Colors.grey[600]),
@@ -201,7 +201,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            buildChildItem(listOfTokens[index])
+                            buildChildItem(listOfTokens[index]!)
                           ],
                         );
                       },
@@ -286,13 +286,13 @@ class _TokensInSlotState extends State<TokensInSlot>
                     splashColor: highlightColor,
                     textColor: btnColor,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: btnColor)),
+                        side: BorderSide(color: btnColor!)),
                     child: Text('Yes'),
                     onPressed: () {
 //Fetch application associated with the token
                       if (Utils.isNotNullOrEmpty(booking.applicationId)) {
-                        _gs
-                            .getApplicationService()
+                        _gs!
+                            .getApplicationService()!
                             .getApplication(booking.applicationId)
                             .then((bookingApplication) {
                           if (bookingApplication != null) {
@@ -334,11 +334,11 @@ class _TokensInSlotState extends State<TokensInSlot>
                                 bookingApplication.timeOfRejection =
                                     value.item1.timeOfRejection;
                                 for (int i = 0; i < listOfTokens.length; i++) {
-                                  if (listOfTokens[i].applicationId ==
+                                  if (listOfTokens[i]!.applicationId ==
                                       value.item1.id) {
-                                    listOfTokens[i].numberBeforeCancellation =
-                                        listOfTokens[i].number;
-                                    listOfTokens[i].number = -1;
+                                    listOfTokens[i]!.numberBeforeCancellation =
+                                        listOfTokens[i]!.number;
+                                    listOfTokens[i]!.number = -1;
                                   }
                                 }
                                 // booking.number = -1;
@@ -371,10 +371,10 @@ class _TokensInSlotState extends State<TokensInSlot>
                             "Cancelling Token ${booking.getDisplayName()}",
                             "Please wait..");
 
-                        _gs
-                            .getTokenService()
+                        _gs!
+                            .getTokenService()!
                             .cancelToken(
-                                booking.parent.getTokenId(), booking.number)
+                                booking.parent!.getTokenId(), booking.number)
                             .then((value) {
                           if (value == null) {
                             Utils.showMyFlushbar(
@@ -408,7 +408,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                     color: btnColor,
                     textColor: btnColor,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: btnColor)),
+                        side: BorderSide(color: btnColor!)),
                     child: Text('No', style: TextStyle(color: Colors.white)),
                     onPressed: () {
                       print("Do nothing");
@@ -486,7 +486,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                               0,
                               0),
                           child: Text(
-                            booking.parent.userId,
+                            booking.parent!.userId!,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontFamily: 'Roboto',
@@ -518,16 +518,16 @@ class _TokensInSlotState extends State<TokensInSlot>
                                       size: 20,
                                     ),
                                     onPressed: () {
-                                      print(booking.parent.userId);
-                                      if (booking.parent.userId != null) {
+                                      print(booking.parent!.userId);
+                                      if (booking.parent!.userId != null) {
                                         try {
-                                          callPhone(booking.parent.userId);
+                                          callPhone(booking.parent!.userId);
                                         } catch (error) {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.error,
                                               Duration(seconds: 5),
-                                              "Could not connect call to the number ${booking.parent.userId} !!",
+                                              "Could not connect call to the number ${booking.parent!.userId} !!",
                                               "Try again later.");
                                         }
                                       } else {
@@ -553,9 +553,9 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     color: tokenIconColor,
                                   ),
                                   onPressed: () {
-                                    print(booking.parent.userId);
+                                    print(booking.parent!.userId);
 
-                                    String phoneNo = booking.parent.userId;
+                                    String? phoneNo = booking.parent!.userId;
                                     if (phoneNo != null && phoneNo != "") {
                                       try {
                                         launchWhatsApp(
@@ -698,8 +698,8 @@ class _TokensInSlotState extends State<TokensInSlot>
                         if (Utils.isNotNullOrEmpty(booking.applicationId))
                           GestureDetector(
                             onTap: () {
-                              _gs
-                                  .getApplicationService()
+                              _gs!
+                                  .getApplicationService()!
                                   .getApplication(booking.applicationId)
                                   .then((bookingApplication) {
                                 if (bookingApplication != null) {
@@ -732,12 +732,12 @@ class _TokensInSlotState extends State<TokensInSlot>
                                       for (int i = 0;
                                           i < listOfTokens.length;
                                           i++) {
-                                        if (listOfTokens[i].applicationId ==
+                                        if (listOfTokens[i]!.applicationId ==
                                             value.item1.id) {
-                                          listOfTokens[i]
+                                          listOfTokens[i]!
                                                   .numberBeforeCancellation =
-                                              listOfTokens[i].number;
-                                          listOfTokens[i].number = -1;
+                                              listOfTokens[i]!.number;
+                                          listOfTokens[i]!.number = -1;
                                         }
                                       }
                                       // booking.number = -1;
@@ -826,14 +826,14 @@ class _TokensInSlotState extends State<TokensInSlot>
                     //           // }
                     //         }),
                     //   ),
-                    if (booking.parent.isOnlineAppointment)
+                    if (booking.parent!.isOnlineAppointment!)
                       FadeTransition(
-                        opacity: animation,
+                        opacity: animation as Animation<double>,
                         child: GestureDetector(
                           onTap: () {
-                            if (booking.parent.dateTime != null) {
+                            if (booking.parent!.dateTime != null) {
                               Duration timeDiff = DateTime.now()
-                                  .difference(booking.parent.dateTime);
+                                  .difference(booking.parent!.dateTime!);
                               if (timeDiff.inMinutes <= -1) {
                                 print("Diff more");
                                 Utils.showMyFlushbar(
@@ -842,7 +842,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     Duration(seconds: 5),
                                     yourTurnUserMessage1,
                                     yourTurnUserMessage2);
-                              } else if (booking.parent.dateTime
+                              } else if (booking.parent!.dateTime!
                                   .isBefore(DateTime.now())) {
                                 Utils.showMyFlushbar(
                                     context,
@@ -851,7 +851,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     "Could not start WhatsApp call as this Booking has already expired.",
                                     "Please contact Owner/Manager of this Place");
                               } else {
-                                String phoneNo = booking.parent.userId;
+                                String? phoneNo = booking.parent!.userId;
                                 if (phoneNo != null && phoneNo != "") {
                                   try {
                                     launchWhatsApp(
@@ -902,7 +902,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                       height: 5,
                     ),
                     Text(
-                      dtFormat.format(booking.parent.dateTime),
+                      dtFormat.format(booking.parent!.dateTime!),
                       style: tokenDataTextStyle,
                     ),
                     Container(
@@ -915,10 +915,10 @@ class _TokensInSlotState extends State<TokensInSlot>
                         // Text('Time: ', style: tokenHeadingTextStyle),
                         Text(
                           Utils.formatTime(
-                                  booking.parent.dateTime.hour.toString()) +
+                                  booking.parent!.dateTime!.hour.toString()) +
                               ':' +
                               Utils.formatTime(
-                                  booking.parent.dateTime.minute.toString()),
+                                  booking.parent!.dateTime!.minute.toString()),
                           style: tokenDateTextStyle,
                         ),
                       ],
@@ -975,7 +975,7 @@ class _TokensInSlotState extends State<TokensInSlot>
       appBar: CustomAppBarWithBackButton(
         backRoute: widget.backRoute,
         titleTxt:
-            "Tokens in ${Utils.formatTimeAsStr(timeSlot)} Slot on ${dtFormat.format(widget.date)}",
+            "Tokens in ${Utils.formatTimeAsStr(timeSlot)} Slot on ${dtFormat.format(widget.date!)}",
       ),
       body: (initCompleted)
           ? Column(
@@ -997,7 +997,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                     padding: EdgeInsets.all(10),
                                     child: Card(
                                         child: _buildItem(
-                                            listOfTokens[index], index)),
+                                            listOfTokens[index]!, index)),
                                     //children: <Widget>[firstRow, secondRow],
                                   );
                                 },

@@ -8,15 +8,15 @@ import '../login_page.dart';
 import '../userHomePage.dart';
 
 class AuthService {
-  AuthService(FirebaseApp fb) {
+  AuthService(FirebaseApp? fb) {
     _fb = fb;
   }
 
-  FirebaseApp _fb;
+  FirebaseApp? _fb;
 
   FirebaseAuth getFirebaseAuth() {
     if (_fb == null) return FirebaseAuth.instance;
-    return FirebaseAuth.instanceFor(app: _fb);
+    return FirebaseAuth.instanceFor(app: _fb!);
   }
 
   handleAuth() {
@@ -42,8 +42,8 @@ class AuthService {
   }
 
 //SignIn
-  UserCredential signIn(AuthCredential authCreds, BuildContext context) {
-    UserCredential result;
+  UserCredential? signIn(AuthCredential authCreds, BuildContext context) {
+    UserCredential? result;
     getFirebaseAuth()
         .signInWithCredential(authCreds)
         .then((UserCredential authResult) {
@@ -55,7 +55,7 @@ class AuthService {
     //   context, MaterialPageRoute(builder: (context) => LandingPage()));
   }
 
-  UserCredential signInWithOTP(smsCode, verId, context) {
+  UserCredential? signInWithOTP(smsCode, verId, context) {
     AuthCredential authCreds =
         PhoneAuthProvider.credential(verificationId: verId, smsCode: smsCode);
     return signIn(authCreds, context);
@@ -66,7 +66,7 @@ class AuthService {
       Duration timeout,
       PhoneVerificationCompleted verificationCompleted,
       PhoneVerificationFailed verificationFailed,
-      int forceResendingToken,
+      int? forceResendingToken,
       PhoneCodeSent codeSent,
       PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout) {
     FirebaseAuth fAuth = getFirebaseAuth();

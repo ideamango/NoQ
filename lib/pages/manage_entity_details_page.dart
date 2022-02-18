@@ -41,10 +41,10 @@ import '../widget/widgets.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
 class ManageEntityDetailsPage extends StatefulWidget {
-  final Entity entity;
+  final Entity? entity;
   final bool isManager;
   ManageEntityDetailsPage(
-      {Key key, @required this.entity, @required this.isManager})
+      {Key? key, required this.entity, required this.isManager})
       : super(key: key);
   @override
   _ManageEntityDetailsPageState createState() =>
@@ -95,8 +95,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   double _videoHeight = 0;
   bool _isVideoExpanded = false;
   EdgeInsets _margin = EdgeInsets.fromLTRB(5, 0, 5, 0);
-  Widget _text;
-  Widget _videoText;
+  Widget? _text;
+  Widget? _videoText;
   bool _isExpanded = false;
   bool _publicExpandClick = false;
   bool _activeExpandClick = false;
@@ -110,7 +110,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   String flushStatus = "Empty";
 
   String dateString = "Start Date";
-  Offer insertOffer = new Offer();
+  Offer? insertOffer = new Offer();
   bool offerFieldStatus = false;
 
 //Basic Details
@@ -161,15 +161,15 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   //TextEditingController _ctPhn1controller = TextEditingController();
 
   TextEditingController _adminItemController = new TextEditingController();
-  String _item;
-  String qrCodeFilePath;
+  String? _item;
+  String? qrCodeFilePath;
 
   //ContactPerson Fields
 
   Employee cp1 = new Employee();
   Address adrs = new Address();
-  MetaEntity _metaEntity;
-  Entity entity;
+  MetaEntity? _metaEntity;
+  Entity? entity;
 
   List<Employee> contactList = new List<Employee>();
   List<String> adminsList = new List<String>();
@@ -177,23 +177,23 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   List<Widget> contactRowWidgetsNew = new List<Widget>();
   List<Widget> adminRowWidgets = new List<Widget>();
 
-  ScrollController _scrollController;
+  ScrollController? _scrollController;
   final itemSize = 80.0;
 
   //bool _autoPopulate = false;
 
-  String _currentCity;
-  String _postalCode;
-  String _country;
-  String _subArea;
-  String _state;
-  String _mainArea;
+  String? _currentCity;
+  String? _postalCode;
+  String? _country;
+  String? _subArea;
+  String? _state;
+  String? _mainArea;
 
 //  String _entityType;
-  String state;
+  String? state;
 
   bool addNewClicked = false;
-  String _roleType;
+  String? _roleType;
 
   bool getEntityDone = false;
   bool _initCompleted = false;
@@ -207,17 +207,17 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   EdgeInsets _bookMargin = EdgeInsets.all(0);
   double _bookWidth = 0;
   double _bookHeight = 0;
-  Widget _bookText;
-  FocusNode whatsappFocus;
-  Position pos;
-  GlobalState _gs;
-  String _phCountryCode;
+  Widget? _bookText;
+  FocusNode? whatsappFocus;
+  Position? pos;
+  GlobalState? _gs;
+  String? _phCountryCode;
   bool setActive = false;
   //final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
   ///from contact page
   bool _isValid = false;
-  Employee contact;
+  Employee? contact;
   TextEditingController _ctNameController = TextEditingController();
   TextEditingController _ctEmpIdController = TextEditingController();
   TextEditingController _ctPhn1controller = TextEditingController();
@@ -228,12 +228,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   final GlobalKey<FormFieldState> phn1Key = new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> phn2Key = new GlobalKey<FormFieldState>();
 
-  List<String> _ctDaysOff;
+  List<String>? _ctDaysOff;
 
-  List<days> _ctClosedOnDays;
-  Entity _entity;
-  List<Employee> _list;
-  Eventify.Listener removeManagerListener;
+  List<days>? _ctClosedOnDays;
+  Entity? _entity;
+  List<Employee>? _list;
+  Eventify.Listener? removeManagerListener;
 
   ///end of fields from contact page
 
@@ -261,37 +261,37 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
-    _phCountryCode = _gs.getConfigurations().phCountryCode;
+    _phCountryCode = _gs!.getConfigurations()!.phCountryCode;
   }
 
   initializeEntity() async {
     if (entity != null) {
-      isPublic = (entity.isPublic) ?? false;
-      isBookable = (entity.isBookable) ?? false;
-      isActive = (entity.isActive) ?? false;
-      isOnlineEnabled = entity.allowOnlineAppointment ?? false;
-      isOfflineEnabled = entity.allowWalkinAppointment ?? false;
+      isPublic = (entity!.isPublic) ?? false;
+      isBookable = (entity!.isBookable) ?? false;
+      isActive = (entity!.isActive) ?? false;
+      isOnlineEnabled = entity!.allowOnlineAppointment ?? false;
+      isOfflineEnabled = entity!.allowWalkinAppointment ?? false;
 
-      if (entity.offer != null) {
-        insertOffer = entity.offer;
+      if (entity!.offer != null) {
+        insertOffer = entity!.offer;
         _offerMessageController.text =
-            entity.offer.message != null ? entity.offer.message.toString() : "";
+            entity!.offer!.message != null ? entity!.offer!.message.toString() : "";
         _offerCouponController.text =
-            entity.offer.coupon != null ? entity.offer.coupon.toString() : "";
+            entity!.offer!.coupon != null ? entity!.offer!.coupon.toString() : "";
 
-        _startDateController.text = entity.offer.startDateTime != null
-            ? entity.offer.startDateTime.day.toString() +
+        _startDateController.text = entity!.offer!.startDateTime != null
+            ? entity!.offer!.startDateTime!.day.toString() +
                 " / " +
-                entity.offer.startDateTime.month.toString() +
+                entity!.offer!.startDateTime!.month.toString() +
                 " / " +
-                entity.offer.startDateTime.year.toString()
+                entity!.offer!.startDateTime!.year.toString()
             : "";
-        _endDateController.text = entity.offer.endDateTime != null
-            ? entity.offer.endDateTime.day.toString() +
+        _endDateController.text = entity!.offer!.endDateTime != null
+            ? entity!.offer!.endDateTime!.day.toString() +
                 " / " +
-                entity.offer.endDateTime.month.toString() +
+                entity!.offer!.endDateTime!.month.toString() +
                 " / " +
-                entity.offer.endDateTime.year.toString()
+                entity!.offer!.endDateTime!.year.toString()
             : "";
       }
 
@@ -301,50 +301,50 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       if (isBookable) {
         validateMandatoryFieldsForBookable();
       }
-      _nameController.text = entity.name;
-      _descController.text = (entity.description);
+      _nameController.text = entity!.name!;
+      _descController.text = entity!.description!;
 
-      if (entity.startTimeHour != null && entity.startTimeMinute != null)
+      if (entity!.startTimeHour != null && entity!.startTimeMinute != null)
         _openTimeController.text =
-            Utils.formatTime(entity.startTimeHour.toString()) +
+            Utils.formatTime(entity!.startTimeHour.toString()) +
                 ':' +
-                Utils.formatTime(entity.startTimeMinute.toString());
-      if (entity.endTimeHour != null && entity.endTimeMinute != null)
+                Utils.formatTime(entity!.startTimeMinute.toString());
+      if (entity!.endTimeHour != null && entity!.endTimeMinute != null)
         _closeTimeController.text =
-            Utils.formatTime(entity.endTimeHour.toString()) +
+            Utils.formatTime(entity!.endTimeHour.toString()) +
                 ':' +
-                Utils.formatTime(entity.endTimeMinute.toString());
-      if (entity.breakStartHour != null && entity.breakStartMinute != null)
+                Utils.formatTime(entity!.endTimeMinute.toString());
+      if (entity!.breakStartHour != null && entity!.breakStartMinute != null)
         _breakStartController.text =
-            Utils.formatTime(entity.breakStartHour.toString()) +
+            Utils.formatTime(entity!.breakStartHour.toString()) +
                 ':' +
-                Utils.formatTime(entity.breakStartMinute.toString());
-      if (entity.breakEndHour != null && entity.breakEndMinute != null)
+                Utils.formatTime(entity!.breakStartMinute.toString());
+      if (entity!.breakEndHour != null && entity!.breakEndMinute != null)
         _breakEndController.text =
-            Utils.formatTime(entity.breakEndHour.toString()) +
+            Utils.formatTime(entity!.breakEndHour.toString()) +
                 ':' +
-                Utils.formatTime(entity.breakEndMinute.toString());
+                Utils.formatTime(entity!.breakEndMinute.toString());
 
-      if (entity.closedOn != null) {
-        if (entity.closedOn.length != 0)
-          _daysOff = Utils.convertStringsToDays(entity.closedOn);
+      if (entity!.closedOn != null) {
+        if (entity!.closedOn!.length != 0)
+          _daysOff = Utils.convertStringsToDays(entity!.closedOn!);
       }
       // if (_daysOff.length == 0) {
       //   _closedOnDays.add('days.sunday');
       //   _daysOff = Utils.convertStringsToDays(_closedOnDays);
       // }
       _slotDurationController.text =
-          entity.slotDuration != null ? entity.slotDuration.toString() : "";
+          entity!.slotDuration != null ? entity!.slotDuration.toString() : "";
       _advBookingInDaysController.text =
-          entity.advanceDays != null ? entity.advanceDays.toString() : "";
+          entity!.advanceDays != null ? entity!.advanceDays.toString() : "";
 
 //Max People
       _maxPeopleController.text =
-          (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
+          (entity!.maxAllowed != null) ? entity!.maxAllowed.toString() : "";
 //Max bookings by User in a Day
       _maxBookingsInDayForUserController.text =
-          (entity.maxTokensByUserInDay != null)
-              ? entity.maxTokensByUserInDay.toString()
+          (entity!.maxTokensByUserInDay != null)
+              ? entity!.maxTokensByUserInDay.toString()
               : "";
 //Max Bookings in a slot by User
 //       _maxBookingsInTimeSlotForUserController.text =
@@ -356,36 +356,36 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 //           ? entity.maxPeoplePerToken.toString()
 //           : "";
 
-      _whatsappPhoneController.text = entity.whatsapp != null
-          ? entity.whatsapp.toString().substring(3)
+      _whatsappPhoneController.text = entity!.whatsapp != null
+          ? entity!.whatsapp.toString().substring(3)
           : "";
-      _contactPhoneController.text = Utils.isNotNullOrEmpty(entity.phone)
-          ? entity.phone.toString().substring(3)
+      _contactPhoneController.text = Utils.isNotNullOrEmpty(entity!.phone)
+          ? entity!.phone.toString().substring(3)
           : "";
-      _emailIdController.text = Utils.isNotNullOrEmpty(entity.supportEmail)
-          ? entity.supportEmail
+      _emailIdController.text = Utils.isNotNullOrEmpty(entity!.supportEmail)
+          ? entity!.supportEmail!
           : "";
 
       _upiIdController.text =
-          Utils.isNotNullOrEmpty(entity.upiId) ? entity.upiId : "";
+          Utils.isNotNullOrEmpty(entity!.upiId) ? entity!.upiId! : "";
       // _upiPhoneController.text = Utils.isNotNullOrEmpty(entity.upiPhoneNumber)
       //     ? entity.upiPhoneNumber.toString().substring(3)
       //     : "";
 
-      if (entity.coordinates != null) {
-        _latController.text = entity.coordinates.geopoint.latitude.toString();
-        _lonController.text = entity.coordinates.geopoint.longitude.toString();
+      if (entity!.coordinates != null) {
+        _latController.text = entity!.coordinates!.geopoint!.latitude.toString();
+        _lonController.text = entity!.coordinates!.geopoint!.longitude.toString();
       }
 
       //address
-      if (entity.address != null) {
-        _adrs1Controller.text = entity.address.address;
-        _localityController.text = entity.address.locality;
-        _landController.text = entity.address.landmark;
-        _cityController.text = entity.address.city;
-        _stateController.text = entity.address.state;
-        _countryController.text = entity.address.country;
-        _pinController.text = entity.address.zipcode;
+      if (entity!.address != null) {
+        _adrs1Controller.text = entity!.address!.address!;
+        _localityController.text = entity!.address!.locality!;
+        _landController.text = entity!.address!.landmark!;
+        _cityController.text = entity!.address!.city!;
+        _stateController.text = entity!.address!.state!;
+        _countryController.text = entity!.address!.country!;
+        _pinController.text = entity!.address!.zipcode!;
       }
       //contact person
       // if (!(Utils.isNullOrEmpty(entity.managers))) {
@@ -396,20 +396,20 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       //   });
       // }
 
-      AppUser currUser = _gs.getCurrentUser();
+      AppUser? currUser = _gs!.getCurrentUser();
       // Map<String, String> adminMap = Map<String, String>();
-      EntityPrivate entityPrivateList;
-      entityPrivateList = await fetchAdmins(entity.entityId);
+      EntityPrivate? entityPrivateList;
+      entityPrivateList = await fetchAdmins(entity!.entityId!);
       if (entityPrivateList != null) {
         //   adminMap = entityPrivateList.roles;
         //   if (adminMap != null)
         //     adminMap.forEach((k, v) {
         //       if (currUser.ph != k) adminsList.add(k);
         //     });
-        _regNumController.text = entityPrivateList.registrationNumber;
+        _regNumController.text = entityPrivateList.registrationNumber!;
       }
     }
-    Location lc = _gs.getLocation();
+    Location? lc = _gs!.getLocation();
     Address defaultAdrs = new Address();
     if (lc != null) {
       defaultAdrs.state = lc.state;
@@ -417,25 +417,25 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       defaultAdrs.city = lc.city;
       defaultAdrs.country = lc.country;
     }
-    entity.address = (entity.address) ?? defaultAdrs;
+    entity!.address = (entity!.address) ?? defaultAdrs;
 
-    _cityController.text = entity.address.city;
-    _stateController.text = entity.address.state;
-    _countryController.text = entity.address.country;
-    _pinController.text = entity.address.zipcode;
+    _cityController.text = entity!.address!.city!;
+    _stateController.text = entity!.address!.state!;
+    _countryController.text = entity!.address!.country!;
+    _pinController.text = entity!.address!.zipcode!;
     contactList = contactList ?? [];
 
     //  _ctNameController.text = entity.contactPersons[0].perName;
   }
 
-  String validateText(String value) {
+  String? validateText(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else
       return null;
   }
 
-  String validateNumber(String value) {
+  String? validateNumber(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else if (int.tryParse(value) == null) {
@@ -444,7 +444,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       return null;
   }
 
-  String validateAdvanceBookingDays(String value) {
+  String? validateAdvanceBookingDays(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else if (int.tryParse(value) == null) {
@@ -455,7 +455,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       return null;
   }
 
-  String validateMaxBookingsInTimeSlot(String value) {
+  String? validateMaxBookingsInTimeSlot(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else if (int.tryParse(value) == null) {
@@ -466,7 +466,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       return null;
   }
 
-  String validateDurationOfSlot(String value) {
+  String? validateDurationOfSlot(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else if (int.tryParse(value) == null) {
@@ -477,7 +477,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       return null;
   }
 
-  String validateUserBookingsInDay(String value) {
+  String? validateUserBookingsInDay(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else if (int.tryParse(value) == null) {
@@ -488,16 +488,16 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       return null;
   }
 
-  String validateTime(String value) {
+  String? validateTime(String value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else
       return null;
   }
 
-  String validateTimeFields() {
-    if ((entity.breakEndHour != null && entity.breakStartHour == null) ||
-        (entity.breakEndHour == null && entity.breakStartHour != null)) {
+  String? validateTimeFields() {
+    if ((entity!.breakEndHour != null && entity!.breakStartHour == null) ||
+        (entity!.breakEndHour == null && entity!.breakStartHour != null)) {
       return "Both Break Start and Break End time should be specified.";
     }
     // if ((entity.breakEndHour != null && entity.breakStartHour != null)) {
@@ -508,18 +508,18 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     //   //Check if End is after start time.
     //   return "Place Closing(End) time should be after Opening(Start) time.";
     // }
-    if ((entity.startTimeHour != null && entity.endTimeHour == null) ||
-        (entity.startTimeHour == null && entity.endTimeHour != null)) {
+    if ((entity!.startTimeHour != null && entity!.endTimeHour == null) ||
+        (entity!.startTimeHour == null && entity!.endTimeHour != null)) {
       return "Both Day Start and Day End time should be specified.";
     }
 
     return null;
   }
 
-  _getAddressFromLatLng(Position position) async {
+  _getAddressFromLatLng(Position? position) async {
     setState(() {
-      entity.coordinates =
-          new MyGeoFirePoint(position.latitude, position.longitude);
+      entity!.coordinates =
+          new MyGeoFirePoint(position!.latitude, position.longitude);
       _latController.text = position.latitude.toString();
       _lonController.text = position.longitude.toString();
     });
@@ -527,7 +527,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
   void clearLocation() {
 //If entity is Public or entity is active, latitude, longitude must be given.
-    if (entity.isActive) {
+    if (entity!.isActive!) {
       Utils.showMyFlushbar(
           context,
           Icons.info_outline,
@@ -539,14 +539,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     } else {
       _latController.text = "";
       _lonController.text = "";
-      entity.coordinates = null;
+      entity!.coordinates = null;
     }
   }
 
-  Future<File> captureImage(bool gallery) async {
+  Future<File?> captureImage(bool gallery) async {
     ImagePicker picker = ImagePicker();
-    PickedFile pickedFile;
-    File newImageFile;
+    PickedFile? pickedFile;
+    File? newImageFile;
 
     if (gallery) {
       pickedFile = await picker.getImage(
@@ -574,34 +574,34 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       String localPath, String targetFileName) async {
     File localImage = File(localPath);
 
-    Reference ref = _gs.firebaseStorage.ref().child('$targetFileName');
+    Reference ref = _gs!.firebaseStorage!.ref().child('$targetFileName');
 
     await ref.putFile(localImage);
 
     return await ref.getDownloadURL();
   }
 
-  String validateMandatoryFieldsForBookable() {
-    String msg;
-    bool error;
+  String? validateMandatoryFieldsForBookable() {
+    String? msg;
+    bool? error;
     if (isBookable) {
       if (openDayTimeKey.currentState != null) {
-        error = (openDayTimeKey.currentState.validate());
+        error = (openDayTimeKey.currentState!.validate());
       }
       if (endDayTimeKey.currentState != null) {
-        error = (endDayTimeKey.currentState.validate());
+        error = (endDayTimeKey.currentState!.validate());
       }
       if (slotDurationKey.currentState != null) {
-        error = (slotDurationKey.currentState.validate());
+        error = (slotDurationKey.currentState!.validate());
       }
       if (advDaysKey.currentState != null) {
-        error = (advDaysKey.currentState.validate());
+        error = (advDaysKey.currentState!.validate());
       }
       if (maxPeopleKey.currentState != null) {
-        error = (maxPeopleKey.currentState.validate());
+        error = (maxPeopleKey.currentState!.validate());
       }
       if (maxTokenUserKey.currentState != null) {
-        error = (maxTokenUserKey.currentState.validate());
+        error = (maxTokenUserKey.currentState!.validate());
       }
       // if (maxTokenUserInSlotKey.currentState != null) {
       //   error = (maxTokenUserInSlotKey.currentState.validate());
@@ -610,10 +610,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       //   error = (maxPeoplePerTokenKey.currentState.validate());
       // }
       if (latKey.currentState != null) {
-        error = (latKey.currentState.validate());
+        error = (latKey.currentState!.validate());
       }
       if (lonKey.currentState != null) {
-        error = (lonKey.currentState.validate());
+        error = (lonKey.currentState!.validate());
       }
 
       if (error != null) {
@@ -626,9 +626,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     return msg;
   }
 
-  String validateFieldsForOnlineConsultation() {
+  String? validateFieldsForOnlineConsultation() {
     //Whatsapp number should be given
-    String msg;
+    String? msg;
     if (Utils.isStrNullOrEmpty(_whatsappPhoneController.text)) {
       msg =
           "WhatsApp phone number should be provided, for enabling Online Consultation.";
@@ -636,9 +636,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     return msg;
   }
 
-  String validateFieldsForOfflineConsultation() {
+  String? validateFieldsForOfflineConsultation() {
     //Whatsapp number should be given
-    String msg;
+    String? msg;
     //TODO: SMita
     // if (Utils.isStrNullOrEmpty(_whatsappPhoneController.text)) {
     //   msg =
@@ -666,10 +666,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return validateText(value);
         },
         onChanged: (String value) {
-          entity.name = value;
+          entity!.name = value;
         },
-        onSaved: (String value) {
-          entity.name = value;
+        onSaved: (String? value) {
+          entity!.name = value;
         },
       );
 
@@ -691,10 +691,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         maxLength: null,
         maxLines: 3,
         onChanged: (String value) {
-          entity.description = value;
+          entity!.description = value;
         },
-        onSaved: (String value) {
-          entity.description = value;
+        onSaved: (String? value) {
+          entity!.description = value;
         },
       );
       final regNumField = TextFormField(
@@ -707,7 +707,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         controller: _regNumController,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Registration Number", hintTextStr: ""),
-        onSaved: (String value) {
+        onSaved: (String? value) {
           //TODO: test if regNum is getting saved
           //entity.regNum = value;
         },
@@ -741,9 +741,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               _openTimeController.text = time.toLowerCase();
               if (_openTimeController.text != "") {
                 List<String> time = _openTimeController.text.split(':');
-                entity.startTimeHour = int.parse(time[0]);
+                entity!.startTimeHour = int.parse(time[0]);
 
-                entity.startTimeMinute = int.parse(time[1]);
+                entity!.startTimeMinute = int.parse(time[1]);
               }
             }, currentTime: DateTime.now());
           }
@@ -786,8 +786,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 onPressed: () {
                   dayStartClearClicked = true;
                   _openTimeController.text = "";
-                  entity.startTimeHour = null;
-                  entity.startTimeMinute = null;
+                  entity!.startTimeHour = null;
+                  entity!.startTimeMinute = null;
                   setState(() {});
                 }),
             labelText: "Opening time*",
@@ -807,11 +807,11 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         },
         onChanged: (String value) {
           List<String> time = value.split(':');
-          entity.startTimeHour = int.parse(time[0]);
+          entity!.startTimeHour = int.parse(time[0]);
 
-          entity.startTimeMinute = int.parse(time[1]);
+          entity!.startTimeMinute = int.parse(time[1]);
         },
-        onSaved: (String value) {},
+        onSaved: (String? value) {},
       );
       final closeTimeField = TextFormField(
         key: endDayTimeKey,
@@ -840,9 +840,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               _closeTimeController.text = time.toLowerCase();
               if (_closeTimeController.text != "") {
                 List<String> time = _closeTimeController.text.split(':');
-                entity.endTimeHour = int.parse(time[0]);
+                entity!.endTimeHour = int.parse(time[0]);
 
-                entity.endTimeMinute = int.parse(time[1]);
+                entity!.endTimeMinute = int.parse(time[1]);
               }
             }, currentTime: DateTime.now());
           }
@@ -866,8 +866,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 onPressed: () {
                   dayEndClearClicked = true;
                   _closeTimeController.text = "";
-                  entity.endTimeHour = null;
-                  entity.endTimeMinute = null;
+                  entity!.endTimeHour = null;
+                  entity!.endTimeMinute = null;
                   setState(() {});
                 }),
             enabledBorder: UnderlineInputBorder(
@@ -885,10 +885,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         },
         onChanged: (String value) {
           List<String> time = value.split(':');
-          entity.endTimeHour = int.parse(time[0]);
-          entity.endTimeMinute = int.parse(time[1]);
+          entity!.endTimeHour = int.parse(time[0]);
+          entity!.endTimeMinute = int.parse(time[1]);
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           //TODO: test the values
         },
       );
@@ -916,9 +916,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               _breakStartController.text = time.toLowerCase();
               if (_breakStartController.text != "") {
                 List<String> time = _breakStartController.text.split(':');
-                entity.breakStartHour = int.parse(time[0]);
+                entity!.breakStartHour = int.parse(time[0]);
 
-                entity.breakStartMinute = int.parse(time[1]);
+                entity!.breakStartMinute = int.parse(time[1]);
               }
             }, currentTime: DateTime.now());
           }
@@ -944,8 +944,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 onPressed: () {
                   breakStartClearClicked = true;
                   _breakStartController.text = "";
-                  entity.breakStartHour = null;
-                  entity.breakStartMinute = null;
+                  entity!.breakStartHour = null;
+                  entity!.breakStartMinute = null;
                   setState(() {});
                 }),
             enabledBorder: UnderlineInputBorder(
@@ -957,10 +957,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         },
         onChanged: (value) {
           List<String> time = value.split(':');
-          entity.breakStartHour = int.parse(time[0]);
-          entity.breakStartMinute = int.parse(time[1]);
+          entity!.breakStartHour = int.parse(time[0]);
+          entity!.breakStartMinute = int.parse(time[1]);
         },
-        onSaved: (String value) {},
+        onSaved: (String? value) {},
       );
       final breakEndTimeField = TextFormField(
         obscureText: false,
@@ -987,8 +987,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               _breakEndController.text = time.toLowerCase();
               if (_breakEndController.text != "") {
                 List<String> time = _breakEndController.text.split(':');
-                entity.breakEndHour = int.parse(time[0]);
-                entity.breakEndMinute = int.parse(time[1]);
+                entity!.breakEndHour = int.parse(time[0]);
+                entity!.breakEndMinute = int.parse(time[1]);
               }
             }, currentTime: DateTime.now());
           }
@@ -1012,8 +1012,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 onPressed: () {
                   breakEndClearClicked = true;
                   _breakEndController.text = "";
-                  entity.breakEndHour = null;
-                  entity.breakEndMinute = null;
+                  entity!.breakEndHour = null;
+                  entity!.breakEndMinute = null;
                   setState(() {});
                 }),
             enabledBorder: UnderlineInputBorder(
@@ -1026,11 +1026,11 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         onChanged: (value) {
           if (value != "") {
             List<String> time = value.split(':');
-            entity.breakEndHour = int.parse(time[0]);
-            entity.breakEndMinute = int.parse(time[1]);
+            entity!.breakEndHour = int.parse(time[0]);
+            entity!.breakEndMinute = int.parse(time[1]);
           }
         },
-        onSaved: (String value) {},
+        onSaved: (String? value) {},
       );
 
       final daysClosedField = Padding(
@@ -1077,7 +1077,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                   var day = element.toString().substring(5);
                   _closedOnDays.add(day);
                 });
-                entity.closedOn = _closedOnDays;
+                entity!.closedOn = _closedOnDays;
                 print(_closedOnDays.length);
                 print(_closedOnDays.toString());
               },
@@ -1109,10 +1109,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          entity.slotDuration = int.tryParse(value);
+          entity!.slotDuration = int.tryParse(value);
         },
-        onSaved: (String value) {
-          entity.slotDuration = int.tryParse(value);
+        onSaved: (String? value) {
+          entity!.slotDuration = int.tryParse(value!);
         },
       );
       final advBookingInDays = TextFormField(
@@ -1139,10 +1139,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          entity.advanceDays = int.tryParse(value);
+          entity!.advanceDays = int.tryParse(value);
         },
-        onSaved: (String value) {
-          entity.advanceDays = int.tryParse(value);
+        onSaved: (String? value) {
+          entity!.advanceDays = int.tryParse(value!);
         },
       );
       final maxpeopleInASlot = TextFormField(
@@ -1169,10 +1169,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          entity.maxAllowed = int.tryParse(value);
+          entity!.maxAllowed = int.tryParse(value);
         },
-        onSaved: (String value) {
-          entity.maxAllowed = int.tryParse(value);
+        onSaved: (String? value) {
+          entity!.maxAllowed = int.tryParse(value!);
         },
       );
       final maxTokenPerDay = TextFormField(
@@ -1199,10 +1199,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          entity.maxTokensByUserInDay = int.tryParse(value);
+          entity!.maxTokensByUserInDay = int.tryParse(value);
         },
-        onSaved: (String value) {
-          entity.maxTokensByUserInDay = int.tryParse(value);
+        onSaved: (String? value) {
+          entity!.maxTokensByUserInDay = int.tryParse(value!);
         },
       );
       // final maxTokenPerSlotInDay = TextFormField(
@@ -1295,10 +1295,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return Utils.validateMobileField(value);
         },
         onChanged: (value) {
-          entity.whatsapp = _phCountryCode + (value);
+          entity!.whatsapp = _phCountryCode! + (value);
         },
-        onSaved: (String value) {
-          entity.whatsapp = _phCountryCode + (value);
+        onSaved: (String? value) {
+          entity!.whatsapp = _phCountryCode! + value!;
         },
       );
       final callingPhone = TextFormField(
@@ -1326,10 +1326,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          entity.phone = _phCountryCode + (value);
+          entity!.phone = _phCountryCode! + (value);
         },
-        onSaved: (String value) {
-          entity.phone = _phCountryCode + (value);
+        onSaved: (String? value) {
+          entity!.phone = _phCountryCode! + value!;
         },
       );
       final emailId = TextFormField(
@@ -1350,10 +1350,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         ),
         validator: Utils.validateEmail,
         onChanged: (value) {
-          entity.supportEmail = value;
+          entity!.supportEmail = value;
         },
-        onSaved: (String value) {
-          entity.supportEmail = value;
+        onSaved: (String? value) {
+          entity!.supportEmail = value;
         },
       );
       final upiIdField = TextFormField(
@@ -1374,10 +1374,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         ),
         validator: Utils.validateUpiAddress,
         onChanged: (value) {
-          entity.upiId = (value);
+          entity!.upiId = (value);
         },
-        onSaved: (String value) {
-          entity.upiId = (value);
+        onSaved: (String? value) {
+          entity!.upiId = (value);
         },
       );
 
@@ -1473,18 +1473,18 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       // );
 
       checkOfferDetailsFilled() {
-        if (insertOffer.message != null && insertOffer.message.isNotEmpty ||
-            insertOffer.coupon != null && insertOffer.coupon.isNotEmpty ||
-            insertOffer.startDateTime != null ||
-            insertOffer.endDateTime != null) {
-          entity.offer = insertOffer;
+        if (insertOffer!.message != null && insertOffer!.message!.isNotEmpty ||
+            insertOffer!.coupon != null && insertOffer!.coupon!.isNotEmpty ||
+            insertOffer!.startDateTime != null ||
+            insertOffer!.endDateTime != null) {
+          entity!.offer = insertOffer;
         } else
-          entity.offer = null;
+          entity!.offer = null;
       }
 
       clearOfferDetail() {
         insertOffer = new Offer();
-        entity.offer = null;
+        entity!.offer = null;
         offerFieldStatus = false;
         _offerCouponController.text = "";
         _offerMessageController.text = "";
@@ -1515,14 +1515,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         maxLines: 1,
         onChanged: (String value) {
           if (Utils.isNotNullOrEmpty(value)) {
-            insertOffer.message = value;
+            insertOffer!.message = value;
             offerFieldStatus = true;
             checkOfferDetailsFilled();
           }
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           if (Utils.isNotNullOrEmpty(value)) {
-            insertOffer.message = value;
+            insertOffer!.message = value;
             offerFieldStatus = true;
             checkOfferDetailsFilled();
           }
@@ -1550,14 +1550,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         maxLines: 1,
         onChanged: (String value) {
           if (Utils.isNotNullOrEmpty(value)) {
-            insertOffer.coupon = value;
+            insertOffer!.coupon = value;
             offerFieldStatus = true;
             checkOfferDetailsFilled();
           }
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           if (Utils.isNotNullOrEmpty(value)) {
-            insertOffer.coupon = value;
+            insertOffer!.coupon = value;
             offerFieldStatus = true;
             checkOfferDetailsFilled();
           }
@@ -1565,17 +1565,17 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
 
       Future<Null> startPickDate(BuildContext context) async {
-        DateTime date = await showDatePicker(
+        DateTime? date = await showDatePicker(
           context: context,
           firstDate: DateTime.now(),
           lastDate: DateTime(DateTime.now().year + 2, DateTime.now().month,
               DateTime.now().day),
-          initialDate: insertOffer.startDateTime != null
-              ? insertOffer.startDateTime.isBefore(DateTime.now())
+          initialDate: insertOffer!.startDateTime != null
+              ? insertOffer!.startDateTime!.isBefore(DateTime.now())
                   ? DateTime.now()
-                  : insertOffer.startDateTime
+                  : insertOffer!.startDateTime!
               : DateTime.now(),
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return Theme(
               data: ThemeData.dark().copyWith(
                 colorScheme: ColorScheme.light(
@@ -1583,13 +1583,13 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 ),
                 dialogBackgroundColor: Colors.white,
               ),
-              child: child,
+              child: child!,
             );
           },
         );
         if (date != null) {
           setState(() {
-            insertOffer.startDateTime = date;
+            insertOffer!.startDateTime = date;
             dateString = date.day.toString() +
                 " / " +
                 date.month.toString() +
@@ -1603,26 +1603,26 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       }
 
       Future<Null> endPickDate(BuildContext context) async {
-        DateTime date = await showDatePicker(
+        DateTime? date = await showDatePicker(
           context: context,
-          firstDate: insertOffer.startDateTime != null
-              ? insertOffer.startDateTime.isBefore(DateTime.now())
+          firstDate: insertOffer!.startDateTime != null
+              ? insertOffer!.startDateTime!.isBefore(DateTime.now())
                   ? DateTime.now()
-                  : insertOffer.startDateTime
+                  : insertOffer!.startDateTime!
               : DateTime.now(),
           lastDate: DateTime(DateTime.now().year + 2, DateTime.now().month,
               DateTime.now().day),
-          initialDate: insertOffer.endDateTime != null
-              ? insertOffer.endDateTime.isBefore(DateTime.now()) &&
-                      insertOffer.startDateTime.isBefore(DateTime.now())
+          initialDate: insertOffer!.endDateTime != null
+              ? insertOffer!.endDateTime!.isBefore(DateTime.now()) &&
+                      insertOffer!.startDateTime!.isBefore(DateTime.now())
                   ? DateTime.now()
-                  : insertOffer.endDateTime.isAfter(insertOffer.startDateTime)
-                      ? insertOffer.endDateTime
-                      : insertOffer.startDateTime
-              : insertOffer.startDateTime != null
-                  ? insertOffer.startDateTime
+                  : insertOffer!.endDateTime!.isAfter(insertOffer!.startDateTime!)
+                      ? insertOffer!.endDateTime!
+                      : insertOffer!.startDateTime!
+              : insertOffer!.startDateTime != null
+                  ? insertOffer!.startDateTime!
                   : DateTime.now(),
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return Theme(
               data: ThemeData.dark().copyWith(
                 colorScheme: ColorScheme.light(
@@ -1630,13 +1630,13 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 ),
                 dialogBackgroundColor: Colors.white,
               ),
-              child: child,
+              child: child!,
             );
           },
         );
         if (date != null) {
           setState(() {
-            insertOffer.endDateTime = date;
+            insertOffer!.endDateTime = date;
             dateString = date.day.toString() +
                 " / " +
                 date.month.toString() +
@@ -1660,7 +1660,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         validator: (value) {
           if (offerFieldStatus) {
             if (value != null && value != "") {
-              if (insertOffer.endDateTime == null)
+              if (insertOffer!.endDateTime == null)
                 return "End Date field is empty";
               else
                 return null;
@@ -1679,7 +1679,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         onChanged: (String value) {
           checkOfferDetailsFilled();
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           checkOfferDetailsFilled();
         },
       );
@@ -1695,7 +1695,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         validator: (value) {
           if (offerFieldStatus) {
             if (value != null && value != "") {
-              if (insertOffer.startDateTime == null)
+              if (insertOffer!.startDateTime == null)
                 return "Start Date Field is empty";
               else
                 return null;
@@ -1714,7 +1714,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         onChanged: (String value) {
           checkOfferDetailsFilled();
         },
-        onSaved: (String value) {
+        onSaved: (String? value) {
           checkOfferDetailsFilled();
         },
       );
@@ -1740,7 +1740,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               return null;
             },
             onChanged: (String value) {},
-            onSaved: (String value) {},
+            onSaved: (String? value) {},
           ));
 
       final lonField = Container(
@@ -1764,7 +1764,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               return null;
             },
             onChanged: (String value) {},
-            onSaved: (String value) {},
+            onSaved: (String? value) {},
           ));
       final clearBtn = Container(
           width: MediaQuery.of(context).size.width * .3,
@@ -1773,7 +1773,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               color: Colors.transparent,
               splashColor: highlightColor,
               textColor: btnColor,
-              shape: RoundedRectangleBorder(side: BorderSide(color: btnColor)),
+              shape: RoundedRectangleBorder(side: BorderSide(color: btnColor!)),
               child: Text(
                 'Clear',
                 textAlign: TextAlign.center,
@@ -1804,11 +1804,11 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             return null;
         },
         onChanged: (String value) {
-          entity.address.address = value;
+          entity!.address!.address = value;
           print("changed address");
         },
-        onSaved: (String value) {
-          entity.address.address = value;
+        onSaved: (String? value) {
+          entity!.address!.address = value;
           print("saved address");
         },
       );
@@ -1829,11 +1829,11 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange)),
         ),
         onChanged: (String value) {
-          entity.address.landmark = value;
+          entity!.address!.landmark = value;
           print("changed landmark");
         },
-        onSaved: (String value) {
-          entity.address.landmark = value;
+        onSaved: (String? value) {
+          entity!.address!.landmark = value;
           print("saved landmark");
         },
       );
@@ -1859,8 +1859,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           else
             return null;
         },
-        onSaved: (String value) {
-          entity.address.locality = value;
+        onSaved: (String? value) {
+          entity!.address!.locality = value;
           print("saved address");
         },
       );
@@ -1886,8 +1886,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           else
             return null;
         },
-        onSaved: (String value) {
-          entity.address.city = value;
+        onSaved: (String? value) {
+          entity!.address!.city = value;
           print("saved address");
         },
       );
@@ -1913,8 +1913,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           else
             return null;
         },
-        onSaved: (String value) {
-          entity.address.state = value;
+        onSaved: (String? value) {
+          entity!.address!.state = value;
           print("saved address");
         },
       );
@@ -1940,8 +1940,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           else
             return null;
         },
-        onSaved: (String value) {
-          entity.address.country = value;
+        onSaved: (String? value) {
+          entity!.address!.country = value;
           print("saved address");
         },
       );
@@ -1968,29 +1968,29 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             return null;
         },
         onChanged: (String value) {
-          entity.address.zipcode = value;
+          entity!.address!.zipcode = value;
           print("saved address");
         },
-        onSaved: (String value) {
-          entity.address.zipcode = value;
+        onSaved: (String? value) {
+          entity!.address!.zipcode = value;
           print("saved address");
         },
       );
       TextEditingController _txtController = new TextEditingController();
       bool _delEnabled = false;
-      Flushbar flush;
-      bool _wasButtonClicked;
+      Flushbar? flush;
+      bool? _wasButtonClicked;
 
       saveRoute() {
         print("saving ");
 
-        String validationPh1;
-        String validationPh2;
+        String? validationPh1;
+        String? validationPh2;
         bool isContactValid = true;
         bool timeFieldsValid = true;
-        String errTimeFields;
-        String errContactPhone;
-        String errBookablePlace;
+        String? errTimeFields;
+        String? errContactPhone;
+        String? errBookablePlace;
         if (isBookable) {
           errBookablePlace = validateMandatoryFieldsForBookable();
           if (Utils.isNotNullOrEmpty(errBookablePlace)) {
@@ -2000,7 +2000,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 Duration(
                   seconds: 4,
                 ),
-                errBookablePlace,
+                errBookablePlace!,
                 "Please fill all mandatory details to allow Booking.");
             return;
           }
@@ -2008,10 +2008,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
         for (int i = 0; i < contactList.length; i++) {
           validationPh1 = (contactList[i].ph != null)
-              ? Utils.validateMobileField(contactList[i].ph.substring(3))
+              ? Utils.validateMobileField(contactList[i].ph!.substring(3))
               : null;
           validationPh2 = (contactList[i].altPhone != null)
-              ? Utils.validateMobileField(contactList[i].altPhone.substring(3))
+              ? Utils.validateMobileField(contactList[i].altPhone!.substring(3))
               : null;
 
           if (validationPh2 != null || validationPh1 != null) {
@@ -2023,7 +2023,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         }
         errTimeFields = validateTimeFields();
         timeFieldsValid = (errTimeFields == null) ? true : false;
-        if (_entityDetailsFormKey.currentState.validate() &&
+        if (_entityDetailsFormKey.currentState!.validate() &&
             isContactValid &&
             timeFieldsValid) {
           Utils.showMyFlushbar(
@@ -2038,24 +2038,24 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               Colors.white,
               true);
 
-          _entityDetailsFormKey.currentState.save();
+          _entityDetailsFormKey.currentState!.save();
 
           //TODO: this hardcoding is to be removed, BookingFORM should be assigned dynamically by the Admin (either create or choose existing form)
-          if (entity.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER &&
-              Utils.isNullOrEmpty(entity.forms)) {
+          if (entity!.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER &&
+              Utils.isNullOrEmpty(entity!.forms)) {
             MetaForm mForm = MetaForm(
                 id: COVID_VACCINATION_BOOKING_FORM_ID_OLD,
                 name: COVID_BOOKING_FORM_NAME);
-            if (entity.forms == null) {
-              entity.forms = List<MetaForm>();
+            if (entity!.forms == null) {
+              entity!.forms = List<MetaForm>();
             }
-            entity.forms.add(mForm);
+            entity!.forms!.add(mForm);
           }
 
-          upsertEntity(entity, _regNumController.text).then((value) {
+          upsertEntity(entity!, _regNumController.text).then((value) {
             if (value) {
               // Assign admins to newly upserted entity
-              assignAdminsFromList(entity.entityId, adminsList).then((value) {
+              assignAdminsFromList(entity!.entityId, adminsList).then((value) {
                 if (!value) {
                   Utils.showMyFlushbar(
                       context,
@@ -2068,7 +2068,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       Colors.red);
                 } else {
                   //Update gs
-                  _gs.updateMetaEntity(entity.getMetaEntity());
+                  _gs!.updateMetaEntity(entity!.getMetaEntity());
 
                   Utils.showMyFlushbar(
                       context,
@@ -2209,7 +2209,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       // }
 
       void useCurrLocation() {
-        Position pos;
+        Position? pos;
         Utils.getCurrLocation().then((value) {
           pos = value;
           if (pos == null)
@@ -2219,7 +2219,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       }
 
       Future<void> showConfirmationDialog() async {
-        bool returnVal = await showDialog(
+        bool returnVal = await (showDialog(
             barrierDismissible: false,
             context: context,
             builder: (_) => AlertDialog(
@@ -2292,18 +2292,18 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       ),
                     ),
                   ],
-                ));
+                )) as FutureOr<bool>);
 
         if (returnVal) {
           setState(() {
             isBookable = true;
           });
-          entity.isBookable = true;
+          entity!.isBookable = true;
         } else {
           setState(() {
             isBookable = false;
           });
-          entity.isBookable = false;
+          entity!.isBookable = false;
         }
       }
 
@@ -2318,7 +2318,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
       validateAllFields() {
         bool retVal;
-        if (_entityDetailsFormKey.currentState.validate())
+        if (_entityDetailsFormKey.currentState!.validate())
           retVal = true;
         else
           retVal = false;
@@ -2335,7 +2335,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             flushbarStyle: FlushbarStyle.GROUNDED,
             reverseAnimationCurve: Curves.decelerate,
             forwardAnimationCurve: Curves.easeInToLinear,
-            backgroundColor: Colors.cyan[200],
+            backgroundColor: Colors.cyan[200]!,
             boxShadows: [
               BoxShadow(
                   color: Colors.cyan, offset: Offset(0.0, 2.0), blurRadius: 3.0)
@@ -2349,7 +2349,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             showProgressIndicator: true,
             progressIndicatorBackgroundColor: Colors.blueGrey[900],
             progressIndicatorValueColor:
-                new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
+                new AlwaysStoppedAnimation<Color?>(Colors.cyan[500]) as Animation<Color>?,
             routeBlur: 10.0,
             titleText: Text(
               "Are you sure you want to leave this page?",
@@ -2373,7 +2373,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                   padding: EdgeInsets.all(0),
                   onPressed: () {
                     flushStatus = "Empty";
-                    flush.dismiss(false); // result = true
+                    flush!.dismiss(false); // result = true
                   },
                   child: Text(
                     "No",
@@ -2385,7 +2385,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                   padding: EdgeInsets.all(0),
                   onPressed: () {
                     flushStatus = "Empty";
-                    flush.dismiss(true); // result = true
+                    flush!.dismiss(true); // result = true
                   },
                   child: Text(
                     "Yes",
@@ -2400,7 +2400,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             ..show(context).then((result) {
               _wasButtonClicked = result;
               flushStatus = "Empty";
-              if (_wasButtonClicked) processGoBackWithTimer();
+              if (_wasButtonClicked!) processGoBackWithTimer();
             });
         }
       }
@@ -2429,7 +2429,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 print("flush already running");
               },
             ),
-            title: Text(Utils.getEntityTypeDisplayName(entity.type),
+            title: Text(Utils.getEntityTypeDisplayName(entity!.type)!,
                 style: drawerdefaultTextStyle),
           ),
           body: Center(
@@ -2450,7 +2450,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -2542,7 +2542,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                           : BoxDecoration(),
                       // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -2634,7 +2634,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                             if (value) {
                                               showConfirmationDialog();
                                               //Check if all mandatory fields for being bookable are not empty.
-                                              String errMsg =
+                                              String? errMsg =
                                                   validateMandatoryFieldsForBookable();
                                               if (Utils.isNotNullOrEmpty(
                                                   errMsg)) {
@@ -2644,14 +2644,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                     Duration(
                                                       seconds: 4,
                                                     ),
-                                                    errMsg,
+                                                    errMsg!,
                                                     "Please fill all mandatory details to allow Booking.");
                                                 isBookable = !value;
                                                 return;
                                               }
                                             }
 
-                                            entity.isBookable = value;
+                                            entity!.isBookable = value;
 
                                             setState(() {});
                                           }
@@ -2673,7 +2673,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   color: Colors.transparent,
-                                  border: Border.all(color: primaryDarkColor),
+                                  border: Border.all(color: primaryDarkColor!),
                                   borderRadius: _borderRadius,
                                 ),
                                 // Define how long the animation should take.
@@ -2786,10 +2786,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                               return;
                                             } else {
                                               isOnlineEnabled = value;
-                                              entity.allowOnlineAppointment =
+                                              entity!.allowOnlineAppointment =
                                                   value;
                                               if (value) {
-                                                String msg =
+                                                String? msg =
                                                     validateFieldsForOnlineConsultation();
                                                 FocusScope.of(context)
                                                     .requestFocus(
@@ -2800,7 +2800,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                           .currentState !=
                                                       null) {
                                                     whatsappPhoneKey
-                                                        .currentState
+                                                        .currentState!
                                                         .validate();
                                                   }
                                                   Utils.showMyFlushbar(
@@ -2809,10 +2809,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                       Duration(
                                                         seconds: 6,
                                                       ),
-                                                      msg,
+                                                      msg!,
                                                       "");
                                                   isOnlineEnabled = !value;
-                                                  entity.allowOnlineAppointment =
+                                                  entity!.allowOnlineAppointment =
                                                       !value;
                                                 }
                                               } else {
@@ -2827,7 +2827,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                       onlineOfflineMsg,
                                                       "");
                                                   isOnlineEnabled = !value;
-                                                  entity.allowOnlineAppointment =
+                                                  entity!.allowOnlineAppointment =
                                                       !value;
                                                 }
                                               }
@@ -2943,10 +2943,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                               return;
                                             } else {
                                               isOfflineEnabled = value;
-                                              entity.allowWalkinAppointment =
+                                              entity!.allowWalkinAppointment =
                                                   value;
                                               if (value) {
-                                                String msg =
+                                                String? msg =
                                                     validateFieldsForOfflineConsultation();
                                                 if (Utils.isNotNullOrEmpty(
                                                     msg)) {
@@ -2963,10 +2963,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                       Duration(
                                                         seconds: 6,
                                                       ),
-                                                      msg,
+                                                      msg!,
                                                       "");
                                                   isOfflineEnabled = !value;
-                                                  entity.allowWalkinAppointment =
+                                                  entity!.allowWalkinAppointment =
                                                       !value;
                                                 }
                                               } else {
@@ -2981,7 +2981,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                       onlineOfflineMsg,
                                                       "");
                                                   isOfflineEnabled = !value;
-                                                  entity.allowWalkinAppointment =
+                                                  entity!.allowWalkinAppointment =
                                                       !value;
                                                 }
                                               }
@@ -3029,7 +3029,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                         margin: EdgeInsets.all(5),
                         padding: EdgeInsets.all(0),
                         decoration: BoxDecoration(
-                            border: Border.all(color: borderColor),
+                            border: Border.all(color: borderColor!),
                             color: Colors.grey[50],
                             shape: BoxShape.rectangle,
                             borderRadius:
@@ -3118,7 +3118,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       margin: EdgeInsets.all(5),
                       padding: EdgeInsets.all(0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -3206,7 +3206,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                             )
                           : BoxDecoration(),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -3284,7 +3284,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                               textColor: btnColor,
                                               shape: RoundedRectangleBorder(
                                                   side: BorderSide(
-                                                      color: btnColor)),
+                                                      color: btnColor!)),
                                               child: Text(
                                                 'Clear',
                                                 textAlign: TextAlign.center,
@@ -3314,7 +3314,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                             )
                           : BoxDecoration(),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -3411,7 +3411,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           textColor: Colors.white,
                                           shape: RoundedRectangleBorder(
                                               side:
-                                                  BorderSide(color: btnColor)),
+                                                  BorderSide(color: btnColor!)),
                                           child: Text(
                                             userCurrentLoc,
                                             textAlign: TextAlign.center,
@@ -3446,7 +3446,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                             )
                           : BoxDecoration(),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -3831,7 +3831,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                           : BoxDecoration(),
                       // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -3946,7 +3946,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           } else {
                                             setState(() {
                                               isPublic = value;
-                                              entity.isPublic = value;
+                                              entity!.isPublic = value;
                                               print(isPublic);
                                               //}
                                             });
@@ -4090,13 +4090,13 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 } else {
                                                   isActiveValidation = false;
                                                   isActive = value;
-                                                  entity.isActive = value;
+                                                  entity!.isActive = value;
                                                   print(isActive);
                                                 }
                                               } else {
                                                 isActive = value;
                                                 isActiveValidation = false;
-                                                entity.isActive = value;
+                                                entity!.isActive = value;
                                                 print(isActive);
                                               }
                                             }
@@ -4163,8 +4163,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                             decoration: new BoxDecoration(
                                 gradient: new LinearGradient(
                                     colors: [
-                                      Colors.cyan[400],
-                                      Colors.cyan[700]
+                                      Colors.cyan[400]!,
+                                      Colors.cyan[700]!
                                     ],
                                     begin: const FractionalOffset(0.0, 0.0),
                                     end: const FractionalOffset(1.0, 0.0),
@@ -4206,7 +4206,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                 )
                               : BoxDecoration(),
                           decoration: new BoxDecoration(
-                              border: Border.all(color: Colors.teal[200]),
+                              border: Border.all(color: Colors.teal[200]!),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5))),
                           //width: MediaQuery.of(context).size.width * .35,
@@ -4240,7 +4240,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                 if (widget.isManager) {
                                   return;
                                 } else {
-                                  String _errorMessage;
+                                  String? _errorMessage;
                                   showDialog(
                                       context: context,
                                       barrierDismissible: true,
@@ -4324,7 +4324,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 ),
                                                 (_errorMessage != null
                                                     ? Text(
-                                                        _errorMessage,
+                                                        _errorMessage!,
                                                         style: errorTextStyle,
                                                       )
                                                     : Container()),
@@ -4339,7 +4339,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 shape: RoundedRectangleBorder(
                                                     side: BorderSide(
                                                         color: Colors
-                                                            .blueGrey[500]),
+                                                            .blueGrey[500]!),
                                                     borderRadius:
                                                         BorderRadius.all(
                                                             Radius.circular(
@@ -4397,8 +4397,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       }).then((returnVal) {
                                     if (returnVal != null) {
                                       if (returnVal) {
-                                        _gs
-                                            .removeEntity(entity.entityId)
+                                        _gs!
+                                            .removeEntity(entity!.entityId!)
                                             .then((value) {
                                           if (value) {
                                             Navigator.pop(context);
@@ -4457,7 +4457,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 Navigator.of(context).pop();
               },
             ),
-            title: Text(Utils.getEntityTypeDisplayName(entity.type),
+            title: Text(Utils.getEntityTypeDisplayName(entity!.type)!,
                 style: whiteBoldTextStyle1),
           ),
 

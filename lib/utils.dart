@@ -68,9 +68,9 @@ class Utils {
     }
   }
 
-  static bool checkIfClosed(DateTime date, List<String> closedOn) {
+  static bool checkIfClosed(DateTime? date, List<String> closedOn) {
     for (String dayClosed in closedOn) {
-      if (getDayNumber(dayClosed) == date.weekday) {
+      if (getDayNumber(dayClosed) == date!.weekday) {
         return true;
       }
     }
@@ -78,14 +78,14 @@ class Utils {
     return false;
   }
 
-  static bool isNullOrEmpty(List<dynamic> list) {
+  static bool isNullOrEmpty(List<dynamic>? list) {
     if (list == null) return true;
     if (list.length == 0) return true;
 
     return false;
   }
 
-  static bool isNotNullOrEmpty(String str) {
+  static bool isNotNullOrEmpty(String? str) {
     if (str == null) return false;
     if (str == "") return false;
     if (str.isEmpty) return false;
@@ -93,7 +93,7 @@ class Utils {
     return true;
   }
 
-  static bool isStrNullOrEmpty(String str) {
+  static bool isStrNullOrEmpty(String? str) {
     if (str == null) return true;
     if (str == "") return true;
     if (str.isEmpty) return true;
@@ -103,18 +103,18 @@ class Utils {
 
   static String getFormattedAddress(Address address) {
     String adr =
-        (Utils.isNotNullOrEmpty(address.address) ? (address.address) : "") +
+        (Utils.isNotNullOrEmpty(address.address) ? (address.address) : "")! +
             (Utils.isNotNullOrEmpty(address.locality)
-                ? (', ' + address.locality)
+                ? (', ' + address.locality!)
                 : "") +
             (Utils.isNotNullOrEmpty(address.landmark)
-                ? (', ' + address.landmark)
+                ? (', ' + address.landmark!)
                 : "") +
-            (Utils.isNotNullOrEmpty(address.city) ? (', ' + address.city) : "");
+            (Utils.isNotNullOrEmpty(address.city) ? (', ' + address.city!) : "");
     return adr;
   }
 
-  static String validateMobile(String value) {
+  static String? validateMobile(String? value) {
     if (value == null) return 'Enter a phone number';
 
     var potentialNumber = int.tryParse(value);
@@ -129,9 +129,9 @@ class Utils {
       return null;
   }
 
-  static String validateUpiAddress(String upi) {
+  static String? validateUpiAddress(String? upi) {
     if (Utils.isNotNullOrEmpty(upi)) {
-      if (upi.split('@').length == 2) {
+      if (upi!.split('@').length == 2) {
         return null;
       } else {
         return "UPI Id is not valid";
@@ -140,20 +140,20 @@ class Utils {
     return null;
   }
 
-  static String validateEmail(String valText) {
+  static String? validateEmail(String? valText) {
     return (Utils.isNotNullOrEmpty(valText))
-        ? (EmailValidator.validate(valText) ? null : "Email is not valid")
+        ? (EmailValidator.validate(valText!) ? null : "Email is not valid")
         : null;
   }
 
-  static Future<DateTime> pickDate(
+  static Future<DateTime?> pickDate(
       BuildContext context, DateTime firstDate, DateTime lastDate) async {
-    DateTime date = await showDatePicker(
+    DateTime? date = await showDatePicker(
       context: context,
       firstDate: firstDate,
       lastDate: lastDate,
       initialDate: DateTime.now(),
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
@@ -161,7 +161,7 @@ class Utils {
             ),
             dialogBackgroundColor: Colors.white,
           ),
-          child: child,
+          child: child!,
         );
       },
     );
@@ -171,7 +171,7 @@ class Utils {
   static Future<void> showLocationAccessDialog(
       BuildContext bc, String msg) async {
     print("SHOW Dialog called");
-    bool returnVal = await showDialog(
+    bool returnVal = await (showDialog(
         barrierDismissible: false,
         context: bc,
         builder: (_) => AlertDialog(
@@ -234,7 +234,7 @@ class Utils {
                   ),
                 ),
               ],
-            ));
+            )) as FutureOr<bool>);
 
     if (returnVal) {
       print("in true, opening app settings");
@@ -247,7 +247,7 @@ class Utils {
     }
   }
 
-  static String validateMobileField(String value) {
+  static String? validateMobileField(String? value) {
     String errMsg = 'Enter a valid Phone number';
     if (value == null || value == "") return null;
     var potentialNumber = int.tryParse(value);
@@ -262,7 +262,7 @@ class Utils {
 
   static void showMyFlushbar(BuildContext context, IconData icon,
       Duration duration, String title, String msg,
-      [Color barcolor = Colors.orangeAccent,
+      [Color? barcolor = Colors.orangeAccent,
       Color fontcolor = Colors.white,
       bool showFlushBar = false]) {
     if (barcolor == null) barcolor = Colors.orangeAccent;
@@ -436,21 +436,21 @@ class Utils {
     return hr + ':' + min;
   }
 
-  static void addEntityToFavs(BuildContext context, String id) async {
+  static void addEntityToFavs(BuildContext context, String? id) async {
     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
         "Adding the Place to your Favourites...", "Hold on!");
 
-    GlobalState gs = await GlobalState.getGlobalState();
-    Entity entity;
+    GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+    Entity? entity;
 
     gs.getEntity(id).then((value) {
       if (value == null)
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             "The place does not exists!", "");
 
-      entity = value.item1;
+      entity = value!.item1;
 
-      gs.addFavourite(entity.getMetaEntity()).then((value) {
+      gs.addFavourite(entity!.getMetaEntity()).then((value) {
         if (value) {
           Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
               "Added to your favorites.", "");
@@ -473,11 +473,11 @@ class Utils {
     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
         "Loading the Booking details...", "Hold on!");
 
-    GlobalState gs = await GlobalState.getGlobalState();
+    GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
     UserTokens userTokenId;
     print(tokenId);
     tokenId = tokenId.replaceAll(' ', '+');
-    gs.getTokenService().getUserToken(tokenId).then((value) {
+    gs.getTokenService()!.getUserToken(tokenId).then((value) {
       if (value == null) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             "No data found for this token.", "");
@@ -492,7 +492,7 @@ class Utils {
                       isAdmin: true,
                     )));
       }
-    }).onError((error, stackTrace) {
+    }).onError((dynamic error, stackTrace) {
       if (error is AccessDeniedException) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             error.cause, contactAdminIfIssue);
@@ -505,28 +505,28 @@ class Utils {
     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
         "Loading the Application details...", "Hold on!");
 
-    GlobalState gs = await GlobalState.getGlobalState();
+    GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
     print(applicationId);
     bool isReadOnly = true;
 
     gs
-        .getApplicationService()
+        .getApplicationService()!
         .getApplication(applicationId)
         .then((newBaFromGS) {
       //SMITA Check this, Application QR scan
-      if (gs.getCurrentUser().entityVsRole.containsKey(newBaFromGS.entityId)) {
-        if (gs.getCurrentUser().entityVsRole[newBaFromGS.entityId] !=
+      if (gs.getCurrentUser()!.entityVsRole!.containsKey(newBaFromGS!.entityId)) {
+        if (gs.getCurrentUser()!.entityVsRole![newBaFromGS.entityId] !=
             EntityRole.Executive) {
           isReadOnly = false;
         }
       }
       if (newBaFromGS != null) {
-        gs.getEntityService().getEntity(newBaFromGS.entityId).then((entity) {
+        gs.getEntityService()!.getEntity(newBaFromGS.entityId!).then((entity) {
           Navigator.of(context).push(new MaterialPageRoute(
               builder: (BuildContext context) => ShowApplicationDetails(
                     bookingApplication: newBaFromGS,
                     showReject: false,
-                    metaEntity: entity.getMetaEntity(),
+                    metaEntity: entity!.getMetaEntity(),
                     newBookingDate: newBaFromGS.preferredSlotTiming,
                     isReadOnly: isReadOnly,
                     isAvailable: true,
@@ -542,7 +542,7 @@ class Utils {
             'Oho! Could not fetch the Application details.',
             'Please try again later.');
       }
-    }).onError((error, stackTrace) {
+    }).onError((dynamic error, stackTrace) {
       if (error is AccessDeniedException) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             error.cause, contactAdminIfIssue);
@@ -557,7 +557,7 @@ class Utils {
     });
   }
 
-  static bool isValidSlotTiming(EntitySlots entitySlots, MetaEntity me,
+  static bool isValidSlotTiming(EntitySlots? entitySlots, MetaEntity me,
       DateTime dateTime, String slotId) {
     List<Slot> slots = getSlots(entitySlots, me, dateTime);
 
@@ -571,7 +571,7 @@ class Utils {
   }
 
   static List<Slot> getSlots(
-      EntitySlots entitySlots, MetaEntity me, DateTime dateTime) {
+      EntitySlots? entitySlots, MetaEntity me, DateTime dateTime) {
     //if EntitySlots is null, this method will return all the slots without merging the booking info from the DB
     DateTime breakStartTime;
     DateTime breakEndTime;
@@ -579,19 +579,19 @@ class Utils {
     DateTime dayEndTime;
     List<Slot> slotList = [];
 
-    int startTimeHour;
-    int startTimeMinute;
-    int endTimeHour;
-    int endTimeMinute;
+    int? startTimeHour;
+    int? startTimeMinute;
+    int? endTimeHour;
+    int? endTimeMinute;
 
-    int breakStartHour;
-    int breakStartMinute;
-    int breakEndHour;
-    int breakEndMinute;
+    int? breakStartHour;
+    int? breakStartMinute;
+    int? breakEndHour;
+    int? breakEndMinute;
 
-    int slotDuration;
-    int maxAllowed;
-    String prefixSlotId = me.entityId +
+    int? slotDuration;
+    int? maxAllowed;
+    String prefixSlotId = me.entityId! +
         "#" +
         dateTime.year.toString() +
         "~" +
@@ -627,24 +627,24 @@ class Utils {
     }
 
     dayStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-        startTimeHour, startTimeMinute);
+        startTimeHour!, startTimeMinute!);
     dayEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-        endTimeHour, endTimeMinute);
+        endTimeHour!, endTimeMinute!);
     if (breakEndHour == null || breakStartHour == null) {
       breakStartTime = dayStartTime;
       breakEndTime = dayStartTime;
     } else {
       breakStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-          breakStartHour, breakStartMinute);
+          breakStartHour, breakStartMinute!);
       breakEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-          breakEndHour, breakEndMinute);
+          breakEndHour, breakEndMinute!);
     }
 
     int firstHalfDuration = breakStartTime.difference(dayStartTime).inMinutes;
 
     int secondHalfDuration = dayEndTime.difference(breakEndTime).inMinutes;
 
-    int numberOfSlotsInFirstHalf = firstHalfDuration ~/ slotDuration;
+    int numberOfSlotsInFirstHalf = firstHalfDuration ~/ slotDuration!;
 
     int numberOfSlotsInSecondHalf = secondHalfDuration ~/ slotDuration;
 
@@ -652,7 +652,7 @@ class Utils {
     for (int count = 0; count < numberOfSlotsInFirstHalf; count++) {
       int minutesToAdd = count * slotDuration;
       DateTime dt = dayStartTime.add(new Duration(minutes: minutesToAdd));
-      Slot sl = checkIfSlotExists(entitySlots, dt);
+      Slot? sl = checkIfSlotExists(entitySlots, dt);
       if (sl == null) {
         sl = new Slot(
             slotId:
@@ -670,7 +670,7 @@ class Utils {
     for (int count = 0; count < numberOfSlotsInSecondHalf; count++) {
       int minutesToAdd = count * slotDuration;
       DateTime dt = breakEndTime.add(new Duration(minutes: minutesToAdd));
-      Slot sl = checkIfSlotExists(entitySlots, dt);
+      Slot? sl = checkIfSlotExists(entitySlots, dt);
       if (sl == null) {
         sl = new Slot(
             slotId:
@@ -687,20 +687,20 @@ class Utils {
     return slotList;
   }
 
-  static Slot checkIfSlotExists(EntitySlots entitySlots, DateTime dt) {
+  static Slot? checkIfSlotExists(EntitySlots? entitySlots, DateTime dt) {
     if (entitySlots == null || entitySlots.slots == null) {
       return null;
     }
 
-    for (Slot sl in entitySlots.slots) {
-      if (sl.dateTime.compareTo(dt) == 0) {
+    for (Slot sl in entitySlots.slots!) {
+      if (sl.dateTime!.compareTo(dt) == 0) {
         return sl;
       }
     }
     return null;
   }
 
-  static Entity createEntity(EntityType entityType, [String parentId]) {
+  static Entity createEntity(EntityType? entityType, [String? parentId]) {
     var uuid = new Uuid();
     String entityId = uuid.v1();
     var isPublic = true;
@@ -792,7 +792,7 @@ class Utils {
     return displayName;
   }
 
-  static Tuple<String, bool> getDefaultApplicationSortOrder(
+  static Tuple<String, bool>? getDefaultApplicationSortOrder(
       ApplicationStatus status) {
     if (status == ApplicationStatus.NEW) {
       return new Tuple<String, bool>(item1: "timeOfSubmission", item2: false);
@@ -836,7 +836,7 @@ class Utils {
     return dt;
   }
 
-  static Future<Position> getCurrLocation() async {
+  static Future<Position?> getCurrLocation() async {
     //TODO SMita = getting lost at this statement
     LocationPermission permission = await Geolocator.checkPermission();
 
@@ -848,7 +848,7 @@ class Utils {
     //   permission = await requestPermission();
     // }
 
-    Position pos;
+    Position? pos;
     try {
       pos = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
@@ -865,8 +865,8 @@ class Utils {
     }
   }
 
-  static Future<Uri> createDynamicLinkFullWithParams(String entityId,
-      String entityName, String bundleId, String appStoreId) async {
+  static Future<Uri> createDynamicLinkFullWithParams(String? entityId,
+      String entityName, String bundleId, String? appStoreId) async {
     String msgTitle = entityName + entityShareByOwnerHeading;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
@@ -898,8 +898,8 @@ class Utils {
     return link;
   }
 
-  static Future<Uri> createQrScreenForUserApplications(String applicationID,
-      String entityName, String bundleId, String appStoreId) async {
+  static Future<Uri> createQrScreenForUserApplications(String? applicationID,
+      String entityName, String bundleId, String? appStoreId) async {
     String msgTitle = entityShareByUserHeading + entityName;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
@@ -931,8 +931,8 @@ class Utils {
     return link;
   }
 
-  static Future<Uri> createQrScreenForBookingTokens(String tokenID,
-      String entityName, String bundleId, String appStoreId) async {
+  static Future<Uri> createQrScreenForBookingTokens(String? tokenID,
+      String entityName, String bundleId, String? appStoreId) async {
     String msgTitle = entityShareByUserHeading + entityName;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
@@ -964,8 +964,8 @@ class Utils {
     return link;
   }
 
-  static Future<Uri> createDynamicLinkWithParams(String entityId,
-      String msgTitle, String bundleId, String appStoreId) async {
+  static Future<Uri> createDynamicLinkWithParams(String? entityId,
+      String msgTitle, String bundleId, String? appStoreId) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
       uriPrefix: shareURLPrefix,
@@ -998,8 +998,8 @@ class Utils {
     return shortenedLink.shortUrl;
   }
 
-  static generateLinkAndShare(String entityId, String msgTitle, String msgBody,
-      String bundleId, String appStoreId) async {
+  static generateLinkAndShare(String? entityId, String msgTitle, String msgBody,
+      String bundleId, String? appStoreId) async {
     var dynamicLink = await Utils.createDynamicLinkWithParams(
         entityId, msgTitle, bundleId, appStoreId);
     Share.share(
@@ -1009,10 +1009,10 @@ class Utils {
         subject: msgTitle);
   }
 
-  static Widget getEntityTypeImage(EntityType type, double size) {
+  static Widget getEntityTypeImage(EntityType? type, double size) {
     Widget entityImageWidget;
-    IconData icon;
-    String image;
+    IconData? icon;
+    String? image;
 
     switch (type) {
       case EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER:
@@ -1116,8 +1116,8 @@ class Utils {
     return entityImageWidget;
   }
 
-  static String getEntityTypeDisplayName(EntityType type) {
-    String displayName;
+  static String? getEntityTypeDisplayName(EntityType? type) {
+    String? displayName;
 
     switch (type) {
       case EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER:
@@ -1258,7 +1258,7 @@ class Utils {
                       Navigator.of(context, rootNavigator: true).pop();
                       Future.delayed(Duration(seconds: 2)).then((value) {
                         GlobalState.getGlobalState().then((value) {
-                          value.getAuthService().signOut(context);
+                          value!.getAuthService()!.signOut(context);
                           GlobalState.clearGlobalState();
                         });
                       });
@@ -1322,9 +1322,9 @@ class Utils {
     }
   }
 
-  static Future<bool> showConfirmationDialog(
+  static Future<bool?> showConfirmationDialog(
       BuildContext context, String msg) async {
-    bool returnVal = await showDialog(
+    bool? returnVal = await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (_) => AlertDialog(
@@ -1396,8 +1396,8 @@ class Utils {
     return returnVal;
   }
 
-  static Future<bool> showImagePopUp(BuildContext context, Image image) async {
-    bool returnVal = await showDialog(
+  static Future<bool?> showImagePopUp(BuildContext context, Image? image) async {
+    bool? returnVal = await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (_) => AlertDialog(
@@ -1413,7 +1413,7 @@ class Utils {
                 child: Stack(
                   alignment: Alignment.topRight,
                   children: [
-                    image,
+                    image!,
                     IconButton(
                       alignment: Alignment.topRight,
                       padding: EdgeInsets.zero,

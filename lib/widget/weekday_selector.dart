@@ -1,8 +1,9 @@
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 
 class WeekDaySelectorFormField extends StatefulWidget {
   const WeekDaySelectorFormField(
-      {Key key,
+      {Key? key,
       this.autovalidate = false,
       this.enabled = true,
       this.onChange,
@@ -38,16 +39,16 @@ class WeekDaySelectorFormField extends StatefulWidget {
           minWidth: 28, minHeight: 28, maxWidth: 28, maxHeight: 28)})
       : super(key: key);
 
-  final List<days> initialValue;
-  final void Function(List<days>) onChange;
-  final void Function(List<days>) onSaved;
-  final String Function(List<days>) validator;
+  final List<days>? initialValue;
+  final void Function(List<days>?)? onChange;
+  final void Function(List<days>?)? onSaved;
+  final String Function(List<days>?)? validator;
   final List<days> displayDays;
   final lang language;
-  final Color fillColor;
-  final Color selectedFillColor;
-  final Color highlightColor;
-  final Color splashColor;
+  final Color? fillColor;
+  final Color? selectedFillColor;
+  final Color? highlightColor;
+  final Color? splashColor;
   final BorderSide borderSide;
   final TextStyle textStyle;
   final TextStyle errorTextStyle;
@@ -83,7 +84,7 @@ class WeekDaySelectorFormField extends StatefulWidget {
 
 class _WeekDaySelectorFormFieldState extends State<WeekDaySelectorFormField> {
   List<Widget> displayedDays = [];
-  List<days> daysSelected = [];
+  List<days>? daysSelected = [];
 
   @override
   void initState() {
@@ -109,8 +110,8 @@ class _WeekDaySelectorFormFieldState extends State<WeekDaySelectorFormField> {
         boxConstraints: widget.boxConstraints,
         selected: widget.initialValue == null
             ? false
-            : widget.initialValue
-                        .firstWhere((d) => day == d, orElse: () => null) ==
+            : widget.initialValue!
+                        .firstWhereOrNull((d) => day == d) ==
                     null
                 ? false
                 : true,
@@ -119,13 +120,13 @@ class _WeekDaySelectorFormFieldState extends State<WeekDaySelectorFormField> {
   }
 
   _dayTap(days day) {
-    if (daysSelected.contains(day)) {
-      daysSelected.remove(day);
+    if (daysSelected!.contains(day)) {
+      daysSelected!.remove(day);
     } else {
-      daysSelected.add(day);
+      daysSelected!.add(day);
     }
     if (widget.onChange != null) {
-      widget.onChange(daysSelected);
+      widget.onChange!(daysSelected);
     }
   }
 
@@ -134,14 +135,14 @@ class _WeekDaySelectorFormFieldState extends State<WeekDaySelectorFormField> {
     return FormField<List<days>>(
       enabled: this.widget.enabled,
       initialValue: widget.initialValue,
-      autovalidate: widget.autovalidate,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       onSaved: (days) {
         // print("SELECTOR SAVE: " + daysSelected.toString());
-        if (widget.onSaved != null) widget.onSaved(daysSelected);
+        if (widget.onSaved != null) widget.onSaved!(daysSelected);
       },
       validator: (days) {
         // print("SELECTOR VALIDATOR: " + daysSelected.toString());
-        if (widget.validator != null) return widget.validator(daysSelected);
+        if (widget.validator != null) return widget.validator!(daysSelected);
         return null;
       },
       builder: (state) {
@@ -158,7 +159,7 @@ class _WeekDaySelectorFormFieldState extends State<WeekDaySelectorFormField> {
               ),
             ),
             state.hasError
-                ? Text(state.errorText, style: this.widget.errorTextStyle)
+                ? Text(state.errorText!, style: this.widget.errorTextStyle)
                 : Container()
           ],
         );
@@ -169,7 +170,7 @@ class _WeekDaySelectorFormFieldState extends State<WeekDaySelectorFormField> {
 
 class _DayItem extends StatefulWidget {
   _DayItem(
-      {Key key,
+      {Key? key,
       this.fillColor,
       this.selectedFillColor = Colors.red,
       this.label,
@@ -186,24 +187,24 @@ class _DayItem extends StatefulWidget {
       this.boxConstraints})
       : super(key: key);
   final selected;
-  final Color fillColor;
-  final Color selectedFillColor;
-  final Function(days) onTap;
-  final String label;
-  final days value;
-  final TextStyle textStyle;
-  final BorderSide borderSide;
-  final Color splashColor;
-  final Color highlightColor;
-  final double borderRadius;
-  final double elevation;
-  final int dayLong;
-  final BoxConstraints boxConstraints;
+  final Color? fillColor;
+  final Color? selectedFillColor;
+  final Function(days?)? onTap;
+  final String? label;
+  final days? value;
+  final TextStyle? textStyle;
+  final BorderSide? borderSide;
+  final Color? splashColor;
+  final Color? highlightColor;
+  final double? borderRadius;
+  final double? elevation;
+  final int? dayLong;
+  final BoxConstraints? boxConstraints;
   __DayItemState createState() => __DayItemState();
 }
 
 class __DayItemState extends State<_DayItem> {
-  bool selected;
+  bool? selected;
 
   @override
   void initState() {
@@ -219,19 +220,19 @@ class __DayItemState extends State<_DayItem> {
       child: RawMaterialButton(
           onPressed: () {
             if (widget.onTap != null) {
-              widget.onTap(widget.value);
+              widget.onTap!(widget.value);
             }
             setState(() {
-              selected = !selected;
+              selected = !selected!;
             });
           },
           focusColor: widget.selectedFillColor,
           highlightColor: widget.highlightColor,
           splashColor: this.widget.splashColor,
-          elevation: this.widget.elevation,
+          elevation: this.widget.elevation!,
           fillColor: selected == true
-              ? widget.selectedFillColor ?? buttonTheme.colorScheme.background
-              : widget.fillColor ?? buttonTheme.colorScheme.background,
+              ? widget.selectedFillColor ?? buttonTheme.colorScheme!.background
+              : widget.fillColor ?? buttonTheme.colorScheme!.background,
           textStyle: widget.textStyle ??
               Theme.of(context)
                   .textTheme
@@ -239,13 +240,13 @@ class __DayItemState extends State<_DayItem> {
           child: Container(
               alignment: Alignment.center,
               child: Text(widget.dayLong == null || widget.dayLong == 0
-                  ? widget.label.substring(0, 2)
-                  : widget.dayLong < widget.label.length
-                      ? widget.label.substring(0, widget.dayLong)
-                      : widget.label)),
+                  ? widget.label!.substring(0, 2)
+                  : widget.dayLong! < widget.label!.length
+                      ? widget.label!.substring(0, widget.dayLong)
+                      : widget.label!)),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(widget.borderRadius),
-              side: selected ? widget.borderSide : BorderSide.none)),
+              borderRadius: BorderRadius.circular(widget.borderRadius!),
+              side: selected! ? widget.borderSide! : BorderSide.none)),
     );
   }
 }

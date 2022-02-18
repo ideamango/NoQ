@@ -8,13 +8,13 @@ class Address {
       this.landmark = "",
       this.zipcode = ""});
 
-  String address;
-  String locality;
-  String city;
-  String state;
-  String country;
-  String landmark;
-  String zipcode;
+  String? address;
+  String? locality;
+  String? city;
+  String? state;
+  String? country;
+  String? landmark;
+  String? zipcode;
 
   Map<String, dynamic> toJson() => {
         'address': address,

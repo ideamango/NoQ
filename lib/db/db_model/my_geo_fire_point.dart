@@ -11,15 +11,15 @@ class MyGeoFirePoint {
     geopoint = new GeoPointExt(lat, lon);
   }
 
-  String geohash;
-  GeoPointExt geopoint;
+  String? geohash;
+  GeoPointExt? geopoint;
 
   Map<String, dynamic> toJson() => {
         'geohash': geohash,
         'geopoint': geopoint,
       };
 
-  static MyGeoFirePoint fromJson(Map<String, dynamic> json) {
+  static MyGeoFirePoint? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
 
     if (json['geopoint'] is GeoPoint) {

@@ -27,20 +27,20 @@ import '../widget/header.dart';
 import '../widget/page_animation.dart';
 
 class ManageEntityForms extends StatefulWidget {
-  final MetaEntity metaEntity;
+  final MetaEntity? metaEntity;
   // final List<MetaForm> forms;
-  final DateTime preferredSlotTime;
+  final DateTime? preferredSlotTime;
   final dynamic isFullPermission;
   final dynamic backRoute;
-  final bool isReadOnly;
+  final bool? isReadOnly;
   ManageEntityForms(
-      {Key key,
-      @required this.metaEntity,
+      {Key? key,
+      required this.metaEntity,
       //  @required this.forms,
-      @required this.preferredSlotTime,
-      @required this.isFullPermission,
-      @required this.backRoute,
-      @required this.isReadOnly})
+      required this.preferredSlotTime,
+      required this.isFullPermission,
+      required this.backRoute,
+      required this.isReadOnly})
       : super(key: key);
 
   @override
@@ -48,13 +48,13 @@ class ManageEntityForms extends StatefulWidget {
 }
 
 class _ManageEntityFormsState extends State<ManageEntityForms> {
-  MetaEntity metaEntity;
+  MetaEntity? metaEntity;
   List<MetaForm> forms = List<MetaForm>();
   List<MetaForm> selectedForms = [];
   List<BookingForm> newlyAddedForms = [];
-  List<String> entityDeletedForms = [];
+  List<String?> entityDeletedForms = [];
   List<MetaForm> entityModifiedForms = [];
-  GlobalState _gs;
+  GlobalState? _gs;
   bool initCompleted = false;
   int _radioValue1 = -1;
   int _selectedValue = -1;
@@ -62,8 +62,8 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
   dynamic dashBoardRoute;
   dynamic reportsRoute;
   List<String> listOfVals = [];
-  Entity entity;
-  List<CheckBoxListTileModel> checkBoxListTileModel;
+  Entity? entity;
+  List<CheckBoxListTileModel>? checkBoxListTileModel;
   bool showLoading = false;
   @override
   void initState() {
@@ -72,31 +72,31 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
     // metaEntity = this.widget.metaEntity;
 
     getGlobalState().whenComplete(() {
-      Configurations conf = _gs.getConfigurations();
+      Configurations conf = _gs!.getConfigurations()!;
 
       // List<String> listOfVals = conf.formToEntityTypeMapping.keys.where(
       //     (k) => conf.formToEntityTypeMapping[k] == widget.metaEntity.entityId);
       //
-      conf.formToEntityTypeMapping.forEach((k, v) {
+      conf.formToEntityTypeMapping!.forEach((k, v) {
         print(v);
-        print(EnumToString.convertToString(widget.metaEntity.type));
-        if (v == EnumToString.convertToString(widget.metaEntity.type)) {
+        print(EnumToString.convertToString(widget.metaEntity!.type));
+        if (v == EnumToString.convertToString(widget.metaEntity!.type)) {
           listOfVals.add(k);
         }
       });
 
       listOfVals.forEach((v) {
-        forms.add(conf.formMetaData.firstWhere((element) => element.id == v));
+        forms.add(conf.formMetaData!.firstWhere((element) => element.id == v));
       });
       checkBoxListTileModel = CheckBoxListTileModel.getForms(forms);
       print(forms.length);
       print(listOfVals.length);
 
-      _gs.getEntity(widget.metaEntity.entityId).then((value) {
-        entity = value.item1;
-        if (!Utils.isNullOrEmpty(entity.forms)) {
-          for (var form in entity.forms) {
-            if (form.isActive == null || form.isActive) {
+      _gs!.getEntity(widget.metaEntity!.entityId).then((value) {
+        entity = value!.item1;
+        if (!Utils.isNullOrEmpty(entity!.forms)) {
+          for (var form in entity!.forms!) {
+            if (form.isActive == null || form.isActive!) {
               selectedForms.add(form);
             }
           }
@@ -155,7 +155,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
       return WillPopScope(
         child: Scaffold(
           drawer: CustomDrawer(
-            phone: _gs.getCurrentUser().ph,
+            phone: _gs!.getCurrentUser()!.ph,
           ),
           appBar: AppBar(
             // key: _appBarKey,
@@ -229,7 +229,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                         child: (!Utils.isNullOrEmpty(checkBoxListTileModel))
                             ? ListView.builder(
                                 // scrollDirection: Axis.horizontal,
-                                itemCount: checkBoxListTileModel.length,
+                                itemCount: checkBoxListTileModel!.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return new Card(
                                     elevation: 2,
@@ -251,13 +251,13 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                 padding: EdgeInsets.zero,
                                                 icon: Icon(
                                                   Icons.add_circle,
-                                                  color: widget.isReadOnly
+                                                  color: widget.isReadOnly!
                                                       ? Colors.grey[700]
                                                       : Colors.cyan[700],
                                                   size: 30,
                                                 ),
                                                 onPressed: () {
-                                                  if (widget.isReadOnly) {
+                                                  if (widget.isReadOnly!) {
                                                     Utils.showMyFlushbar(
                                                         context,
                                                         Icons.info,
@@ -266,7 +266,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                         "");
                                                     return;
                                                   } else {
-                                                    checkBoxListTileModel[index]
+                                                    checkBoxListTileModel![index]
                                                         .isCheck = true;
 
                                                     bool isFormAlreadyAdded =
@@ -275,11 +275,11 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                     for (MetaForm metaForm
                                                         in selectedForms) {
                                                       String origFormId =
-                                                          metaForm.id
+                                                          metaForm.id!
                                                               .split('#')[0];
-                                                      if (checkBoxListTileModel[
+                                                      if (checkBoxListTileModel![
                                                                   index]
-                                                              .form
+                                                              .form!
                                                               .id ==
                                                           origFormId) {
                                                         isFormAlreadyAdded =
@@ -294,16 +294,16 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                           "This Booking Form is already added.",
                                                           "");
                                                     } else {
-                                                      _gs
-                                                          .getApplicationService()
+                                                      _gs!
+                                                          .getApplicationService()!
                                                           .getBookingForm(
-                                                              checkBoxListTileModel[
+                                                              checkBoxListTileModel![
                                                                       index]
-                                                                  .form
-                                                                  .id)
+                                                                  .form!
+                                                                  .id!)
                                                           .then((value) {
                                                         BookingForm
-                                                            bookingForm = value;
+                                                            bookingForm = value!;
 
                                                         BookingForm cloneForm =
                                                             bookingForm.clone();
@@ -334,9 +334,9 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                       .width *
                                                   .68,
                                               child: AutoSizeText(
-                                                checkBoxListTileModel[index]
-                                                    .form
-                                                    .name,
+                                                checkBoxListTileModel![index]
+                                                    .form!
+                                                    .name!,
                                                 minFontSize: 9,
                                                 maxFontSize: 13,
                                                 style: TextStyle(
@@ -364,9 +364,9 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                                   context) =>
                                                               EntityForm(
                                                                 bookingFormId:
-                                                                    checkBoxListTileModel[
+                                                                    checkBoxListTileModel![
                                                                             index]
-                                                                        .form
+                                                                        .form!
                                                                         .id,
                                                                 metaEntity: widget
                                                                     .metaEntity,
@@ -410,7 +410,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                 )),
                       ),
                       Container(
-                        foregroundDecoration: widget.isReadOnly
+                        foregroundDecoration: widget.isReadOnly!
                             ? BoxDecoration(
                                 color: Colors.grey[50],
                                 backgroundBlendMode: BlendMode.saturation,
@@ -418,7 +418,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                             : BoxDecoration(),
                         decoration: BoxDecoration(
                             color: Colors.cyan[100],
-                            border: Border.all(color: Colors.grey[400]),
+                            border: Border.all(color: Colors.grey[400]!),
                             borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(4.0),
                                 topRight: Radius.circular(4.0))),
@@ -449,7 +449,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                           child: Container(
                         width: MediaQuery.of(context).size.width * .92,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[400]),
+                            border: Border.all(color: Colors.grey[400]!),
                             color: Colors.white,
                             shape: BoxShape.rectangle,
                             borderRadius:
@@ -461,7 +461,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                 itemCount: selectedForms.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return new Container(
-                                    foregroundDecoration: widget.isReadOnly
+                                    foregroundDecoration: widget.isReadOnly!
                                         ? BoxDecoration(
                                             color: Colors.grey[50],
                                             backgroundBlendMode:
@@ -493,7 +493,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                         size: 30,
                                                       ),
                                                       onPressed: () {
-                                                        if (widget.isReadOnly) {
+                                                        if (widget.isReadOnly!) {
                                                           Utils.showMyFlushbar(
                                                               context,
                                                               Icons.info,
@@ -506,7 +506,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
 
                                                         //If the form being deleted is newly added just delete it
                                                         // else if its old form of entity delete the ref from entity.forms
-                                                        int indexToBeRemoved;
+                                                        int? indexToBeRemoved;
 
                                                         for (int i = 0;
                                                             i <
@@ -529,14 +529,14 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                           newlyAddedForms.removeAt(
                                                               indexToBeRemoved);
                                                         else {
-                                                          int indexToBeRemovedForEntityForms;
+                                                          int? indexToBeRemovedForEntityForms;
 
                                                           for (int i = 0;
                                                               i <
-                                                                  entity.forms
+                                                                  entity!.forms!
                                                                       .length;
                                                               i++) {
-                                                            if (entity.forms[i]
+                                                            if (entity!.forms![i]
                                                                     .id ==
                                                                 selectedForms[
                                                                         index]
@@ -578,7 +578,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                                 10, 10, 0, 0),
                                                         child: Text(
                                                           selectedForms[index]
-                                                              .name,
+                                                              .name!,
                                                           style: TextStyle(
                                                               fontSize: 15,
                                                               fontWeight:
@@ -604,7 +604,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                                     .autoApproved,
                                                             onChanged: (value) {
                                                               if (widget
-                                                                  .isReadOnly) {
+                                                                  .isReadOnly!) {
                                                                 Utils.showMyFlushbar(
                                                                     context,
                                                                     Icons.info,
@@ -638,8 +638,8 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                                 }
                                                                 if (!isFormNew) {
                                                                   for (var form
-                                                                      in entity
-                                                                          .forms) {
+                                                                      in entity!
+                                                                          .forms!) {
                                                                     if (form.id ==
                                                                         selectedForms[index]
                                                                             .id) {
@@ -731,7 +731,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                 )),
                       )),
                       Container(
-                        foregroundDecoration: widget.isReadOnly
+                        foregroundDecoration: widget.isReadOnly!
                             ? BoxDecoration(
                                 color: Colors.grey[50],
                                 backgroundBlendMode: BlendMode.saturation,
@@ -759,12 +759,12 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                             ),
                             splashColor: highlightColor,
                             shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.blueGrey[500]),
+                                side: BorderSide(color: Colors.blueGrey[500]!),
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(5.0))),
                             onPressed: () async {
                               //Save Entity with updated changes.
-                              if (widget.isReadOnly) {
+                              if (widget.isReadOnly!) {
                                 Utils.showMyFlushbar(
                                     context,
                                     Icons.info,
@@ -777,7 +777,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                   showLoading = true;
                                 });
 
-                                if (entity.forms == null) entity.forms = [];
+                                if (entity!.forms == null) entity!.forms = [];
                                 bool entityModified = false;
                                 //If all pre existing forms for entity are deleted.
                                 // if (Utils.isNullOrEmpty(selectedForms) &&
@@ -814,20 +814,20 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                     i < entityModifiedForms.length;
                                     i++) {
                                   for (int j = 0;
-                                      j < entity.forms.length;
+                                      j < entity!.forms!.length;
                                       j++) {
-                                    if (entity.forms[j].id ==
+                                    if (entity!.forms![j].id ==
                                         entityModifiedForms[i].id) {
-                                      entity.forms[j].autoApproved =
+                                      entity!.forms![j].autoApproved =
                                           entityModifiedForms[i].autoApproved;
                                       entityModified = true;
-                                      BookingForm bf = await _gs
-                                          .getApplicationService()
-                                          .getBookingForm(entity.forms[j].id);
+                                      BookingForm bf = await (_gs!
+                                          .getApplicationService()!
+                                          .getBookingForm(entity!.forms![j].id!) as FutureOr<BookingForm>);
                                       bf.autoApproved =
                                           entityModifiedForms[i].autoApproved;
-                                      bool isFormSaved = await _gs
-                                          .getApplicationService()
+                                      bool isFormSaved = await _gs!
+                                          .getApplicationService()!
                                           .saveBookingForm(bf);
 
                                       if (!isFormSaved) {
@@ -855,7 +855,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                     // entity.forms.removeWhere((element) =>
                                     //     element.id == entityDeletedForms[i]);
 
-                                    for (var entityForm in entity.forms) {
+                                    for (var entityForm in entity!.forms!) {
                                       if (entityForm.id ==
                                           entityDeletedForms[i]) {
                                         entityForm.isActive = false;
@@ -868,7 +868,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                   for (int i = 0;
                                       i < entityModifiedForms.length;
                                       i++) {
-                                    for (var form in entity.forms) {
+                                    for (var form in entity!.forms!) {
                                       if (form.id ==
                                           entityModifiedForms[i].id) {
                                         form.autoApproved =
@@ -885,12 +885,12 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                   for (int i = 0;
                                       i < newlyAddedForms.length;
                                       i++) {
-                                    bool isFormSaved = await _gs
-                                        .getApplicationService()
+                                    bool isFormSaved = await _gs!
+                                        .getApplicationService()!
                                         .saveBookingForm(newlyAddedForms[i]);
 
                                     if (isFormSaved) {
-                                      entity.forms.add(
+                                      entity!.forms!.add(
                                           newlyAddedForms[i].getMetaForm());
                                       entityModified = true;
                                     } else {
@@ -909,7 +909,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                 // }
                                 //SAVE Entity
                                 if (entityModified) {
-                                  _gs.putEntity(entity, true).then((value) {
+                                  _gs!.putEntity(entity!, true).then((value) {
                                     Utils.showMyFlushbar(
                                         context,
                                         Icons.check,
@@ -1033,8 +1033,8 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
 }
 
 class CheckBoxListTileModel {
-  MetaForm form;
-  bool isCheck;
+  MetaForm? form;
+  bool? isCheck;
 
   CheckBoxListTileModel({this.form, this.isCheck});
 

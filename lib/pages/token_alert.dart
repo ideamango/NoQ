@@ -5,8 +5,8 @@ import '../constants.dart';
 import '../widget/widgets.dart';
 import '../style.dart';
 
-Future<String> showTokenAlert(BuildContext context, String msg, String tokenNo,
-    String storeName, String date, String time) {
+Future<String> showTokenAlert(BuildContext context, String msg, String? tokenNo,
+    String? storeName, String date, String time) {
   return showDialog(
       context: context,
       barrierDismissible: false,
@@ -39,7 +39,7 @@ Future<String> showTokenAlert(BuildContext context, String msg, String tokenNo,
                     decoration: new BoxDecoration(
                       color: primaryIcon,
                     ),
-                    child: Text(tokenNo, style: homeMsgStyle3),
+                    child: Text(tokenNo!, style: homeMsgStyle3),
                   ),
                   RichText(
                       text: TextSpan(
@@ -206,7 +206,7 @@ Future<bool> showConfirmationDialog(BuildContext context, String headerMsg,
                 color: Colors.white,
                 textColor: btnColor,
                 shape:
-                    RoundedRectangleBorder(side: BorderSide(color: btnColor)),
+                    RoundedRectangleBorder(side: BorderSide(color: btnColor!)),
                 child: Text(btnText1),
                 onPressed: () {
                   Navigator.of(_).pop(false);
@@ -232,11 +232,11 @@ Future<bool> showConfirmationDialog(BuildContext context, String headerMsg,
   });
 }
 
-Future<List> showApplicationStatusDialog(BuildContext context, String headerMsg,
+Future<List?> showApplicationStatusDialog(BuildContext context, String headerMsg,
     String mainMsg, String subMsg, String btnText) async {
   TextEditingController rmksController = new TextEditingController();
   final remarksKey = GlobalKey<FormFieldState>();
-  List remarksVal = await showDialog(
+  List? remarksVal = await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) {
@@ -311,7 +311,7 @@ Future<List> showApplicationStatusDialog(BuildContext context, String headerMsg,
                 splashColor: highlightColor,
                 padding: EdgeInsets.fromLTRB(10, 8, 10, 8),
                 shape: RoundedRectangleBorder(
-                    side: BorderSide(color: disabledColor),
+                    side: BorderSide(color: disabledColor!),
                     borderRadius: BorderRadius.all(Radius.circular(5.0))),
                 child: Text(
                   'Back',

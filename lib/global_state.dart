@@ -41,43 +41,43 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class GlobalState {
-  AppUser _currentUser;
-  Configurations _conf;
-  List<Tuple<UserToken, DocumentSnapshot>> bookings;
-  String lastSearchName;
-  EntityType lastSearchType;
-  List<Entity> lastSearchResults;
-  Map<String, Entity> _entities;
-  FirebaseApp _secondaryFirebaseApp;
-  FirebaseAuth _fbAuth;
-  FirebaseStorage firebaseStorage;
+  AppUser? _currentUser;
+  Configurations? _conf;
+  List<Tuple<UserToken, DocumentSnapshot>>? bookings;
+  String? lastSearchName;
+  EntityType? lastSearchType;
+  List<Entity>? lastSearchResults;
+  Map<String?, Entity>? _entities;
+  FirebaseApp? _secondaryFirebaseApp;
+  FirebaseAuth? _fbAuth;
+  FirebaseStorage? firebaseStorage;
 
   //true is entity is saved on server and false if it is a new entity
-  Map<String, bool> _entityState;
-  EntityService _entityService;
-  UserService _userService;
-  TokenService _tokenService;
-  NotificationService _notificationService;
-  BookingApplicationService _applicationService;
-  AuthService _authService;
-  static Future<Null> isWorking;
-  Location _locData;
-  PackageInfo packageInfo;
+  Map<String?, bool>? _entityState;
+  EntityService? _entityService;
+  UserService? _userService;
+  TokenService? _tokenService;
+  NotificationService? _notificationService;
+  BookingApplicationService? _applicationService;
+  AuthService? _authService;
+  static Future<Null>? isWorking;
+  Location? _locData;
+  late PackageInfo packageInfo;
 
-  String appName;
-  String packageName;
-  String version;
-  String buildNumber;
-  bool isAndroid;
-  bool isIOS;
+  String? appName;
+  String? packageName;
+  String? version;
+  String? buildNumber;
+  late bool isAndroid;
+  late bool isIOS;
 
-  RemoteConfig remoteConfig;
+  RemoteConfig? remoteConfig;
 
-  static GlobalState _gs;
+  static GlobalState? _gs;
 
   GlobalState._();
 
-  Future<FirebaseApp> initSecondaryFirebaseApp() async {
+  Future<FirebaseApp?> initSecondaryFirebaseApp() async {
     packageInfo = await PackageInfo.fromPlatform();
 
     appName = packageInfo.appName;
@@ -88,7 +88,7 @@ class GlobalState {
     isIOS = Platform.isIOS;
 
     //comment following line to continue to work with secondary Firebase
-    _gs._secondaryFirebaseApp = Firebase.apps[0];
+    _gs!._secondaryFirebaseApp = Firebase.apps[0];
 
     String appId;
     String apiKey;
@@ -178,30 +178,30 @@ class GlobalState {
     //   _gs._secondaryFirebaseApp = Firebase.apps[0];
     // }
 
-    if (_gs._secondaryFirebaseApp == null) {
-      _gs._secondaryFirebaseApp = Firebase.app('SecondaryFirebaseApp');
+    if (_gs!._secondaryFirebaseApp == null) {
+      _gs!._secondaryFirebaseApp = Firebase.app('SecondaryFirebaseApp');
     }
 
-    if (_gs.firebaseStorage == null) {
-      _gs.firebaseStorage =
-          FirebaseStorage.instanceFor(app: _gs._secondaryFirebaseApp);
+    if (_gs!.firebaseStorage == null) {
+      _gs!.firebaseStorage =
+          FirebaseStorage.instanceFor(app: _gs!._secondaryFirebaseApp);
     }
 
-    return _gs._secondaryFirebaseApp;
+    return _gs!._secondaryFirebaseApp;
   }
 
-  Configurations getConfigurations() {
+  Configurations? getConfigurations() {
     return _conf;
   }
 
-  Location getLocation() {
+  Location? getLocation() {
     return _locData;
   }
 
   bool isEligibleForUpdate() {
-    if (_conf.latestVersion == null) return false;
+    if (_conf!.latestVersion == null) return false;
 
-    Version latestVer = _conf.getLatestPublishedVersion();
+    Version? latestVer = _conf!.getLatestPublishedVersion();
     if (latestVer != null) {
       try {
         Version currentVersion = Version.parse(version);
@@ -215,9 +215,9 @@ class GlobalState {
     return false;
   }
 
-  static Future<GlobalState> getGlobalState() async {
-    Location loc;
-    if (_gs == null || _gs._locData == null) {
+  static Future<GlobalState?> getGlobalState() async {
+    Location? loc;
+    if (_gs == null || _gs!._locData == null) {
       //automatically detect country
       //loc = await LocationUtil.getLocation();
     }
@@ -227,7 +227,7 @@ class GlobalState {
     return await GlobalState.getGlobalStateForCountry(loc);
   }
 
-  static Future<GlobalState> getGlobalStateForCountry(Location location) async {
+  static Future<GlobalState?> getGlobalStateForCountry(Location? location) async {
     if (isWorking != null) {
       await isWorking; // wait for future complete
       return getGlobalStateForCountry(location);
@@ -241,47 +241,47 @@ class GlobalState {
       _gs = new GlobalState._();
     }
 
-    if (_gs._secondaryFirebaseApp == null) {
-      await _gs.initSecondaryFirebaseApp();
+    if (_gs!._secondaryFirebaseApp == null) {
+      await _gs!.initSecondaryFirebaseApp();
     }
 
-    if (_gs._fbAuth == null) {
-      _gs._fbAuth = FirebaseAuth.instanceFor(app: _gs._secondaryFirebaseApp);
+    if (_gs!._fbAuth == null) {
+      _gs!._fbAuth = FirebaseAuth.instanceFor(app: _gs!._secondaryFirebaseApp!);
     }
 
-    if (_gs.remoteConfig == null) {
-      _gs.remoteConfig = RemoteConfig.instance;
+    if (_gs!.remoteConfig == null) {
+      _gs!.remoteConfig = RemoteConfig.instance;
     }
 
-    if (_gs._authService == null) {
-      _gs._authService = new AuthService(_gs._secondaryFirebaseApp);
+    if (_gs!._authService == null) {
+      _gs!._authService = new AuthService(_gs!._secondaryFirebaseApp);
     }
 
-    if (_gs._entityService == null) {
-      _gs._entityService = new EntityService(_gs._secondaryFirebaseApp);
+    if (_gs!._entityService == null) {
+      _gs!._entityService = new EntityService(_gs!._secondaryFirebaseApp);
     }
 
-    if (_gs._userService == null) {
-      _gs._userService = new UserService(_gs._secondaryFirebaseApp);
+    if (_gs!._userService == null) {
+      _gs!._userService = new UserService(_gs!._secondaryFirebaseApp);
     }
 
-    if (_gs._notificationService == null) {
-      _gs._notificationService =
-          new NotificationService(_gs._secondaryFirebaseApp);
+    if (_gs!._notificationService == null) {
+      _gs!._notificationService =
+          new NotificationService(_gs!._secondaryFirebaseApp);
     }
 
-    if (_gs._tokenService == null) {
-      _gs._tokenService = new TokenService(_gs._secondaryFirebaseApp);
+    if (_gs!._tokenService == null) {
+      _gs!._tokenService = new TokenService(_gs!._secondaryFirebaseApp);
     }
 
-    if (_gs._applicationService == null) {
-      _gs._applicationService =
-          new BookingApplicationService(_gs._secondaryFirebaseApp, _gs);
+    if (_gs!._applicationService == null) {
+      _gs!._applicationService =
+          new BookingApplicationService(_gs!._secondaryFirebaseApp, _gs);
     }
 
-    if (_gs._conf == null && _gs._fbAuth.currentUser != null) {
+    if (_gs!._conf == null && _gs!._fbAuth!.currentUser != null) {
       try {
-        _gs._conf = await ConfigurationService(_gs._secondaryFirebaseApp)
+        _gs!._conf = await ConfigurationService(_gs!._secondaryFirebaseApp)
             .getConfigurations();
       } catch (e) {
         print(
@@ -289,32 +289,32 @@ class GlobalState {
       }
     }
 
-    if (_gs._locData == null && _gs._conf != null) {
+    if (_gs!._locData == null && _gs!._conf != null) {
       if (location != null) {
-        _gs._locData = location;
+        _gs!._locData = location;
       } else {
         //automatically detect country
         try {
-          _gs._locData = await LocationUtil.getLocation(_gs._conf);
+          _gs!._locData = await LocationUtil.getLocation(_gs!._conf!);
         } catch (e) {
           print("Error getting location from the IP: " + e.toString());
         }
       }
     }
 
-    if (_gs._entities == null) {
-      _gs._entities = new Map<String, Entity>();
-      _gs._entityState = new Map<String, bool>();
+    if (_gs!._entities == null) {
+      _gs!._entities = new Map<String?, Entity>();
+      _gs!._entityState = new Map<String?, bool>();
     }
 
-    if (_gs._currentUser == null &&
-        _gs._conf != null &&
-        _gs._fbAuth.currentUser != null) {
+    if (_gs!._currentUser == null &&
+        _gs!._conf != null &&
+        _gs!._fbAuth!.currentUser != null) {
       try {
-        _gs._currentUser = await _gs._userService.getCurrentUser(_gs._locData);
-        if (_gs._currentUser != null &&
-            Utils.isNullOrEmpty(_gs._currentUser.favourites))
-          _gs._currentUser.favourites = [];
+        _gs!._currentUser = await _gs!._userService!.getCurrentUser(_gs!._locData);
+        if (_gs!._currentUser != null &&
+            Utils.isNullOrEmpty(_gs!._currentUser!.favourites))
+          _gs!._currentUser!.favourites = [];
       } catch (e) {
         print(
             "Error initializing GlobalState, User details could not be fetched from server..");
@@ -353,63 +353,63 @@ class GlobalState {
     return _gs;
   }
 
-  UserService getUserService() {
-    return _gs == null ? null : _gs._userService;
+  UserService? getUserService() {
+    return _gs == null ? null : _gs!._userService;
   }
 
-  NotificationService getNotificationService() {
-    return _gs == null ? null : _gs._notificationService;
+  NotificationService? getNotificationService() {
+    return _gs == null ? null : _gs!._notificationService;
   }
 
-  EntityService getEntityService() {
-    return _gs._entityService;
+  EntityService? getEntityService() {
+    return _gs!._entityService;
   }
 
-  BookingApplicationService getApplicationService() {
-    return _gs == null ? null : _gs._applicationService;
+  BookingApplicationService? getApplicationService() {
+    return _gs == null ? null : _gs!._applicationService;
   }
 
-  TokenService getTokenService() {
-    return _gs == null ? null : _gs._tokenService;
+  TokenService? getTokenService() {
+    return _gs == null ? null : _gs!._tokenService;
   }
 
-  AppUser getCurrentUser() {
+  AppUser? getCurrentUser() {
     return _currentUser;
   }
 
-  AuthService getAuthService() {
+  AuthService? getAuthService() {
     return _authService;
   }
 
-  static Future<String> getCountry() async {
-    return _gs == null ? null : _gs._locData.country;
+  static Future<String?> getCountry() async {
+    return _gs == null ? null : _gs!._locData!.country;
   }
 
-  Future<Tuple<Entity, bool>> getEntity(String id,
+  Future<Tuple<Entity, bool>?> getEntity(String? id,
       [bool fetchFromServer = false]) async {
     if (_entityService == null) return null;
-    if (fetchFromServer || !_entities.containsKey(id)) {
-      Entity ent = await _entityService.getEntity(id);
+    if (fetchFromServer || !_entities!.containsKey(id)) {
+      Entity? ent = await _entityService!.getEntity(id!);
       if (ent == null) {
         return null;
       }
 
-      _entities[id] = ent;
-      _entityState[id] = true;
+      _entities![id] = ent;
+      _entityState![id] = true;
 
       return new Tuple(item1: ent, item2: true);
-    } else if (_entities.containsKey(id)) {
-      return new Tuple(item1: _entities[id], item2: _entityState[id]);
+    } else if (_entities!.containsKey(id)) {
+      return new Tuple(item1: _entities![id], item2: _entityState![id]);
     }
   }
 
-  Future<bool> removeEmployee(String entityId, String phone) async {
+  Future<bool> removeEmployee(String? entityId, String? phone) async {
     if (_gs == null) return false;
-    Entity updatedEntity =
-        await _gs.getEntityService().removeEmployee(entityId, phone);
+    Entity? updatedEntity =
+        await _gs!.getEntityService()!.removeEmployee(entityId, phone);
     if (updatedEntity != null) {
-      _entities[updatedEntity.entityId] = updatedEntity;
-      _entityState[updatedEntity.entityId] = true;
+      _entities![updatedEntity.entityId] = updatedEntity;
+      _entityState![updatedEntity.entityId] = true;
       return true;
     }
 
@@ -418,28 +418,28 @@ class GlobalState {
 
   Future<bool> addEmployee(
       String entityId, Employee employee, EntityRole role) async {
-    Entity updatedEntity =
-        await _gs.getEntityService().upsertEmployee(entityId, employee, role);
+    Entity? updatedEntity =
+        await _gs!.getEntityService()!.upsertEmployee(entityId, employee, role);
     if (updatedEntity != null) {
       //putEntity(updatedEntity, false);
-      _entities[updatedEntity.entityId] = updatedEntity;
-      _entityState[updatedEntity.entityId] = true;
+      _entities![updatedEntity.entityId] = updatedEntity;
+      _entityState![updatedEntity.entityId] = true;
       return true;
     }
     return false;
   }
 
-  Future<bool> removeEntity(String id, [String parentId]) async {
-    bool isDeleted = await _entityService.deleteEntity(id);
+  Future<bool> removeEntity(String id, [String? parentId]) async {
+    bool isDeleted = await _entityService!.deleteEntity(id);
 
     if (isDeleted) {
-      _currentUser.entities.removeWhere((element) => element.entityId == id);
-      _currentUser.entityVsRole.remove(id);
-      _entities.remove(id);
-      _entityState.remove(id);
+      _currentUser!.entities!.removeWhere((element) => element!.entityId == id);
+      _currentUser!.entityVsRole!.remove(id);
+      _entities!.remove(id);
+      _entityState!.remove(id);
       if (Utils.isNotNullOrEmpty(parentId)) {
-        Tuple<Entity, bool> parent = await getEntity(parentId, false);
-        Entity parentEnt = parent.item1;
+        Tuple<Entity, bool> parent = await (getEntity(parentId, false) as FutureOr<Tuple<Entity, bool>>);
+        Entity parentEnt = parent.item1!;
         parentEnt.removeChildEntity(id);
       }
     }
@@ -447,68 +447,68 @@ class GlobalState {
   }
 
   Future<bool> putEntity(Entity entity, bool saveOnServer,
-      [String parentId]) async {
-    _entities[entity.entityId] = entity;
+      [String? parentId]) async {
+    _entities![entity.entityId] = entity;
 
     bool existsInUser = false;
-    if (Utils.isNullOrEmpty(_currentUser.entities)) {
-      _currentUser.entities = [];
+    if (Utils.isNullOrEmpty(_currentUser!.entities)) {
+      _currentUser!.entities = [];
     }
-    for (MetaEntity mEnt in _currentUser.entities) {
-      if (mEnt.entityId == entity.entityId) {
+    for (MetaEntity? mEnt in _currentUser!.entities!) {
+      if (mEnt!.entityId == entity.entityId) {
         existsInUser = true;
       }
     }
 
     if (!existsInUser) {
-      _currentUser.entities.add(entity.getMetaEntity());
+      _currentUser!.entities!.add(entity.getMetaEntity());
     }
 
-    if (_currentUser.entityVsRole == null) {
-      _currentUser.entityVsRole = new Map<String, EntityRole>();
+    if (_currentUser!.entityVsRole == null) {
+      _currentUser!.entityVsRole = new Map<String?, EntityRole>();
     }
 
-    _currentUser.entityVsRole[entity.entityId] = EntityRole.Admin;
+    _currentUser!.entityVsRole![entity.entityId] = EntityRole.Admin;
 
     bool saved = false;
     if (saveOnServer) {
       if (Utils.isNotNullOrEmpty(parentId)) {
         saved =
-            await _entityService.upsertChildEntityToParent(entity, parentId);
+            await _entityService!.upsertChildEntityToParent(entity, parentId!);
       } else {
-        saved = await _entityService.upsertEntity(entity);
+        saved = await _entityService!.upsertEntity(entity);
       }
     }
-    _entityState[entity.entityId] = saved;
+    _entityState![entity.entityId] = saved;
     return saved;
   }
 
-  void setPastSearch(List<Entity> entityList, String name, EntityType type) {
+  void setPastSearch(List<Entity>? entityList, String? name, EntityType? type) {
     if (_gs == null) return;
-    _gs.lastSearchResults = entityList;
-    _gs.lastSearchName = name;
-    _gs.lastSearchType = type;
+    _gs!.lastSearchResults = entityList;
+    _gs!.lastSearchName = name;
+    _gs!.lastSearchType = type;
     return;
   }
 
-  Future<List<UserToken>> getPastBookings(int startNum, int takeCount) async {
-    if (_gs._currentUser == null) {
+  Future<List<UserToken?>> getPastBookings(int startNum, int takeCount) async {
+    if (_gs!._currentUser == null) {
       return [];
     }
 
-    if (_gs._currentUser != null && _gs.bookings == null) {
-      _gs.bookings = [];
+    if (_gs!._currentUser != null && _gs!.bookings == null) {
+      _gs!.bookings = [];
     }
 
-    List<UserToken> newBookings = [];
+    List<UserToken?> newBookings = [];
     DateTime now = DateTime.now();
 
-    for (Tuple<UserToken, DocumentSnapshot> tok in _gs.bookings) {
-      if (tok.item1.parent.dateTime.isBefore(now)) newBookings.add(tok.item1);
+    for (Tuple<UserToken, DocumentSnapshot> tok in _gs!.bookings!) {
+      if (tok.item1!.parent!.dateTime!.isBefore(now)) newBookings.add(tok.item1);
     }
 
-    newBookings.sort((a, b) => (a.parent.dateTime.millisecondsSinceEpoch >
-            b.parent.dateTime.millisecondsSinceEpoch)
+    newBookings.sort((a, b) => (a!.parent!.dateTime!.millisecondsSinceEpoch >
+            b!.parent!.dateTime!.millisecondsSinceEpoch)
         ? -1
         : 1);
     //CASE:1 - When number of Bokkings we are trying is already in the GS collection.
@@ -517,7 +517,7 @@ class GlobalState {
       //e.g. total items are 10, start num is 6 and take count is 5
       //e.g. total items are 15, start num is 6 and take count is 5
 
-      List<UserToken> list = [];
+      List<UserToken?> list = [];
       list.addAll(newBookings.getRange(startNum - 1, startNum + takeCount - 1));
       return list;
     }
@@ -529,25 +529,25 @@ class GlobalState {
       //e.g. total items are 10, start num is 6 and take count is 8
       //e.g. total items are 10, start num is 1 and take count is 11
 
-      List<UserToken> uts = [];
+      List<UserToken?> uts = [];
       uts.addAll(newBookings.getRange(startNum - 1, newBookings.length));
 
-      Tuple<UserToken, DocumentSnapshot> lastDoc;
+      Tuple<UserToken, DocumentSnapshot>? lastDoc;
       if (uts.length > 0) {
-        for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-          if (doc.item1.getID() == uts[uts.length - 1].getID()) {
+        for (Tuple<UserToken, DocumentSnapshot> doc in _gs!.bookings!) {
+          if (doc.item1!.getID() == uts[uts.length - 1]!.getID()) {
             lastDoc = doc;
             break;
           }
         }
       }
 
-      DocumentSnapshot lastDocSnap;
+      DocumentSnapshot? lastDocSnap;
       if (lastDoc != null) {
         if (lastDoc.item2 == null) {
-          Tuple<UserTokens, DocumentSnapshot> tokDetails = await _gs
-              ._tokenService
-              .getToken(lastDoc.item1.parent.getTokenId());
+          Tuple<UserTokens, DocumentSnapshot>? tokDetails = await _gs!
+              ._tokenService!
+              .getToken(lastDoc.item1!.parent!.getTokenId());
 
           if (tokDetails != null) {
             lastDoc.item2 = tokDetails.item2;
@@ -561,13 +561,13 @@ class GlobalState {
 
       int remainingCount = takeCount - uts.length;
       List<Tuple<UserTokens, DocumentSnapshot>> remainingTokens =
-          await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
+          await _gs!._tokenService!.getTokens(null, _gs!._currentUser!.ph, null,
               now, true, null, lastDocSnap, remainingCount);
 
       if (remainingTokens != null && remainingTokens.length > 0) {
         for (Tuple<UserTokens, DocumentSnapshot> tokens in remainingTokens) {
-          for (UserToken token in tokens.item1.tokens) {
-            _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
+          for (UserToken token in tokens.item1!.tokens!) {
+            _gs!.bookings!.add(new Tuple<UserToken, DocumentSnapshot>(
                 item1: token, item2: tokens.item2));
             uts.add(token);
           }
@@ -581,24 +581,24 @@ class GlobalState {
       //e.g. total items are 10, start num is 11 and take count is 3
       //this is first time scenario where start num = 1 and no items will be there in the newBookings
       //also this will be usual load more scenario from server when user reaches to the last item in the list
-      List<UserToken> uts = [];
-      Tuple<UserToken, DocumentSnapshot> lastDoc;
+      List<UserToken?> uts = [];
+      Tuple<UserToken, DocumentSnapshot>? lastDoc;
       if (newBookings.length > 0) {
-        for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-          if (doc.item1.getID() ==
-              newBookings[newBookings.length - 1].getID()) {
+        for (Tuple<UserToken, DocumentSnapshot> doc in _gs!.bookings!) {
+          if (doc.item1!.getID() ==
+              newBookings[newBookings.length - 1]!.getID()) {
             lastDoc = doc;
             break;
           }
         }
       }
 
-      DocumentSnapshot lastDocSnap;
+      DocumentSnapshot? lastDocSnap;
       if (lastDoc != null) {
         if (lastDoc.item2 == null) {
-          Tuple<UserTokens, DocumentSnapshot> tokDetails = await _gs
-              ._tokenService
-              .getToken(lastDoc.item1.parent.getTokenId());
+          Tuple<UserTokens, DocumentSnapshot>? tokDetails = await _gs!
+              ._tokenService!
+              .getToken(lastDoc.item1!.parent!.getTokenId());
 
           if (tokDetails != null) {
             lastDoc.item2 = tokDetails.item2;
@@ -610,13 +610,13 @@ class GlobalState {
       }
 
       List<Tuple<UserTokens, DocumentSnapshot>> allTokens =
-          await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
+          await _gs!._tokenService!.getTokens(null, _gs!._currentUser!.ph, null,
               now, true, null, lastDocSnap, takeCount);
 
       if (allTokens != null && allTokens.length > 0) {
         for (Tuple<UserTokens, DocumentSnapshot> tokens in allTokens) {
-          for (UserToken token in tokens.item1.tokens) {
-            _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
+          for (UserToken token in tokens.item1!.tokens!) {
+            _gs!.bookings!.add(new Tuple<UserToken, DocumentSnapshot>(
                 item1: token, item2: tokens.item2));
             uts.add(token);
           }
@@ -628,56 +628,56 @@ class GlobalState {
     }
   }
 
-  Future<List<UserToken>> getUpcomingBookings(
+  Future<List<UserToken?>> getUpcomingBookings(
       int startNum, int takeCount) async {
-    if (_gs._currentUser == null) {
+    if (_gs!._currentUser == null) {
       return [];
     }
 
-    if (_gs._currentUser != null && _gs.bookings == null) {
-      _gs.bookings = [];
+    if (_gs!._currentUser != null && _gs!.bookings == null) {
+      _gs!.bookings = [];
     }
 
-    List<UserToken> newBookings = [];
+    List<UserToken?> newBookings = [];
     DateTime now = DateTime.now();
 
-    for (Tuple<UserToken, DocumentSnapshot> tok in _gs.bookings) {
-      if (!tok.item1.parent.dateTime.isBefore(now)) newBookings.add(tok.item1);
+    for (Tuple<UserToken, DocumentSnapshot> tok in _gs!.bookings!) {
+      if (!tok.item1!.parent!.dateTime!.isBefore(now)) newBookings.add(tok.item1);
     }
 
-    newBookings.sort((a, b) => (a.parent.dateTime.millisecondsSinceEpoch >
-            b.parent.dateTime.millisecondsSinceEpoch)
+    newBookings.sort((a, b) => (a!.parent!.dateTime!.millisecondsSinceEpoch >
+            b!.parent!.dateTime!.millisecondsSinceEpoch)
         ? 1
         : -1);
     //CASE:1
     if (newBookings.length >= startNum + takeCount - 1) {
       //e.g. total items are 10, start num is 6 and take count is 5
-      List<UserToken> list = [];
+      List<UserToken?> list = [];
       list.addAll(newBookings.getRange(startNum - 1, startNum + takeCount - 1));
       return list;
     }
     //CASE:2
     else if (newBookings.length >= startNum &&
         newBookings.length < startNum + takeCount - 1) {
-      List<UserToken> uts = [];
+      List<UserToken?> uts = [];
       uts.addAll(newBookings.getRange(startNum - 1, newBookings.length));
 
-      Tuple<UserToken, DocumentSnapshot> lastDoc;
+      Tuple<UserToken, DocumentSnapshot>? lastDoc;
 
       if (uts.length > 0) {
-        for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-          if (doc.item1.getID() == uts[uts.length - 1].getID()) {
+        for (Tuple<UserToken, DocumentSnapshot> doc in _gs!.bookings!) {
+          if (doc.item1!.getID() == uts[uts.length - 1]!.getID()) {
             lastDoc = doc;
             break;
           }
         }
       }
-      DocumentSnapshot lastDocSnap;
+      DocumentSnapshot? lastDocSnap;
       if (lastDoc != null) {
         if (lastDoc.item2 == null) {
-          Tuple<UserTokens, DocumentSnapshot> tokDetails = await _gs
-              ._tokenService
-              .getToken(lastDoc.item1.parent.getTokenId());
+          Tuple<UserTokens, DocumentSnapshot>? tokDetails = await _gs!
+              ._tokenService!
+              .getToken(lastDoc.item1!.parent!.getTokenId());
 
           if (tokDetails != null) {
             lastDoc.item2 = tokDetails.item2;
@@ -691,13 +691,13 @@ class GlobalState {
 
       int remainingCount = takeCount - uts.length;
       List<Tuple<UserTokens, DocumentSnapshot>> remainingTokens =
-          await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
+          await _gs!._tokenService!.getTokens(null, _gs!._currentUser!.ph, null,
               now, false, null, lastDocSnap, remainingCount);
 
       if (remainingTokens != null && remainingTokens.length > 0) {
         for (Tuple<UserTokens, DocumentSnapshot> tokens in remainingTokens) {
-          for (UserToken token in tokens.item1.tokens) {
-            _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
+          for (UserToken token in tokens.item1!.tokens!) {
+            _gs!.bookings!.add(new Tuple<UserToken, DocumentSnapshot>(
                 item1: token, item2: tokens.item2));
             uts.add(token);
           }
@@ -709,24 +709,24 @@ class GlobalState {
     else if (startNum == newBookings.length + 1) {
       //this is first time scenario where start num = 1 and no items will be there in the newBookings
       //also this will be usual load more scenario from server when user reaches to the last item in the list
-      List<UserToken> uts = [];
-      Tuple<UserToken, DocumentSnapshot> lastDoc;
+      List<UserToken?> uts = [];
+      Tuple<UserToken, DocumentSnapshot>? lastDoc;
       if (newBookings.length > 0) {
-        for (Tuple<UserToken, DocumentSnapshot> doc in _gs.bookings) {
-          if (doc.item1.getID() ==
-              newBookings[newBookings.length - 1].getID()) {
+        for (Tuple<UserToken, DocumentSnapshot> doc in _gs!.bookings!) {
+          if (doc.item1!.getID() ==
+              newBookings[newBookings.length - 1]!.getID()) {
             lastDoc = doc;
             break;
           }
         }
       }
 
-      DocumentSnapshot lastDocSnap;
+      DocumentSnapshot? lastDocSnap;
       if (lastDoc != null) {
         if (lastDoc.item2 == null) {
-          Tuple<UserTokens, DocumentSnapshot> tokDetails = await _gs
-              ._tokenService
-              .getToken(lastDoc.item1.parent.getTokenId());
+          Tuple<UserTokens, DocumentSnapshot>? tokDetails = await _gs!
+              ._tokenService!
+              .getToken(lastDoc.item1!.parent!.getTokenId());
 
           if (tokDetails != null) {
             lastDoc.item2 = tokDetails.item2;
@@ -738,13 +738,13 @@ class GlobalState {
       }
 
       List<Tuple<UserTokens, DocumentSnapshot>> allTokens =
-          await _gs._tokenService.getTokens(null, _gs._currentUser.ph, null,
+          await _gs!._tokenService!.getTokens(null, _gs!._currentUser!.ph, null,
               now, false, null, lastDocSnap, takeCount);
 
       if (allTokens != null && allTokens.length > 0) {
         for (Tuple<UserTokens, DocumentSnapshot> tokens in allTokens) {
-          for (UserToken token in tokens.item1.tokens) {
-            _gs.bookings.add(new Tuple<UserToken, DocumentSnapshot>(
+          for (UserToken token in tokens.item1!.tokens!) {
+            _gs!.bookings!.add(new Tuple<UserToken, DocumentSnapshot>(
                 item1: token, item2: tokens.item2));
             uts.add(token);
           }
@@ -756,17 +756,17 @@ class GlobalState {
     }
   }
 
-  List<EntityType> getActiveEntityTypes() {
-    List<EntityType> types = [];
+  List<EntityType?> getActiveEntityTypes() {
+    List<EntityType?> types = [];
     if (_conf == null) return types;
-    List<String> stringTypes;
+    List<String>? stringTypes;
 
     if (isAndroid) {
-      stringTypes = _conf.androidAppVersionToEntityTypes[version];
+      stringTypes = _conf!.androidAppVersionToEntityTypes![version!];
     }
 
     if (isIOS) {
-      stringTypes = _conf.iosAppVersionToEntityTypes[version];
+      stringTypes = _conf!.iosAppVersionToEntityTypes![version!];
     }
 
     if (stringTypes != null) {
@@ -778,23 +778,23 @@ class GlobalState {
     return types;
   }
 
-  List<EntityType> getActiveChildEntityTypes(EntityType parentType) {
-    List<EntityType> types = [];
+  List<EntityType?> getActiveChildEntityTypes(EntityType? parentType) {
+    List<EntityType?> types = [];
     if (_conf == null) return types;
 
-    if (!_conf.typeToChildType
+    if (!_conf!.typeToChildType!
         .containsKey(EnumToString.convertToString(parentType))) {
       return types;
     }
 
     List<String> childTypes =
-        _conf.typeToChildType[EnumToString.convertToString(parentType)];
+        _conf!.typeToChildType![EnumToString.convertToString(parentType)]!;
 
-    List<EntityType> activeTypeForThisAppVerison = getActiveEntityTypes();
+    List<EntityType?> activeTypeForThisAppVerison = getActiveEntityTypes();
 
     for (String childType in childTypes) {
-      EntityType type = EnumToString.fromString(EntityType.values, childType);
-      for (EntityType activeType in activeTypeForThisAppVerison) {
+      EntityType? type = EnumToString.fromString(EntityType.values, childType);
+      for (EntityType? activeType in activeTypeForThisAppVerison) {
         if (type == activeType) {
           types.add(type);
           break;
@@ -804,42 +804,42 @@ class GlobalState {
     return types;
   }
 
-  Future<bool> addFavourite(MetaEntity newMe) async {
-    for (MetaEntity me in _currentUser.favourites) {
-      if (me.entityId == newMe.entityId) {
+  Future<bool> addFavourite(MetaEntity? newMe) async {
+    for (MetaEntity? me in _currentUser!.favourites!) {
+      if (me!.entityId == newMe!.entityId) {
         return true;
       }
     }
 
     //add first and then make the server call, this is to improve the responsiveness
-    _currentUser.favourites.add(newMe);
+    _currentUser!.favourites!.add(newMe);
 
-    bool isSuccess = await _entityService.addEntityToUserFavourite(newMe);
+    bool isSuccess = await _entityService!.addEntityToUserFavourite(newMe);
 
     if (isSuccess) {
       return true;
     } else {
-      _currentUser.favourites
-          .removeWhere((element) => element.entityId == newMe.entityId);
+      _currentUser!.favourites!
+          .removeWhere((element) => element!.entityId == newMe!.entityId);
       return false;
     }
   }
 
-  Future<bool> removeFavourite(MetaEntity me) async {
+  Future<bool> removeFavourite(MetaEntity? me) async {
     bool isRemoved = false;
-    for (MetaEntity meta in _currentUser.favourites) {
-      if (meta.entityId == me.entityId) {
-        _currentUser.favourites
-            .removeWhere((element) => element.entityId == me.entityId);
+    for (MetaEntity? meta in _currentUser!.favourites!) {
+      if (meta!.entityId == me!.entityId) {
+        _currentUser!.favourites!
+            .removeWhere((element) => element!.entityId == me.entityId);
 
         isRemoved =
-            await _entityService.removeEntityFromUserFavourite(me.entityId);
+            await _entityService!.removeEntityFromUserFavourite(me.entityId);
 
         if (isRemoved) {
           return true;
         } else {
           //as it could not be removed on server, add it back
-          _currentUser.favourites.add(me);
+          _currentUser!.favourites!.add(me);
           return false;
         }
       }
@@ -848,37 +848,37 @@ class GlobalState {
     return true;
   }
 
-  Future<bool> updateMetaEntity(MetaEntity metaEntity) async {
-    for (int i = 0; i < _currentUser.entities.length; i++) {
-      if (_currentUser.entities[i].entityId == metaEntity.entityId) {
-        _currentUser.entities[i] = metaEntity;
+  Future<bool> updateMetaEntity(MetaEntity? metaEntity) async {
+    for (int i = 0; i < _currentUser!.entities!.length; i++) {
+      if (_currentUser!.entities![i]!.entityId == metaEntity!.entityId) {
+        _currentUser!.entities![i] = metaEntity;
       }
     }
     return true;
   }
 
-  Future<bool> updateSearchResults(List<Entity> list) async {
-    _gs.lastSearchResults = list;
+  Future<bool> updateSearchResults(List<Entity>? list) async {
+    _gs!.lastSearchResults = list;
     return true;
   }
 
   //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
-  Future<Triplet<UserTokens, TokenCounter, EntitySlots>> addBooking(
-      MetaEntity meta, Slot slot, bool enableVideoChat) async {
-    UserTokens tokens;
-    Triplet<UserTokens, TokenCounter, EntitySlots> triplet;
+  Future<Triplet<UserTokens, TokenCounter, EntitySlots>?> addBooking(
+      MetaEntity? meta, Slot slot, bool enableVideoChat) async {
+    UserTokens? tokens;
+    Triplet<UserTokens, TokenCounter, EntitySlots>? triplet;
     triplet =
-        await _tokenService.generateToken(meta, slot.dateTime, enableVideoChat);
+        await _tokenService!.generateToken(meta, slot.dateTime, enableVideoChat);
 
-    tokens = triplet.item1;
+    tokens = triplet!.item1;
 
-    UserToken newToken;
+    UserToken? newToken;
     bool matched;
     if (tokens != null) {
-      for (UserToken tok in tokens.tokens) {
+      for (UserToken tok in tokens.tokens!) {
         matched = false;
-        for (Tuple<UserToken, DocumentSnapshot> ut in bookings) {
-          if (ut.item1.getID() == tok.getID()) {
+        for (Tuple<UserToken, DocumentSnapshot> ut in bookings!) {
+          if (ut.item1!.getID() == tok.getID()) {
             matched = true;
             break;
           }
@@ -890,7 +890,7 @@ class GlobalState {
         }
       }
       if (newToken != null) {
-        bookings.add(
+        bookings!.add(
             Tuple<UserToken, DocumentSnapshot>(item1: newToken, item2: null));
       }
     }
@@ -900,69 +900,69 @@ class GlobalState {
   static clearGlobalState() {
     if (_gs != null) {
       // ignore: unnecessary_statements
-      _gs._entityState != null ? _gs._entityState.clear() : null;
+      _gs!._entityState != null ? _gs!._entityState!.clear() : null;
       // ignore: unnecessary_statements
-      _gs._entities != null ? _gs._entities.clear() : null;
+      _gs!._entities != null ? _gs!._entities!.clear() : null;
       // ignore: unnecessary_statements
-      _gs.lastSearchResults != null ? _gs.lastSearchResults.clear() : null;
+      _gs!.lastSearchResults != null ? _gs!.lastSearchResults!.clear() : null;
       // ignore: unnecessary_statements
-      _gs.bookings != null ? _gs.bookings.clear() : null;
-      _gs.bookings = null;
+      _gs!.bookings != null ? _gs!.bookings!.clear() : null;
+      _gs!.bookings = null;
 
-      _gs._tokenService = null;
-      _gs._userService = null;
-      _gs._entityService = null;
-      _gs._currentUser = null;
-      _gs._applicationService = null;
-      _gs._authService = null;
-      _gs._conf = null;
-      _gs.lastSearchName = "";
-      _gs.lastSearchType = null;
-      _gs._secondaryFirebaseApp = null;
+      _gs!._tokenService = null;
+      _gs!._userService = null;
+      _gs!._entityService = null;
+      _gs!._currentUser = null;
+      _gs!._applicationService = null;
+      _gs!._authService = null;
+      _gs!._conf = null;
+      _gs!.lastSearchName = "";
+      _gs!.lastSearchType = null;
+      _gs!._secondaryFirebaseApp = null;
     }
 
     _gs = null;
   }
 
-  Future<Triplet<UserToken, TokenCounter, EntitySlots>> withDrawApplication(
-      String applicationId, String notesOnCancellation) async {
+  Future<Triplet<UserToken, TokenCounter, EntitySlots>?> withDrawApplication(
+      String? applicationId, String notesOnCancellation) async {
     if (_gs == null ||
         _applicationService == null ||
         !Utils.isNotNullOrEmpty(applicationId)) return null;
 
     Triplet<UserToken, TokenCounter, EntitySlots> triplet =
-        await _applicationService.withDrawApplication(
-            applicationId, notesOnCancellation);
+        await _applicationService!.withDrawApplication(
+            applicationId!, notesOnCancellation);
 
-    _updateTokensCacheAndCancelNotification(triplet.item1);
+    _updateTokensCacheAndCancelNotification(triplet.item1!);
 
     return triplet;
   }
 
   //Throws => TokenAlreadyCancelledException, NoTokenFoundException
-  Future<Triplet<UserToken, TokenCounter, EntitySlots>> cancelBooking(
-      String tokenId,
-      [int number]) async {
-    Triplet<UserToken, TokenCounter, EntitySlots> triplet;
+  Future<Triplet<UserToken, TokenCounter, EntitySlots>?> cancelBooking(
+      String? tokenId,
+      [int? number]) async {
+    Triplet<UserToken, TokenCounter, EntitySlots>? triplet;
     if (_gs == null || _tokenService == null) return null;
 
-    triplet = await _tokenService.cancelToken(tokenId, number);
+    triplet = await _tokenService!.cancelToken(tokenId, number);
 
-    _updateTokensCacheAndCancelNotification(triplet.item1);
+    _updateTokensCacheAndCancelNotification(triplet!.item1!);
 
     return triplet;
   }
 
   void _updateTokensCacheAndCancelNotification(UserToken cancelledToken) {
-    UserTokens uts = cancelledToken.parent;
+    UserTokens? uts = cancelledToken.parent;
     if (uts != null) {
       //update the bookings in the collection
       int index = -1;
 
       bool didMatch = false;
-      for (Tuple<UserToken, DocumentSnapshot> existingTok in bookings) {
+      for (Tuple<UserToken, DocumentSnapshot> existingTok in bookings!) {
         index++;
-        if (existingTok.item1.getID() == cancelledToken.getID()) {
+        if (existingTok.item1!.getID() == cancelledToken.getID()) {
           //supplied number should not exist in the returned UserTokens object as that would have changed to -1 and original number should match
           didMatch = true;
           break;
@@ -970,11 +970,11 @@ class GlobalState {
       }
 
       if (didMatch) {
-        Tuple<UserToken, DocumentSnapshot> tup = bookings[index];
+        Tuple<UserToken, DocumentSnapshot> tup = bookings![index];
         tup.item1 = cancelledToken;
       }
 
-      getNotificationService().unRegisterTokenNotification(cancelledToken);
+      getNotificationService()!.unRegisterTokenNotification(cancelledToken);
     }
   }
 
@@ -991,13 +991,13 @@ class GlobalState {
     return searchListJson;
   }
 
-  static List<Entity> convertToSearchListFromJson(
+  static List<Entity?> convertToSearchListFromJson(
       List<dynamic> metaEntityJson) {
-    List<Entity> metaEntities = [];
+    List<Entity?> metaEntities = [];
 
     if (metaEntityJson != null) {
-      for (Map<String, dynamic> json in metaEntityJson) {
-        Entity metaEnt = Entity.fromJson(json);
+      for (Map<String, dynamic> json in metaEntityJson as Iterable<Map<String, dynamic>>) {
+        Entity? metaEnt = Entity.fromJson(json);
         metaEntities.add(metaEnt);
       }
     }
@@ -1005,7 +1005,7 @@ class GlobalState {
   }
 
   bool _isNotificationInitialized = false;
-  FlutterLocalNotificationsPlugin localNotification;
+  late FlutterLocalNotificationsPlugin localNotification;
 
   bool isNotificationInitialized() {
     return _isNotificationInitialized;
@@ -1039,7 +1039,7 @@ class GlobalState {
     }
   }
 
-  Future onSelectNotification(String payload) async {
+  Future onSelectNotification(String? payload) async {
     print(" onSelectNotification clicked");
   }
 
@@ -1050,9 +1050,9 @@ class GlobalState {
         return;
       }
 
-      LocalNotificationData data = event.eventData;
+      LocalNotificationData? data = event.eventData as LocalNotificationData?;
       if (data != null && data.id != null) {
-        localNotification.cancel(data.id);
+        localNotification.cancel(data.id!);
       }
     });
   }
@@ -1073,11 +1073,11 @@ class GlobalState {
         return;
       }
 
-      LocalNotificationData data = event.eventData;
+      LocalNotificationData data = event.eventData as LocalNotificationData;
 
-      var tzDateTime = tz.TZDateTime.from(data.dateTime, tz.local);
+      var tzDateTime = tz.TZDateTime.from(data.dateTime!, tz.local);
 
-      localNotification.zonedSchedule(data.id, data.title, data.message,
+      localNotification.zonedSchedule(data.id!, data.title, data.message,
           tzDateTime, generalNotificationDetails,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.wallClockTime,

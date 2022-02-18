@@ -79,7 +79,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   //final NavigationService _navigationService = locator<NavigationService>();
   final DynamicLinkService _dynamicLinkService = DynamicLinkService();
-  Timer _timerLink;
+  Timer? _timerLink;
   //FlutterLocalNotificationsPlugin localNotification;
 
   @override
@@ -132,7 +132,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     if (_timerLink != null) {
-      _timerLink.cancel();
+      _timerLink!.cancel();
     }
     super.dispose();
   }
@@ -149,9 +149,9 @@ class DynamicLinkService {
   void retrieveDynamicLink(BuildContext context) async {
     try {
       // showDialog(context: context, child: Text('Yay!!!'));
-      final PendingDynamicLinkData data =
+      final PendingDynamicLinkData? data =
           await FirebaseDynamicLinks.instance.getInitialLink();
-      final Uri deepLink = data?.link;
+      final Uri? deepLink = data?.link;
 
       if (deepLink != null) {
         print(deepLink.queryParameters);
@@ -173,7 +173,7 @@ class DynamicLinkService {
             print("current user already logged in");
             // Call method to add entity to favs list, if not already present,
             // else just load favs page.
-            String entityId = deepLink.queryParameters['entityId'];
+            String? entityId = deepLink.queryParameters['entityId'];
             Utils.addEntityToFavs(context, entityId);
           } else {
             //TODO: Smita: User not logged in, but app is installed
@@ -192,7 +192,7 @@ class DynamicLinkService {
             print("current user already logged in");
             // Call method to add entity to favs list, if not already present,
             // else just load favs page.
-            String tokenID = deepLink.queryParameters['tokenIdentifier'];
+            String tokenID = deepLink.queryParameters['tokenIdentifier']!;
             print(deepLink.data);
             print(deepLink.query);
 
@@ -215,7 +215,7 @@ class DynamicLinkService {
             print("current user already logged in");
             // Call method to add entity to favs list, if not already present,
             // else just load favs page.
-            String applicationId = deepLink.queryParameters['applicationID'];
+            String applicationId = deepLink.queryParameters['applicationID']!;
             print(deepLink.data);
             print(deepLink.query);
 

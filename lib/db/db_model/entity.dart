@@ -58,62 +58,62 @@ class Entity {
       this.allowWalkinAppointment = true});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
-  String entityId;
-  String name;
-  String description;
-  String regNum;
-  Address address;
-  int advanceDays;
-  bool isPublic;
-  List<Employee> admins;
-  List<Employee> managers;
-  List<Employee> executives;
-  List<MetaEntity> childEntities;
+  String? entityId;
+  String? name;
+  String? description;
+  String? regNum;
+  Address? address;
+  int? advanceDays;
+  bool? isPublic;
+  List<Employee>? admins;
+  List<Employee>? managers;
+  List<Employee>? executives;
+  List<MetaEntity?>? childEntities;
   //MyGeoFirePoint geo;
-  int maxAllowed;
-  int slotDuration;
-  List<String> closedOn;
-  int breakStartHour;
-  int breakStartMinute;
-  int breakEndHour;
-  int breakEndMinute;
-  int startTimeHour;
-  int startTimeMinute;
-  int endTimeHour;
-  int endTimeMinute;
-  String parentId;
-  EntityType type;
-  bool isBookable;
-  bool isActive;
-  MyGeoFirePoint coordinates;
-  double distance;
-  String whatsapp;
-  DateTime createdAt;
-  DateTime modifiedAt;
+  int? maxAllowed;
+  int? slotDuration;
+  List<String>? closedOn;
+  int? breakStartHour;
+  int? breakStartMinute;
+  int? breakEndHour;
+  int? breakEndMinute;
+  int? startTimeHour;
+  int? startTimeMinute;
+  int? endTimeHour;
+  int? endTimeMinute;
+  String? parentId;
+  EntityType? type;
+  bool? isBookable;
+  bool? isActive;
+  MyGeoFirePoint? coordinates;
+  double? distance;
+  String? whatsapp;
+  DateTime? createdAt;
+  DateTime? modifiedAt;
   //"Verification Pending", "Verified", "Rejected"
-  String verificationStatus;
-  String upiId;
-  String upiPhoneNumber;
-  String upiQRImagePath;
-  Offer offer;
-  String phone;
-  MetaEntity _meta;
-  List<MetaForm> forms;
-  int maxTokensPerSlotByUser;
-  int maxPeoplePerToken;
-  String
+  String? verificationStatus;
+  String? upiId;
+  String? upiPhoneNumber;
+  String? upiQRImagePath;
+  Offer? offer;
+  String? phone;
+  MetaEntity? _meta;
+  List<MetaForm>? forms;
+  int? maxTokensPerSlotByUser;
+  int? maxPeoplePerToken;
+  String?
       parentGroupId; //this value will be present and common for different branches of same company
-  String supportEmail;
-  int maxTokensByUserInDay;
-  bool allowOnlineAppointment;
-  bool allowWalkinAppointment;
+  String? supportEmail;
+  int? maxTokensByUserInDay;
+  bool? allowOnlineAppointment;
+  bool? allowWalkinAppointment;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
         'name': name,
         'description': description,
         //'regNum': regNum,
-        'address': address != null ? address.toJson() : null,
+        'address': address != null ? address!.toJson() : null,
         'advanceDays': advanceDays,
         'isPublic': isPublic,
         'admins': employeesToJson(admins),
@@ -135,17 +135,17 @@ class Entity {
         'type': EnumToString.convertToString(type),
         'isBookable': isBookable,
         'isActive': isActive,
-        'coordinates': coordinates != null ? coordinates.toJson() : null,
+        'coordinates': coordinates != null ? coordinates!.toJson() : null,
         'nameQuery': constructQueriableList(name),
         'distance': distance,
         'whatsapp': whatsapp,
-        'createdAt': createdAt.millisecondsSinceEpoch,
-        'modifiedAt': modifiedAt.millisecondsSinceEpoch,
+        'createdAt': createdAt!.millisecondsSinceEpoch,
+        'modifiedAt': modifiedAt!.millisecondsSinceEpoch,
         'verificationStatus': verificationStatus,
         'upiId': upiId,
         'upiPhoneNumber': upiPhoneNumber,
         'upiQRImagePath': upiQRImagePath,
-        'offer': offer != null ? offer.toJson() : null,
+        'offer': offer != null ? offer!.toJson() : null,
         'phone': phone,
         'forms': metaFormsToJson(forms),
         'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
@@ -166,7 +166,7 @@ class Entity {
     return usersJson;
   }
 
-  List<dynamic> employeesToJson(List<Employee> emps) {
+  List<dynamic> employeesToJson(List<Employee>? emps) {
     List<dynamic> usersJson = [];
     if (emps == null) return usersJson;
     for (Employee emp in emps) {
@@ -175,16 +175,16 @@ class Entity {
     return usersJson;
   }
 
-  List<dynamic> metaEntitiesToJson(List<MetaEntity> metaEntities) {
+  List<dynamic> metaEntitiesToJson(List<MetaEntity?>? metaEntities) {
     List<dynamic> usersJson = [];
     if (metaEntities == null) return usersJson;
-    for (MetaEntity meta in metaEntities) {
-      usersJson.add(meta.toJson());
+    for (MetaEntity? meta in metaEntities) {
+      usersJson.add(meta!.toJson());
     }
     return usersJson;
   }
 
-  List<dynamic> metaFormsToJson(List<MetaForm> metaForms) {
+  List<dynamic> metaFormsToJson(List<MetaForm>? metaForms) {
     List<dynamic> usersJson = [];
     if (metaForms == null) return usersJson;
     for (MetaForm meta in metaForms) {
@@ -193,21 +193,21 @@ class Entity {
     return usersJson;
   }
 
-  EntityRole getRole(String phone) {
-    for (int index = 0; index < this.admins.length; index++) {
-      if (this.admins[index].ph == phone) {
+  EntityRole? getRole(String phone) {
+    for (int index = 0; index < this.admins!.length; index++) {
+      if (this.admins![index].ph == phone) {
         return EntityRole.Admin;
       }
     }
 
-    for (int index = 0; index < this.managers.length; index++) {
-      if (this.managers[index].ph == phone) {
+    for (int index = 0; index < this.managers!.length; index++) {
+      if (this.managers![index].ph == phone) {
         return EntityRole.Manager;
       }
     }
 
-    for (int index = 0; index < this.executives.length; index++) {
-      if (this.executives[index].ph == phone) {
+    for (int index = 0; index < this.executives!.length; index++) {
+      if (this.executives![index].ph == phone) {
         return EntityRole.Executive;
       }
     }
@@ -215,7 +215,7 @@ class Entity {
     return null;
   }
 
-  static Entity fromJson(Map<String, dynamic> json) {
+  static Entity? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return new Entity(
         entityId: json['entityId'],
@@ -271,16 +271,16 @@ class Entity {
     }
     int index = -1;
     bool matched = false;
-    for (MetaEntity me in childEntities) {
+    for (MetaEntity? me in childEntities!) {
       index++;
-      if (me.entityId == childEntityId) {
+      if (me!.entityId == childEntityId) {
         matched = true;
         break;
       }
     }
 
     if (matched) {
-      childEntities.removeAt(index);
+      childEntities!.removeAt(index);
       return true;
     }
 
@@ -295,18 +295,18 @@ class Entity {
     List<MetaUser> users = [];
     if (usersJson == null) return users;
 
-    for (Map<String, dynamic> json in usersJson) {
+    for (Map<String, dynamic> json in usersJson as Iterable<Map<String, dynamic>>) {
       MetaUser sl = MetaUser.fromJson(json);
       users.add(sl);
     }
     return users;
   }
 
-  static List<Employee> convertToEmployeesFromJson(List<dynamic> usersJson) {
+  static List<Employee> convertToEmployeesFromJson(List<dynamic>? usersJson) {
     List<Employee> users = [];
     if (usersJson == null) return users;
 
-    for (Map<String, dynamic> json in usersJson) {
+    for (Map<String, dynamic> json in usersJson as Iterable<Map<String, dynamic>>) {
       Employee emp = Employee.fromJson(json);
       users.add(emp);
     }
@@ -314,39 +314,39 @@ class Entity {
   }
 
   static List<MetaEntity> convertToMetaEntitiesFromJson(
-      List<dynamic> metaEntityJson) {
+      List<dynamic>? metaEntityJson) {
     List<MetaEntity> metaEntities = [];
     if (metaEntityJson == null) return metaEntities;
 
-    for (Map<String, dynamic> json in metaEntityJson) {
+    for (Map<String, dynamic> json in metaEntityJson as Iterable<Map<String, dynamic>>) {
       MetaEntity metaEnt = MetaEntity.fromJson(json);
       metaEntities.add(metaEnt);
     }
     return metaEntities;
   }
 
-  static List<MetaForm> convertToMetaFormsFromJson(List<dynamic> metaFormJson) {
+  static List<MetaForm> convertToMetaFormsFromJson(List<dynamic>? metaFormJson) {
     List<MetaForm> metaForms = [];
     if (metaFormJson == null) return metaForms;
 
-    for (Map<String, dynamic> json in metaFormJson) {
+    for (Map<String, dynamic> json in metaFormJson as Iterable<Map<String, dynamic>>) {
       MetaForm metaEnt = MetaForm.fromJson(json);
       metaForms.add(metaEnt);
     }
     return metaForms;
   }
 
-  static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
+  static List<String> convertToClosedOnArrayFromJson(List<dynamic>? daysJson) {
     List<String> days = [];
     if (daysJson == null) return days;
 
-    for (String day in daysJson) {
+    for (String day in daysJson as Iterable<String>) {
       days.add(day);
     }
     return days;
   }
 
-  MetaEntity getMetaEntity() {
+  MetaEntity? getMetaEntity() {
     if (_meta == null) {
       _meta = new MetaEntity(
           entityId: entityId,
@@ -364,8 +364,8 @@ class Entity {
           endTimeHour: endTimeHour,
           endTimeMinute: endTimeMinute,
           isActive: isActive,
-          lat: (coordinates != null) ? coordinates.geopoint.latitude : null,
-          lon: (coordinates != null) ? coordinates.geopoint.longitude : null,
+          lat: (coordinates != null) ? coordinates!.geopoint!.latitude : null,
+          lon: (coordinates != null) ? coordinates!.geopoint!.longitude : null,
           slotDuration: slotDuration,
           maxAllowed: maxAllowed,
           distance: distance,
@@ -377,8 +377,8 @@ class Entity {
           offer: offer,
           phone: phone,
           address:
-              (address != null) ? Utils.getFormattedAddress(address) : null,
-          hasChildren: (childEntities != null && childEntities.length > 0)
+              (address != null) ? Utils.getFormattedAddress(address!) : null,
+          hasChildren: (childEntities != null && childEntities!.length > 0)
               ? true
               : false,
           isBookable: isBookable,
@@ -391,51 +391,51 @@ class Entity {
           allowOnlineAppointment: allowOnlineAppointment,
           allowWalkinAppointment: allowWalkinAppointment);
     } else {
-      _meta.name = name;
-      _meta.type = type;
-      _meta.advanceDays = advanceDays;
-      _meta.isPublic = isPublic;
-      _meta.closedOn = closedOn;
+      _meta!.name = name;
+      _meta!.type = type;
+      _meta!.advanceDays = advanceDays;
+      _meta!.isPublic = isPublic;
+      _meta!.closedOn = closedOn;
 
-      _meta.breakStartHour = breakStartHour;
-      _meta.breakStartMinute = breakStartMinute;
-      _meta.breakEndHour = breakEndHour;
-      _meta.breakEndMinute = breakEndMinute;
-      _meta.startTimeHour = startTimeHour;
-      _meta.startTimeMinute = startTimeMinute;
-      _meta.endTimeHour = endTimeHour;
-      _meta.endTimeMinute = endTimeMinute;
-      _meta.isActive = isActive;
-      _meta.lat = (coordinates != null) ? coordinates.geopoint.latitude : null;
-      _meta.lon = (coordinates != null) ? coordinates.geopoint.longitude : null;
-      _meta.slotDuration = slotDuration;
-      _meta.maxAllowed = maxAllowed;
-      _meta.distance = distance;
-      _meta.whatsapp = whatsapp;
-      _meta.parentId = parentId;
-      _meta.upiId = upiId;
-      _meta.upiPhoneNumber = upiPhoneNumber;
-      _meta.upiQRImagePath = upiQRImagePath;
-      _meta.offer = offer;
-      _meta.phone = phone;
-      _meta.address =
-          (address != null) ? Utils.getFormattedAddress(address) : null;
-      _meta.hasChildren =
-          (childEntities != null && childEntities.length > 0) ? true : false;
-      _meta.isBookable = isBookable;
-      _meta.forms = forms;
-      _meta.maxTokensPerSlotByUser = maxTokensPerSlotByUser;
-      _meta.maxPeoplePerToken = maxPeoplePerToken;
-      _meta.parentGroupId = parentGroupId;
-      _meta.supportEmail = supportEmail;
-      _meta.maxTokensByUserInDay = maxTokensByUserInDay;
-      _meta.allowOnlineAppointment = allowOnlineAppointment;
-      _meta.allowWalkinAppointment = allowWalkinAppointment;
+      _meta!.breakStartHour = breakStartHour;
+      _meta!.breakStartMinute = breakStartMinute;
+      _meta!.breakEndHour = breakEndHour;
+      _meta!.breakEndMinute = breakEndMinute;
+      _meta!.startTimeHour = startTimeHour;
+      _meta!.startTimeMinute = startTimeMinute;
+      _meta!.endTimeHour = endTimeHour;
+      _meta!.endTimeMinute = endTimeMinute;
+      _meta!.isActive = isActive;
+      _meta!.lat = (coordinates != null) ? coordinates!.geopoint!.latitude : null;
+      _meta!.lon = (coordinates != null) ? coordinates!.geopoint!.longitude : null;
+      _meta!.slotDuration = slotDuration;
+      _meta!.maxAllowed = maxAllowed;
+      _meta!.distance = distance;
+      _meta!.whatsapp = whatsapp;
+      _meta!.parentId = parentId;
+      _meta!.upiId = upiId;
+      _meta!.upiPhoneNumber = upiPhoneNumber;
+      _meta!.upiQRImagePath = upiQRImagePath;
+      _meta!.offer = offer;
+      _meta!.phone = phone;
+      _meta!.address =
+          (address != null) ? Utils.getFormattedAddress(address!) : null;
+      _meta!.hasChildren =
+          (childEntities != null && childEntities!.length > 0) ? true : false;
+      _meta!.isBookable = isBookable;
+      _meta!.forms = forms;
+      _meta!.maxTokensPerSlotByUser = maxTokensPerSlotByUser;
+      _meta!.maxPeoplePerToken = maxPeoplePerToken;
+      _meta!.parentGroupId = parentGroupId;
+      _meta!.supportEmail = supportEmail;
+      _meta!.maxTokensByUserInDay = maxTokensByUserInDay;
+      _meta!.allowOnlineAppointment = allowOnlineAppointment;
+      _meta!.allowWalkinAppointment = allowWalkinAppointment;
     }
     return _meta;
   }
 
-  List<String> constructQueriableList(String string) {
+  List<String> constructQueriableList(String? string) {
     if (string == null) return [];
     String lowercased = string.toLowerCase();
     List<String> queriables = [];

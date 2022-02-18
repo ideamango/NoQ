@@ -43,12 +43,12 @@ class _FavsListPageState extends State<FavsListPage>
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
-  SharedPreferences _prefs;
-  PersistentBottomSheetController placeDetailsSheetController;
+  SharedPreferences? _prefs;
+  PersistentBottomSheetController? placeDetailsSheetController;
 
-  List<MetaEntity> _stores = new List<MetaEntity>();
+  List<MetaEntity?> _stores = new List<MetaEntity?>();
 
-  String _entityType;
+  String? _entityType;
 
   bool fetchFromServer = false;
 
@@ -61,18 +61,18 @@ class _FavsListPageState extends State<FavsListPage>
   );
   final key = new GlobalKey<ScaffoldState>();
 
-  List<MetaEntity> _list;
+  List<MetaEntity>? _list;
 
-  String pageName;
-  GlobalState _gs;
+  String? pageName;
+  GlobalState? _gs;
   bool stateInitFinished = false;
-  String emptyPageMsg;
-  double fontSize;
+  String? emptyPageMsg;
+  double? fontSize;
 
   var sideInfoGrp = new AutoSizeGroup();
 
-  AnimationController _animationController;
-  Animation animation;
+  late AnimationController _animationController;
+  late Animation animation;
   @override
   void initState() {
     super.initState();
@@ -102,10 +102,10 @@ class _FavsListPageState extends State<FavsListPage>
     //List<MetaEntity> newList = new List<MetaEntity>();
     Entity e;
     //if (initCompleted) {
-    print(_gs.getCurrentUser().favourites);
+    print(_gs!.getCurrentUser()!.favourites);
     _stores.clear();
-    if (!Utils.isNullOrEmpty(_gs.getCurrentUser().favourites)) {
-      for (MetaEntity fs in _gs.getCurrentUser().favourites) {
+    if (!Utils.isNullOrEmpty(_gs!.getCurrentUser()!.favourites)) {
+      for (MetaEntity? fs in _gs!.getCurrentUser()!.favourites!) {
         //e = await EntityService().getEntity(fs.entityId);
         _stores.add(fs);
       }
@@ -125,14 +125,14 @@ class _FavsListPageState extends State<FavsListPage>
     }
   }
 
-  bool isFavourite(MetaEntity en) {
-    if (_gs.getCurrentUser() == null) {
+  bool isFavourite(MetaEntity? en) {
+    if (_gs!.getCurrentUser() == null) {
       return false;
     }
 
-    List<MetaEntity> favs = _gs.getCurrentUser().favourites;
+    List<MetaEntity?> favs = _gs!.getCurrentUser()!.favourites!;
     for (int i = 0; i < favs.length; i++) {
-      if (favs[i].entityId == en.entityId) {
+      if (favs[i]!.entityId == en!.entityId) {
         return true;
       }
     }
@@ -144,32 +144,32 @@ class _FavsListPageState extends State<FavsListPage>
     isFav = isFavourite(en);
     if (isFav) {
       setState(() {
-        _gs.removeFavourite(en);
+        _gs!.removeFavourite(en);
       });
 
       return true;
     } else {
       setState(() {
-        _gs.addFavourite(en);
+        _gs!.addFavourite(en);
       });
 
       return false;
     }
   }
 
-  void toggleFavorite(MetaEntity strData) {
+  void toggleFavorite(MetaEntity? strData) {
 //Removes favorite from User-Favorites and update favs list being displayed.
 //If nothing in list then displays message.
-    MetaEntity metaEn = strData;
-    _gs.removeFavourite(metaEn).then((value) {
+    MetaEntity? metaEn = strData;
+    _gs!.removeFavourite(metaEn).then((value) {
       _stores?.remove(strData);
       setState(() {});
     });
     setState(() {});
   }
 
-  showPlaceDetailsSheet(Entity str) {
-    placeDetailsSheetController = key.currentState.showBottomSheet<Null>(
+  showPlaceDetailsSheet(Entity? str) {
+    placeDetailsSheetController = key.currentState!.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
         height: MediaQuery.of(context).size.height * .87,
@@ -190,7 +190,7 @@ class _FavsListPageState extends State<FavsListPage>
                           color: headerBarColor,
                         ),
                         onPressed: () {
-                          placeDetailsSheetController.close();
+                          placeDetailsSheetController!.close();
                           placeDetailsSheetController = null;
                           // Navigator.of(context).pop();
                         }),
@@ -199,7 +199,7 @@ class _FavsListPageState extends State<FavsListPage>
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width * .8,
                       child: Text(
-                        str.name,
+                        str!.name!,
                         style: TextStyle(
                             color: Colors.blueGrey[800],
                             fontFamily: 'RalewayRegular',
@@ -221,22 +221,22 @@ class _FavsListPageState extends State<FavsListPage>
       elevation: 30,
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.blueGrey[200]),
+          side: BorderSide(color: Colors.blueGrey[200]!),
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
     );
   }
 
-  generateLinkAndShareWithParams(String entityId, String name) async {
+  generateLinkAndShareWithParams(String? entityId, String name) async {
     String msgTitle = entityShareByUserHeading + name;
     String msgBody = entityShareByUserMessage;
 
     Utils.generateLinkAndShare(entityId, msgTitle, msgBody,
-        _gs.getConfigurations().packageName, _gs.getConfigurations().iOSAppId);
+        _gs!.getConfigurations()!.packageName!, _gs!.getConfigurations()!.iOSAppId);
   }
 
   Widget _emptyFavsPage() {
-    String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : noFavMsg;
+    String? txtMsg = (emptyPageMsg != null) ? emptyPageMsg : noFavMsg;
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -254,7 +254,7 @@ class _FavsListPageState extends State<FavsListPage>
 
   Future<bool> willPopCallback() async {
     if (placeDetailsSheetController != null) {
-      placeDetailsSheetController.close();
+      placeDetailsSheetController!.close();
       placeDetailsSheetController = null;
       return false;
     } else {
@@ -274,7 +274,7 @@ class _FavsListPageState extends State<FavsListPage>
     return WillPopScope(
       child: Scaffold(
         key: key,
-        appBar: (!initCompleted)
+        appBar: ((!initCompleted)
             ? CustomAppBar(
                 titleTxt: "My Favourites",
               )
@@ -298,7 +298,7 @@ class _FavsListPageState extends State<FavsListPage>
                   "My Favourites",
                   style: TextStyle(color: Colors.white, fontSize: 16),
                   overflow: TextOverflow.ellipsis,
-                )),
+                ))) as PreferredSizeWidget?,
         body: (!initCompleted)
             ? Center(
                 child: Column(
@@ -349,7 +349,7 @@ class _FavsListPageState extends State<FavsListPage>
     return imgWidget;
   }
 
-  Widget _buildItem(MetaEntity str) {
+  Widget _buildItem(MetaEntity? str) {
     _prepareDateList();
     print('after buildDateGrid called');
     return Card(
@@ -366,7 +366,7 @@ class _FavsListPageState extends State<FavsListPage>
                   alignment: Alignment.center,
                   height: MediaQuery.of(context).size.width * .09,
                   width: MediaQuery.of(context).size.width * .09,
-                  child: Utils.getEntityTypeImage(str.type, 30)),
+                  child: Utils.getEntityTypeImage(str!.type, 30)),
               Container(
                 width: MediaQuery.of(context).size.width * .8,
                 padding: EdgeInsets.all(2),
@@ -393,8 +393,8 @@ class _FavsListPageState extends State<FavsListPage>
                                 GestureDetector(
                                   onTap: () {
                                     print("Container clicked");
-                                    _gs.getEntity(str.entityId).then((value) =>
-                                        {showPlaceDetailsSheet(value.item1)});
+                                    _gs!.getEntity(str.entityId).then((value) =>
+                                        {showPlaceDetailsSheet(value!.item1)});
                                   },
                                   child: Container(
                                     padding: EdgeInsets.zero,
@@ -411,9 +411,9 @@ class _FavsListPageState extends State<FavsListPage>
                                   ),
                                 ),
                                 (str.allowOnlineAppointment != null)
-                                    ? (str.allowOnlineAppointment
+                                    ? (str.allowOnlineAppointment!
                                         ? FadeTransition(
-                                            opacity: animation,
+                                            opacity: animation as Animation<double>,
                                             child: GestureDetector(
                                               onTap: () {
                                                 Utils.showMyFlushbar(
@@ -478,7 +478,7 @@ class _FavsListPageState extends State<FavsListPage>
                                                   EnumToString.convertToString(
                                                       str.type))
                                               ? Utils.getEntityTypeDisplayName(
-                                                  str.type)
+                                                  str.type)!
                                               : "",
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -602,7 +602,7 @@ class _FavsListPageState extends State<FavsListPage>
                             width: MediaQuery.of(context).size.width * .65,
                             child: AutoSizeText(
                               (Utils.isNotNullOrEmpty(str.address))
-                                  ? str.address
+                                  ? str.address!
                                   : "No Address found",
                               maxLines: 1,
                               minFontSize: 12,
@@ -615,7 +615,7 @@ class _FavsListPageState extends State<FavsListPage>
                               width: MediaQuery.of(context).size.width * .13,
                               child: AutoSizeText(
                                 (str.distance != null)
-                                    ? str.distance.toStringAsFixed(1) + ' Km'
+                                    ? str.distance!.toStringAsFixed(1) + ' Km'
                                     : "",
                                 group: sideInfoGrp,
                                 minFontSize: 9,
@@ -631,7 +631,7 @@ class _FavsListPageState extends State<FavsListPage>
                     ),
                     SizedBox(height: 5),
                     if (str.isBookable != null && str.isActive != null)
-                      if (str.isBookable && str.isActive)
+                      if (str.isBookable! && str.isActive!)
                         Container(
                             width: MediaQuery.of(context).size.width * .78,
                             //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
@@ -672,7 +672,7 @@ class _FavsListPageState extends State<FavsListPage>
                     padding: EdgeInsets.only(left: 3),
                     width: MediaQuery.of(context).size.width * .82,
                     child: Text(
-                      str.offer.message,
+                      str.offer!.message!,
                       maxLines: 1,
                       //  minFontSize: 12,
                       overflow: TextOverflow.ellipsis,
@@ -708,7 +708,7 @@ class _FavsListPageState extends State<FavsListPage>
                       padding: EdgeInsets.all(5),
                       // alignment: Alignment.center,
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[200]),
+                          side: BorderSide(color: Colors.blueGrey[200]!),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       color: Colors.white,
                       splashColor: highlightColor,
@@ -752,7 +752,7 @@ class _FavsListPageState extends State<FavsListPage>
                       elevation: 5,
                       padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[200]),
+                          side: BorderSide(color: Colors.blueGrey[200]!),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       color: Colors.white,
                       splashColor: highlightColor,
@@ -796,7 +796,7 @@ class _FavsListPageState extends State<FavsListPage>
                         elevation: 5,
                         padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
                         shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.blueGrey[200]),
+                            side: BorderSide(color: Colors.blueGrey[200]!),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
                         color: Colors.white,
@@ -810,7 +810,7 @@ class _FavsListPageState extends State<FavsListPage>
                           try {
                             if (str.lat != null)
                               launchURL(
-                                  str.name, str.address, str.lat, str.lon);
+                                  str.name, str.address, str.lat!, str.lon!);
                             else {
                               Utils.showMyFlushbar(context, Icons.error,
                                   Duration(seconds: 5), locationNotFound, "");
@@ -830,7 +830,7 @@ class _FavsListPageState extends State<FavsListPage>
                         elevation: 5,
                         padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
                         shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.blueGrey[200]),
+                            side: BorderSide(color: Colors.blueGrey[200]!),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
                         color: Colors.white,
@@ -842,7 +842,7 @@ class _FavsListPageState extends State<FavsListPage>
                         ),
                         onPressed: () {
                           generateLinkAndShareWithParams(
-                              str.entityId, str.name);
+                              str.entityId, str.name!);
                         },
                       )),
                   Container(
@@ -854,7 +854,7 @@ class _FavsListPageState extends State<FavsListPage>
                       elevation: 5,
                       padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[200]),
+                          side: BorderSide(color: Colors.blueGrey[200]!),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       color: Colors.white,
                       splashColor: highlightColor,
@@ -875,7 +875,7 @@ class _FavsListPageState extends State<FavsListPage>
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        if (str.hasChildren)
+                        if (str.hasChildren!)
                           Container(
                             padding: EdgeInsets.all(0),
                             margin: EdgeInsets.all(0),
@@ -888,11 +888,11 @@ class _FavsListPageState extends State<FavsListPage>
                               onPressed: () {
                                 //Load child page.
 
-                                _gs.getEntity(str.entityId).then((value) {
+                                _gs!.getEntity(str.entityId).then((value) {
                                   if (value != null) {
                                     dynamic route = SearchChildEntityPage(
                                         pageName: "FavsSearch",
-                                        childList: value.item1.childEntities,
+                                        childList: value.item1!.childEntities,
                                         parentName: str.name);
                                     Navigator.of(context)
                                         .push(PageAnimation.createRoute(route));
@@ -935,7 +935,7 @@ class _FavsListPageState extends State<FavsListPage>
                               ),
                             ),
                           ),
-                        if (!str.hasChildren)
+                        if (!str.hasChildren!)
                           Container(
                             width: 40,
                             height: 40,
@@ -948,7 +948,7 @@ class _FavsListPageState extends State<FavsListPage>
     );
   }
 
-  void showSlots(MetaEntity store, DateTime dateTime) {
+  void showSlots(MetaEntity? store, DateTime dateTime) {
     //Check INTERNET connection first.
 
     Navigator.of(context).push(new MaterialPageRoute(
@@ -959,8 +959,8 @@ class _FavsListPageState extends State<FavsListPage>
             )));
   }
 
-  List<Widget> _buildDateGridItems(MetaEntity store, String sid, String sname,
-      List<String> daysClosed, int advanceDays) {
+  List<Widget> _buildDateGridItems(MetaEntity? store, String? sid, String? sname,
+      List<String>? daysClosed, int? advanceDays) {
     bool isClosed = false;
     bool isBookingAllowed = false;
     String dayOfWeek;
@@ -968,12 +968,12 @@ class _FavsListPageState extends State<FavsListPage>
     var dateWidgets = List<Widget>();
     for (var date in _dateList) {
       daysCounter++;
-      if (daysCounter <= advanceDays) {
+      if (daysCounter <= advanceDays!) {
         isBookingAllowed = true;
       } else
         isBookingAllowed = false;
 
-      for (String str in daysClosed) {
+      for (String str in daysClosed!) {
         if (str.toLowerCase() ==
             DateFormat('EEEE').format(date).toLowerCase()) {
           isClosed = true;
@@ -997,23 +997,23 @@ class _FavsListPageState extends State<FavsListPage>
   }
 
   Widget buildDateItem(
-      MetaEntity store,
-      String sid,
-      String sname,
+      MetaEntity? store,
+      String? sid,
+      String? sname,
       bool isClosed,
       bool isBookingAllowed,
-      int advanceDays,
+      int? advanceDays,
       DateTime dt,
       String dayOfWeek) {
     bool dateBooked = false;
     // UserAppData user = _userProfile;
 
-    if (_gs.bookings != null) {
-      for (Tuple<UserToken, DocumentSnapshot> obj in (_gs.bookings)) {
+    if (_gs!.bookings != null) {
+      for (Tuple<UserToken, DocumentSnapshot> obj in _gs!.bookings!) {
         if ((compareDateFormat.format(dt).compareTo(
-                    compareDateFormat.format(obj.item1.parent.dateTime)) ==
+                    compareDateFormat.format(obj.item1!.parent!.dateTime!)) ==
                 0) &&
-            (obj.item1.parent.entityId == sid && obj.item1.number != -1)) {
+            (obj.item1!.parent!.entityId == sid && obj.item1!.number != -1)) {
           dateBooked = true;
         }
       }

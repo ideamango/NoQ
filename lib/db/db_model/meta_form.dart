@@ -9,13 +9,13 @@ class MetaForm {
       this.deletedOn});
 
   //just need an id which is unique even if later phone or firebase id changes
-  String id;
-  String name;
-  String description;
-  bool autoApproved;
-  bool allowedOnline;
-  bool isActive;
-  DateTime deletedOn;
+  String? id;
+  String? name;
+  String? description;
+  bool? autoApproved;
+  bool? allowedOnline;
+  bool? isActive;
+  DateTime? deletedOn;
 
   Map<String, dynamic> toJson() => {
         'id': id,

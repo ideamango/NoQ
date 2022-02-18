@@ -17,7 +17,7 @@ import 'upi_payment_page.dart';
 
 class HelpPage extends StatefulWidget {
   HelpPage({
-    Key key,
+    Key? key,
   }) : super(key: key);
   @override
   _HelpPageState createState() => _HelpPageState();
@@ -25,16 +25,16 @@ class HelpPage extends StatefulWidget {
 
 class _HelpPageState extends State<HelpPage> {
   bool initCompleted = false;
-  GlobalState _gs;
-  String upiId;
-  String upiQrImgPath;
-  String emailId;
+  GlobalState? _gs;
+  String? upiId;
+  String? upiQrImgPath;
+  String? emailId;
   @override
   void initState() {
     getGlobalState().then((gs) {
       _gs = gs;
-      emailId = _gs.getConfigurations().contactEmail;
-      upiId = _gs.getConfigurations().upi;
+      emailId = _gs!.getConfigurations()!.contactEmail;
+      upiId = _gs!.getConfigurations()!.upi;
       upiQrImgPath = "assets/bigpiq_gpay.jpg";
       upiId = upiId;
       setState(() {
@@ -44,7 +44,7 @@ class _HelpPageState extends State<HelpPage> {
     super.initState();
   }
 
-  Future<GlobalState> getGlobalState() async {
+  Future<GlobalState?> getGlobalState() async {
     return await GlobalState.getGlobalState();
   }
 

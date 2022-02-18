@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../style.dart';
 import '../widget/widgets.dart';
 
-Widget showCircularProgress([String msg]) {
+Widget showCircularProgress([String? msg]) {
   return Center(
     child: Padding(
       padding: EdgeInsets.only(top: 10.0, bottom: 10),

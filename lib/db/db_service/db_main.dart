@@ -55,7 +55,7 @@ class DBLayer {
 
     stream.listen((List<DocumentSnapshot> documentList) {
       documentList.forEach(
-          (doc) => {print(AppUser.fromJson(doc.data()).loc.geopoint.latitude)});
+          (doc) => {print(AppUser.fromJson(doc.data()!).loc!.geopoint!.latitude)});
     });
   }
 }

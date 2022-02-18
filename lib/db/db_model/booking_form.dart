@@ -6,25 +6,25 @@ import 'package:uuid/uuid.dart';
 import 'meta_form.dart';
 
 class BookingForm {
-  String id = Uuid().v1();
-  String formName;
-  String headerMsg;
-  String footerMsg;
-  List<Field> _formFields;
-  bool autoApproved = true;
-  bool generateTokenOnApproval = true;
-  bool appointmentRequired = true;
-  bool isActive = true;
-  String originalFormID;
-  bool allowedOnline = false;
+  String? id = Uuid().v1();
+  String? formName;
+  String? headerMsg;
+  String? footerMsg;
+  List<Field>? _formFields;
+  bool? autoApproved = true;
+  bool? generateTokenOnApproval = true;
+  bool? appointmentRequired = true;
+  bool? isActive = true;
+  String? originalFormID;
+  bool? allowedOnline = false;
 
   //This is not supposed to be created by Entity Manager or Admin, right not will be done via backend on Request.
   //This implies that this BookingForm is global form not specific to any Entity
-  bool isSystemTemplate = false;
+  bool? isSystemTemplate = false;
 
   BookingForm(
-      {@required this.formName,
-      @required this.headerMsg,
+      {required this.formName,
+      required this.headerMsg,
       this.footerMsg,
       this.autoApproved});
 
@@ -32,12 +32,12 @@ class BookingForm {
     if (_formFields == null) {
       _formFields = [];
     }
-    int numberOfFields = _formFields.length;
+    int numberOfFields = _formFields!.length;
     numberOfFields = ++numberOfFields * 10;
     String key = "KEY" + numberOfFields.toString();
     field.key = key;
-    field.id = this.id + "#" + key;
-    _formFields.add(field);
+    field.id = this.id! + "#" + key;
+    _formFields!.add(field);
     return key;
   }
 
@@ -56,7 +56,7 @@ class BookingForm {
         'allowedOnline': allowedOnline
       };
 
-  List<dynamic> _formFieldsToJson(List<Field> fields) {
+  List<dynamic>? _formFieldsToJson(List<Field>? fields) {
     List<dynamic> fieldsJson = [];
     if (fields == null) return null;
     for (Field sl in fields) {
@@ -72,7 +72,7 @@ class BookingForm {
         autoApproved: this.autoApproved,
         footerMsg: this.footerMsg);
     var newId = new Uuid().v1();
-    form.id = this.id + '#' + newId;
+    form.id = this.id! + '#' + newId;
     form.isSystemTemplate = false;
     form.generateTokenOnApproval = this.generateTokenOnApproval;
     form.appointmentRequired = this.appointmentRequired;
@@ -80,7 +80,7 @@ class BookingForm {
     form.originalFormID = this.id;
     form.allowedOnline = this.allowedOnline;
 
-    for (Field f in _formFields) {
+    for (Field f in _formFields!) {
       form.addField(f);
     }
 
@@ -97,7 +97,7 @@ class BookingForm {
     return mf;
   }
 
-  static BookingForm fromJson(Map<String, dynamic> json) {
+  static BookingForm? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     BookingForm bf = BookingForm(
         formName: json['formName'],
@@ -117,11 +117,11 @@ class BookingForm {
     return bf;
   }
 
-  static List<Field> _convertToOptionValuesFromJson(List<dynamic> fieldsJson) {
+  static List<Field>? _convertToOptionValuesFromJson(List<dynamic>? fieldsJson) {
     List<Field> values = [];
     if (fieldsJson == null) return null;
 
-    for (Map<String, dynamic> value in fieldsJson) {
+    for (Map<String, dynamic> value in fieldsJson as Iterable<Map<String, dynamic>>) {
       if (value["type"] == EnumToString.convertToString(FieldType.TEXT)) {
         values.add(FormInputFieldText.fromJson(value));
       } else if (value["type"] == EnumToString.convertToString(FieldType.INT)) {
@@ -155,30 +155,30 @@ class BookingForm {
   List<Field> getFormFields() {
     //returning duplicate list, to ensure that original list is modified only via
     //addField method to maintain the order of the key
-    return _formFields.toList();
+    return _formFields!.toList();
   }
 }
 
 class Field {
-  String key;
-  String id;
-  String label;
-  bool isMeta = false;
-  bool isMandatory;
-  String infoMessage;
-  FieldType type;
+  String? key;
+  String? id;
+  String? label;
+  bool? isMeta = false;
+  bool? isMandatory;
+  String? infoMessage;
+  FieldType? type;
   Map<String, dynamic> toJson() => {
         //action implementation is in the derived classes
       };
 }
 
 class FormInputFieldText extends Field {
-  int maxLength;
-  String response;
-  bool isEmail = false;
+  int? maxLength;
+  String? response;
+  bool? isEmail = false;
 
   FormInputFieldText(
-      String label, bool isMandatory, String infoMessage, int maxLength) {
+      String? label, bool? isMandatory, String? infoMessage, int? maxLength) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -216,14 +216,14 @@ class FormInputFieldText extends Field {
 }
 
 class FormInputFieldInt extends Field {
-  int maxValue;
-  int minValue;
-  int maxLength;
-  int minLength;
-  int response;
+  int? maxValue;
+  int? minValue;
+  int? maxLength;
+  int? minLength;
+  int? response;
 
-  FormInputFieldInt(String label, bool isMandatory, String infoMessage,
-      int minValue, int maxValue) {
+  FormInputFieldInt(String? label, bool? isMandatory, String? infoMessage,
+      int? minValue, int? maxValue) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.minValue = minValue;
@@ -267,13 +267,13 @@ class FormInputFieldInt extends Field {
 }
 
 class FormInputFieldNumber extends Field {
-  double maxValue;
-  double minValue;
+  double? maxValue;
+  double? minValue;
 
-  double response;
+  double? response;
 
-  FormInputFieldNumber(String label, bool isMandatory, String infoMessage,
-      double minValue, double maxValue) {
+  FormInputFieldNumber(String? label, bool? isMandatory, String? infoMessage,
+      double? minValue, double? maxValue) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.minValue = minValue;
@@ -313,14 +313,14 @@ class FormInputFieldNumber extends Field {
 }
 
 class FormInputFieldOptions extends Field {
-  List<Value> options;
-  bool isMultiSelect;
-  List<Value> responseValues;
-  int defaultValueIndex =
+  List<Value>? options;
+  bool? isMultiSelect;
+  List<Value>? responseValues;
+  int? defaultValueIndex =
       -1; //if there is a default value then it should start from 0
 
-  FormInputFieldOptions(String label, bool isMandatory, String infoMessage,
-      List<Value> options, bool isMultiSelect) {
+  FormInputFieldOptions(String? label, bool? isMandatory, String? infoMessage,
+      List<Value> options, bool? isMultiSelect) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -359,17 +359,17 @@ class FormInputFieldOptions extends Field {
     return field;
   }
 
-  static List<Value> convertToValuesFromJson(List<dynamic> valuesJson) {
+  static List<Value> convertToValuesFromJson(List<dynamic>? valuesJson) {
     List<Value> values = [];
     if (valuesJson == null) return values;
 
-    for (Map<String, dynamic> json in valuesJson) {
+    for (Map<String, dynamic> json in valuesJson as Iterable<Map<String, dynamic>>) {
       values.add(Value.fromJson(json));
     }
     return values;
   }
 
-  List<dynamic> convertValuesToJson(List<Value> options) {
+  List<dynamic> convertValuesToJson(List<Value>? options) {
     List<dynamic> usersJson = [];
     if (options == null) return usersJson;
     for (Value val in options) {
@@ -380,14 +380,14 @@ class FormInputFieldOptions extends Field {
 }
 
 class FormInputFieldAttachment extends Field {
-  List<String> responseFilePaths;
-  int maxAttachments = 2;
-  bool paymentProofRequired = false;
+  List<String>? responseFilePaths;
+  int? maxAttachments = 2;
+  bool? paymentProofRequired = false;
 
   FormInputFieldAttachment(
-    String label,
-    bool isMandatory,
-    String infoMessage,
+    String? label,
+    bool? isMandatory,
+    String? infoMessage,
   ) {
     this.label = label;
     this.isMandatory = isMandatory;
@@ -408,11 +408,11 @@ class FormInputFieldAttachment extends Field {
         'paymentProofRequired': paymentProofRequired
       };
 
-  static List<String> convertToPathValuesFromJson(List<dynamic> valuesJson) {
+  static List<String> convertToPathValuesFromJson(List<dynamic>? valuesJson) {
     List<String> values = [];
     if (valuesJson == null) return values;
 
-    for (String value in valuesJson) {
+    for (String value in valuesJson as Iterable<String>) {
       values.add(value);
     }
     return values;
@@ -437,11 +437,11 @@ class FormInputFieldAttachment extends Field {
 }
 
 class FormInputFieldDateTime extends Field {
-  DateTime responseDateTime;
-  bool isAge = false;
-  bool yearOnly = false;
+  DateTime? responseDateTime;
+  bool? isAge = false;
+  bool? yearOnly = false;
 
-  FormInputFieldDateTime(String label, bool isMandatory, String infoMessage) {
+  FormInputFieldDateTime(String? label, bool? isMandatory, String? infoMessage) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -457,7 +457,7 @@ class FormInputFieldDateTime extends Field {
         "infoMessage": infoMessage,
         'type': EnumToString.convertToString(type),
         'responseDateTime': responseDateTime != null
-            ? responseDateTime.millisecondsSinceEpoch
+            ? responseDateTime!.millisecondsSinceEpoch
             : null,
         'isAge': isAge,
         'yearOnly': yearOnly
@@ -481,11 +481,11 @@ class FormInputFieldDateTime extends Field {
 }
 
 class FormInputFieldPhone extends Field {
-  String responsePhone;
-  String
+  String? responsePhone;
+  String?
       countryCode; //e.g. +91, this is to be set while creating the field in the booking form
 
-  FormInputFieldPhone(String label, bool isMandatory, String infoMessage) {
+  FormInputFieldPhone(String? label, bool? isMandatory, String? infoMessage) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -516,18 +516,18 @@ class FormInputFieldPhone extends Field {
 }
 
 class FormInputFieldOptionsWithAttachments extends Field {
-  List<Value> options;
-  bool isMultiSelect;
-  List<Value> responseValues;
-  int defaultValueIndex =
+  List<Value>? options;
+  bool? isMultiSelect;
+  List<Value>? responseValues;
+  int? defaultValueIndex =
       -1; //if there is a default value then it should start from 0
 
-  List<String> responseFilePaths;
-  int maxAttachments = 2;
-  bool paymentProofRequired = false;
+  List<String>? responseFilePaths;
+  int? maxAttachments = 2;
+  bool? paymentProofRequired = false;
 
-  FormInputFieldOptionsWithAttachments(String label, bool isMandatory,
-      String infoMessage, List<Value> options, bool isMultiSelect) {
+  FormInputFieldOptionsWithAttachments(String? label, bool? isMandatory,
+      String? infoMessage, List<Value> options, bool? isMultiSelect) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -577,27 +577,27 @@ class FormInputFieldOptionsWithAttachments extends Field {
     return field;
   }
 
-  static List<Value> convertToValuesFromJson(List<dynamic> valuesJson) {
+  static List<Value> convertToValuesFromJson(List<dynamic>? valuesJson) {
     List<Value> values = [];
     if (valuesJson == null) return values;
 
-    for (Map<String, dynamic> json in valuesJson) {
+    for (Map<String, dynamic> json in valuesJson as Iterable<Map<String, dynamic>>) {
       values.add(Value.fromJson(json));
     }
     return values;
   }
 
-  static List<String> convertToStringsFromJson(List<dynamic> valuesJson) {
+  static List<String> convertToStringsFromJson(List<dynamic>? valuesJson) {
     List<String> strs = [];
     if (valuesJson == null) return strs;
 
-    for (String str in valuesJson) {
+    for (String str in valuesJson as Iterable<String>) {
       strs.add(str);
     }
     return strs;
   }
 
-  List<dynamic> convertValuesToJson(List<Value> options) {
+  List<dynamic> convertValuesToJson(List<Value>? options) {
     List<dynamic> usersJson = [];
     if (options == null) return usersJson;
     for (Value val in options) {
@@ -608,11 +608,11 @@ class FormInputFieldOptionsWithAttachments extends Field {
 }
 
 class FormInputFieldBool extends Field {
-  bool response;
-  bool defaultValue;
+  bool? response;
+  bool? defaultValue;
 
   FormInputFieldBool(
-      String label, bool isMandatory, String infoMessage, bool defaultValue) {
+      String? label, bool? isMandatory, String? infoMessage, bool? defaultValue) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -649,7 +649,7 @@ class FormInputFieldBool extends Field {
 
 class Value {
   dynamic value;
-  String key;
+  String? key;
 
   Value(dynamic label) {
     this.key = Uuid().v1();

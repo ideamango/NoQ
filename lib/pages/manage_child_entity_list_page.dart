@@ -28,9 +28,9 @@ import '../widget/widgets.dart';
 import '../tuple.dart';
 
 class ManageChildEntityListPage extends StatefulWidget {
-  final Entity entity;
-  final bool isReadOnly;
-  ManageChildEntityListPage({Key key, @required this.entity, this.isReadOnly})
+  final Entity? entity;
+  final bool? isReadOnly;
+  ManageChildEntityListPage({Key? key, required this.entity, this.isReadOnly})
       : super(key: key);
   @override
   _ManageChildEntityListPageState createState() =>
@@ -38,38 +38,38 @@ class ManageChildEntityListPage extends StatefulWidget {
 }
 
 class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
-  String _msg;
+  String? _msg;
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
-  List<MetaEntity> servicesList = [];
-  ScrollController _childScrollController;
+  List<MetaEntity?>? servicesList = [];
+  ScrollController? _childScrollController;
 
   final String title = "Child Amenities Details Form";
   // Map<String, Entity> _entityMap = Map<String, Entity>();
 
-  Entity parentEntity;
-  EntityType _subEntityType;
+  Entity? parentEntity;
+  EntityType? _subEntityType;
   bool _initCompleted = false;
-  List<String> subEntityTypes;
-  GlobalState _gs;
-  double itemSize;
+  List<String>? subEntityTypes;
+  GlobalState? _gs;
+  double? itemSize;
 
 //Add service Row
 
   int _count = 0;
-  EntityType categoryType;
-  PersistentBottomSheetController childBottomSheetController;
+  EntityType? categoryType;
+  PersistentBottomSheetController? childBottomSheetController;
   final manageChildEntityListPagekey = new GlobalKey<ScaffoldState>();
   // Eventify.Listener _eventListener;
 
-  Widget _buildCategoryItem(BuildContext context, EntityType type) {
-    String name = Utils.getEntityTypeDisplayName(type);
+  Widget _buildCategoryItem(BuildContext context, EntityType? type) {
+    String name = Utils.getEntityTypeDisplayName(type)!;
     Widget image = Utils.getEntityTypeImage(type, 30);
 
     return GestureDetector(
         onTap: () {
-          if (!widget.isReadOnly) {
+          if (!widget.isReadOnly!) {
             categoryType = type;
-            childBottomSheetController.close();
+            childBottomSheetController!.close();
             childBottomSheetController = null;
             //   Navigator.of(context).pop();
             setState(() {
@@ -89,7 +89,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
           }
         },
         child: Container(
-          foregroundDecoration: widget.isReadOnly
+          foregroundDecoration: widget.isReadOnly!
               ? BoxDecoration(
                   color: Colors.grey[50],
                   backgroundBlendMode: BlendMode.saturation,
@@ -118,8 +118,8 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     super.dispose();
   }
 
-  Future<Entity> getEntityById(String id) async {
-    var tup = await _gs.getEntity(id);
+  Future<Entity?> getEntityById(String id) async {
+    var tup = await _gs!.getEntity(id);
     if (tup != null) {
       return tup.item1;
     }
@@ -135,9 +135,9 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     if (parentEntity == null)
       servicesList = [];
     else {
-      if (!Utils.isNullOrEmpty(parentEntity.childEntities))
+      if (!Utils.isNullOrEmpty(parentEntity!.childEntities))
         setState(() {
-          servicesList = parentEntity.childEntities;
+          servicesList = parentEntity!.childEntities;
           // for (int i = 0; i < servicesList.length; i++) {
           //   _entityMap[servicesList[i].entityId] = servicesList[i];
           // }
@@ -157,25 +157,25 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 
   initialize() async {
     await getGlobalState();
-    subEntityTypes = _gs.getConfigurations().entityTypes;
+    subEntityTypes = _gs!.getConfigurations()!.entityTypes;
   }
 
   void _addNewServiceRow() {
-    Entity en = Utils.createEntity(_subEntityType, parentEntity.entityId);
-    _gs.putEntity(en, false, parentEntity.entityId);
-    MetaEntity meta;
+    Entity en = Utils.createEntity(_subEntityType, parentEntity!.entityId);
+    _gs!.putEntity(en, false, parentEntity!.entityId);
+    MetaEntity? meta;
     //itemSize = MediaQuery.of(context).size.height * .23;
 
-    if (_childScrollController.hasClients)
-      _childScrollController.animateTo(
-          _childScrollController.position.maxScrollExtent,
+    if (_childScrollController!.hasClients)
+      _childScrollController!.animateTo(
+          _childScrollController!.position.maxScrollExtent,
           curve: Curves.easeInToLinear,
           duration: Duration(milliseconds: 200));
 
     setState(() {
       // _entityMap[en.entityId] = en;
       meta = en.getMetaEntity();
-      servicesList.add(meta);
+      servicesList!.add(meta);
       _count = _count + 1;
     });
   }
@@ -230,9 +230,9 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     //   },
     // );
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (_childScrollController.hasClients)
-        _childScrollController
-            .jumpTo(_childScrollController.position.maxScrollExtent);
+      if (_childScrollController!.hasClients)
+        _childScrollController!
+            .jumpTo(_childScrollController!.position.maxScrollExtent);
     });
 
     String title = "Manage child Places";
@@ -254,7 +254,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                   child: Container(
                     padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                        border: Border.all(color: borderColor),
+                        border: Border.all(color: borderColor!),
                         color: Colors.white,
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -272,7 +272,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                       ),
                       onTap: () {
                         print("Tappped");
-                        if (!widget.isReadOnly) {
+                        if (!widget.isReadOnly!) {
                           showCategorySheet();
                         } else {
                           Utils.showMyFlushbar(
@@ -303,10 +303,10 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                           return Container(
                             margin: EdgeInsets.only(bottom: 5),
                             child: ChildEntityRow(
-                                childEntity: servicesList[index]),
+                                childEntity: servicesList![index]),
                           );
                         },
-                        itemCount: servicesList.length,
+                        itemCount: servicesList!.length,
                       ),
                     ),
                   ),
@@ -318,7 +318,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         ),
         onWillPop: () async {
           if (childBottomSheetController != null) {
-            childBottomSheetController.close();
+            childBottomSheetController!.close();
             childBottomSheetController = null;
             return false;
           } else {
@@ -358,7 +358,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 
   showCategorySheet() {
     childBottomSheetController =
-        manageChildEntityListPagekey.currentState.showBottomSheet<Null>(
+        manageChildEntityListPagekey.currentState!.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
         height: MediaQuery.of(context).size.height * .45,
@@ -379,7 +379,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                         color: btnDisabledolor,
                       ),
                       onPressed: () {
-                        childBottomSheetController.close();
+                        childBottomSheetController!.close();
                         childBottomSheetController = null;
                         // Navigator.of(context).pop();
                       }),
@@ -405,7 +405,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount:
-                      _gs.getActiveChildEntityTypes(parentEntity.type).length,
+                      _gs!.getActiveChildEntityTypes(parentEntity!.type).length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 10.0,
@@ -420,8 +420,8 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                         child: Center(
                           child: _buildCategoryItem(
                               context,
-                              _gs.getActiveChildEntityTypes(
-                                  parentEntity.type)[index]),
+                              _gs!.getActiveChildEntityTypes(
+                                  parentEntity!.type)[index]),
                         ),
                       ),
                     );
@@ -435,7 +435,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
       elevation: 30,
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.blueGrey[200]),
+          side: BorderSide(color: Colors.blueGrey[200]!),
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
     );

@@ -7,7 +7,7 @@ import '../widget/page_animation.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String titleTxt;
-  CustomAppBar({Key key, @required this.titleTxt})
+  CustomAppBar({Key? key, required this.titleTxt})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -48,10 +48,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
 class CustomAppBarWithBackButton extends StatefulWidget
     implements PreferredSizeWidget {
-  final String titleTxt;
+  final String? titleTxt;
   final dynamic backRoute;
   CustomAppBarWithBackButton(
-      {Key key, @required this.titleTxt, @required this.backRoute})
+      {Key? key, required this.titleTxt, required this.backRoute})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -72,7 +72,7 @@ class _CustomAppBarWithBackButtonState
     return AppBar(
       key: _appBarKey,
       title: Text(
-        widget.titleTxt,
+        widget.titleTxt!,
         maxLines: 2,
         style: TextStyle(color: Colors.white, fontSize: 15),
         overflow: TextOverflow.ellipsis,
@@ -119,7 +119,7 @@ class CustomAppBarWithNoAnimationBackButton extends StatefulWidget
   final String titleTxt;
   final dynamic backRoute;
   CustomAppBarWithNoAnimationBackButton(
-      {Key key, @required this.titleTxt, @required this.backRoute})
+      {Key? key, required this.titleTxt, required this.backRoute})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -188,10 +188,10 @@ class CustomAppBarWithBackFwdButton extends StatefulWidget
   final dynamic backRoute;
   final dynamic fwdRoute;
   CustomAppBarWithBackFwdButton(
-      {Key key,
-      @required this.titleTxt,
-      @required this.backRoute,
-      @required this.fwdRoute})
+      {Key? key,
+      required this.titleTxt,
+      required this.backRoute,
+      required this.fwdRoute})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 

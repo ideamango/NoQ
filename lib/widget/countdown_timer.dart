@@ -10,10 +10,10 @@ class CountDownTimer extends StatefulWidget {
 
 class _CountDownTimerState extends State<CountDownTimer>
     with TickerProviderStateMixin {
-  AnimationController timerController;
+  late AnimationController timerController;
 
   String get timerString {
-    Duration duration = timerController.duration * timerController.value;
+    Duration duration = timerController.duration! * timerController.value;
     return '${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
   }
 

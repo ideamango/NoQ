@@ -18,17 +18,17 @@ import '../widget/page_animation.dart';
 import '../widget/widgets.dart';
 
 class OverviewPage extends StatefulWidget {
-  final String bookingFormId;
-  final String bookingFormName;
-  final MetaEntity metaEntity;
+  final String? bookingFormId;
+  final String? bookingFormName;
+  final MetaEntity? metaEntity;
   final bool isReadOnly;
 
   OverviewPage(
-      {Key key,
-      @required this.bookingFormId,
-      @required this.bookingFormName,
-      @required this.metaEntity,
-      @required this.isReadOnly})
+      {Key? key,
+      required this.bookingFormId,
+      required this.bookingFormName,
+      required this.metaEntity,
+      required this.isReadOnly})
       : super(key: key);
   @override
   _OverviewPageState createState() => _OverviewPageState();
@@ -36,19 +36,19 @@ class OverviewPage extends StatefulWidget {
 
 class _OverviewPageState extends State<OverviewPage> {
   bool initCompleted = false;
-  GlobalState _gs;
-  int _completedCount = 0;
-  int _totalReceivedCount = 0;
-  BookingApplicationCounter _bookingApplicationsOverview;
+  GlobalState? _gs;
+  int? _completedCount = 0;
+  int? _totalReceivedCount = 0;
+  BookingApplicationCounter? _bookingApplicationsOverview;
 
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
-      _gs
-          .getApplicationService()
+      _gs!
+          .getApplicationService()!
           .getApplicationsOverview(widget.bookingFormId,
-              widget.metaEntity.entityId, DateTime.now().year)
+              widget.metaEntity!.entityId, DateTime.now().year)
           .then((value) {
         //TODO SMITA - check that applications overview doesn't come null.
         _bookingApplicationsOverview = value;
@@ -60,9 +60,9 @@ class _OverviewPageState extends State<OverviewPage> {
           initCompleted = true;
         Future.delayed(Duration(seconds: 1)).then((value) {
           setState(() {
-            _completedCount = _bookingApplicationsOverview.numberOfCompleted;
+            _completedCount = _bookingApplicationsOverview!.numberOfCompleted;
             _totalReceivedCount =
-                _bookingApplicationsOverview.totalApplications;
+                _bookingApplicationsOverview!.totalApplications;
           });
         });
       });
@@ -70,10 +70,10 @@ class _OverviewPageState extends State<OverviewPage> {
   }
 
   refreshData() {
-    _gs
-        .getApplicationService()
+    _gs!
+        .getApplicationService()!
         .getApplicationsOverview(widget.bookingFormId,
-            widget.metaEntity.entityId, DateTime.now().year)
+            widget.metaEntity!.entityId, DateTime.now().year)
         .then((value) {
       _bookingApplicationsOverview = value;
       if (this.mounted) {
@@ -85,8 +85,8 @@ class _OverviewPageState extends State<OverviewPage> {
     });
     if (mounted) {
       setState(() {
-        _completedCount = _bookingApplicationsOverview.numberOfCompleted;
-        _totalReceivedCount = _bookingApplicationsOverview.totalApplications;
+        _completedCount = _bookingApplicationsOverview!.numberOfCompleted;
+        _totalReceivedCount = _bookingApplicationsOverview!.totalApplications;
       });
     }
   }
@@ -111,7 +111,7 @@ class _OverviewPageState extends State<OverviewPage> {
       return Scaffold(
         appBar: CustomAppBarWithBackButton(
           backRoute: BookingFormSelection(
-            entityId: widget.metaEntity.entityId,
+            entityId: widget.metaEntity!.entityId,
             entity: null,
             preferredSlotTime: null,
             isFullAccess: !widget.isReadOnly,
@@ -212,7 +212,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                     child: Column(
                                       children: [
                                         AutoSizeText(
-                                          _bookingApplicationsOverview
+                                          _bookingApplicationsOverview!
                                               .numberOfNew
                                               .toString(),
                                           maxLines: 1,
@@ -280,7 +280,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                     child: Column(
                                       children: [
                                         AutoSizeText(
-                                          _bookingApplicationsOverview
+                                          _bookingApplicationsOverview!
                                               .numberOfInProcess
                                               .toString(),
                                           maxLines: 1,
@@ -358,7 +358,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         AutoSizeText(
-                                          _bookingApplicationsOverview
+                                          _bookingApplicationsOverview!
                                               .numberOfRejected
                                               .toString(),
                                           maxLines: 1,
@@ -427,7 +427,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         AutoSizeText(
-                                          _bookingApplicationsOverview
+                                          _bookingApplicationsOverview!
                                               .numberOfCancelled
                                               .toString(),
                                           maxLines: 1,
@@ -502,7 +502,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         AutoSizeText(
-                                          _bookingApplicationsOverview
+                                          _bookingApplicationsOverview!
                                               .numberOfPutOnHold
                                               .toString(),
                                           maxLines: 1,
@@ -571,7 +571,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         AutoSizeText(
-                                          _bookingApplicationsOverview
+                                          _bookingApplicationsOverview!
                                               .numberOfApproved
                                               .toString(),
                                           maxLines: 1,

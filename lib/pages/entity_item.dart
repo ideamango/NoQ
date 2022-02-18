@@ -26,26 +26,26 @@ import '../widget/widgets.dart';
 import '../global_state.dart';
 
 class EntityRow extends StatefulWidget {
-  final MetaEntity metaEntity;
+  final MetaEntity? metaEntity;
 
-  EntityRow({Key key, @required this.metaEntity}) : super(key: key);
+  EntityRow({Key? key, required this.metaEntity}) : super(key: key);
   @override
   State<StatefulWidget> createState() => new EntityRowState();
 }
 
 class EntityRowState extends State<EntityRow> {
-  MetaEntity _metaEntity;
-  Entity entity;
+  MetaEntity? _metaEntity;
+  Entity? entity;
   bool getEntityDone = false;
 
-  GlobalState _gs;
+  GlobalState? _gs;
   bool _initCompleted = false;
   bool isExec = false;
   bool isManager = false;
   bool isAdmin = false;
   bool hideAll = false;
-  bool readOnly;
-  bool entityExistsOnServer = true;
+  bool? readOnly;
+  bool? entityExistsOnServer = true;
   @override
   void initState() {
     super.initState();
@@ -54,14 +54,14 @@ class EntityRowState extends State<EntityRow> {
       _metaEntity = widget.metaEntity;
       //
       //Check if logged in user is Admin or not
-      if (_gs.getCurrentUser() != null &&
-          _gs.getCurrentUser().entityVsRole.containsKey(_metaEntity.entityId)) {
-        if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+      if (_gs!.getCurrentUser() != null &&
+          _gs!.getCurrentUser()!.entityVsRole!.containsKey(_metaEntity!.entityId)) {
+        if (_gs!.getCurrentUser()!.entityVsRole![_metaEntity!.entityId] ==
             EntityRole.Executive) isExec = true;
 
-        if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+        if (_gs!.getCurrentUser()!.entityVsRole![_metaEntity!.entityId] ==
             EntityRole.Manager) isManager = true;
-        if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+        if (_gs!.getCurrentUser()!.entityVsRole![_metaEntity!.entityId] ==
             EntityRole.Admin) isAdmin = true;
         //isExec = true;
       } else {
@@ -73,7 +73,7 @@ class EntityRowState extends State<EntityRow> {
       }
       //If the entity is in GS, means its a newly created entity.
       //Then disable all options except Details.
-      _gs.getEntity(_metaEntity.entityId, false).then((value) {
+      _gs!.getEntity(_metaEntity!.entityId, false).then((value) {
         if (value != null) {
           entityExistsOnServer = value.item2;
         }
@@ -93,7 +93,7 @@ class EntityRowState extends State<EntityRow> {
   @override
   Widget build(BuildContext context) {
     showServiceForm() {
-      _gs.getEntity(_metaEntity.entityId).then((value) {
+      _gs!.getEntity(_metaEntity!.entityId).then((value) {
         entity = value?.item1;
         if (entity == null) {
           Utils.showMyFlushbar(
@@ -110,27 +110,27 @@ class EntityRowState extends State<EntityRow> {
       });
     }
 
-    generateLinkAndShareWithParams(String entityId, String name) async {
+    generateLinkAndShareWithParams(String? entityId, String name) async {
       String msgTitle = entityShareByOwnerHeading + " - " + name;
       String msgBody = entityShareMessage;
       Utils.generateLinkAndShare(
           entityId,
           msgTitle,
           msgBody,
-          _gs.getConfigurations().packageName,
-          _gs.getConfigurations().iOSAppId);
+          _gs!.getConfigurations()!.packageName!,
+          _gs!.getConfigurations()!.iOSAppId);
     }
 
     showChildListPage() {
-      _gs.getEntity(_metaEntity.entityId, true).then((value) {
-        bool isSavedOnServer = false;
-        Entity ent;
+      _gs!.getEntity(_metaEntity!.entityId, true).then((value) {
+        bool? isSavedOnServer = false;
+        Entity? ent;
         if (value != null) {
           isSavedOnServer = value.item2;
           ent = value.item1;
         }
 
-        if (isSavedOnServer) {
+        if (isSavedOnServer!) {
           Navigator.of(context).push(PageAnimation.createRoute(
               ManageChildEntityListPage(entity: ent, isReadOnly: readOnly)));
         } else {
@@ -148,15 +148,15 @@ class EntityRowState extends State<EntityRow> {
     }
 
     share() {
-      Entity en;
-      _gs.getEntity(_metaEntity.entityId, false).then((value) {
-        bool isSavedOnServer = true;
+      Entity? en;
+      _gs!.getEntity(_metaEntity!.entityId, false).then((value) {
+        bool? isSavedOnServer = true;
         if (value != null) {
           en = value.item1;
           isSavedOnServer = value.item2;
         }
 
-        if (!isSavedOnServer) {
+        if (!isSavedOnServer!) {
           Utils.showMyFlushbar(
               context,
               Icons.info,
@@ -165,20 +165,20 @@ class EntityRowState extends State<EntityRow> {
               "Save Entity and then Share!!");
         } else
           generateLinkAndShareWithParams(
-              _metaEntity.entityId, _metaEntity.name);
+              _metaEntity!.entityId, _metaEntity!.name!);
       });
     }
 
     shareQr() {
-      Entity en;
-      _gs.getEntity(_metaEntity.entityId, false).then((value) {
-        bool isSavedOnServer = true;
+      Entity? en;
+      _gs!.getEntity(_metaEntity!.entityId, false).then((value) {
+        bool? isSavedOnServer = true;
         if (value != null) {
           en = value.item1;
           isSavedOnServer = value.item2;
         }
 
-        if (!isSavedOnServer) {
+        if (!isSavedOnServer!) {
           Utils.showMyFlushbar(
               context,
               Icons.info,
@@ -187,8 +187,8 @@ class EntityRowState extends State<EntityRow> {
               "Save Entity and then Share!!");
         } else
           Navigator.of(context).push(PageAnimation.createRoute(GenerateScreen(
-            entityId: _metaEntity.entityId,
-            entityName: _metaEntity.name,
+            entityId: _metaEntity!.entityId,
+            entityName: _metaEntity!.name,
             backRoute: ManageEntityListPage(),
           )));
       });
@@ -201,7 +201,7 @@ class EntityRowState extends State<EntityRow> {
         child: Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-              border: Border.all(color: borderColor),
+              border: Border.all(color: borderColor!),
               color: Colors.white,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -225,7 +225,7 @@ class EntityRowState extends State<EntityRow> {
                       children: <Widget>[
                         Text(
                           (_metaEntity?.name != null)
-                              ? _metaEntity.name
+                              ? _metaEntity!.name!
                               : "Untitled",
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -234,7 +234,7 @@ class EntityRowState extends State<EntityRow> {
                               fontFamily: 'RalewayRegular'),
                         ),
                         Text(
-                          Utils.getEntityTypeDisplayName(_metaEntity.type),
+                          Utils.getEntityTypeDisplayName(_metaEntity!.type)!,
                           style: labelTextStyle,
                         ),
                       ],
@@ -352,7 +352,7 @@ class EntityRowState extends State<EntityRow> {
                             "$noViewPermission Employees!!",
                             contactAdmin);
                       } else {
-                        if (!entityExistsOnServer) {
+                        if (!entityExistsOnServer!) {
                           Utils.showMyFlushbar(
                               context,
                               Icons.info_outline,
@@ -360,13 +360,13 @@ class EntityRowState extends State<EntityRow> {
                               "First, enter basic details of the place",
                               "");
                         } else {
-                          if (Utils.isNullOrEmpty(_gs
-                              .getActiveChildEntityTypes(_metaEntity.type))) {
+                          if (Utils.isNullOrEmpty(_gs!
+                              .getActiveChildEntityTypes(_metaEntity!.type))) {
                             Utils.showMyFlushbar(
                                 context,
                                 Icons.info_outline,
                                 Duration(seconds: 4),
-                                "Contact LESSs team, if you require to add new places inside your ${Utils.getEntityTypeDisplayName(_metaEntity.type)}.",
+                                "Contact LESSs team, if you require to add new places inside your ${Utils.getEntityTypeDisplayName(_metaEntity!.type)}.",
                                 "");
                           } else {
                             print("To child list page");
@@ -377,9 +377,9 @@ class EntityRowState extends State<EntityRow> {
                     },
                     child: Container(
                       foregroundDecoration: (Utils.isNullOrEmpty(
-                                  _gs.getActiveChildEntityTypes(
-                                      _metaEntity.type)) ||
-                              !entityExistsOnServer)
+                                  _gs!.getActiveChildEntityTypes(
+                                      _metaEntity!.type)) ||
+                              !entityExistsOnServer!)
                           ? BoxDecoration(
                               color: Colors.grey[50],
                               backgroundBlendMode: BlendMode.saturation,
@@ -408,8 +408,8 @@ class EntityRowState extends State<EntityRow> {
                             style: TextStyle(
                                 letterSpacing: 1.1,
                                 color: Utils.isNullOrEmpty(
-                                        _gs.getActiveChildEntityTypes(
-                                            _metaEntity.type))
+                                        _gs!.getActiveChildEntityTypes(
+                                            _metaEntity!.type))
                                     ? disabledColor
                                     : whiteBtnTextColor,
                                 fontFamily: 'Roboto'),
@@ -426,7 +426,7 @@ class EntityRowState extends State<EntityRow> {
                     child: GestureDetector(
                       onTap: () {
                         if (!isExec) {
-                          if (!entityExistsOnServer) {
+                          if (!entityExistsOnServer!) {
                             Utils.showMyFlushbar(
                                 context,
                                 Icons.info_outline,
@@ -457,7 +457,7 @@ class EntityRowState extends State<EntityRow> {
                         padding: EdgeInsets.all(0),
                         width: MediaQuery.of(context).size.width * .21,
                         height: MediaQuery.of(context).size.width * .21,
-                        foregroundDecoration: !entityExistsOnServer
+                        foregroundDecoration: !entityExistsOnServer!
                             ? BoxDecoration(
                                 color: Colors.grey[50],
                                 backgroundBlendMode: BlendMode.saturation,
@@ -502,7 +502,7 @@ class EntityRowState extends State<EntityRow> {
                             "$noViewPermission Applications!!",
                             contactAdmin);
                       } else {
-                        if (!entityExistsOnServer) {
+                        if (!entityExistsOnServer!) {
                           Utils.showMyFlushbar(
                               context,
                               Icons.info_outline,
@@ -511,13 +511,13 @@ class EntityRowState extends State<EntityRow> {
                               "");
                         } else {
                           print("Over To overview page");
-                          _gs.getEntity(_metaEntity.entityId).then((value) {
-                            if (value.item1 != null) {
-                              if (!Utils.isNullOrEmpty(value.item1.forms)) {
+                          _gs!.getEntity(_metaEntity!.entityId).then((value) {
+                            if (value!.item1 != null) {
+                              if (!Utils.isNullOrEmpty(value.item1!.forms)) {
                                 Navigator.of(context).push(
                                     PageAnimation.createRoute(
                                         BookingFormSelection(
-                                  entityId: _metaEntity.entityId,
+                                  entityId: _metaEntity!.entityId,
                                   entity: value.item1,
                                   preferredSlotTime: null,
                                   isFullAccess: isAdmin || isManager,
@@ -543,7 +543,7 @@ class EntityRowState extends State<EntityRow> {
                       padding: EdgeInsets.all(0),
                       width: MediaQuery.of(context).size.width * .21,
                       height: MediaQuery.of(context).size.width * .21,
-                      foregroundDecoration: !entityExistsOnServer
+                      foregroundDecoration: !entityExistsOnServer!
                           ? BoxDecoration(
                               color: Colors.grey[50],
                               backgroundBlendMode: BlendMode.saturation,
@@ -568,7 +568,7 @@ class EntityRowState extends State<EntityRow> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 letterSpacing: 1.1,
-                                color: _metaEntity.isBookable
+                                color: _metaEntity!.isBookable!
                                     ? whiteBtnTextColor
                                     : disabledColor,
                                 fontFamily: 'Roboto'),
@@ -591,7 +591,7 @@ class EntityRowState extends State<EntityRow> {
                             "$noViewPermission Booking Tokens!",
                             contactAdmin);
                       } else {
-                        if (!entityExistsOnServer) {
+                        if (!entityExistsOnServer!) {
                           Utils.showMyFlushbar(
                               context,
                               Icons.info_outline,
@@ -599,7 +599,7 @@ class EntityRowState extends State<EntityRow> {
                               "First, enter basic details of the place",
                               "");
                         } else {
-                          if (_metaEntity.isBookable) {
+                          if (_metaEntity!.isBookable!) {
                             print("To child list page");
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(EntityTokenListPage(
@@ -624,7 +624,7 @@ class EntityRowState extends State<EntityRow> {
                       padding: EdgeInsets.all(2),
                       width: MediaQuery.of(context).size.width * .21,
                       height: MediaQuery.of(context).size.width * .21,
-                      foregroundDecoration: !entityExistsOnServer
+                      foregroundDecoration: !entityExistsOnServer!
                           ? BoxDecoration(
                               color: Colors.grey[50],
                               backgroundBlendMode: BlendMode.saturation,
@@ -648,7 +648,7 @@ class EntityRowState extends State<EntityRow> {
                             maxFontSize: 11,
                             style: TextStyle(
                                 letterSpacing: 1.1,
-                                color: _metaEntity.isBookable
+                                color: _metaEntity!.isBookable!
                                     ? whiteBtnTextColor
                                     : disabledColor,
                                 fontFamily: 'Roboto'),
@@ -664,7 +664,7 @@ class EntityRowState extends State<EntityRow> {
                   child: GestureDetector(
                     onTap: () {
                       if (!hideAll) {
-                        if (!entityExistsOnServer) {
+                        if (!entityExistsOnServer!) {
                           Utils.showMyFlushbar(
                               context,
                               Icons.info_outline,
@@ -677,7 +677,7 @@ class EntityRowState extends State<EntityRow> {
                               .push(PageAnimation.createRoute(ManageEntityForms(
                             metaEntity: _metaEntity,
                             preferredSlotTime: null,
-                            isFullPermission: !readOnly,
+                            isFullPermission: !readOnly!,
                             backRoute: ManageEntityListPage(),
                             isReadOnly: readOnly,
                           )));
@@ -696,7 +696,7 @@ class EntityRowState extends State<EntityRow> {
                       padding: EdgeInsets.all(0),
                       width: MediaQuery.of(context).size.width * .21,
                       height: MediaQuery.of(context).size.width * .21,
-                      foregroundDecoration: !entityExistsOnServer
+                      foregroundDecoration: !entityExistsOnServer!
                           ? BoxDecoration(
                               color: Colors.grey[50],
                               backgroundBlendMode: BlendMode.saturation,
@@ -720,7 +720,7 @@ class EntityRowState extends State<EntityRow> {
                             maxFontSize: 11,
                             style: TextStyle(
                                 letterSpacing: 1.1,
-                                color: _metaEntity.isBookable
+                                color: _metaEntity!.isBookable!
                                     ? whiteBtnTextColor
                                     : disabledColor,
                                 fontFamily: 'Roboto'),
@@ -742,7 +742,7 @@ class EntityRowState extends State<EntityRow> {
         margin: EdgeInsets.all(5),
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
-            border: Border.all(color: borderColor),
+            border: Border.all(color: borderColor!),
             color: Colors.white,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.all(Radius.circular(5.0))),

@@ -1,12 +1,12 @@
 import 'dart:ffi';
 
 class EntityPrivate {
-  Map<String, String> roles;
-  String registrationNumber;
+  Map<String?, String>? roles;
+  String? registrationNumber;
 
   EntityPrivate({this.roles, this.registrationNumber});
 
-  static EntityPrivate fromJson(Map<String, dynamic> json) {
+  static EntityPrivate? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return new EntityPrivate(
         roles: convert((json['roles'] as Map<String, dynamic>)),

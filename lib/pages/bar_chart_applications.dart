@@ -11,23 +11,23 @@ import '../widget/appbar.dart';
 
 class BarChartApplications extends StatefulWidget {
   final Map<String, int> dataMap;
-  final MetaEntity metaEn;
-  BarChartApplications({Key key, @required this.dataMap, @required this.metaEn})
+  final MetaEntity? metaEn;
+  BarChartApplications({Key? key, required this.dataMap, required this.metaEn})
       : super(key: key);
   @override
   _BarChartApplicationsState createState() => _BarChartApplicationsState();
 }
 
 class _BarChartApplicationsState extends State<BarChartApplications> {
-  Map<String, int> _dataMap;
+  late Map<String, int> _dataMap;
   List<dynamic> colors = [
-    charts.ColorUtil.fromDartColor(Colors.pink[200]),
-    charts.ColorUtil.fromDartColor(Colors.green[200]),
-    charts.ColorUtil.fromDartColor(Colors.yellow[200]),
-    charts.ColorUtil.fromDartColor(Colors.red[200]),
-    charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]),
-    charts.ColorUtil.fromDartColor(Colors.purple[200]),
-    charts.ColorUtil.fromDartColor(Colors.indigoAccent[200])
+    charts.ColorUtil.fromDartColor(Colors.pink[200]!),
+    charts.ColorUtil.fromDartColor(Colors.green[200]!),
+    charts.ColorUtil.fromDartColor(Colors.yellow[200]!),
+    charts.ColorUtil.fromDartColor(Colors.red[200]!),
+    charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]!),
+    charts.ColorUtil.fromDartColor(Colors.purple[200]!),
+    charts.ColorUtil.fromDartColor(Colors.indigoAccent[200]!)
   ];
 
   final List<BarChartModel> data = [

@@ -34,18 +34,18 @@ import 'package:email_validator/email_validator.dart';
 import 'package:path/path.dart' as pathfile;
 
 class CreateFormFields extends StatefulWidget {
-  final MetaEntity metaEntity;
-  final String bookingFormId;
-  final DateTime preferredSlotTime;
-  final bool isOnlineToken;
+  final MetaEntity? metaEntity;
+  final String? bookingFormId;
+  final DateTime? preferredSlotTime;
+  final bool? isOnlineToken;
   final dynamic backRoute;
   CreateFormFields(
-      {Key key,
-      @required this.metaEntity,
-      @required this.bookingFormId,
-      @required this.preferredSlotTime,
-      @required this.isOnlineToken,
-      @required this.backRoute})
+      {Key? key,
+      required this.metaEntity,
+      required this.bookingFormId,
+      required this.preferredSlotTime,
+      required this.isOnlineToken,
+      required this.backRoute})
       : super(key: key);
 
   @override
@@ -54,12 +54,12 @@ class CreateFormFields extends StatefulWidget {
 
 class _CreateFormFieldsState extends State<CreateFormFields> {
   TextEditingController _fieldController = new TextEditingController();
-  Map<String, TextEditingController> listOfFieldControllers =
-      new Map<String, TextEditingController>();
+  Map<String?, TextEditingController> listOfFieldControllers =
+      new Map<String?, TextEditingController>();
 
   final GlobalKey<FormState> _bookingFormKey = new GlobalKey<FormState>();
   List<TextEditingController> _controllers = [];
-  BookingForm dummyForm;
+  BookingForm? dummyForm;
   final itemSize = 100.0;
   List<String> dumList = [];
 
@@ -67,42 +67,42 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
   //List<File> _medCondsProofimages = [];
   bool validateField = false;
-  Map<String, Widget> listOfWidgets = new Map<String, Widget>();
+  Map<String?, Widget> listOfWidgets = new Map<String?, Widget>();
   Map<String, List> listOfFieldTypes = new Map<String, List>();
   String dateString = "Start Date";
-  String validationErrMsg;
-  List<Field> listOfFields;
-  String _phCountryCode;
+  String? validationErrMsg;
+  late List<Field> listOfFields;
+  String? _phCountryCode;
   String flushStatus = "Empty";
-  Flushbar flush;
-  bool _wasButtonClicked;
-  BookingApplication bookingApplication;
-  GlobalState _gs;
+  Flushbar? flush;
+  bool? _wasButtonClicked;
+  BookingApplication? bookingApplication;
+  GlobalState? _gs;
   ScrollController yearController =
       new ScrollController(initialScrollOffset: 0);
   int _radioBookingPref = -1;
   bool showLoading = false;
-  PersistentBottomSheetController upiPaymentSheetController;
+  PersistentBottomSheetController? upiPaymentSheetController;
   final key = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
-      _gs
-          .getApplicationService()
-          .getBookingForm(widget.bookingFormId)
+      _gs!
+          .getApplicationService()!
+          .getBookingForm(widget.bookingFormId!)
           .then((value) {
         dummyForm = value;
         bookingApplication = new BookingApplication();
         //slot
-        bookingApplication.preferredSlotTiming = widget.preferredSlotTime;
+        bookingApplication!.preferredSlotTiming = widget.preferredSlotTime;
 
         //bookingFormId
-        bookingApplication.bookingFormId = widget.bookingFormId;
-        bookingApplication.entityId = widget.metaEntity.entityId;
+        bookingApplication!.bookingFormId = widget.bookingFormId;
+        bookingApplication!.entityId = widget.metaEntity!.entityId;
         // bookingApplication.userId = _gs.getCurrentUser().ph;
-        bookingApplication.status = ApplicationStatus.NEW;
-        bookingApplication.responseForm = dummyForm;
+        bookingApplication!.status = ApplicationStatus.NEW;
+        bookingApplication!.responseForm = dummyForm;
         print("Booking application set");
         initPage();
         setState(() {
@@ -113,7 +113,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   }
 
   void initPage() {
-    listOfFields = dummyForm.getFormFields();
+    listOfFields = dummyForm!.getFormFields();
     Widget newField;
     for (int i = 0; i < listOfFields.length; i++) {
       Field field = listOfFields[i];
@@ -124,17 +124,17 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
-    _phCountryCode = _gs.getConfigurations().phCountryCode;
+    _phCountryCode = _gs!.getConfigurations()!.phCountryCode;
   }
 
-  Future<DateTime> pickAnyYear(BuildContext context, DateTime date) async {
+  Future<DateTime?> pickAnyYear(BuildContext context, DateTime date) async {
     int fromYear = date.year - 100;
     List<int> displayYears = [];
     for (int i = 100; i >= 0; i--) {
       displayYears.add(fromYear + i);
     }
 
-    DateTime returnVal = await showDialog(
+    DateTime? returnVal = await showDialog(
         context: context,
         builder: (BuildContext context) {
           DateTime selectedYear = date;
@@ -187,8 +187,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                       side: BorderSide(
                                           color: (selectedYear.year ==
                                                   displayYears[index])
-                                              ? Colors.cyan[300]
-                                              : Colors.cyan[300]),
+                                              ? Colors.cyan[300]!
+                                              : Colors.cyan[300]!),
                                     ),
                                     child: Text(
                                       displayYears[index].toString(),
@@ -345,13 +345,13 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     return returnVal;
   }
 
-  Future<DateTime> pickDate(BuildContext context) async {
-    DateTime date = await showDatePicker(
+  Future<DateTime?> pickDate(BuildContext context) async {
+    DateTime? date = await showDatePicker(
       context: context,
       firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
       lastDate: DateTime.now(),
       initialDate: DateTime.now(),
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
@@ -360,7 +360,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 onSecondary: Colors.cyan),
             dialogBackgroundColor: Colors.white,
           ),
-          child: child,
+          child: child!,
         );
       },
     );
@@ -368,7 +368,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   }
 
   showUpiPage() {
-    upiPaymentSheetController = key.currentState.showBottomSheet<Null>(
+    upiPaymentSheetController = key.currentState!.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
         height: MediaQuery.of(context).size.height * .8,
@@ -389,7 +389,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           color: headerBarColor,
                         ),
                         onPressed: () {
-                          upiPaymentSheetController.close();
+                          upiPaymentSheetController!.close();
                           upiPaymentSheetController = null;
                           // Navigator.of(context).pop();
                         }),
@@ -415,8 +415,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               child: UPIPaymentPage(
                 backRoute: null,
                 isDonation: false,
-                upiQrCodeImgPath: widget.metaEntity.upiQRImagePath,
-                upiId: widget.metaEntity.upiId,
+                upiQrCodeImgPath: widget.metaEntity!.upiQRImagePath,
+                upiId: widget.metaEntity!.upiId,
                 showMinimum: true,
               ),
             ),
@@ -426,13 +426,13 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       elevation: 30,
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.blueGrey[200]),
+          side: BorderSide(color: Colors.blueGrey[200]!),
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
     );
   }
 
-  String validateText(String value) {
+  String? validateText(String? value) {
     if (validateField) {
       if (value == null || value == "") {
         return 'Field is empty';
@@ -458,7 +458,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     switch (field.type) {
       case FieldType.TEXT:
         {
-          FormInputFieldText textField = field;
+          FormInputFieldText textField = field as FormInputFieldText;
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
@@ -483,9 +483,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           title: SizedBox(
                             width: MediaQuery.of(context).size.width * .8,
                             child: AutoSizeText(
-                              (field.isMandatory)
-                                  ? field.label + ' (mandatory)'
-                                  : field.label + ' (optional)',
+                              field.isMandatory!
+                                  ? field.label! + ' (mandatory)'
+                                  : field.label! + ' (optional)',
                               maxLines: null,
                               minFontSize: 8,
                               maxFontSize: 14,
@@ -505,7 +505,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(field.infoMessage,
+                                    child: Text(field.infoMessage!,
                                         style: buttonXSmlTextStyle),
                                   ),
                                 ],
@@ -531,12 +531,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   : AutovalidateMode.disabled,
                               validator: (value) {
                                 if (Utils.isNotNullOrEmpty(value)) {
-                                  if (textField.isEmail) {
-                                    return EmailValidator.validate(value)
+                                  if (textField.isEmail!) {
+                                    return EmailValidator.validate(value!)
                                         ? null
                                         : "Please enter a valid Email";
                                   }
-                                } else if (field.isMandatory &&
+                                } else if (field.isMandatory! &&
                                     validateField &&
                                     Utils.isStrNullOrEmpty(value)) {
                                   return "Field is empty";
@@ -565,7 +565,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                 textField.response = value;
                                 print(value);
                               },
-                              onSaved: (String value) {
+                              onSaved: (String? value) {
                                 textField.response = value;
                                 print(value);
                               },
@@ -581,11 +581,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         break;
       case FieldType.DATETIME:
         {
-          FormInputFieldDateTime newDateField = field;
+          FormInputFieldDateTime newDateField = field as FormInputFieldDateTime;
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -609,9 +609,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * .8,
                             child: AutoSizeText(
-                              (field.isMandatory)
-                                  ? field.label + ' (mandatory)'
-                                  : field.label + ' (optional)',
+                              field.isMandatory!
+                                  ? field.label! + ' (mandatory)'
+                                  : field.label! + ' (optional)',
                               maxLines: null,
                               minFontSize: 11,
                               maxFontSize: 14,
@@ -633,7 +633,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(field.infoMessage,
+                                child: Text(field.infoMessage!,
                                     style: buttonXSmlTextStyle),
                               ),
                             ],
@@ -658,7 +658,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           autovalidateMode: AutovalidateMode.always,
                           validator: (value) {
                             if (validateField &&
-                                newDateField.isMandatory &&
+                                newDateField.isMandatory! &&
                                 Utils.isStrNullOrEmpty(value)) {
                               return "Field is empty";
                             } else
@@ -672,14 +672,14 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               labelTextStr: newDateField.label,
                               hintTextStr: newDateField.label),
                           onTap: () {
-                            if (newDateField.yearOnly) {
+                            if (newDateField.yearOnly!) {
                               setState(() {
                                 pickAnyYear(context, DateTime.now())
                                     .then((value) {
                                   if (value != null) {
                                     print(value);
 
-                                    listOfFieldControllers[newDateField.label]
+                                    listOfFieldControllers[newDateField.label]!
                                         .text = value.year.toString();
 
                                     setState(() {
@@ -697,7 +697,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                         value.month.toString() +
                                         " / " +
                                         value.year.toString();
-                                    listOfFieldControllers[newDateField.label]
+                                    listOfFieldControllers[newDateField.label]!
                                         .text = dateString;
                                   });
                                   newDateField.responseDateTime = value;
@@ -709,7 +709,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           onChanged: (String value) {
                             print(value);
                           },
-                          onSaved: (String value) {
+                          onSaved: (String? value) {
                             print(value);
                           },
                         ),
@@ -819,11 +819,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       //   break;
       case FieldType.PHONE:
         {
-          FormInputFieldPhone phone = field;
+          FormInputFieldPhone phone = field as FormInputFieldPhone;
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -847,9 +847,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * .8,
                                 child: AutoSizeText(
-                                  (field.isMandatory)
-                                      ? field.label + ' (mandatory)'
-                                      : field.label + ' (optional)',
+                                  field.isMandatory!
+                                      ? field.label! + ' (mandatory)'
+                                      : field.label! + ' (optional)',
                                   maxLines: null,
                                   minFontSize: 11,
                                   maxFontSize: 14,
@@ -869,7 +869,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(phone.infoMessage,
+                                    child: Text(phone.infoMessage!,
                                         style: buttonXSmlTextStyle),
                                   ),
                                 ],
@@ -907,7 +907,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   if (Utils.isNotNullOrEmpty(value)) {
                                     return Utils.validateMobileField(value);
                                   } else if (validateField &&
-                                      phone.isMandatory &&
+                                      phone.isMandatory! &&
                                       Utils.isStrNullOrEmpty(value)) {
                                     return "Field is empty";
                                   }
@@ -916,12 +916,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                 onChanged: (value) {
                                   if (value != "")
                                     phone.responsePhone =
-                                        _phCountryCode + (value);
+                                        _phCountryCode! + (value);
                                 },
-                                onSaved: (String value) {
+                                onSaved: (String? value) {
                                   if (value != "")
                                     phone.responsePhone =
-                                        _phCountryCode + (value);
+                                        _phCountryCode! + value!;
                                 },
                               )),
                         ],
@@ -934,11 +934,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         break;
       case FieldType.NUMBER:
         {
-          FormInputFieldNumber numberField = field;
+          FormInputFieldNumber numberField = field as FormInputFieldNumber;
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -962,9 +962,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               Container(
                                 width: MediaQuery.of(context).size.width * .8,
                                 child: AutoSizeText(
-                                  (field.isMandatory)
-                                      ? field.label + ' (mandatory)'
-                                      : field.label + ' (optional)',
+                                  field.isMandatory!
+                                      ? field.label! + ' (mandatory)'
+                                      : field.label! + ' (optional)',
                                   maxLines: null,
                                   minFontSize: 11,
                                   maxFontSize: 14,
@@ -986,7 +986,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(numberField.infoMessage,
+                                    child: Text(numberField.infoMessage!,
                                         style: buttonXSmlTextStyle),
                                   ),
                                 ],
@@ -1015,13 +1015,13 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               validator: (value) {
                                 if (Utils.isNotNullOrEmpty(
                                     validateText(value))) {
-                                  if (double.tryParse(value) != null) {
+                                  if (double.tryParse(value!) != null) {
                                     return null;
                                   } else
                                     return "Enter a valid number";
                                 }
                                 if ((validateField) &&
-                                    numberField.isMandatory &&
+                                    numberField.isMandatory! &&
                                     Utils.isStrNullOrEmpty(value)) {
                                   return "Enter a valid number";
                                 }
@@ -1032,8 +1032,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
                                 print(value);
                               },
-                              onSaved: (String value) {
-                                numberField.response = double.tryParse(value);
+                              onSaved: (String? value) {
+                                numberField.response = double.tryParse(value!);
                                 print(value);
                               },
                             ),
@@ -1048,11 +1048,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         break;
       case FieldType.INT:
         {
-          FormInputFieldInt intField = field;
+          FormInputFieldInt intField = field as FormInputFieldInt;
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1076,9 +1076,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           Container(
                             width: MediaQuery.of(context).size.width * .8,
                             child: AutoSizeText(
-                              (field.isMandatory)
-                                  ? field.label + ' (mandatory)'
-                                  : field.label + ' (optional)',
+                              field.isMandatory!
+                                  ? field.label! + ' (mandatory)'
+                                  : field.label! + ' (optional)',
                               maxLines: null,
                               minFontSize: 11,
                               maxFontSize: 14,
@@ -1100,7 +1100,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(intField.infoMessage,
+                                child: Text(intField.infoMessage!,
                                     style: buttonXSmlTextStyle),
                               ),
                             ],
@@ -1129,9 +1129,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               hintTextStr: intField.label),
                           validator: (value) {
                             if (Utils.isNotNullOrEmpty(value)) {
-                              if (int.tryParse(value) != null) {
+                              if (int.tryParse(value!) != null) {
                                 if (intField.maxLength != null) {
-                                  if (value.length > intField.maxLength) {
+                                  if (value.length > intField.maxLength!) {
                                     String msg1 = (intField.minLength == null)
                                         ? "of maximum"
                                         : "of";
@@ -1158,7 +1158,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   }
                                 }
                                 if (intField.minLength != null) {
-                                  if (value.length < intField.minLength) {
+                                  if (value.length < intField.minLength!) {
                                     String msg1 = (intField.maxLength == null)
                                         ? "of minimum"
                                         : "of";
@@ -1171,8 +1171,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                     return "Number should be $msg1 ${intField.minLength} $msg2 digits ";
                                   }
                                 }
-                                if (int.tryParse(value) > intField.maxValue ||
-                                    int.tryParse(value) < intField.minValue) {
+                                if (int.tryParse(value)! > intField.maxValue! ||
+                                    int.tryParse(value)! < intField.minValue!) {
                                   return "Number should be between ${intField.minValue} and ${intField.maxValue}";
                                 } else
                                   return null;
@@ -1180,7 +1180,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                 return "Enter a valid number";
                             }
                             if ((validateField) &&
-                                intField.isMandatory &&
+                                intField.isMandatory! &&
                                 Utils.isStrNullOrEmpty(value)) {
                               return "Enter a valid number";
                             }
@@ -1192,9 +1192,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
                             print(value);
                           },
-                          onSaved: (String value) {
+                          onSaved: (String? value) {
                             //SMITA:TODO
-                            intField.response = int.tryParse(value);
+                            intField.response = int.tryParse(value!);
                             print(value);
                           },
                         ),
@@ -1210,12 +1210,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
       case FieldType.OPTIONS:
         {
-          FormInputFieldOptions newOptionsField = field;
+          FormInputFieldOptions newOptionsField = field as FormInputFieldOptions;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1239,9 +1239,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * .8,
                             child: AutoSizeText(
-                                (newOptionsField.isMandatory)
-                                    ? newOptionsField.label + ' (mandatory)'
-                                    : newOptionsField.label + ' (optional)',
+                                newOptionsField.isMandatory!
+                                    ? newOptionsField.label! + ' (mandatory)'
+                                    : newOptionsField.label! + ' (optional)',
                                 maxLines: null,
                                 minFontSize: 11,
                                 maxFontSize: 14,
@@ -1262,7 +1262,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(newOptionsField.infoMessage,
+                                child: Text(newOptionsField.infoMessage!,
                                     style: buttonXSmlTextStyle),
                               ),
                             ],
@@ -1280,20 +1280,20 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         children: [
                           Expanded(
                             child: Wrap(
-                              children: newOptionsField.options
+                              children: newOptionsField.options!
                                   .map((item) => GestureDetector(
                                       onTap: () {
-                                        if (newOptionsField.responseValues
+                                        if (newOptionsField.responseValues!
                                             .contains(item)) {
-                                          newOptionsField.responseValues
+                                          newOptionsField.responseValues!
                                               .remove(item);
                                         } else {
                                           if (newOptionsField.isMultiSelect ==
                                               false) {
-                                            newOptionsField.responseValues
+                                            newOptionsField.responseValues!
                                                 .clear();
                                           }
-                                          newOptionsField.responseValues
+                                          newOptionsField.responseValues!
                                               .add(item);
                                         }
 
@@ -1302,10 +1302,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                       child: Container(
                                           decoration: new BoxDecoration(
                                               border: Border.all(
-                                                  color: Colors.blueGrey[200]),
+                                                  color: Colors.blueGrey[200]!),
                                               shape: BoxShape.rectangle,
                                               color: (newOptionsField
-                                                      .responseValues
+                                                      .responseValues!
                                                       .contains(item))
                                                   ? highlightColor
                                                   : Colors.cyan[50],
@@ -1332,12 +1332,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         break;
       case FieldType.ATTACHMENT:
         {
-          FormInputFieldAttachment attsField = field;
+          FormInputFieldAttachment attsField = field as FormInputFieldAttachment;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1361,9 +1361,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * .8,
                             child: AutoSizeText(
-                              (attsField.isMandatory)
-                                  ? attsField.label + ' (mandatory)'
-                                  : attsField.label + ' (optional)',
+                              attsField.isMandatory!
+                                  ? attsField.label! + ' (mandatory)'
+                                  : attsField.label! + ' (optional)',
                               maxLines: null,
                               minFontSize: 11,
                               maxFontSize: 14,
@@ -1385,7 +1385,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(attsField.infoMessage,
+                                child: Text(attsField.infoMessage!,
                                     style: buttonXSmlTextStyle),
                               ),
                             ],
@@ -1399,7 +1399,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   padding: EdgeInsets.only(left: 5.0, right: 5),
                   child: Column(
                     children: [
-                      if (attsField.paymentProofRequired)
+                      if (attsField.paymentProofRequired!)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -1458,7 +1458,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   acceptPaymentInFormMsgMain,
                                   style: TextStyle(
                                       color: (validateField &&
-                                              attsField.isMandatory &&
+                                              attsField.isMandatory! &&
                                               (Utils.isNullOrEmpty(
                                                   attsField.responseFilePaths)))
                                           ? Colors.red
@@ -1474,7 +1474,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   AssetImage('assets/rupee_icon.png'),
                                   size: 16,
                                   color: (Utils.isNotNullOrEmpty(
-                                          widget.metaEntity.upiId)
+                                          widget.metaEntity!.upiId)
                                       ? btnColor
                                       : Colors.blueGrey[400]),
                                 ),
@@ -1521,12 +1521,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               ? Container(
                                   width: MediaQuery.of(context).size.width * .6,
                                   child: Text(
-                                    (attsField.paymentProofRequired)
+                                    attsField.paymentProofRequired!
                                         ? acceptPaymentInFormMsgSub
                                         : "No Image Selected",
                                     style: TextStyle(
                                         color: (validateField &&
-                                                attsField.isMandatory)
+                                                attsField.isMandatory!)
                                             ? Colors.red
                                             : Colors.black),
                                   ))
@@ -1549,7 +1549,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                             EdgeInsets.symmetric(vertical: 3),
                                         decoration: BoxDecoration(
                                             border: Border.all(
-                                                color: containerColor),
+                                                color: containerColor!),
                                             color: Colors.grey[50],
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -1557,12 +1557,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                         padding: EdgeInsets.all(5),
                                         child: showImageList(
                                             context,
-                                            attsField.responseFilePaths[index],
+                                            attsField.responseFilePaths![index],
                                             attsField.responseFilePaths),
                                       );
                                     },
                                     itemCount:
-                                        attsField.responseFilePaths.length,
+                                        attsField.responseFilePaths!.length,
                                   ),
                                 ),
                           Container(
@@ -1578,12 +1578,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                       color: primaryDarkColor,
                                     ),
                                     onPressed: () {
-                                      if (attsField.responseFilePaths.length <
-                                          attsField.maxAttachments) {
+                                      if (attsField.responseFilePaths!.length <
+                                          attsField.maxAttachments!) {
                                         captureImage(false).then((value) {
                                           if (value != null) {
                                             // _medCondsProofimages.add(value);
-                                            attsField.responseFilePaths
+                                            attsField.responseFilePaths!
                                                 .add(value.path);
                                           }
                                           setState(() {});
@@ -1606,12 +1606,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                       color: primaryDarkColor,
                                     ),
                                     onPressed: () {
-                                      if (attsField.responseFilePaths.length <
-                                          attsField.maxAttachments) {
+                                      if (attsField.responseFilePaths!.length <
+                                          attsField.maxAttachments!) {
                                         captureImage(true).then((value) {
                                           if (value != null) {
                                             // _medCondsProofimages.add(value);
-                                            attsField.responseFilePaths
+                                            attsField.responseFilePaths!
                                                 .add(value.path);
                                           }
                                           setState(() {});
@@ -1642,12 +1642,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         break;
       case FieldType.OPTIONS_ATTACHMENTS:
         {
-          FormInputFieldOptionsWithAttachments optsAttsField = field;
+          FormInputFieldOptionsWithAttachments optsAttsField = field as FormInputFieldOptionsWithAttachments;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1671,9 +1671,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * .74,
                             child: AutoSizeText(
-                              (optsAttsField.isMandatory)
-                                  ? optsAttsField.label + ' (mandatory)'
-                                  : optsAttsField.label + ' (optional)',
+                              optsAttsField.isMandatory!
+                                  ? optsAttsField.label! + ' (mandatory)'
+                                  : optsAttsField.label! + ' (optional)',
                               maxLines: null,
                               minFontSize: 8,
                               maxFontSize: 14,
@@ -1695,7 +1695,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(optsAttsField.infoMessage,
+                                child: Text(optsAttsField.infoMessage!,
                                     style: buttonXSmlTextStyle),
                               ),
                             ],
@@ -1713,20 +1713,20 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         children: [
                           Expanded(
                             child: Wrap(
-                              children: optsAttsField.options
+                              children: optsAttsField.options!
                                   .map((item) => GestureDetector(
                                       onTap: () {
-                                        if (optsAttsField.responseValues
+                                        if (optsAttsField.responseValues!
                                             .contains(item)) {
-                                          optsAttsField.responseValues
+                                          optsAttsField.responseValues!
                                               .remove(item);
                                         } else {
                                           if (optsAttsField.isMultiSelect ==
                                               false) {
-                                            optsAttsField.responseValues
+                                            optsAttsField.responseValues!
                                                 .clear();
                                           }
-                                          optsAttsField.responseValues
+                                          optsAttsField.responseValues!
                                               .add(item);
                                         }
 
@@ -1735,10 +1735,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                       child: Container(
                                           decoration: new BoxDecoration(
                                               border: Border.all(
-                                                  color: Colors.blueGrey[200]),
+                                                  color: Colors.blueGrey[200]!),
                                               shape: BoxShape.rectangle,
                                               color: (optsAttsField
-                                                      .responseValues
+                                                      .responseValues!
                                                       .contains(item))
                                                   ? highlightColor
                                                   : Colors.cyan[50],
@@ -1789,7 +1789,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                             EdgeInsets.symmetric(vertical: 3),
                                         decoration: BoxDecoration(
                                             border: Border.all(
-                                                color: containerColor),
+                                                color: containerColor!),
                                             color: Colors.grey[50],
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -1797,12 +1797,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                         child: showImageList(
                                             context,
                                             optsAttsField
-                                                .responseFilePaths[index],
+                                                .responseFilePaths![index],
                                             optsAttsField.responseFilePaths),
                                       );
                                     },
                                     itemCount:
-                                        optsAttsField.responseFilePaths.length,
+                                        optsAttsField.responseFilePaths!.length,
                                   ),
                                 ),
                           Row(
@@ -1815,12 +1815,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                     color: primaryDarkColor,
                                   ),
                                   onPressed: () {
-                                    if (optsAttsField.responseFilePaths.length <
-                                        optsAttsField.maxAttachments) {
+                                    if (optsAttsField.responseFilePaths!.length <
+                                        optsAttsField.maxAttachments!) {
                                       captureImage(false).then((value) {
                                         if (value != null) {
                                           //  _medCondsProofimages.add(value);
-                                          optsAttsField.responseFilePaths
+                                          optsAttsField.responseFilePaths!
                                               .add(value.path);
                                         }
                                         setState(() {});
@@ -1843,12 +1843,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                     color: primaryDarkColor,
                                   ),
                                   onPressed: () {
-                                    if (optsAttsField.responseFilePaths.length <
-                                        optsAttsField.maxAttachments) {
+                                    if (optsAttsField.responseFilePaths!.length <
+                                        optsAttsField.maxAttachments!) {
                                       captureImage(true).then((value) {
                                         if (value != null) {
                                           //  _medCondsProofimages.add(value);
-                                          optsAttsField.responseFilePaths
+                                          optsAttsField.responseFilePaths!
                                               .add(value.path);
                                         }
                                         setState(() {});
@@ -1881,7 +1881,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: containerColor!),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1905,9 +1905,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * .8,
                                 child: AutoSizeText(
-                                  (field.isMandatory)
-                                      ? field.label + ' (mandatory)'
-                                      : field.label + ' (optional)',
+                                  field.isMandatory!
+                                      ? field.label! + ' (mandatory)'
+                                      : field.label! + ' (optional)',
                                   maxLines: null,
                                   minFontSize: 11,
                                   maxFontSize: 14,
@@ -1929,7 +1929,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(field.infoMessage,
+                                    child: Text(field.infoMessage!,
                                         style: buttonXSmlTextStyle),
                                   ),
                                 ],
@@ -1957,7 +1957,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                             onChanged: (String value) {
                               print(value);
                             },
-                            onSaved: (String value) {
+                            onSaved: (String? value) {
                               print(value);
                             },
                           ),
@@ -1977,10 +1977,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     );
   }
 
-  Future<File> captureImage(bool gallery) async {
+  Future<File?> captureImage(bool gallery) async {
     ImagePicker picker = ImagePicker();
-    PickedFile pickedFile;
-    File newImageFile;
+    PickedFile? pickedFile;
+    File? newImageFile;
 
     if (gallery) {
       pickedFile = await picker.getImage(
@@ -2005,7 +2005,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   }
 
   Widget showImageList(
-      BuildContext context, String imageUrl, List<String> filesList) {
+      BuildContext context, String imageUrl, List<String>? filesList) {
     File image = File(imageUrl);
     return Stack(
       alignment: AlignmentDirectional.topEnd,
@@ -2026,10 +2026,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               Utils.showConfirmationDialog(
                       context, "Are you sure you want to delete this image?")
                   .then((value) {
-                if (value) {
+                if (value!) {
                   print('REMOVE path in responsePaths $imageUrl');
                   setState(() {
-                    filesList.removeWhere((element) => element == imageUrl);
+                    filesList!.removeWhere((element) => element == imageUrl);
 
                     // idProofField.responseFilePaths
                     //     .removeWhere((element) => element == imageUrl.path);
@@ -2049,7 +2049,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
     print("Target file name " + targetFileName);
 
-    Reference ref = _gs.firebaseStorage.ref().child('uploads/$targetFileName');
+    Reference ref = _gs!.firebaseStorage!.ref().child('uploads/$targetFileName');
 
     await ref.putFile(localImage);
 
@@ -2061,10 +2061,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       if (listOfFields[i].type != FieldType.OPTIONS &&
           listOfFields[i].type != FieldType.ATTACHMENT &&
           listOfFields[i].type != FieldType.OPTIONS_ATTACHMENTS) {
-        if (listOfFields[i].isMandatory) {
+        if (listOfFields[i].isMandatory!) {
           if (!Utils.isNotNullOrEmpty(
-              listOfFieldControllers[listOfFields[i].label].text)) {
-            validationErrMsg = validationErrMsg +
+              listOfFieldControllers[listOfFields[i].label]!.text)) {
+            validationErrMsg = validationErrMsg! +
                 (Utils.isNotNullOrEmpty(validationErrMsg)
                     ? ", ${listOfFields[i].label}"
                     : "${listOfFields[i].label}");
@@ -2087,7 +2087,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       showLoading = true;
       validateField = true;
     });
-    if (_bookingFormKey.currentState.validate()) {
+    if (_bookingFormKey.currentState!.validate()) {
       if (!validateMandatoryFields()) {
         setState(() {
           showLoading = false;
@@ -2098,7 +2098,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             Duration(
               seconds: 8,
             ),
-            validationErrMsg,
+            validationErrMsg!,
             '',
             Colors.red,
             Colors.white);
@@ -2106,12 +2106,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       }
       //***Handle the Options and Attachments field.****
       List<Field> listOfFields =
-          bookingApplication.responseForm.getFormFields();
+          bookingApplication!.responseForm!.getFormFields();
       for (int i = 0; i < listOfFields.length; i++) {
         switch (listOfFields[i].type) {
           case FieldType.OPTIONS:
             FormInputFieldOptions f = listOfFields[i] as FormInputFieldOptions;
-            if (f.isMandatory && f.responseValues.length == 0) {
+            if (f.isMandatory! && f.responseValues!.length == 0) {
               validationErrMsg = '${f.label} is empty.';
               Utils.showMyFlushbar(
                   context,
@@ -2119,7 +2119,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   Duration(
                     seconds: 5,
                   ),
-                  validationErrMsg,
+                  validationErrMsg!,
                   fillMandatoryInfo,
                   Colors.red,
                   Colors.white);
@@ -2129,7 +2129,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           case FieldType.ATTACHMENT:
             FormInputFieldAttachment f =
                 listOfFields[i] as FormInputFieldAttachment;
-            if (f.isMandatory && f.responseFilePaths.length == 0) {
+            if (f.isMandatory! && f.responseFilePaths!.length == 0) {
               validationErrMsg = '${f.label} is empty.';
               Utils.showMyFlushbar(
                   context,
@@ -2137,7 +2137,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   Duration(
                     seconds: 5,
                   ),
-                  validationErrMsg,
+                  validationErrMsg!,
                   fillMandatoryInfo,
                   Colors.red,
                   Colors.white);
@@ -2146,19 +2146,19 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               List<String> targetPaths = [];
 
               for (String path in (listOfFields[i] as FormInputFieldAttachment)
-                  .responseFilePaths) {
+                  .responseFilePaths!) {
                 String fileName = pathfile.basename(path);
                 print(fileName);
 
                 String targetFileName =
-                    '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
+                    '${bookingApplication!.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs!.getCurrentUser()!.id}#$fileName';
                 print(targetFileName);
                 String targetPath =
                     await uploadFilesToServer(path, targetFileName);
                 print(targetPath);
                 targetPaths.add(targetPath);
               }
-              (bookingApplication.responseForm.getFormFields()[i]
+              (bookingApplication!.responseForm!.getFormFields()[i]
                       as FormInputFieldAttachment)
                   .responseFilePaths = targetPaths;
             }
@@ -2167,9 +2167,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           case FieldType.OPTIONS_ATTACHMENTS:
             FormInputFieldOptionsWithAttachments f =
                 listOfFields[i] as FormInputFieldOptionsWithAttachments;
-            if (f.isMandatory &&
-                (f.responseFilePaths.length == 0 ||
-                    f.responseValues.length == 0)) {
+            if (f.isMandatory! &&
+                (f.responseFilePaths!.length == 0 ||
+                    f.responseValues!.length == 0)) {
               validationErrMsg = '${f.label} is empty.';
               Utils.showMyFlushbar(
                   context,
@@ -2177,7 +2177,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   Duration(
                     seconds: 5,
                   ),
-                  validationErrMsg,
+                  validationErrMsg!,
                   fillMandatoryInfo,
                   Colors.red,
                   Colors.white);
@@ -2187,25 +2187,25 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               List<String> targetPaths = [];
               for (String path
                   in (listOfFields[i] as FormInputFieldOptionsWithAttachments)
-                      .responseFilePaths) {
+                      .responseFilePaths!) {
                 String fileName = pathfile.basename(path);
                 print(fileName);
 
-                print(bookingApplication.id);
+                print(bookingApplication!.id);
                 print((listOfFields[i] as FormInputFieldOptionsWithAttachments)
                     .id);
-                print(_gs.getCurrentUser().id);
+                print(_gs!.getCurrentUser()!.id);
                 print(fileName);
 
                 String targetFileName =
-                    '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
+                    '${bookingApplication!.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs!.getCurrentUser()!.id}#$fileName';
                 print(targetFileName);
                 String targetPath =
                     await uploadFilesToServer(path, targetFileName);
                 print(targetPath);
                 targetPaths.add(targetPath);
               }
-              (bookingApplication.responseForm.getFormFields()[i]
+              (bookingApplication!.responseForm!.getFormFields()[i]
                       as FormInputFieldOptionsWithAttachments)
                   .responseFilePaths = targetPaths;
             }
@@ -2232,30 +2232,30 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       //     "Processing your Request..",
       //     '');
       if (Utils.isStrNullOrEmpty(validationErrMsg)) {
-        _bookingFormKey.currentState.save();
-        _gs
-            .getApplicationService()
+        _bookingFormKey.currentState!.save();
+        _gs!
+            .getApplicationService()!
             .submitApplication(
                 bookingApplication, widget.metaEntity, widget.isOnlineToken)
             .then((value) {
-          UserToken token = value.item1;
+          UserToken? token = value.item1;
           if (token != null) {
             final dtFormat = new DateFormat(dateDisplayFormat);
             String _dateFormatted =
-                dtFormat.format(bookingApplication.preferredSlotTiming);
+                dtFormat.format(bookingApplication!.preferredSlotTiming!);
             String time =
-                " ${Utils.formatTime(bookingApplication.preferredSlotTiming.hour.toString())} : ${Utils.formatTime(bookingApplication.preferredSlotTiming.minute.toString())}";
+                " ${Utils.formatTime(bookingApplication!.preferredSlotTiming!.hour.toString())} : ${Utils.formatTime(bookingApplication!.preferredSlotTiming!.minute.toString())}";
             setState(() {
               showLoading = false;
             });
 
             showTokenAlert(
                     context,
-                    token.parent.isOnlineAppointment
+                    token.parent!.isOnlineAppointment!
                         ? tokenTextH2Online
                         : tokenTextH2Walkin,
                     token.getDisplayName(),
-                    widget.metaEntity.name,
+                    widget.metaEntity!.name,
                     _dateFormatted,
                     time)
                 .then((value) {
@@ -2363,7 +2363,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         flushbarStyle: FlushbarStyle.GROUNDED,
         reverseAnimationCurve: Curves.decelerate,
         forwardAnimationCurve: Curves.easeInToLinear,
-        backgroundColor: Colors.cyan[200],
+        backgroundColor: Colors.cyan[200]!,
         boxShadows: [
           BoxShadow(
               color: Colors.cyan, offset: Offset(0.0, 2.0), blurRadius: 3.0)
@@ -2377,7 +2377,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         showProgressIndicator: true,
         progressIndicatorBackgroundColor: Colors.blueGrey[900],
         progressIndicatorValueColor:
-            new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
+            new AlwaysStoppedAnimation<Color?>(Colors.cyan[500]) as Animation<Color>?,
         routeBlur: 10.0,
         titleText: Text(
           "Are you sure you want to leave this page?",
@@ -2401,7 +2401,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               padding: EdgeInsets.all(0),
               onPressed: () {
                 flushStatus = "Empty";
-                flush.dismiss(false); // result = true
+                flush!.dismiss(false); // result = true
               },
               child: Text(
                 "No",
@@ -2413,7 +2413,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               padding: EdgeInsets.all(0),
               onPressed: () {
                 flushStatus = "Empty";
-                flush.dismiss(true); // result = true
+                flush!.dismiss(true); // result = true
               },
               child: Text(
                 "Yes",
@@ -2436,7 +2436,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         ..show(context).then((result) {
           _wasButtonClicked = result;
           flushStatus = "Empty";
-          if (_wasButtonClicked) {
+          if (_wasButtonClicked!) {
             Navigator.of(context).pop();
           }
         });
@@ -2466,7 +2466,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   goingBack();
                 },
               ),
-              title: Text(dummyForm.formName,
+              title: Text(dummyForm!.formName!,
                   style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
             body: Center(
@@ -2482,7 +2482,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               margin: EdgeInsets.fromLTRB(0, 12, 0, 0),
                               width: MediaQuery.of(context).size.width * .913,
                               decoration: BoxDecoration(
-                                  border: Border.all(color: containerColor),
+                                  border: Border.all(color: containerColor!),
                                   color: Colors.grey[50],
                                   shape: BoxShape.rectangle,
                                   borderRadius:
@@ -2569,13 +2569,13 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                                             EdgeInsets.only(
                                                                 left: 5),
                                                         child: AutoSizeText(
-                                                            ((bookingApplication
+                                                            ((bookingApplication!
                                                                         .preferredSlotTiming !=
                                                                     null)
                                                                 ? DateFormat(
                                                                         'yyyy-MM-dd – HH:mm')
-                                                                    .format(bookingApplication
-                                                                        .preferredSlotTiming)
+                                                                    .format(bookingApplication!
+                                                                        .preferredSlotTiming!)
                                                                 : "None"),
                                                             // group: medCondGroup,
                                                             minFontSize: 12,
@@ -2624,7 +2624,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                                                             metaEntity:
                                                                                 widget.metaEntity,
                                                                             dateTime:
-                                                                                bookingApplication.preferredSlotTiming,
+                                                                                bookingApplication!.preferredSlotTiming,
                                                                             forAdmin:
                                                                                 "ApplicationList",
                                                                             tokenCounter:
@@ -2634,7 +2634,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                                           print(result);
                                                           setState(() {
                                                             if (result != null)
-                                                              bookingApplication
+                                                              bookingApplication!
                                                                       .preferredSlotTiming =
                                                                   result;
                                                           });
@@ -2666,12 +2666,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   width:
                                       MediaQuery.of(context).size.width * .95,
                                   child: buildChildItem(
-                                      dummyForm.getFormFields()[index],
+                                      dummyForm!.getFormFields()[index],
                                       index,
                                       false),
                                 );
                               },
-                              itemCount: dummyForm.getFormFields().length,
+                              itemCount: dummyForm!.getFormFields().length,
                             ),
                             Container(
                               margin: EdgeInsets.fromLTRB(10, 10, 10, 14),
@@ -2794,7 +2794,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           ),
           onWillPop: () async {
             if (upiPaymentSheetController != null) {
-              upiPaymentSheetController.close();
+              upiPaymentSheetController!.close();
               upiPaymentSheetController = null;
             } else {
               goingBack();

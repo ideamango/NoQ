@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Item1 extends StatelessWidget {
-  const Item1({Key key}) : super(key: key);
+  const Item1({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -15,7 +15,7 @@ class Item1 extends StatelessWidget {
 }
 
 class Item2 extends StatelessWidget {
-  const Item2({Key key}) : super(key: key);
+  const Item2({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,7 +44,7 @@ class Item2 extends StatelessWidget {
 }
 
 class Item3 extends StatelessWidget {
-  const Item3({Key key}) : super(key: key);
+  const Item3({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -63,7 +63,7 @@ class Item3 extends StatelessWidget {
 }
 
 class Item4 extends StatelessWidget {
-  const Item4({Key key}) : super(key: key);
+  const Item4({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -77,7 +77,7 @@ class Item4 extends StatelessWidget {
 }
 
 class Item5 extends StatelessWidget {
-  const Item5({Key key}) : super(key: key);
+  const Item5({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -91,7 +91,7 @@ class Item5 extends StatelessWidget {
 }
 
 class Item6 extends StatelessWidget {
-  const Item6({Key key}) : super(key: key);
+  const Item6({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -105,7 +105,7 @@ class Item6 extends StatelessWidget {
 }
 
 class Item7 extends StatelessWidget {
-  const Item7({Key key}) : super(key: key);
+  const Item7({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(

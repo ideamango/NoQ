@@ -5,9 +5,9 @@ import '../../location.dart';
 import '../db_model/app_user.dart';
 
 class UserService {
-  FirebaseApp _fb;
+  FirebaseApp? _fb;
 
-  UserService(FirebaseApp firebaseApp) {
+  UserService(FirebaseApp? firebaseApp) {
     _fb = firebaseApp;
   }
 
@@ -15,29 +15,29 @@ class UserService {
     if (_fb == null) {
       return FirebaseFirestore.instance;
     } else {
-      return FirebaseFirestore.instanceFor(app: _fb);
+      return FirebaseFirestore.instanceFor(app: _fb!);
     }
   }
 
   FirebaseAuth getFirebaseAuth() {
     if (_fb == null) return FirebaseAuth.instance;
-    return FirebaseAuth.instanceFor(app: _fb);
+    return FirebaseAuth.instanceFor(app: _fb!);
   }
 
-  Future<AppUser> getCurrentUser([Location loc]) async {
-    User user = getFirebaseAuth().currentUser;
+  Future<AppUser?> getCurrentUser([Location? loc]) async {
+    User? user = getFirebaseAuth().currentUser;
     if (user == null) return null;
 
     FirebaseFirestore fStore = getFirestore();
 
-    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
+    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber!);
 
     AppUser u;
 
     DocumentSnapshot doc = await userRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
+      Map<String, dynamic> map = doc.data()!;
 
       u = AppUser.fromJson(map);
     } else {
@@ -57,10 +57,10 @@ class UserService {
   }
 
   Future<bool> deleteCurrentUser() async {
-    User user = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser!;
     FirebaseFirestore fStore = getFirestore();
     try {
-      final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
+      final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber!);
       userRef.delete();
     } catch (e) {
       return false;
@@ -79,17 +79,17 @@ class UserService {
     return true;
   }
 
-  Future<AppUser> getUser(String phone) async {
+  Future<AppUser?> getUser(String phone) async {
     FirebaseFirestore fStore = getFirestore();
 
     final DocumentReference userRef = fStore.doc('users/' + phone);
 
-    AppUser u;
+    AppUser? u;
 
     DocumentSnapshot doc = await userRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
+      Map<String, dynamic> map = doc.data()!;
 
       u = AppUser.fromJson(map);
     }

@@ -224,32 +224,32 @@ final headingTextStyle = TextStyle(
     letterSpacing: 0.5,
     fontFamily: 'Montserrat',
     fontSize: 15.0);
-final Color primaryIcon = Colors.blueGrey[800];
+final Color? primaryIcon = Colors.blueGrey[800];
 final Color lightIcon = Colors.white;
-final Color tokenIconColor = Colors.blueGrey[700];
+final Color? tokenIconColor = Colors.blueGrey[700];
 
-final Color btnColor = Colors.cyan[600];
+final Color? btnColor = Colors.cyan[600];
 
-final Color borderColor = Colors.blueGrey[800];
+final Color? borderColor = Colors.blueGrey[800];
 
 final Color primaryAccentColor = Colors.cyanAccent;
-final Color primaryDoneColor = Colors.green[300];
-final Color primaryDarkColor = Colors.cyan[800];
+final Color? primaryDoneColor = Colors.green[300];
+final Color? primaryDarkColor = Colors.cyan[800];
 final Color whiteBtnTextColor = Colors.black;
 
-final Color gradientDarkColor = Colors.blueGrey[600];
+final Color? gradientDarkColor = Colors.blueGrey[600];
 
-final Color headerBarColor = Colors.blueGrey[400];
+final Color? headerBarColor = Colors.blueGrey[400];
 
-final Color categoryIconColor = Colors.orangeAccent[400];
+final Color? categoryIconColor = Colors.orangeAccent[400];
 final Color highlightColor = Colors.orangeAccent;
-final Color greenColor = Colors.greenAccent[700];
-final Color successGreenSnackBar = Colors.greenAccent[700];
-final Color unselectedColor = Colors.blueGrey[700];
-final Color disabledColor = Colors.grey[400];
-final Color btnDisabledolor = Colors.blueGrey[200];
+final Color? greenColor = Colors.greenAccent[700];
+final Color? successGreenSnackBar = Colors.greenAccent[700];
+final Color? unselectedColor = Colors.blueGrey[700];
+final Color? disabledColor = Colors.grey[400];
+final Color? btnDisabledolor = Colors.blueGrey[200];
 
-final Color highlightText = Colors.blueGrey[800];
+final Color? highlightText = Colors.blueGrey[800];
 final highlightSubTextStyle = TextStyle(
     color: Colors.black87,
     fontFamily: 'AkkuratPro',
@@ -339,46 +339,46 @@ final BoxDecoration whiteContainer = new BoxDecoration(
     color: Colors.grey[100],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
-final Color containerColor = Colors.blueGrey[500];
+final Color? containerColor = Colors.blueGrey[500];
 final BoxDecoration soildLightContainer = new BoxDecoration(
-    border: Border.all(color: Colors.teal[200]),
+    border: Border.all(color: Colors.teal[200]!),
     shape: BoxShape.rectangle,
     color: Colors.teal[200],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 final BoxDecoration lightCyanContainer = new BoxDecoration(
-    border: Border.all(color: Colors.cyan[50]),
+    border: Border.all(color: Colors.cyan[50]!),
     shape: BoxShape.rectangle,
     color: Colors.cyan[100],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 final BoxDecoration midCyanContainer = new BoxDecoration(
-    border: Border.all(color: Colors.cyan[200]),
+    border: Border.all(color: Colors.cyan[200]!),
     shape: BoxShape.rectangle,
     color: Colors.cyan[400],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 final BoxDecoration lightAmberContainer = new BoxDecoration(
-    border: Border.all(color: Colors.amber[200]),
+    border: Border.all(color: Colors.amber[200]!),
     shape: BoxShape.rectangle,
     color: Colors.amber[200],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 final BoxDecoration btnColorContainer = new BoxDecoration(
-    border: Border.all(color: btnColor),
+    border: Border.all(color: btnColor!),
     shape: BoxShape.rectangle,
     color: btnColor,
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 
 final BoxDecoration rectLightContainer = new BoxDecoration(
-  border: Border.all(color: btnColor),
+  border: Border.all(color: btnColor!),
   shape: BoxShape.rectangle,
   color: btnColor,
 );
 final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
-      colors: [Colors.blueGrey[800], Colors.blueGrey[800]],
+      colors: [Colors.blueGrey[800]!, Colors.blueGrey[800]!],
       begin: const FractionalOffset(0.0, 0.0),
       end: const FractionalOffset(1.0, 0.0),
       stops: [0.0, 1.0],
@@ -387,7 +387,7 @@ final gradientBackground = new BoxDecoration(
 
 final buttonBackground = new BoxDecoration(
     gradient: new LinearGradient(
-        colors: [Colors.cyan[400], Colors.cyan[700]],
+        colors: [Colors.cyan[400]!, Colors.cyan[700]!],
         begin: const FractionalOffset(0.0, 0.0),
         end: const FractionalOffset(1.0, 0.0),
         stops: [0.0, 1.0],
@@ -412,8 +412,8 @@ final verticalBackground = new BoxDecoration(
 
 class CommonStyle {
   static InputDecoration textFieldStyle(
-      {String labelTextStr = "",
-      String hintTextStr = "",
+      {String? labelTextStr = "",
+      String? hintTextStr = "",
       String prefixText = ""}) {
     return InputDecoration(
       //contentPadding: EdgeInsets.all(12),

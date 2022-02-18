@@ -40,9 +40,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 //import 'path';
 
 class UserHomePage extends StatefulWidget {
-  final bool dontShowUpdate;
+  final bool? dontShowUpdate;
   UserHomePage({
-    Key key,
+    Key? key,
     this.dontShowUpdate,
   }) : super(key: key);
   @override
@@ -51,11 +51,11 @@ class UserHomePage extends StatefulWidget {
 
 class _UserHomePageState extends State<UserHomePage>
     with TickerProviderStateMixin {
-  int i;
-  List<UserToken> _pastBookingsList;
-  List<UserToken> _newBookingsList;
-  String _upcomingBkgStatus;
-  String _pastBkgStatus;
+  int? i;
+  List<UserToken>? _pastBookingsList;
+  List<UserToken?>? _newBookingsList;
+  String? _upcomingBkgStatus;
+  String? _pastBkgStatus;
   // UserAppData _userProfile;
   DateTime now = DateTime.now();
   final dtFormat = new DateFormat(dateDisplayFormat);
@@ -63,15 +63,15 @@ class _UserHomePageState extends State<UserHomePage>
   bool isPastSet = false;
 //Qr code scan result
   //ScanResult scanResult;
-  GlobalState _gs;
+  GlobalState? _gs;
   bool _initCompleted = false;
-  String forceUpdateMsg;
-  String versionUpdateMsg;
-  List<String> versionFactors;
-  String upiId;
-  String upiQrImgPath;
-  String msg;
-  bool isDonationEnabled = false;
+  String? forceUpdateMsg;
+  String? versionUpdateMsg;
+  List<String>? versionFactors;
+  String? upiId;
+  String? upiQrImgPath;
+  String? msg;
+  bool? isDonationEnabled = false;
   bool isForceUpdateRequired = false;
 
   int _currentIndex = 0;
@@ -84,18 +84,18 @@ class _UserHomePageState extends State<UserHomePage>
     Item6(),
     //  Item7()
   ];
-  List<T> map<T>(List list, Function handler) {
-    List<T> result = [];
+  List<T?> map<T>(List list, Function handler) {
+    List<T?> result = [];
     for (var i = 0; i < list.length; i++) {
       result.add(handler(i, list[i]));
     }
     return result;
   }
 
-  AnimationController _animationController;
-  Animation animation;
-  String loadUpcomingTokensMsg;
-  bool dontShowUpdate;
+  late AnimationController _animationController;
+  late Animation animation;
+  String? loadUpcomingTokensMsg;
+  bool? dontShowUpdate;
   bool noUpcomingTokens = false;
   GlobalKey<ScaffoldState> _drawerKey = new GlobalKey<ScaffoldState>();
   @override
@@ -108,22 +108,22 @@ class _UserHomePageState extends State<UserHomePage>
     dontShowUpdate = widget.dontShowUpdate;
     getGlobalState().whenComplete(() {
 //Start Code for UPI pay -donation
-      upiId = _gs.getConfigurations().upi;
+      upiId = _gs!.getConfigurations()!.upi;
       upiQrImgPath = "assets/bigpiq_gpay.jpg";
       upiId = upiId;
 //End Code for UPI pay -donation
 //Start Code for version update dialog
       if (dontShowUpdate != null) {
-        if (_gs.isEligibleForUpdate()) {
-          if (_gs.getConfigurations().isForceUpdateRequired()) {
+        if (_gs!.isEligibleForUpdate()) {
+          if (_gs!.getConfigurations()!.isForceUpdateRequired()!) {
             isForceUpdateRequired = true;
-            forceUpdateMsg = _gs.getConfigurations().getForceUpdateMessage();
+            forceUpdateMsg = _gs!.getConfigurations()!.getForceUpdateMessage();
           } else {
             versionUpdateMsg =
-                _gs.getConfigurations().getVersionUpdateMessage();
+                _gs!.getConfigurations()!.getVersionUpdateMessage();
           }
-          versionFactors = _gs.getConfigurations().getVersionUpdateFactors();
-          msg = (_gs.getConfigurations().isForceUpdateRequired())
+          versionFactors = _gs!.getConfigurations()!.getVersionUpdateFactors();
+          msg = _gs!.getConfigurations()!.isForceUpdateRequired()!
               ? forceUpdateMsg
               : (versionUpdateMsg);
         }
@@ -133,7 +133,7 @@ class _UserHomePageState extends State<UserHomePage>
 //
 //_state.getConfigurations().isDonationEnabled()
 //
-      isDonationEnabled = _gs.getConfigurations().isDonationEnabled();
+      isDonationEnabled = _gs!.getConfigurations()!.isDonationEnabled();
       _loadInitialUpcomingBookings().then((value) {
         if (this.mounted) {
           setState(() {
@@ -147,12 +147,12 @@ class _UserHomePageState extends State<UserHomePage>
 
   Future<void> _loadInitialUpcomingBookings() async {
     _upcomingBkgStatus = 'Loading..';
-    _newBookingsList = await _gs.getUpcomingBookings(1, 3);
+    _newBookingsList = await _gs!.getUpcomingBookings(1, 3);
 
     if (_newBookingsList != null) {
-      if (_newBookingsList.length != 0) {
+      if (_newBookingsList!.length != 0) {
         _upcomingBkgStatus = 'Success';
-        if (_newBookingsList.length < 3) {
+        if (_newBookingsList!.length < 3) {
           noUpcomingTokens = true;
         }
       } else {
@@ -177,15 +177,15 @@ class _UserHomePageState extends State<UserHomePage>
     _upcomingBkgStatus = 'Loading';
     // _pastBkgStatus = 'Loading';
     //  showLoadingAppls = true;
-    _gs.getUpcomingBookings(_newBookingsList.length + 1, 5).then((value) {
+    _gs!.getUpcomingBookings(_newBookingsList!.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
         loadUpcomingTokensMsg = 'That\'s all!';
 
         noUpcomingTokens = true;
       } else {
-        _newBookingsList.addAll(value);
+        _newBookingsList!.addAll(value);
         _upcomingBkgStatus = 'Success';
-        if (_newBookingsList.length < 5) {
+        if (_newBookingsList!.length < 5) {
           noUpcomingTokens = true;
           loadUpcomingTokensMsg = 'That\'s all!';
         }
@@ -195,7 +195,7 @@ class _UserHomePageState extends State<UserHomePage>
         _upcomingBkgStatus = 'Success';
         // _pastBkgStatus = 'Success';
       });
-    }).onError((error, stackTrace) {
+    }).onError((dynamic error, stackTrace) {
       setState(() {
         loadUpcomingTokensMsg =
             'Couldn\'t load more Tokens, Please try again later.';
@@ -232,12 +232,12 @@ class _UserHomePageState extends State<UserHomePage>
     // String packageName = info.packageName;
 
     launchPlayStore(
-        packageName: _gs.getConfigurations().packageName,
-        iOSAppId: _gs.getConfigurations().iOSAppId,
+        packageName: _gs!.getConfigurations()!.packageName,
+        iOSAppId: _gs!.getConfigurations()!.iOSAppId,
         forReview: false);
   }
 
-  DateTime currentBackPressTime;
+  DateTime? currentBackPressTime;
   @override
   Widget build(BuildContext context) {
     if (_initCompleted) {
@@ -265,7 +265,7 @@ class _UserHomePageState extends State<UserHomePage>
                     children: [
                       Text(
                         //"There is an important update and includes very critical features. App may not function properly if not updated now.",
-                        msg,
+                        msg!,
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -283,12 +283,12 @@ class _UserHomePageState extends State<UserHomePage>
                             return Container(
                               margin: EdgeInsets.only(bottom: 5),
                               child: Text(
-                                "*  " + versionFactors[index],
+                                "*  " + versionFactors![index],
                                 style: TextStyle(height: 1.5, fontSize: 14),
                               ),
                             );
                           },
-                          itemCount: versionFactors.length,
+                          itemCount: versionFactors!.length,
                         ),
                     ],
                   ),
@@ -303,7 +303,7 @@ class _UserHomePageState extends State<UserHomePage>
                             elevation: 0,
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.green[600]),
+                                side: BorderSide(color: Colors.green[600]!),
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(5.0))),
                             onPressed: () {
@@ -337,7 +337,7 @@ class _UserHomePageState extends State<UserHomePage>
                           elevation: 20,
                           color: Colors.green[600],
                           shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.green[600]),
+                              side: BorderSide(color: Colors.green[600]!),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5.0))),
                           onPressed: () {
@@ -444,7 +444,7 @@ class _UserHomePageState extends State<UserHomePage>
                                                 : Colors.grey,
                                           ),
                                         );
-                                      }),
+                                      }) as List<Widget>,
                                     ),
                                   ],
                                 )
@@ -478,7 +478,7 @@ class _UserHomePageState extends State<UserHomePage>
                     //   ),
                     // )),
                     // verticalSpacer,
-                    if (isDonationEnabled)
+                    if (isDonationEnabled!)
                       Container(
                         width: MediaQuery.of(context).size.width,
                         margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -546,14 +546,14 @@ class _UserHomePageState extends State<UserHomePage>
                                       (BuildContext context, int index) {
                                     return Container(
                                         child: _buildItem(
-                                            _newBookingsList[index],
+                                            _newBookingsList![index]!,
                                             _newBookingsList,
                                             index)
 
                                         //children: <Widget>[firstRow, secondRow],
                                         );
                                   },
-                                  itemCount: _newBookingsList.length,
+                                  itemCount: _newBookingsList!.length,
                                 ),
                               ),
                             Row(
@@ -568,7 +568,7 @@ class _UserHomePageState extends State<UserHomePage>
                                           margin: EdgeInsets.only(
                                               top: 10, bottom: 15),
                                           child: AutoSizeText(
-                                            loadUpcomingTokensMsg,
+                                            loadUpcomingTokensMsg!,
                                             minFontSize: 11,
                                             maxFontSize: 17,
                                             style: TextStyle(
@@ -588,7 +588,7 @@ class _UserHomePageState extends State<UserHomePage>
                                       elevation: 8,
                                       shape: RoundedRectangleBorder(
                                           side: BorderSide(
-                                              color: Colors.blueGrey[700]),
+                                              color: Colors.blueGrey[700]!),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(5.0))),
                                       child: Column(
@@ -700,8 +700,8 @@ class _UserHomePageState extends State<UserHomePage>
                 FloatingActionButtonLocation.centerDocked,
             drawer: CustomDrawer(
                 key: _drawerKey,
-                phone: _gs.getCurrentUser() != null
-                    ? _gs.getCurrentUser().ph
+                phone: _gs!.getCurrentUser() != null
+                    ? _gs!.getCurrentUser()!.ph
                     : ""),
             bottomNavigationBar: CustomBottomBar(
               barIndex: 0,
@@ -825,7 +825,7 @@ class _UserHomePageState extends State<UserHomePage>
     ]));
   }
 
-  Widget _buildItem(UserToken token, List<UserToken> list, int index) {
+  Widget _buildItem(UserToken token, List<UserToken?>? list, int index) {
     // String address = Utils.getFormattedAddress(booking.address);
     double ticketwidth = MediaQuery.of(context).size.width * .95;
     double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.7;
@@ -890,9 +890,9 @@ class _UserHomePageState extends State<UserHomePage>
                               0,
                               0),
                           child: Text(
-                            token.parent.entityName +
-                                (token.parent.address != null
-                                    ? (', ' + token.parent.address)
+                            token.parent!.entityName! +
+                                (token.parent!.address != null
+                                    ? (', ' + token.parent!.address!)
                                     : ''),
                             overflow: TextOverflow.ellipsis,
                             style: tokenDataTextStyle,
@@ -921,15 +921,15 @@ class _UserHomePageState extends State<UserHomePage>
                                       size: 20,
                                     ),
                                     onPressed: () {
-                                      if (token.parent.phone != null) {
+                                      if (token.parent!.phone != null) {
                                         try {
-                                          callPhone(token.parent.phone);
+                                          callPhone(token.parent!.phone);
                                         } catch (error) {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.error,
                                               Duration(seconds: 5),
-                                              "Could not connect call to the number ${token.parent.phone} !!",
+                                              "Could not connect call to the number ${token.parent!.phone} !!",
                                               "Try again later.");
                                         }
                                       } else {
@@ -957,7 +957,7 @@ class _UserHomePageState extends State<UserHomePage>
                                   ),
                                   onPressed: () {
                                     //If booking is past booking then no sense of cancelling , show msg to user
-                                    if (token.parent.dateTime
+                                    if (token.parent!.dateTime!
                                         .isBefore(DateTime.now()))
                                       Utils.showMyFlushbar(
                                           context,
@@ -989,10 +989,10 @@ class _UserHomePageState extends State<UserHomePage>
                                     onPressed: () {
                                       try {
                                         launchURL(
-                                            token.parent.entityName,
-                                            token.parent.address,
-                                            token.parent.lat,
-                                            token.parent.lon);
+                                            token.parent!.entityName,
+                                            token.parent!.address,
+                                            token.parent!.lat!,
+                                            token.parent!.lon!);
                                       } catch (error) {
                                         Utils.showMyFlushbar(
                                             context,
@@ -1016,8 +1016,8 @@ class _UserHomePageState extends State<UserHomePage>
                                     color: tokenIconColor,
                                   ),
                                   onPressed: () {
-                                    String phoneNo =
-                                        token.parent.entityWhatsApp;
+                                    String? phoneNo =
+                                        token.parent!.entityWhatsApp;
                                     if (phoneNo != null && phoneNo != "") {
                                       try {
                                         launchWhatsApp(
@@ -1073,18 +1073,18 @@ class _UserHomePageState extends State<UserHomePage>
                                     AssetImage('assets/rupee_icon.png'),
                                     size: 16,
                                     color: (Utils.isNotNullOrEmpty(
-                                            token.parent.upiId)
+                                            token.parent!.upiId)
                                         ? tokenIconColor
                                         : Colors.blueGrey[400]),
                                   ),
                                   onPressed: () {
                                     if (Utils.isNotNullOrEmpty(
-                                        token.parent.upiId)) {
+                                        token.parent!.upiId)) {
                                       Navigator.of(context).push(
                                           new MaterialPageRoute(
                                               builder: (BuildContext context) =>
                                                   UPIPaymentPage(
-                                                    upiId: token.parent.upiId,
+                                                    upiId: token.parent!.upiId,
                                                     upiQrCodeImgPath: null,
                                                     backRoute: UserHomePage(),
                                                     isDonation: false,
@@ -1109,8 +1109,8 @@ class _UserHomePageState extends State<UserHomePage>
                         if (Utils.isNotNullOrEmpty(token.applicationId))
                           GestureDetector(
                             onTap: () {
-                              _gs
-                                  .getApplicationService()
+                              _gs!
+                                  .getApplicationService()!
                                   .getApplication(token.applicationId)
                                   .then((bookingApplication) {
                                 if (bookingApplication != null) {
@@ -1161,14 +1161,14 @@ class _UserHomePageState extends State<UserHomePage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    if (token.parent.isOnlineAppointment)
+                    if (token.parent!.isOnlineAppointment!)
                       FadeTransition(
-                        opacity: animation,
+                        opacity: animation as Animation<double>,
                         child: GestureDetector(
                           onTap: () {
-                            if (token.parent.dateTime != null) {
+                            if (token.parent!.dateTime != null) {
                               Duration timeDiff = DateTime.now()
-                                  .difference(token.parent.dateTime);
+                                  .difference(token.parent!.dateTime!);
                               if (timeDiff.inMinutes <= -1) {
                                 print("Diff more");
                                 Utils.showMyFlushbar(
@@ -1177,7 +1177,7 @@ class _UserHomePageState extends State<UserHomePage>
                                     Duration(seconds: 5),
                                     yourTurnUserMessage1,
                                     yourTurnUserMessage2);
-                              } else if (token.parent.dateTime
+                              } else if (token.parent!.dateTime!
                                   .isBefore(DateTime.now())) {
                                 Utils.showMyFlushbar(
                                     context,
@@ -1186,7 +1186,7 @@ class _UserHomePageState extends State<UserHomePage>
                                     "Could not start WhatsApp call as this Booking has expired.",
                                     "Please contact Owner/Manager of this Place");
                               } else {
-                                String phoneNo = token.parent.entityWhatsApp;
+                                String? phoneNo = token.parent!.entityWhatsApp;
                                 if (phoneNo != null && phoneNo != "") {
                                   try {
                                     launchWhatsApp(
@@ -1233,7 +1233,7 @@ class _UserHomePageState extends State<UserHomePage>
                           ),
                         ),
                       ),
-                    if (!token.parent.isOnlineAppointment)
+                    if (!token.parent!.isOnlineAppointment!)
                       Container(
                         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                         margin: EdgeInsets.all(0),
@@ -1253,19 +1253,19 @@ class _UserHomePageState extends State<UserHomePage>
                               print(token.applicationId);
 
                               print('Unique identifier for TOKEN -  ' +
-                                  token.parent.slotId +
+                                  token.parent!.slotId! +
                                   '%3A' +
-                                  token.parent.userId);
+                                  token.parent!.userId!);
 
                               String id =
-                                  token.parent.slotId.replaceAll('#', ':') +
+                                  token.parent!.slotId!.replaceAll('#', ':') +
                                       ':' +
-                                      token.parent.userId;
+                                      token.parent!.userId!;
 
                               Navigator.of(context).push(new MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                       GenerateQrUserApplication(
-                                        entityName: token.parent.entityName,
+                                        entityName: token.parent!.entityName,
                                         backRoute: "UserHome",
                                         baId: null,
                                         uniqueTokenIdentifier: id,
@@ -1276,7 +1276,7 @@ class _UserHomePageState extends State<UserHomePage>
                       height: 5,
                     ),
                     AutoSizeText(
-                      dtFormat.format(token.parent.dateTime),
+                      dtFormat.format(token.parent!.dateTime!),
                       minFontSize: 10,
                       maxFontSize: 12,
                       maxLines: 1,
@@ -1294,10 +1294,10 @@ class _UserHomePageState extends State<UserHomePage>
                         // Text('Time: ', style: tokenHeadingTextStyle),
                         Text(
                           Utils.formatTime(
-                                  token.parent.dateTime.hour.toString()) +
+                                  token.parent!.dateTime!.hour.toString()) +
                               ':' +
                               Utils.formatTime(
-                                  token.parent.dateTime.minute.toString()),
+                                  token.parent!.dateTime!.minute.toString()),
                           style: tokenDateTextStyle,
                         ),
                       ],
@@ -1349,7 +1349,7 @@ class _UserHomePageState extends State<UserHomePage>
     }
   }
 
-  void showCancelBooking(UserToken booking, List<UserToken> list, int index) {
+  void showCancelBooking(UserToken booking, List<UserToken?>? list, int index) {
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -1397,8 +1397,8 @@ class _UserHomePageState extends State<UserHomePage>
                       print("Cancel booking");
                       Navigator.of(_).pop();
                       if (Utils.isNotNullOrEmpty(booking.applicationId)) {
-                        _gs
-                            .getApplicationService()
+                        _gs!
+                            .getApplicationService()!
                             .getApplication(booking.applicationId)
                             .then((bookingApplication) {
                           if (bookingApplication != null) {
@@ -1431,7 +1431,7 @@ class _UserHomePageState extends State<UserHomePage>
                             "Cancelling Token ${booking.getDisplayName()}",
                             "Please wait..");
 
-                        _gs.cancelBooking(booking.parent.getTokenId())
+                        _gs!.cancelBooking(booking.parent!.getTokenId())
                             // .getTokenService()
                             // .cancelToken(
                             //     booking.parent.getTokenId(), booking.number)
@@ -1448,7 +1448,7 @@ class _UserHomePageState extends State<UserHomePage>
                           } else {
                             setState(() {
                               //TODO Smita - return value UserToken should be assigned.
-                              list[index] = value.item1;
+                              list![index] = value.item1;
                             });
                           }
                         }).catchError((e) {

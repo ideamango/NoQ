@@ -34,32 +34,32 @@ class Configurations {
       this.iOSAppId,
       this.packageName});
 
-  List<String> entityTypes;
-  List<String> messages;
-  String keyMessage;
-  String contactEmail;
-  String contactPhone;
-  String whatsappPhone;
-  List<String> supportReasons;
-  String phCountryCode;
-  int searchRadius;
-  int bookingDataFromDays;
-  int bookingDataToDays;
-  Map<String, dynamic> donation;
+  List<String>? entityTypes;
+  List<String>? messages;
+  String? keyMessage;
+  String? contactEmail;
+  String? contactPhone;
+  String? whatsappPhone;
+  List<String>? supportReasons;
+  String? phCountryCode;
+  int? searchRadius;
+  int? bookingDataFromDays;
+  int? bookingDataToDays;
+  Map<String, dynamic>? donation;
 
-  Map<String, String> formToEntityTypeMapping;
-  List<MetaForm> formMetaData;
-  Map<String, dynamic> latestVersion;
-  Map<String, List<String>> typeToChildType;
-  Map<String, List<String>> androidAppVersionToEntityTypes;
-  Map<String, List<String>> iosAppVersionToEntityTypes;
-  String upi;
-  String ipURL;
-  String ipstackURL;
-  String userBookingVideoLink;
-  String businessRegisterVideoLink;
-  String iOSAppId;
-  String packageName;
+  Map<String, String>? formToEntityTypeMapping;
+  List<MetaForm>? formMetaData;
+  Map<String, dynamic>? latestVersion;
+  Map<String, List<String>>? typeToChildType;
+  Map<String, List<String>>? androidAppVersionToEntityTypes;
+  Map<String, List<String>>? iosAppVersionToEntityTypes;
+  String? upi;
+  String? ipURL;
+  String? ipstackURL;
+  String? userBookingVideoLink;
+  String? businessRegisterVideoLink;
+  String? iOSAppId;
+  String? packageName;
 
   Map<String, dynamic> toJson() => {
         'entityTypes': entityTypes,
@@ -73,10 +73,10 @@ class Configurations {
         'searchRadius': searchRadius,
         'bookingDataFromDays': bookingDataFromDays,
         'bookingDataToDays': bookingDataToDays,
-        'donation': convertFromMap(donation),
+        'donation': convertFromMap(donation as Map<String, String>?),
         'formToEntityTypeMapping': convertFromMap(formToEntityTypeMapping),
         'formMetaData': metaFormsToJson(formMetaData),
-        'latestVersion': convertFromMap(latestVersion),
+        'latestVersion': convertFromMap(latestVersion as Map<String, String>?),
         'typeToChildType': convertFromMapOfList(typeToChildType),
         'androidAppVersionToEntityTypes':
             convertFromMapOfList(androidAppVersionToEntityTypes),
@@ -91,7 +91,7 @@ class Configurations {
         'packageName': packageName
       };
 
-  Map<String, dynamic> convertFromMap(Map<String, String> dailyStats) {
+  Map<String, dynamic>? convertFromMap(Map<String, String>? dailyStats) {
     if (dailyStats == null) {
       return null;
     }
@@ -101,8 +101,8 @@ class Configurations {
     return map;
   }
 
-  Map<String, dynamic> convertFromMapOfList(
-      Map<String, List<String>> dailyStats) {
+  Map<String, dynamic>? convertFromMapOfList(
+      Map<String, List<String>>? dailyStats) {
     if (dailyStats == null) {
       return null;
     }
@@ -112,7 +112,7 @@ class Configurations {
     return map;
   }
 
-  List<dynamic> metaFormsToJson(List<MetaForm> metaForms) {
+  List<dynamic> metaFormsToJson(List<MetaForm>? metaForms) {
     List<dynamic> metaFormsJson = [];
     if (metaForms == null) return metaFormsJson;
     for (MetaForm metaForm in metaForms) {
@@ -121,7 +121,7 @@ class Configurations {
     return metaFormsJson;
   }
 
-  static Map<String, String> convertToMapFromJSON(Map<dynamic, dynamic> map) {
+  static Map<String, String> convertToMapFromJSON(Map<dynamic, dynamic>? map) {
     Map<String, String> roles = new Map<String, String>();
     if (map != null) {
       map.forEach((k, v) => roles[k] = v);
@@ -130,7 +130,7 @@ class Configurations {
   }
 
   static Map<String, dynamic> convertToMapOfDynamicFromJSON(
-      Map<dynamic, dynamic> map) {
+      Map<dynamic, dynamic>? map) {
     Map<String, dynamic> roles = new Map<String, dynamic>();
     if (map != null) {
       map.forEach((k, v) => roles[k] = v);
@@ -138,7 +138,7 @@ class Configurations {
     return roles;
   }
 
-  static Configurations fromJson(Map<String, dynamic> json) {
+  static Configurations? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return new Configurations(
         entityTypes: convertToStringsArrayFromJson(json['entityTypes']),
@@ -171,19 +171,19 @@ class Configurations {
         packageName: json['packageName']);
   }
 
-  static List<MetaForm> convertToFormMetaData(List<dynamic> json) {
+  static List<MetaForm> convertToFormMetaData(List<dynamic>? json) {
     List<MetaForm> metaForms = [];
     if (json == null) return metaForms;
 
-    for (Map<String, dynamic> metaFormJson in json) {
+    for (Map<String, dynamic> metaFormJson in json as Iterable<Map<String, dynamic>>) {
       MetaForm sl = MetaForm.fromJson(metaFormJson);
       metaForms.add(sl);
     }
     return metaForms;
   }
 
-  static Map<String, List<String>> convertToMapOfList(
-      Map<String, dynamic> json) {
+  static Map<String, List<String>>? convertToMapOfList(
+      Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -196,11 +196,11 @@ class Configurations {
     return map;
   }
 
-  static List<String> convertToStringsArrayFromJson(List<dynamic> json) {
+  static List<String> convertToStringsArrayFromJson(List<dynamic>? json) {
     List<String> strs = [];
     if (Utils.isNullOrEmpty(json)) return strs;
 
-    for (String str in json) {
+    for (String str in json as Iterable<String>) {
       strs.add(str);
     }
     return strs;
@@ -212,9 +212,9 @@ class Configurations {
       return forms;
     }
 
-    this.formToEntityTypeMapping.forEach((k, v) {
+    this.formToEntityTypeMapping!.forEach((k, v) {
       if (v == EnumToString.convertToString(eType)) {
-        for (MetaForm form in this.formMetaData) {
+        for (MetaForm form in this.formMetaData!) {
           if (form.id == k) {
             forms.add(form);
             break;
@@ -226,50 +226,50 @@ class Configurations {
     return forms;
   }
 
-  String getForceUpdateMessage() {
+  String? getForceUpdateMessage() {
     if (Platform.isAndroid) {
-      if (latestVersion.containsKey("androidForceUpdateMessage")) {
-        return latestVersion["androidForceUpdateMessage"];
+      if (latestVersion!.containsKey("androidForceUpdateMessage")) {
+        return latestVersion!["androidForceUpdateMessage"];
       }
     }
 
     if (Platform.isIOS) {
-      if (latestVersion.containsKey("iosForceUpdateMessage")) {
-        return latestVersion["iosForceUpdateMessage"];
+      if (latestVersion!.containsKey("iosForceUpdateMessage")) {
+        return latestVersion!["iosForceUpdateMessage"];
       }
     }
 
     return null;
   }
 
-  bool isForceUpdateRequired() {
+  bool? isForceUpdateRequired() {
     if (Platform.isAndroid) {
-      if (latestVersion.containsKey("androidForceUpdate")) {
-        return latestVersion["androidForceUpdate"];
+      if (latestVersion!.containsKey("androidForceUpdate")) {
+        return latestVersion!["androidForceUpdate"];
       }
     }
 
     if (Platform.isIOS) {
-      if (latestVersion.containsKey("iosForceUpdate")) {
-        return latestVersion["iosForceUpdate"];
+      if (latestVersion!.containsKey("iosForceUpdate")) {
+        return latestVersion!["iosForceUpdate"];
       }
     }
 
     return false;
   }
 
-  String getVersionUpdateMessage() {
+  String? getVersionUpdateMessage() {
     if (Platform.isAndroid) {
-      if (latestVersion.containsKey("androidMessage")) {
-        return latestVersion["androidMessage"];
+      if (latestVersion!.containsKey("androidMessage")) {
+        return latestVersion!["androidMessage"];
       } else {
         return null;
       }
     }
 
     if (Platform.isIOS) {
-      if (latestVersion.containsKey("iosMessage")) {
-        return latestVersion["iosMessage"];
+      if (latestVersion!.containsKey("iosMessage")) {
+        return latestVersion!["iosMessage"];
       } else {
         return null;
       }
@@ -278,11 +278,11 @@ class Configurations {
     return null;
   }
 
-  List<String> getVersionUpdateFactors() {
+  List<String>? getVersionUpdateFactors() {
     List<String> listOfReasons = [];
     if (Platform.isAndroid) {
-      if (latestVersion.containsKey("androidUpdateFactors")) {
-        for (String reason in latestVersion["androidUpdateFactors"]) {
+      if (latestVersion!.containsKey("androidUpdateFactors")) {
+        for (String reason in latestVersion!["androidUpdateFactors"]) {
           listOfReasons.add(reason);
         }
         return listOfReasons;
@@ -292,8 +292,8 @@ class Configurations {
     }
 
     if (Platform.isIOS) {
-      if (latestVersion.containsKey("iosUpdateFactors")) {
-        for (String reason in latestVersion["iosUpdateFactors"]) {
+      if (latestVersion!.containsKey("iosUpdateFactors")) {
+        for (String reason in latestVersion!["iosUpdateFactors"]) {
           listOfReasons.add(reason);
         }
         return listOfReasons;
@@ -305,11 +305,11 @@ class Configurations {
     return null;
   }
 
-  Version getLatestPublishedVersion() {
+  Version? getLatestPublishedVersion() {
     if (Platform.isAndroid) {
-      if (latestVersion.containsKey("androidVersion")) {
+      if (latestVersion!.containsKey("androidVersion")) {
         try {
-          return Version.parse(latestVersion["androidVersion"]);
+          return Version.parse(latestVersion!["androidVersion"]);
         } catch (e) {
           return null;
         }
@@ -319,9 +319,9 @@ class Configurations {
     }
 
     if (Platform.isIOS) {
-      if (latestVersion.containsKey("iosVersion")) {
+      if (latestVersion!.containsKey("iosVersion")) {
         try {
-          return Version.parse(latestVersion["iosVersion"]);
+          return Version.parse(latestVersion!["iosVersion"]);
         } catch (e) {
           return null;
         }
@@ -333,32 +333,32 @@ class Configurations {
     return null;
   }
 
-  bool isDonationEnabled() {
-    if (donation != null && donation.containsKey("isEnabled")) {
-      return donation["isEnabled"];
+  bool? isDonationEnabled() {
+    if (donation != null && donation!.containsKey("isEnabled")) {
+      return donation!["isEnabled"];
     }
     return false;
   }
 
-  String getDonationMessage() {
-    if (donation != null && donation.containsKey("message")) {
-      return donation["message"];
+  String? getDonationMessage() {
+    if (donation != null && donation!.containsKey("message")) {
+      return donation!["message"];
     }
     return null;
   }
 
-  String getDonationImageURL() {
-    if (donation != null && donation.containsKey("imageURL")) {
-      return donation["imageURL"];
+  String? getDonationImageURL() {
+    if (donation != null && donation!.containsKey("imageURL")) {
+      return donation!["imageURL"];
     }
     return null;
   }
 
-  int getBuildNumber() {
+  int? getBuildNumber() {
     if (Platform.isAndroid) {
-      if (latestVersion.containsKey("androidBuildNumber")) {
+      if (latestVersion!.containsKey("androidBuildNumber")) {
         try {
-          return int.parse(latestVersion["androidBuildNumber"]);
+          return int.parse(latestVersion!["androidBuildNumber"]);
         } catch (e) {
           return null;
         }
@@ -368,9 +368,9 @@ class Configurations {
     }
 
     if (Platform.isIOS) {
-      if (latestVersion.containsKey("iosBuildNumber")) {
+      if (latestVersion!.containsKey("iosBuildNumber")) {
         try {
-          return int.parse(latestVersion["iosBuildNumber"]);
+          return int.parse(latestVersion!["iosBuildNumber"]);
         } catch (e) {
           return null;
         }

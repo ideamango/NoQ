@@ -49,10 +49,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
 class ManageChildEntityDetailsPage extends StatefulWidget {
-  final MetaEntity childMetaEntity;
+  final MetaEntity? childMetaEntity;
   final bool isManager;
   ManageChildEntityDetailsPage(
-      {Key key, @required this.childMetaEntity, @required this.isManager})
+      {Key? key, required this.childMetaEntity, required this.isManager})
       : super(key: key);
   @override
   _ManageChildEntityDetailsPageState createState() =>
@@ -104,9 +104,9 @@ class _ManageChildEntityDetailsPageState
   bool _isVideoExpanded = false;
   bool isOnlineEnabled = false;
   bool isOfflineEnabled = false;
-  Widget _videoText;
+  Widget? _videoText;
   EdgeInsets _margin = EdgeInsets.fromLTRB(0, 0, 0, 0);
-  Widget _text;
+  Widget? _text;
   bool _isExpanded = false;
   bool _publicExpandClick = false;
   bool _activeExpandClick = false;
@@ -114,12 +114,12 @@ class _ManageChildEntityDetailsPageState
   EdgeInsets _bookMargin = EdgeInsets.all(0);
   double _bookWidth = 0;
   double _bookHeight = 0;
-  Widget _bookText;
+  Widget? _bookText;
 
-  String title = "Managers Form";
+  String? title = "Managers Form";
 
   String dateString = "Start Date";
-  Offer insertOffer = new Offer();
+  Offer? insertOffer = new Offer();
   bool offerFieldStatus = false;
   BorderRadiusGeometry _borderRadius = BorderRadius.circular(5);
   bool isActiveValidation = false;
@@ -169,7 +169,7 @@ class _ManageChildEntityDetailsPageState
 
   final GlobalKey<FormFieldState> adminItemKey =
       new GlobalKey<FormFieldState>();
-  String _item;
+  String? _item;
 
   //ContactPerson Fields
   TextEditingController _ctNameController = TextEditingController();
@@ -180,20 +180,20 @@ class _ManageChildEntityDetailsPageState
   TextEditingController _ctAvlTillTimeController = TextEditingController();
 
   List<days> _daysOff = List<days>();
-  Entity serviceEntity;
+  Entity? serviceEntity;
 
   //bool _autoPopulate = false;
 
-  String _currentCity;
-  String _postalCode;
-  String _country;
-  String _subArea;
-  String _state;
-  String _mainArea;
+  String? _currentCity;
+  String? _postalCode;
+  String? _country;
+  String? _subArea;
+  String? _state;
+  String? _mainArea;
 
-  String _role;
-  String _entityType;
-  String state;
+  String? _role;
+  String? _entityType;
+  String? state;
   bool isPublic = false;
   bool isActive = false;
   bool isBookable = false;
@@ -204,21 +204,21 @@ class _ManageChildEntityDetailsPageState
   List<Widget> contactRowWidgets = new List<Widget>();
   List<Widget> adminRowWidgets = new List<Widget>();
   int _contactCount = 0;
-  String _roleType;
+  String? _roleType;
 
-  Flushbar flush;
-  bool _wasButtonClicked;
+  Flushbar? flush;
+  bool? _wasButtonClicked;
   String flushStatus = "Empty";
   bool isAnythingChanged = false;
-  Position pos;
+  Position? pos;
   bool _initCompleted = false;
-  GlobalState _gs;
-  String _phCountryCode;
+  GlobalState? _gs;
+  String? _phCountryCode;
 
   final itemSize = 80.0;
 
-  Eventify.Listener removeManagerListener;
-  FocusNode whatsappFocus;
+  Eventify.Listener? removeManagerListener;
+  FocusNode? whatsappFocus;
 
   @override
   void initState() {
@@ -228,7 +228,7 @@ class _ManageChildEntityDetailsPageState
     getGlobalState().whenComplete(() {
       initializeEntity().whenComplete(() {
         whatsappFocus = new FocusNode();
-        title = Utils.getEntityTypeDisplayName(serviceEntity.type);
+        title = Utils.getEntityTypeDisplayName(serviceEntity!.type);
         setState(() {
           _initCompleted = true;
         });
@@ -245,23 +245,23 @@ class _ManageChildEntityDetailsPageState
 
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
-    _phCountryCode = _gs.getConfigurations().phCountryCode;
+    _phCountryCode = _gs!.getConfigurations()!.phCountryCode;
   }
 
   initializeEntity() async {
     // serviceEntity = await getEntity(_metaEntity.entityId);
 
     Tuple<Entity, bool> entityTuple =
-        await _gs.getEntity(widget.childMetaEntity.entityId);
+        await (_gs!.getEntity(widget.childMetaEntity!.entityId) as FutureOr<Tuple<Entity, bool>>);
     serviceEntity = entityTuple.item1;
 
     if (serviceEntity != null) {
-      isPublic = (serviceEntity.isPublic) ?? false;
-      isBookable = (serviceEntity.isBookable) ?? false;
-      isActive = (serviceEntity.isActive) ?? false;
+      isPublic = (serviceEntity!.isPublic) ?? false;
+      isBookable = (serviceEntity!.isBookable) ?? false;
+      isActive = (serviceEntity!.isActive) ?? false;
 
-      isOnlineEnabled = serviceEntity.allowOnlineAppointment ?? false;
-      isOfflineEnabled = serviceEntity.allowWalkinAppointment ?? false;
+      isOnlineEnabled = serviceEntity!.allowOnlineAppointment ?? false;
+      isOfflineEnabled = serviceEntity!.allowWalkinAppointment ?? false;
 
       if (isActive) {
         isActiveValidation = true;
@@ -270,78 +270,78 @@ class _ManageChildEntityDetailsPageState
         validateMandatoryFieldsForBookable();
       }
 
-      if (serviceEntity.offer != null) {
-        insertOffer = serviceEntity.offer;
-        _offerMessageController.text = serviceEntity.offer.message != null
-            ? serviceEntity.offer.message.toString()
+      if (serviceEntity!.offer != null) {
+        insertOffer = serviceEntity!.offer;
+        _offerMessageController.text = serviceEntity!.offer!.message != null
+            ? serviceEntity!.offer!.message.toString()
             : "";
-        _offerCouponController.text = serviceEntity.offer.coupon != null
-            ? serviceEntity.offer.coupon.toString()
+        _offerCouponController.text = serviceEntity!.offer!.coupon != null
+            ? serviceEntity!.offer!.coupon.toString()
             : "";
 
-        _startDateController.text = serviceEntity.offer.startDateTime != null
-            ? serviceEntity.offer.startDateTime.day.toString() +
+        _startDateController.text = serviceEntity!.offer!.startDateTime != null
+            ? serviceEntity!.offer!.startDateTime!.day.toString() +
                 " / " +
-                serviceEntity.offer.startDateTime.month.toString() +
+                serviceEntity!.offer!.startDateTime!.month.toString() +
                 " / " +
-                serviceEntity.offer.startDateTime.year.toString()
+                serviceEntity!.offer!.startDateTime!.year.toString()
             : "";
-        _endDateController.text = serviceEntity.offer.endDateTime != null
-            ? serviceEntity.offer.endDateTime.day.toString() +
+        _endDateController.text = serviceEntity!.offer!.endDateTime != null
+            ? serviceEntity!.offer!.endDateTime!.day.toString() +
                 " / " +
-                serviceEntity.offer.endDateTime.month.toString() +
+                serviceEntity!.offer!.endDateTime!.month.toString() +
                 " / " +
-                serviceEntity.offer.endDateTime.year.toString()
+                serviceEntity!.offer!.endDateTime!.year.toString()
             : "";
       }
 
-      _nameController.text = (serviceEntity.name);
-      _descController.text = (serviceEntity.description);
+      _nameController.text = serviceEntity!.name!;
+      _descController.text = serviceEntity!.description!;
 
-      if (serviceEntity.startTimeHour != null &&
-          serviceEntity.startTimeMinute != null)
+      if (serviceEntity!.startTimeHour != null &&
+          serviceEntity!.startTimeMinute != null)
         _openTimeController.text =
-            Utils.formatTime(serviceEntity.startTimeHour.toString()) +
+            Utils.formatTime(serviceEntity!.startTimeHour.toString()) +
                 ':' +
-                Utils.formatTime(serviceEntity.startTimeMinute.toString());
-      if (serviceEntity.endTimeHour != null &&
-          serviceEntity.endTimeMinute != null)
+                Utils.formatTime(serviceEntity!.startTimeMinute.toString());
+      if (serviceEntity!.endTimeHour != null &&
+          serviceEntity!.endTimeMinute != null)
         _closeTimeController.text =
-            Utils.formatTime(serviceEntity.endTimeHour.toString()) +
+            Utils.formatTime(serviceEntity!.endTimeHour.toString()) +
                 ':' +
-                Utils.formatTime(serviceEntity.endTimeMinute.toString());
-      if (serviceEntity.breakStartHour != null &&
-          serviceEntity.breakStartMinute != null)
+                Utils.formatTime(serviceEntity!.endTimeMinute.toString());
+      if (serviceEntity!.breakStartHour != null &&
+          serviceEntity!.breakStartMinute != null)
         _breakStartController.text =
-            Utils.formatTime(serviceEntity.breakStartHour.toString()) +
+            Utils.formatTime(serviceEntity!.breakStartHour.toString()) +
                 ':' +
-                Utils.formatTime(serviceEntity.breakStartMinute.toString());
-      if (serviceEntity.breakEndHour != null &&
-          serviceEntity.breakEndMinute != null)
+                Utils.formatTime(serviceEntity!.breakStartMinute.toString());
+      if (serviceEntity!.breakEndHour != null &&
+          serviceEntity!.breakEndMinute != null)
         _breakEndController.text =
-            Utils.formatTime(serviceEntity.breakEndHour.toString()) +
+            Utils.formatTime(serviceEntity!.breakEndHour.toString()) +
                 ':' +
-                Utils.formatTime(serviceEntity.breakEndMinute.toString());
+                Utils.formatTime(serviceEntity!.breakEndMinute.toString());
 
-      if (serviceEntity.closedOn != null) {
-        if (serviceEntity.closedOn.length != 0)
-          _daysOff = Utils.convertStringsToDays(serviceEntity.closedOn);
+      if (serviceEntity!.closedOn != null) {
+        if (serviceEntity!.closedOn!.length != 0)
+          _daysOff = Utils.convertStringsToDays(serviceEntity!.closedOn!);
       }
 
-      _slotDurationController.text = (serviceEntity.slotDuration != null)
-          ? serviceEntity.slotDuration.toString()
+      _slotDurationController.text = (serviceEntity!.slotDuration != null)
+          ? serviceEntity!.slotDuration.toString()
           : "";
-      _advBookingInDaysController.text = (serviceEntity.advanceDays != null)
-          ? serviceEntity.advanceDays.toString()
+      _advBookingInDaysController.text = (serviceEntity!.advanceDays != null)
+          ? serviceEntity!.advanceDays.toString()
           : "";
 //Max People
-      _maxPeopleController.text = (serviceEntity.maxAllowed != null)
-          ? serviceEntity.maxAllowed.toString()
+      _maxPeopleController.text = (serviceEntity!.maxAllowed != null)
+          ? serviceEntity!.maxAllowed.toString()
           : "";
 //Max bookings by User in a Day
       _maxBookingsInDayForUserController.text =
-          (serviceEntity.maxTokensByUserInDay != null)
-              ? serviceEntity.maxTokensByUserInDay.toString()
+          (serviceEntity!.maxTokensByUserInDay != null)
+              ? serviceEntity!.maxTokensByUserInDay.toString()
               : "";
 //Max Bookings in a slot by User
       // _maxBookingsInTimeSlotForUserController.text =
@@ -355,63 +355,63 @@ class _ManageChildEntityDetailsPageState
       //         : "";
 
       _whatsappPhoneController.text =
-          Utils.isNotNullOrEmpty(serviceEntity.whatsapp)
-              ? serviceEntity.whatsapp.toString().substring(3)
+          Utils.isNotNullOrEmpty(serviceEntity!.whatsapp)
+              ? serviceEntity!.whatsapp.toString().substring(3)
               : "";
-      _contactPhoneController.text = Utils.isNotNullOrEmpty(serviceEntity.phone)
-          ? serviceEntity.phone.toString().substring(3)
+      _contactPhoneController.text = Utils.isNotNullOrEmpty(serviceEntity!.phone)
+          ? serviceEntity!.phone.toString().substring(3)
           : "";
       _emailIdController.text =
-          Utils.isNotNullOrEmpty(serviceEntity.supportEmail)
-              ? serviceEntity.supportEmail
+          Utils.isNotNullOrEmpty(serviceEntity!.supportEmail)
+              ? serviceEntity!.supportEmail!
               : "";
-      _upiIdController.text = Utils.isNotNullOrEmpty(serviceEntity.upiId)
-          ? serviceEntity.upiId
+      _upiIdController.text = Utils.isNotNullOrEmpty(serviceEntity!.upiId)
+          ? serviceEntity!.upiId!
           : "";
 
-      if (serviceEntity.offer != null) {
+      if (serviceEntity!.offer != null) {
         _offerMessageController.text =
-            Utils.isNotNullOrEmpty(serviceEntity.offer.message)
-                ? serviceEntity.offer.message.toString()
+            Utils.isNotNullOrEmpty(serviceEntity!.offer!.message)
+                ? serviceEntity!.offer!.message.toString()
                 : "";
         _offerCouponController.text =
-            Utils.isNotNullOrEmpty(serviceEntity.offer.coupon)
-                ? serviceEntity.offer.coupon.toString()
+            Utils.isNotNullOrEmpty(serviceEntity!.offer!.coupon)
+                ? serviceEntity!.offer!.coupon.toString()
                 : "";
 
-        _startDateController.text = serviceEntity.offer.startDateTime != null
-            ? serviceEntity.offer.startDateTime.day.toString() +
+        _startDateController.text = serviceEntity!.offer!.startDateTime != null
+            ? serviceEntity!.offer!.startDateTime!.day.toString() +
                 " / " +
-                serviceEntity.offer.startDateTime.month.toString() +
+                serviceEntity!.offer!.startDateTime!.month.toString() +
                 " / " +
-                serviceEntity.offer.startDateTime.year.toString()
+                serviceEntity!.offer!.startDateTime!.year.toString()
             : "";
-        _endDateController.text = serviceEntity.offer.endDateTime != null
-            ? serviceEntity.offer.endDateTime.day.toString() +
+        _endDateController.text = serviceEntity!.offer!.endDateTime != null
+            ? serviceEntity!.offer!.endDateTime!.day.toString() +
                 " / " +
-                serviceEntity.offer.endDateTime.month.toString() +
+                serviceEntity!.offer!.endDateTime!.month.toString() +
                 " / " +
-                serviceEntity.offer.endDateTime.year.toString()
+                serviceEntity!.offer!.endDateTime!.year.toString()
             : "";
       }
 
-      if (serviceEntity.coordinates != null) {
+      if (serviceEntity!.coordinates != null) {
         _latController.text =
-            serviceEntity.coordinates.geopoint.latitude.toString();
+            serviceEntity!.coordinates!.geopoint!.latitude.toString();
         _lonController.text =
-            serviceEntity.coordinates.geopoint.longitude.toString();
+            serviceEntity!.coordinates!.geopoint!.longitude.toString();
       }
       //address
-      if (serviceEntity.address != null) {
-        _adrs1Controller.text = serviceEntity.address.address;
-        _localityController.text = serviceEntity.address.locality;
-        _landController.text = serviceEntity.address.landmark;
-        _cityController.text = serviceEntity.address.city;
-        _stateController.text = serviceEntity.address.state;
-        _countryController.text = serviceEntity.address.country;
-        _pinController.text = serviceEntity.address.zipcode;
+      if (serviceEntity!.address != null) {
+        _adrs1Controller.text = serviceEntity!.address!.address!;
+        _localityController.text = serviceEntity!.address!.locality!;
+        _landController.text = serviceEntity!.address!.landmark!;
+        _cityController.text = serviceEntity!.address!.city!;
+        _stateController.text = serviceEntity!.address!.state!;
+        _countryController.text = serviceEntity!.address!.country!;
+        _pinController.text = serviceEntity!.address!.zipcode!;
       }
-      Location lc = _gs.getLocation();
+      Location? lc = _gs!.getLocation();
       Address defaultAdrs = new Address();
       if (lc != null) {
         defaultAdrs.state = lc.state;
@@ -419,31 +419,31 @@ class _ManageChildEntityDetailsPageState
         defaultAdrs.city = lc.city;
         defaultAdrs.country = lc.country;
       }
-      serviceEntity.address = (serviceEntity.address) ?? defaultAdrs;
+      serviceEntity!.address = (serviceEntity!.address) ?? defaultAdrs;
 
-      _cityController.text = serviceEntity.address.city;
-      _stateController.text = serviceEntity.address.state;
-      _countryController.text = serviceEntity.address.country;
-      _pinController.text = serviceEntity.address.zipcode;
+      _cityController.text = serviceEntity!.address!.city!;
+      _stateController.text = serviceEntity!.address!.state!;
+      _countryController.text = serviceEntity!.address!.country!;
+      _pinController.text = serviceEntity!.address!.zipcode!;
 
-      AppUser currUser = _gs.getCurrentUser();
+      AppUser? currUser = _gs!.getCurrentUser();
 
-      EntityPrivate entityPrivateList;
-      entityPrivateList = await fetchAdmins(serviceEntity.entityId);
+      EntityPrivate? entityPrivateList;
+      entityPrivateList = await fetchAdmins(serviceEntity!.entityId!);
       if (entityPrivateList != null) {
-        _regNumController.text = entityPrivateList.registrationNumber;
+        _regNumController.text = entityPrivateList.registrationNumber!;
       }
     }
   }
 
-  String validateText(String value) {
+  String? validateText(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     }
     return null;
   }
 
-  String validateNumber(String value) {
+  String? validateNumber(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else if (int.tryParse(value) == null) {
@@ -452,7 +452,7 @@ class _ManageChildEntityDetailsPageState
       return null;
   }
 
-  String validateAdvanceBookingDays(String value) {
+  String? validateAdvanceBookingDays(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else if (int.tryParse(value) == null) {
@@ -463,7 +463,7 @@ class _ManageChildEntityDetailsPageState
       return null;
   }
 
-  String validateMaxBookingsInTimeSlot(String value) {
+  String? validateMaxBookingsInTimeSlot(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else if (int.tryParse(value) == null) {
@@ -474,7 +474,7 @@ class _ManageChildEntityDetailsPageState
       return null;
   }
 
-  String validateDurationOfSlot(String value) {
+  String? validateDurationOfSlot(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else if (int.tryParse(value) == null) {
@@ -485,7 +485,7 @@ class _ManageChildEntityDetailsPageState
       return null;
   }
 
-  String validateUserBookingsInDay(String value) {
+  String? validateUserBookingsInDay(String? value) {
     if (value == null || value == "") {
       return 'Field is empty';
     } else if (int.tryParse(value) == null) {
@@ -496,31 +496,31 @@ class _ManageChildEntityDetailsPageState
       return null;
   }
 
-  String validateTime(String value) {
+  String? validateTime(String value) {
     if (value == null || value == "") {
       return 'Field is empty';
     }
     return null;
   }
 
-  String validateTimeFields() {
-    if ((serviceEntity.breakEndHour != null &&
-            serviceEntity.breakStartHour == null) ||
-        (serviceEntity.breakEndHour == null &&
-            serviceEntity.breakStartHour != null)) {
+  String? validateTimeFields() {
+    if ((serviceEntity!.breakEndHour != null &&
+            serviceEntity!.breakStartHour == null) ||
+        (serviceEntity!.breakEndHour == null &&
+            serviceEntity!.breakStartHour != null)) {
       return "Both Break Start and Break End time should be specified.";
     }
-    if ((serviceEntity.startTimeHour != null &&
-            serviceEntity.endTimeHour == null) ||
-        (serviceEntity.startTimeHour == null &&
-            serviceEntity.endTimeHour != null)) {
+    if ((serviceEntity!.startTimeHour != null &&
+            serviceEntity!.endTimeHour == null) ||
+        (serviceEntity!.startTimeHour == null &&
+            serviceEntity!.endTimeHour != null)) {
       return "Both Day Start and Day End time should be specified.";
     }
     return null;
   }
 
   void useCurrLocation() {
-    Position pos;
+    Position? pos;
     Utils.getCurrLocation().then((value) {
       pos = value;
       if (pos == null)
@@ -530,7 +530,7 @@ class _ManageChildEntityDetailsPageState
   }
 
   void clearLocation() {
-    if (serviceEntity.isActive) {
+    if (serviceEntity!.isActive!) {
       Utils.showMyFlushbar(
           context,
           Icons.info_outline,
@@ -542,14 +542,14 @@ class _ManageChildEntityDetailsPageState
     } else {
       _latController.text = "";
       _lonController.text = "";
-      serviceEntity.coordinates = null;
+      serviceEntity!.coordinates = null;
     }
   }
 
-  _getAddressFromLatLng(Position position) async {
+  _getAddressFromLatLng(Position? position) async {
     setState(() {
-      serviceEntity.coordinates =
-          new MyGeoFirePoint(position.latitude, position.longitude);
+      serviceEntity!.coordinates =
+          new MyGeoFirePoint(position!.latitude, position.longitude);
       _latController.text = position.latitude.toString();
       _lonController.text = position.longitude.toString();
     });
@@ -589,7 +589,7 @@ class _ManageChildEntityDetailsPageState
   }
 
   void _removeServiceRow(String currItem) {
-    removeAdmin(serviceEntity.entityId, currItem).then((delStatus) {
+    removeAdmin(serviceEntity!.entityId, currItem).then((delStatus) {
       if (delStatus)
         setState(() {
           adminsList.remove(currItem);
@@ -677,29 +677,29 @@ class _ManageChildEntityDetailsPageState
   saveDetails() async {
     //TODO Smita: build string to get lat, long from address(UI) and save it in entity.
     String addressStr;
-    addressStr = serviceEntity.address.locality +
+    addressStr = serviceEntity!.address!.locality! +
         ", " +
-        serviceEntity.address.city +
+        serviceEntity!.address!.city! +
         "," +
-        serviceEntity.address.state +
+        serviceEntity!.address!.state! +
         "," +
-        serviceEntity.address.country;
+        serviceEntity!.address!.country!;
     // List<Placemark> placemark =
     //     await Geolocator().placemarkFromAddress(addressStr);
 
     // print(placemark);
 
-    String validationPh1;
-    String validationPh2;
+    String? validationPh1;
+    String? validationPh2;
     bool isContactValid = true;
 
     for (int i = 0; i < contactList.length; i++) {
       validationPh1 = (contactList[i].ph != null)
-          ? Utils.validateMobileField(contactList[i].ph.substring(3))
-          : true;
+          ? Utils.validateMobileField(contactList[i].ph!.substring(3))
+          : true as String?;
       validationPh2 = (contactList[i].altPhone != null)
-          ? Utils.validateMobileField(contactList[i].altPhone.substring(3))
-          : true;
+          ? Utils.validateMobileField(contactList[i].altPhone!.substring(3))
+          : true as String?;
 
       if (validationPh2 != null || validationPh1 != null) {
         isContactValid = false;
@@ -708,12 +708,12 @@ class _ManageChildEntityDetailsPageState
     }
     print("saving ");
 
-    if (_serviceDetailsFormKey.currentState.validate() && isContactValid) {
-      _serviceDetailsFormKey.currentState.save();
+    if (_serviceDetailsFormKey.currentState!.validate() && isContactValid) {
+      _serviceDetailsFormKey.currentState!.save();
       print("Saved formmmmmmm");
-      serviceEntity.regNum = _regNumController.text;
+      serviceEntity!.regNum = _regNumController.text;
 
-      _gs.putEntity(serviceEntity, true, serviceEntity.parentId).then((value) {
+      _gs!.putEntity(serviceEntity!, true, serviceEntity!.parentId).then((value) {
         if (value) {
           Navigator.of(context).push(new MaterialPageRoute(
               builder: (BuildContext context) =>
@@ -741,27 +741,27 @@ class _ManageChildEntityDetailsPageState
     });
   }
 
-  String validateMandatoryFieldsForBookable() {
-    String msg;
-    bool error;
+  String? validateMandatoryFieldsForBookable() {
+    String? msg;
+    bool? error;
     if (isBookable) {
       if (openDayTimeKey.currentState != null) {
-        error = (openDayTimeKey.currentState.validate());
+        error = (openDayTimeKey.currentState!.validate());
       }
       if (endDayTimeKey.currentState != null) {
-        error = (endDayTimeKey.currentState.validate());
+        error = (endDayTimeKey.currentState!.validate());
       }
       if (slotDurationKey.currentState != null) {
-        error = (slotDurationKey.currentState.validate());
+        error = (slotDurationKey.currentState!.validate());
       }
       if (advDaysKey.currentState != null) {
-        error = (advDaysKey.currentState.validate());
+        error = (advDaysKey.currentState!.validate());
       }
       if (maxPeopleKey.currentState != null) {
-        error = (maxPeopleKey.currentState.validate());
+        error = (maxPeopleKey.currentState!.validate());
       }
       if (maxTokenUserKey.currentState != null) {
-        error = (maxTokenUserKey.currentState.validate());
+        error = (maxTokenUserKey.currentState!.validate());
       }
       //TODO : Phase2
       // if (maxTokenUserInSlotKey.currentState != null) {
@@ -772,10 +772,10 @@ class _ManageChildEntityDetailsPageState
       // }
 
       if (latKey.currentState != null) {
-        error = (latKey.currentState.validate());
+        error = (latKey.currentState!.validate());
       }
       if (lonKey.currentState != null) {
-        error = (lonKey.currentState.validate());
+        error = (lonKey.currentState!.validate());
       }
 
       if (error != null) {
@@ -787,9 +787,9 @@ class _ManageChildEntityDetailsPageState
     return msg;
   }
 
-  String validateFieldsForOnlineConsultation() {
+  String? validateFieldsForOnlineConsultation() {
     //Whatsapp number should be given
-    String msg;
+    String? msg;
     if (Utils.isStrNullOrEmpty(_whatsappPhoneController.text)) {
       msg =
           "WhatsApp phone number should be provided, for enabling Online Consultation.";
@@ -797,9 +797,9 @@ class _ManageChildEntityDetailsPageState
     return msg;
   }
 
-  String validateFieldsForOfflineConsultation() {
+  String? validateFieldsForOfflineConsultation() {
     //Whatsapp number should be given
-    String msg;
+    String? msg;
     //TODO: SMita
     // if (Utils.isStrNullOrEmpty(_whatsappPhoneController.text)) {
     //   msg =
@@ -826,10 +826,10 @@ class _ManageChildEntityDetailsPageState
         return validateText(value);
       },
       onChanged: (String value) {
-        serviceEntity.name = value;
+        serviceEntity!.name = value;
       },
-      onSaved: (String value) {
-        serviceEntity.name = value;
+      onSaved: (String? value) {
+        serviceEntity!.name = value;
       },
     );
     final descField = TextFormField(
@@ -845,10 +845,10 @@ class _ManageChildEntityDetailsPageState
       maxLength: null,
       maxLines: 3,
       onChanged: (String value) {
-        serviceEntity.description = value;
+        serviceEntity!.description = value;
       },
-      onSaved: (String value) {
-        serviceEntity.description = value;
+      onSaved: (String? value) {
+        serviceEntity!.description = value;
       },
     );
     final regNumField = TextFormField(
@@ -865,7 +865,7 @@ class _ManageChildEntityDetailsPageState
         isAnythingChanged = true;
         //serviceEntity.regNum = value;
       },
-      onSaved: (String value) {
+      onSaved: (String? value) {
         //serviceEntity.regNum = value;
       },
     );
@@ -897,8 +897,8 @@ class _ManageChildEntityDetailsPageState
             _openTimeController.text = time.toLowerCase();
             if (_openTimeController.text != "") {
               List<String> time = _openTimeController.text.split(':');
-              serviceEntity.startTimeHour = int.parse(time[0]);
-              serviceEntity.startTimeMinute = int.parse(time[1]);
+              serviceEntity!.startTimeHour = int.parse(time[0]);
+              serviceEntity!.startTimeMinute = int.parse(time[1]);
             }
           }, currentTime: DateTime.now());
         }
@@ -925,8 +925,8 @@ class _ManageChildEntityDetailsPageState
               onPressed: () {
                 dayStartClearClicked = true;
                 _openTimeController.text = "";
-                serviceEntity.startTimeHour = null;
-                serviceEntity.startTimeMinute = null;
+                serviceEntity!.startTimeHour = null;
+                serviceEntity!.startTimeMinute = null;
                 setState(() {});
               }),
           enabledBorder:
@@ -944,10 +944,10 @@ class _ManageChildEntityDetailsPageState
       },
       onChanged: (String value) {
         List<String> time = value.split(':');
-        serviceEntity.startTimeHour = int.parse(time[0]);
-        serviceEntity.startTimeMinute = int.parse(time[1]);
+        serviceEntity!.startTimeHour = int.parse(time[0]);
+        serviceEntity!.startTimeMinute = int.parse(time[1]);
       },
-      onSaved: (String value) {},
+      onSaved: (String? value) {},
     );
     final closeTimeField = TextFormField(
       obscureText: false,
@@ -975,8 +975,8 @@ class _ManageChildEntityDetailsPageState
             _closeTimeController.text = time.toLowerCase();
             if (_closeTimeController.text != "") {
               List<String> time = _closeTimeController.text.split(':');
-              serviceEntity.endTimeHour = int.parse(time[0]);
-              serviceEntity.endTimeMinute = int.parse(time[1]);
+              serviceEntity!.endTimeHour = int.parse(time[0]);
+              serviceEntity!.endTimeMinute = int.parse(time[1]);
             }
           }, currentTime: DateTime.now());
         }
@@ -1000,8 +1000,8 @@ class _ManageChildEntityDetailsPageState
               onPressed: () {
                 dayEndClearClicked = true;
                 _closeTimeController.text = "";
-                serviceEntity.endTimeHour = null;
-                serviceEntity.endTimeMinute = null;
+                serviceEntity!.endTimeHour = null;
+                serviceEntity!.endTimeMinute = null;
                 setState(() {});
               }),
           enabledBorder:
@@ -1019,10 +1019,10 @@ class _ManageChildEntityDetailsPageState
       },
       onChanged: (String value) {
         List<String> time = value.split(':');
-        serviceEntity.endTimeHour = int.parse(time[0]);
-        serviceEntity.endTimeMinute = int.parse(time[1]);
+        serviceEntity!.endTimeHour = int.parse(time[0]);
+        serviceEntity!.endTimeMinute = int.parse(time[1]);
       },
-      onSaved: (String value) {},
+      onSaved: (String? value) {},
     );
     final breakSartTimeField = TextFormField(
       obscureText: false,
@@ -1048,8 +1048,8 @@ class _ManageChildEntityDetailsPageState
             _breakStartController.text = time.toLowerCase();
             if (_breakStartController.text != "") {
               List<String> time = _breakStartController.text.split(':');
-              serviceEntity.breakStartHour = int.parse(time[0]);
-              serviceEntity.breakStartMinute = int.parse(time[1]);
+              serviceEntity!.breakStartHour = int.parse(time[0]);
+              serviceEntity!.breakStartMinute = int.parse(time[1]);
             }
           }, currentTime: DateTime.now());
         }
@@ -1075,8 +1075,8 @@ class _ManageChildEntityDetailsPageState
               onPressed: () {
                 breakStartClearClicked = true;
                 _breakStartController.text = "";
-                serviceEntity.breakStartHour = null;
-                serviceEntity.breakStartMinute = null;
+                serviceEntity!.breakStartHour = null;
+                serviceEntity!.breakStartMinute = null;
                 setState(() {});
               }),
           enabledBorder:
@@ -1088,10 +1088,10 @@ class _ManageChildEntityDetailsPageState
       },
       onChanged: (String value) {
         List<String> time = value.split(':');
-        serviceEntity.breakStartHour = int.parse(time[0]);
-        serviceEntity.breakStartMinute = int.parse(time[1]);
+        serviceEntity!.breakStartHour = int.parse(time[0]);
+        serviceEntity!.breakStartMinute = int.parse(time[1]);
       },
-      onSaved: (String value) {},
+      onSaved: (String? value) {},
     );
     final breakEndTimeField = TextFormField(
       obscureText: false,
@@ -1118,8 +1118,8 @@ class _ManageChildEntityDetailsPageState
             _breakEndController.text = time.toLowerCase();
             if (_breakEndController.text != "") {
               List<String> time = _breakEndController.text.split(':');
-              serviceEntity.breakEndHour = int.parse(time[0]);
-              serviceEntity.breakEndMinute = int.parse(time[1]);
+              serviceEntity!.breakEndHour = int.parse(time[0]);
+              serviceEntity!.breakEndMinute = int.parse(time[1]);
             }
           }, currentTime: DateTime.now());
         }
@@ -1143,8 +1143,8 @@ class _ManageChildEntityDetailsPageState
               onPressed: () {
                 breakEndClearClicked = true;
                 _breakEndController.text = "";
-                serviceEntity.breakEndHour = null;
-                serviceEntity.breakEndMinute = null;
+                serviceEntity!.breakEndHour = null;
+                serviceEntity!.breakEndMinute = null;
                 setState(() {});
               }),
           enabledBorder:
@@ -1157,11 +1157,11 @@ class _ManageChildEntityDetailsPageState
       onChanged: (String value) {
         if (value != "") {
           List<String> time = value.split(':');
-          serviceEntity.breakEndHour = int.parse(time[0]);
-          serviceEntity.breakEndMinute = int.parse(time[1]);
+          serviceEntity!.breakEndHour = int.parse(time[0]);
+          serviceEntity!.breakEndMinute = int.parse(time[1]);
         }
       },
-      onSaved: (String value) {
+      onSaved: (String? value) {
         //TODO: test the values
       },
     );
@@ -1210,7 +1210,7 @@ class _ManageChildEntityDetailsPageState
                 var day = element.toString().substring(5);
                 _closedOnDays.add(day);
               });
-              serviceEntity.closedOn = _closedOnDays;
+              serviceEntity!.closedOn = _closedOnDays;
               print(_closedOnDays.length);
               print(_closedOnDays.toString());
             },
@@ -1242,10 +1242,10 @@ class _ManageChildEntityDetailsPageState
         return null;
       },
       onChanged: (value) {
-        serviceEntity.slotDuration = int.tryParse(value);
+        serviceEntity!.slotDuration = int.tryParse(value);
       },
-      onSaved: (String value) {
-        serviceEntity.slotDuration = int.tryParse(value);
+      onSaved: (String? value) {
+        serviceEntity!.slotDuration = int.tryParse(value!);
       },
     );
     final advBookingInDays = TextFormField(
@@ -1272,10 +1272,10 @@ class _ManageChildEntityDetailsPageState
         return null;
       },
       onChanged: (value) {
-        serviceEntity.advanceDays = int.tryParse(value);
+        serviceEntity!.advanceDays = int.tryParse(value);
       },
-      onSaved: (String value) {
-        serviceEntity.advanceDays = int.tryParse(value);
+      onSaved: (String? value) {
+        serviceEntity!.advanceDays = int.tryParse(value!);
       },
     );
     final maxpeopleInASlot = TextFormField(
@@ -1302,10 +1302,10 @@ class _ManageChildEntityDetailsPageState
         return null;
       },
       onChanged: (String value) {
-        serviceEntity.maxAllowed = int.tryParse(value);
+        serviceEntity!.maxAllowed = int.tryParse(value);
       },
-      onSaved: (String value) {
-        serviceEntity.maxAllowed = int.tryParse(value);
+      onSaved: (String? value) {
+        serviceEntity!.maxAllowed = int.tryParse(value!);
         print("saved max people");
         // entity. = value;
       },
@@ -1335,10 +1335,10 @@ class _ManageChildEntityDetailsPageState
         return null;
       },
       onChanged: (value) {
-        serviceEntity.maxTokensByUserInDay = int.tryParse(value);
+        serviceEntity!.maxTokensByUserInDay = int.tryParse(value);
       },
-      onSaved: (String value) {
-        serviceEntity.maxTokensByUserInDay = int.tryParse(value);
+      onSaved: (String? value) {
+        serviceEntity!.maxTokensByUserInDay = int.tryParse(value!);
       },
     );
     final maxTokenPerSlotInDay = TextFormField(
@@ -1365,10 +1365,10 @@ class _ManageChildEntityDetailsPageState
         return null;
       },
       onChanged: (value) {
-        serviceEntity.maxTokensPerSlotByUser = int.tryParse(value);
+        serviceEntity!.maxTokensPerSlotByUser = int.tryParse(value);
       },
-      onSaved: (String value) {
-        serviceEntity.maxTokensPerSlotByUser = int.tryParse(value);
+      onSaved: (String? value) {
+        serviceEntity!.maxTokensPerSlotByUser = int.tryParse(value!);
       },
     );
 
@@ -1396,10 +1396,10 @@ class _ManageChildEntityDetailsPageState
         return null;
       },
       onChanged: (value) {
-        serviceEntity.maxPeoplePerToken = int.tryParse(value);
+        serviceEntity!.maxPeoplePerToken = int.tryParse(value);
       },
-      onSaved: (String value) {
-        serviceEntity.maxPeoplePerToken = int.tryParse(value);
+      onSaved: (String? value) {
+        serviceEntity!.maxPeoplePerToken = int.tryParse(value!);
       },
     );
     final whatsappPhone = TextFormField(
@@ -1430,10 +1430,10 @@ class _ManageChildEntityDetailsPageState
         return Utils.validateMobileField(value);
       },
       onChanged: (value) {
-        serviceEntity.whatsapp = _phCountryCode + (value);
+        serviceEntity!.whatsapp = _phCountryCode! + (value);
       },
-      onSaved: (String value) {
-        serviceEntity.whatsapp = _phCountryCode + (value);
+      onSaved: (String? value) {
+        serviceEntity!.whatsapp = _phCountryCode! + value!;
         print("WhatsApp Number");
       },
     );
@@ -1462,10 +1462,10 @@ class _ManageChildEntityDetailsPageState
         return null;
       },
       onChanged: (value) {
-        serviceEntity.phone = _phCountryCode + (value);
+        serviceEntity!.phone = _phCountryCode! + (value);
       },
-      onSaved: (String value) {
-        serviceEntity.phone = _phCountryCode + (value);
+      onSaved: (String? value) {
+        serviceEntity!.phone = _phCountryCode! + value!;
       },
     );
 
@@ -1487,10 +1487,10 @@ class _ManageChildEntityDetailsPageState
       ),
       validator: Utils.validateEmail,
       onChanged: (value) {
-        serviceEntity.supportEmail = value;
+        serviceEntity!.supportEmail = value;
       },
-      onSaved: (String value) {
-        serviceEntity.supportEmail = value;
+      onSaved: (String? value) {
+        serviceEntity!.supportEmail = value;
       },
     );
 
@@ -1512,26 +1512,26 @@ class _ManageChildEntityDetailsPageState
       ),
       validator: Utils.validateUpiAddress,
       onChanged: (value) {
-        serviceEntity.upiId = (value);
+        serviceEntity!.upiId = (value);
       },
-      onSaved: (String value) {
-        serviceEntity.upiId = (value);
+      onSaved: (String? value) {
+        serviceEntity!.upiId = (value);
       },
     );
 
     checkOfferDetailsFilled() {
-      if (insertOffer.message != null && insertOffer.message.isNotEmpty ||
-          insertOffer.coupon != null && insertOffer.coupon.isNotEmpty ||
-          insertOffer.startDateTime != null ||
-          insertOffer.endDateTime != null) {
-        serviceEntity.offer = insertOffer;
+      if (insertOffer!.message != null && insertOffer!.message!.isNotEmpty ||
+          insertOffer!.coupon != null && insertOffer!.coupon!.isNotEmpty ||
+          insertOffer!.startDateTime != null ||
+          insertOffer!.endDateTime != null) {
+        serviceEntity!.offer = insertOffer;
       } else
-        serviceEntity.offer = null;
+        serviceEntity!.offer = null;
     }
 
     clearOfferDetail() {
       insertOffer = new Offer();
-      serviceEntity.offer = null;
+      serviceEntity!.offer = null;
       offerFieldStatus = false;
       _offerCouponController.text = "";
       _offerMessageController.text = "";
@@ -1562,14 +1562,14 @@ class _ManageChildEntityDetailsPageState
       maxLines: 1,
       onChanged: (String value) {
         if (Utils.isNotNullOrEmpty(value)) {
-          insertOffer.message = value;
+          insertOffer!.message = value;
           offerFieldStatus = true;
           checkOfferDetailsFilled();
         }
       },
-      onSaved: (String value) {
+      onSaved: (String? value) {
         if (Utils.isNotNullOrEmpty(value)) {
-          insertOffer.message = value;
+          insertOffer!.message = value;
           offerFieldStatus = true;
           checkOfferDetailsFilled();
         }
@@ -1597,14 +1597,14 @@ class _ManageChildEntityDetailsPageState
       maxLines: 1,
       onChanged: (String value) {
         if (Utils.isNotNullOrEmpty(value)) {
-          insertOffer.coupon = value;
+          insertOffer!.coupon = value;
           offerFieldStatus = true;
           checkOfferDetailsFilled();
         }
       },
-      onSaved: (String value) {
+      onSaved: (String? value) {
         if (Utils.isNotNullOrEmpty(value)) {
-          insertOffer.coupon = value;
+          insertOffer!.coupon = value;
           offerFieldStatus = true;
           checkOfferDetailsFilled();
         }
@@ -1612,17 +1612,17 @@ class _ManageChildEntityDetailsPageState
     );
 
     Future<Null> startPickDate(BuildContext context) async {
-      DateTime date = await showDatePicker(
+      DateTime? date = await showDatePicker(
         context: context,
         firstDate: DateTime.now(),
         lastDate: DateTime(
             DateTime.now().year + 2, DateTime.now().month, DateTime.now().day),
-        initialDate: insertOffer.startDateTime != null
-            ? insertOffer.startDateTime.isBefore(DateTime.now())
+        initialDate: insertOffer!.startDateTime != null
+            ? insertOffer!.startDateTime!.isBefore(DateTime.now())
                 ? DateTime.now()
-                : insertOffer.startDateTime
+                : insertOffer!.startDateTime!
             : DateTime.now(),
-        builder: (BuildContext context, Widget child) {
+        builder: (BuildContext context, Widget? child) {
           return Theme(
             data: ThemeData.dark().copyWith(
               colorScheme: ColorScheme.light(
@@ -1630,13 +1630,13 @@ class _ManageChildEntityDetailsPageState
               ),
               dialogBackgroundColor: Colors.white,
             ),
-            child: child,
+            child: child!,
           );
         },
       );
       if (date != null) {
         setState(() {
-          insertOffer.startDateTime = date;
+          insertOffer!.startDateTime = date;
           dateString = date.day.toString() +
               " / " +
               date.month.toString() +
@@ -1650,26 +1650,26 @@ class _ManageChildEntityDetailsPageState
     }
 
     Future<Null> endPickDate(BuildContext context) async {
-      DateTime date = await showDatePicker(
+      DateTime? date = await showDatePicker(
         context: context,
-        firstDate: insertOffer.startDateTime != null
-            ? insertOffer.startDateTime.isBefore(DateTime.now())
+        firstDate: insertOffer!.startDateTime != null
+            ? insertOffer!.startDateTime!.isBefore(DateTime.now())
                 ? DateTime.now()
-                : insertOffer.startDateTime
+                : insertOffer!.startDateTime!
             : DateTime.now(),
         lastDate: DateTime(
             DateTime.now().year + 2, DateTime.now().month, DateTime.now().day),
-        initialDate: insertOffer.endDateTime != null
-            ? insertOffer.endDateTime.isBefore(DateTime.now()) &&
-                    insertOffer.startDateTime.isBefore(DateTime.now())
+        initialDate: insertOffer!.endDateTime != null
+            ? insertOffer!.endDateTime!.isBefore(DateTime.now()) &&
+                    insertOffer!.startDateTime!.isBefore(DateTime.now())
                 ? DateTime.now()
-                : insertOffer.endDateTime.isAfter(insertOffer.startDateTime)
-                    ? insertOffer.endDateTime
-                    : insertOffer.startDateTime
-            : insertOffer.startDateTime != null
-                ? insertOffer.startDateTime
+                : insertOffer!.endDateTime!.isAfter(insertOffer!.startDateTime!)
+                    ? insertOffer!.endDateTime!
+                    : insertOffer!.startDateTime!
+            : insertOffer!.startDateTime != null
+                ? insertOffer!.startDateTime!
                 : DateTime.now(),
-        builder: (BuildContext context, Widget child) {
+        builder: (BuildContext context, Widget? child) {
           return Theme(
             data: ThemeData.dark().copyWith(
               colorScheme: ColorScheme.light(
@@ -1677,13 +1677,13 @@ class _ManageChildEntityDetailsPageState
               ),
               dialogBackgroundColor: Colors.white,
             ),
-            child: child,
+            child: child!,
           );
         },
       );
       if (date != null) {
         setState(() {
-          insertOffer.endDateTime = date;
+          insertOffer!.endDateTime = date;
           dateString = date.day.toString() +
               " / " +
               date.month.toString() +
@@ -1707,7 +1707,7 @@ class _ManageChildEntityDetailsPageState
       validator: (value) {
         if (offerFieldStatus) {
           if (value != null && value != "") {
-            if (insertOffer.endDateTime == null)
+            if (insertOffer!.endDateTime == null)
               return "End Date field is empty";
             else
               return null;
@@ -1726,7 +1726,7 @@ class _ManageChildEntityDetailsPageState
       onChanged: (String value) {
         checkOfferDetailsFilled();
       },
-      onSaved: (String value) {
+      onSaved: (String? value) {
         checkOfferDetailsFilled();
       },
     );
@@ -1742,7 +1742,7 @@ class _ManageChildEntityDetailsPageState
       validator: (value) {
         if (offerFieldStatus) {
           if (value != null && value != "") {
-            if (insertOffer.startDateTime == null)
+            if (insertOffer!.startDateTime == null)
               return "Start Date Field is empty";
             else
               return null;
@@ -1761,7 +1761,7 @@ class _ManageChildEntityDetailsPageState
       onChanged: (String value) {
         checkOfferDetailsFilled();
       },
-      onSaved: (String value) {
+      onSaved: (String? value) {
         checkOfferDetailsFilled();
       },
     );
@@ -1787,7 +1787,7 @@ class _ManageChildEntityDetailsPageState
             return null;
           },
           onChanged: (String value) {},
-          onSaved: (String value) {},
+          onSaved: (String? value) {},
         ));
 
     final lonField = Container(
@@ -1811,7 +1811,7 @@ class _ManageChildEntityDetailsPageState
             return null;
           },
           onChanged: (String value) {},
-          onSaved: (String value) {},
+          onSaved: (String? value) {},
         ));
     final clearBtn = Container(
         width: MediaQuery.of(context).size.width * .3,
@@ -1820,7 +1820,7 @@ class _ManageChildEntityDetailsPageState
             color: Colors.transparent,
             splashColor: highlightColor,
             textColor: btnColor,
-            shape: RoundedRectangleBorder(side: BorderSide(color: btnColor)),
+            shape: RoundedRectangleBorder(side: BorderSide(color: btnColor!)),
             child: Text(
               'Clear',
               textAlign: TextAlign.center,
@@ -1850,11 +1850,11 @@ class _ManageChildEntityDetailsPageState
           return null;
       },
       onChanged: (String value) {
-        serviceEntity.address.address = value;
+        serviceEntity!.address!.address = value;
         print("saved address");
       },
-      onSaved: (String value) {
-        serviceEntity.address.address = value;
+      onSaved: (String? value) {
+        serviceEntity!.address!.address = value;
         print("saved address");
       },
     );
@@ -1877,10 +1877,10 @@ class _ManageChildEntityDetailsPageState
       ),
       // validator: validateText,
       onChanged: (String value) {
-        serviceEntity.address.landmark = value;
+        serviceEntity!.address!.landmark = value;
       },
-      onSaved: (String value) {
-        serviceEntity.address.landmark = value;
+      onSaved: (String? value) {
+        serviceEntity!.address!.landmark = value;
       },
     );
     final localityField = TextFormField(
@@ -1901,7 +1901,7 @@ class _ManageChildEntityDetailsPageState
       ),
       onChanged: (String value) {
         isAnythingChanged = true;
-        serviceEntity.address.locality = value;
+        serviceEntity!.address!.locality = value;
       },
       validator: (value) {
         if (isBookable || isActiveValidation)
@@ -1909,8 +1909,8 @@ class _ManageChildEntityDetailsPageState
         else
           return null;
       },
-      onSaved: (String value) {
-        serviceEntity.address.locality = value;
+      onSaved: (String? value) {
+        serviceEntity!.address!.locality = value;
       },
     );
     final cityField = TextFormField(
@@ -1936,10 +1936,10 @@ class _ManageChildEntityDetailsPageState
           return null;
       },
       onChanged: (String value) {
-        serviceEntity.address.city = value;
+        serviceEntity!.address!.city = value;
       },
-      onSaved: (String value) {
-        serviceEntity.address.city = value;
+      onSaved: (String? value) {
+        serviceEntity!.address!.city = value;
       },
     );
     final stateField = TextFormField(
@@ -1966,10 +1966,10 @@ class _ManageChildEntityDetailsPageState
       },
       onChanged: (String value) {
         isAnythingChanged = true;
-        serviceEntity.address.state = value;
+        serviceEntity!.address!.state = value;
       },
-      onSaved: (String value) {
-        serviceEntity.address.state = value;
+      onSaved: (String? value) {
+        serviceEntity!.address!.state = value;
       },
     );
     final countryField = TextFormField(
@@ -1994,8 +1994,8 @@ class _ManageChildEntityDetailsPageState
         else
           return null;
       },
-      onSaved: (String value) {
-        serviceEntity.address.country = value;
+      onSaved: (String? value) {
+        serviceEntity!.address!.country = value;
       },
     );
     final pinField = TextFormField(
@@ -2021,10 +2021,10 @@ class _ManageChildEntityDetailsPageState
           return null;
       },
       onChanged: (String value) {
-        serviceEntity.address.zipcode = value;
+        serviceEntity!.address!.zipcode = value;
       },
-      onSaved: (String value) {
-        serviceEntity.address.zipcode = value;
+      onSaved: (String? value) {
+        serviceEntity!.address!.zipcode = value;
       },
     );
 
@@ -2034,13 +2034,13 @@ class _ManageChildEntityDetailsPageState
     saveRoute() {
       print("saving ");
 
-      String validationPh1;
-      String validationPh2;
+      String? validationPh1;
+      String? validationPh2;
       bool isContactValid = true;
       bool timeFieldsValid = true;
-      String errTimeFields;
-      String errContactPhone;
-      String errBookablePlace;
+      String? errTimeFields;
+      String? errContactPhone;
+      String? errBookablePlace;
 
       if (isBookable) {
         errBookablePlace = validateMandatoryFieldsForBookable();
@@ -2051,7 +2051,7 @@ class _ManageChildEntityDetailsPageState
               Duration(
                 seconds: 4,
               ),
-              errBookablePlace,
+              errBookablePlace!,
               "Please fill all mandatory details to allow Booking.");
           return;
         }
@@ -2059,10 +2059,10 @@ class _ManageChildEntityDetailsPageState
 
       for (int i = 0; i < contactList.length; i++) {
         validationPh1 = (contactList[i].ph != null)
-            ? Utils.validateMobileField(contactList[i].ph.substring(3))
+            ? Utils.validateMobileField(contactList[i].ph!.substring(3))
             : null;
         validationPh2 = (contactList[i].altPhone != null)
-            ? Utils.validateMobileField(contactList[i].altPhone.substring(3))
+            ? Utils.validateMobileField(contactList[i].altPhone!.substring(3))
             : null;
         print(validationPh1);
         print(validationPh2);
@@ -2075,7 +2075,7 @@ class _ManageChildEntityDetailsPageState
       }
       errTimeFields = validateTimeFields();
       timeFieldsValid = (errTimeFields == null) ? true : false;
-      if (_serviceDetailsFormKey.currentState.validate() &&
+      if (_serviceDetailsFormKey.currentState!.validate() &&
           isContactValid &&
           timeFieldsValid) {
         Utils.showMyFlushbar(
@@ -2090,14 +2090,14 @@ class _ManageChildEntityDetailsPageState
             Colors.white,
             true);
 
-        _serviceDetailsFormKey.currentState.save();
-        serviceEntity.regNum = _regNumController.text;
-        _gs
-            .putEntity(serviceEntity, true, serviceEntity.parentId)
+        _serviceDetailsFormKey.currentState!.save();
+        serviceEntity!.regNum = _regNumController.text;
+        _gs!
+            .putEntity(serviceEntity!, true, serviceEntity!.parentId)
             .then((value) {
           if (value) {
             // Assign admins to newly upserted entity
-            assignAdminsFromList(serviceEntity.entityId, adminsList)
+            assignAdminsFromList(serviceEntity!.entityId, adminsList)
                 .then((value) {
               if (!value) {
                 Utils.showMyFlushbar(
@@ -2110,7 +2110,7 @@ class _ManageChildEntityDetailsPageState
                     "Please verify the details and try again.",
                     Colors.red);
               } else {
-                _gs.updateMetaEntity(serviceEntity.getMetaEntity());
+                _gs!.updateMetaEntity(serviceEntity!.getMetaEntity());
                 Utils.showMyFlushbar(
                     context,
                     Icons.check,
@@ -2158,13 +2158,13 @@ class _ManageChildEntityDetailsPageState
     }
 
     String msg;
-    Flushbar flush;
+    Flushbar? flush;
     //bool _wasButtonClicked;
     backRoute() {
       //Navigator.of(context).pop();
-      Entity parentEn;
-      _gs.getEntity(serviceEntity.parentId, true).then((value) {
-        parentEn = value.item1;
+      Entity? parentEn;
+      _gs!.getEntity(serviceEntity!.parentId, true).then((value) {
+        parentEn = value!.item1;
         if (parentEn != null)
           Navigator.push(
               context,
@@ -2180,7 +2180,7 @@ class _ManageChildEntityDetailsPageState
     }
 
     Future<void> showConfirmationDialog() async {
-      bool returnVal = await showDialog(
+      bool returnVal = await (showDialog(
           barrierDismissible: false,
           context: context,
           builder: (_) => AlertDialog(
@@ -2253,18 +2253,18 @@ class _ManageChildEntityDetailsPageState
                     ),
                   ),
                 ],
-              ));
+              )) as FutureOr<bool>);
 
       if (returnVal) {
         setState(() {
           isBookable = true;
         });
-        serviceEntity.isBookable = true;
+        serviceEntity!.isBookable = true;
       } else {
         setState(() {
           isBookable = false;
         });
-        serviceEntity.isBookable = false;
+        serviceEntity!.isBookable = false;
       }
     }
 
@@ -2279,7 +2279,7 @@ class _ManageChildEntityDetailsPageState
 
     validateAllFields() {
       bool retVal;
-      if (_serviceDetailsFormKey.currentState.validate())
+      if (_serviceDetailsFormKey.currentState!.validate())
         retVal = true;
       else
         retVal = false;
@@ -2314,14 +2314,14 @@ class _ManageChildEntityDetailsPageState
           hintStyle: new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
       validator: Utils.validateMobileField,
       onChanged: (value) {
-        adminItemKey.currentState.validate();
+        adminItemKey.currentState!.validate();
         setState(() {
           _item = '+91' + value;
           // _errMsg = "";
         });
       },
       onSaved: (newValue) {
-        _item = '+91' + newValue;
+        _item = '+91' + newValue!;
       },
     );
 
@@ -2336,7 +2336,7 @@ class _ManageChildEntityDetailsPageState
           flushbarStyle: FlushbarStyle.GROUNDED,
           reverseAnimationCurve: Curves.decelerate,
           forwardAnimationCurve: Curves.easeInToLinear,
-          backgroundColor: Colors.cyan[200],
+          backgroundColor: Colors.cyan[200]!,
           boxShadows: [
             BoxShadow(
                 color: Colors.cyan, offset: Offset(0.0, 2.0), blurRadius: 3.0)
@@ -2350,7 +2350,7 @@ class _ManageChildEntityDetailsPageState
           showProgressIndicator: true,
           progressIndicatorBackgroundColor: Colors.blueGrey[900],
           progressIndicatorValueColor:
-              new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
+              new AlwaysStoppedAnimation<Color?>(Colors.cyan[500]) as Animation<Color>?,
           routeBlur: 10.0,
           titleText: Text(
             "Are you sure you want to leave this page?",
@@ -2374,7 +2374,7 @@ class _ManageChildEntityDetailsPageState
                 padding: EdgeInsets.all(0),
                 onPressed: () {
                   flushStatus = "Empty";
-                  flush.dismiss(false); // result = true
+                  flush!.dismiss(false); // result = true
                 },
                 child: Text(
                   "No",
@@ -2386,7 +2386,7 @@ class _ManageChildEntityDetailsPageState
                 padding: EdgeInsets.all(0),
                 onPressed: () {
                   flushStatus = "Empty";
-                  flush.dismiss(true); // result = true
+                  flush!.dismiss(true); // result = true
                 },
                 child: Text(
                   "Yes",
@@ -2409,7 +2409,7 @@ class _ManageChildEntityDetailsPageState
           ..show(context).then((result) {
             _wasButtonClicked = result;
             flushStatus = "Empty";
-            if (_wasButtonClicked) processGoBackWithTimer();
+            if (_wasButtonClicked!) processGoBackWithTimer();
           });
       }
 
@@ -2433,7 +2433,7 @@ class _ManageChildEntityDetailsPageState
               onPressed: goBack,
             ),
             title: Text(
-              title,
+              title!,
               style: whiteBoldTextStyle1,
               overflow: TextOverflow.ellipsis,
             )),
@@ -2441,7 +2441,7 @@ class _ManageChildEntityDetailsPageState
           child: SafeArea(
             child: new Form(
               key: _serviceDetailsFormKey,
-              autovalidate: _autoValidate,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: ListView(padding: const EdgeInsets.all(8.0),
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -2457,7 +2457,7 @@ class _ManageChildEntityDetailsPageState
                       margin: EdgeInsets.all(5),
                       padding: EdgeInsets.all(0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: borderColor),
+                          border: Border.all(color: borderColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -2544,7 +2544,7 @@ class _ManageChildEntityDetailsPageState
                           : BoxDecoration(),
                       // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -2636,7 +2636,7 @@ class _ManageChildEntityDetailsPageState
                                             if (value) {
                                               showConfirmationDialog();
                                               //Check if all mandatory fields for being bookable are not empty.
-                                              String errMsg =
+                                              String? errMsg =
                                                   validateMandatoryFieldsForBookable();
                                               if (Utils.isNotNullOrEmpty(
                                                   errMsg)) {
@@ -2646,14 +2646,14 @@ class _ManageChildEntityDetailsPageState
                                                     Duration(
                                                       seconds: 4,
                                                     ),
-                                                    errMsg,
+                                                    errMsg!,
                                                     "Please fill all mandatory details to allow Booking.");
                                                 isBookable = !value;
                                                 return;
                                               }
                                             }
 
-                                            serviceEntity.isBookable = value;
+                                            serviceEntity!.isBookable = value;
 
                                             setState(() {});
                                           }
@@ -2675,7 +2675,7 @@ class _ManageChildEntityDetailsPageState
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   color: Colors.transparent,
-                                  border: Border.all(color: primaryDarkColor),
+                                  border: Border.all(color: primaryDarkColor!),
                                   borderRadius: _borderRadius,
                                 ),
                                 // Define how long the animation should take.
@@ -2737,11 +2737,11 @@ class _ManageChildEntityDetailsPageState
                                               return;
                                             } else {
                                               isOnlineEnabled = value;
-                                              serviceEntity
+                                              serviceEntity!
                                                       .allowOnlineAppointment =
                                                   value;
                                               if (value) {
-                                                String msg =
+                                                String? msg =
                                                     validateFieldsForOnlineConsultation();
                                                 FocusScope.of(context)
                                                     .requestFocus(
@@ -2752,7 +2752,7 @@ class _ManageChildEntityDetailsPageState
                                                           .currentState !=
                                                       null) {
                                                     whatsappPhoneKey
-                                                        .currentState
+                                                        .currentState!
                                                         .validate();
                                                   }
                                                   Utils.showMyFlushbar(
@@ -2761,10 +2761,10 @@ class _ManageChildEntityDetailsPageState
                                                       Duration(
                                                         seconds: 6,
                                                       ),
-                                                      msg,
+                                                      msg!,
                                                       "");
                                                   isOnlineEnabled = !value;
-                                                  serviceEntity
+                                                  serviceEntity!
                                                           .allowOnlineAppointment =
                                                       !value;
                                                 }
@@ -2780,7 +2780,7 @@ class _ManageChildEntityDetailsPageState
                                                       onlineOfflineMsg,
                                                       "");
                                                   isOnlineEnabled = !value;
-                                                  serviceEntity
+                                                  serviceEntity!
                                                           .allowOnlineAppointment =
                                                       !value;
                                                 }
@@ -2850,11 +2850,11 @@ class _ManageChildEntityDetailsPageState
                                               return;
                                             } else {
                                               isOfflineEnabled = value;
-                                              serviceEntity
+                                              serviceEntity!
                                                       .allowWalkinAppointment =
                                                   value;
                                               if (value) {
-                                                String msg =
+                                                String? msg =
                                                     validateFieldsForOfflineConsultation();
                                                 if (Utils.isNotNullOrEmpty(
                                                     msg)) {
@@ -2871,10 +2871,10 @@ class _ManageChildEntityDetailsPageState
                                                       Duration(
                                                         seconds: 6,
                                                       ),
-                                                      msg,
+                                                      msg!,
                                                       "");
                                                   isOfflineEnabled = !value;
-                                                  serviceEntity
+                                                  serviceEntity!
                                                           .allowWalkinAppointment =
                                                       !value;
                                                 }
@@ -2890,7 +2890,7 @@ class _ManageChildEntityDetailsPageState
                                                       onlineOfflineMsg,
                                                       "");
                                                   isOfflineEnabled = !value;
-                                                  serviceEntity
+                                                  serviceEntity!
                                                           .allowWalkinAppointment =
                                                       !value;
                                                 }
@@ -2939,7 +2939,7 @@ class _ManageChildEntityDetailsPageState
                         margin: EdgeInsets.all(5),
                         padding: EdgeInsets.all(0),
                         decoration: BoxDecoration(
-                            border: Border.all(color: borderColor),
+                            border: Border.all(color: borderColor!),
                             color: Colors.grey[50],
                             shape: BoxShape.rectangle,
                             borderRadius:
@@ -3035,7 +3035,7 @@ class _ManageChildEntityDetailsPageState
                           : BoxDecoration(),
                       padding: EdgeInsets.all(0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -3116,7 +3116,7 @@ class _ManageChildEntityDetailsPageState
                           : BoxDecoration(),
                       padding: EdgeInsets.all(0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -3201,7 +3201,7 @@ class _ManageChildEntityDetailsPageState
                                               textColor: btnColor,
                                               shape: RoundedRectangleBorder(
                                                   side: BorderSide(
-                                                      color: btnColor)),
+                                                      color: btnColor!)),
                                               child: Text(
                                                 'Clear',
                                                 textAlign: TextAlign.center,
@@ -3237,7 +3237,7 @@ class _ManageChildEntityDetailsPageState
 
                       padding: EdgeInsets.all(0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -3337,7 +3337,7 @@ class _ManageChildEntityDetailsPageState
                                         splashColor: highlightColor,
                                         textColor: Colors.white,
                                         shape: RoundedRectangleBorder(
-                                            side: BorderSide(color: btnColor)),
+                                            side: BorderSide(color: btnColor!)),
                                         child: Text(
                                           userCurrentLoc,
                                           textAlign: TextAlign.center,
@@ -3373,7 +3373,7 @@ class _ManageChildEntityDetailsPageState
                             )
                           : BoxDecoration(),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -3451,7 +3451,7 @@ class _ManageChildEntityDetailsPageState
                       padding: EdgeInsets.all(5),
                       // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
+                          border: Border.all(color: containerColor!),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -3577,7 +3577,7 @@ class _ManageChildEntityDetailsPageState
                                             } else {
                                               setState(() {
                                                 isPublic = value;
-                                                serviceEntity.isPublic = value;
+                                                serviceEntity!.isPublic = value;
                                                 print(isPublic);
                                                 //}
                                               });
@@ -3726,7 +3726,7 @@ class _ManageChildEntityDetailsPageState
                                                   } else {
                                                     isActiveValidation = false;
                                                     isActive = value;
-                                                    serviceEntity.isActive =
+                                                    serviceEntity!.isActive =
                                                         value;
                                                     print(isActive);
                                                   }
@@ -3734,7 +3734,7 @@ class _ManageChildEntityDetailsPageState
                                                   isActive = value;
                                                   isActiveValidation = false;
 
-                                                  serviceEntity.isActive =
+                                                  serviceEntity!.isActive =
                                                       value;
                                                   print(isActive);
                                                 }
@@ -3799,8 +3799,8 @@ class _ManageChildEntityDetailsPageState
                             decoration: new BoxDecoration(
                                 gradient: new LinearGradient(
                                     colors: [
-                                      Colors.cyan[400],
-                                      Colors.cyan[700]
+                                      Colors.cyan[400]!,
+                                      Colors.cyan[700]!
                                     ],
                                     begin: const FractionalOffset(0.0, 0.0),
                                     end: const FractionalOffset(1.0, 0.0),
@@ -3835,7 +3835,7 @@ class _ManageChildEntityDetailsPageState
                         margin: EdgeInsets.fromLTRB(6, 15, 6, 15),
                         height: 40,
                         decoration: new BoxDecoration(
-                            border: Border.all(color: Colors.teal[200]),
+                            border: Border.all(color: Colors.teal[200]!),
                             borderRadius: BorderRadius.all(Radius.circular(5))),
                         foregroundDecoration: widget.isManager
                             ? BoxDecoration(
@@ -3874,7 +3874,7 @@ class _ManageChildEntityDetailsPageState
                               if (widget.isManager) {
                                 return;
                               } else {
-                                String _errorMessage;
+                                String? _errorMessage;
                                 showDialog(
                                     context: context,
                                     barrierDismissible: true,
@@ -3953,7 +3953,7 @@ class _ManageChildEntityDetailsPageState
                                               ),
                                               (_errorMessage != null
                                                   ? Text(
-                                                      _errorMessage,
+                                                      _errorMessage!,
                                                       style: errorTextStyle,
                                                     )
                                                   : Container()),
@@ -3968,7 +3968,7 @@ class _ManageChildEntityDetailsPageState
                                               shape: RoundedRectangleBorder(
                                                   side: BorderSide(
                                                       color: Colors
-                                                          .blueGrey[500]),
+                                                          .blueGrey[500]!),
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(
@@ -4026,20 +4026,20 @@ class _ManageChildEntityDetailsPageState
                                     }).then((returnVal) {
                                   if (returnVal != null) {
                                     if (returnVal) {
-                                      String parentEntityId =
-                                          serviceEntity.parentId;
-                                      Entity parentEntity;
+                                      String? parentEntityId =
+                                          serviceEntity!.parentId;
+                                      Entity? parentEntity;
 
-                                      _gs
-                                          .removeEntity(serviceEntity.entityId,
+                                      _gs!
+                                          .removeEntity(serviceEntity!.entityId!,
                                               parentEntityId)
                                           .then((value) {
                                         if (value) {
                                           Navigator.pop(context);
-                                          _gs
+                                          _gs!
                                               .getEntity(parentEntityId)
                                               .then((value) {
-                                            parentEntity = value.item1;
+                                            parentEntity = value!.item1;
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(

@@ -28,16 +28,16 @@ enum SelectedView { list, bar, pie, line }
 enum DateDisplayFormat { date, month, year }
 
 class EntityTokenListPage extends StatefulWidget {
-  final MetaEntity metaEntity;
-  final DateTime defaultDate;
+  final MetaEntity? metaEntity;
+  final DateTime? defaultDate;
   final bool isReadOnly;
   final dynamic backRoute;
   EntityTokenListPage(
-      {Key key,
-      @required this.metaEntity,
-      @required this.defaultDate,
-      @required this.isReadOnly,
-      @required this.backRoute})
+      {Key? key,
+      required this.metaEntity,
+      required this.defaultDate,
+      required this.isReadOnly,
+      required this.backRoute})
       : super(key: key);
   @override
   _EntityTokenListPageState createState() => _EntityTokenListPageState();
@@ -47,29 +47,29 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     with SingleTickerProviderStateMixin {
   bool initCompleted = false;
   bool loadingData = true;
-  GlobalState _gs;
-  List<Slot> list;
-  Map<String, TokenStats> dataForDay;
-  Map<String, TokenStats> dataForMonth;
-  Map<String, TokenStats> dataForYear;
-  String formattedDateStr;
-  DateTime dateForShowingList;
-  DateTime yearForShowingList;
-  DateTime monthForShowingList;
-  String weekForShowingList;
-  Map<String, List<UserToken>> _tokensMap = new Map<String, List<UserToken>>();
+  GlobalState? _gs;
+  List<Slot>? list;
+  late Map<String, TokenStats> dataForDay;
+  Map<String, TokenStats>? dataForMonth;
+  Map<String, TokenStats>? dataForYear;
+  String? formattedDateStr;
+  DateTime? dateForShowingList;
+  DateTime? yearForShowingList;
+  DateTime? monthForShowingList;
+  String? weekForShowingList;
+  Map<String?, List<UserToken>?> _tokensMap = new Map<String?, List<UserToken>?>();
   Map<String, TokenStats> dataMap = new Map<String, TokenStats>();
   DateDisplayFormat selectedDateFormat = DateDisplayFormat.date;
   SelectedView selectedView = SelectedView.list;
-  Widget listWidget;
-  Widget barChartWidget;
-  DateTime selectedDate;
-  List<Slot> allSlotsList = [];
-  TokenStats emptyToken;
-  TokenCounter tokenCounterForYear;
-  EntitySlots entitySlotsForDay;
-  AnimationController _animationController;
-  Animation animation;
+  late Widget listWidget;
+  late Widget barChartWidget;
+  DateTime? selectedDate;
+  List<Slot>? allSlotsList = [];
+  TokenStats? emptyToken;
+  TokenCounter? tokenCounterForYear;
+  EntitySlots? entitySlotsForDay;
+  late AnimationController _animationController;
+  late Animation animation;
 
   @override
   void initState() {
@@ -79,8 +79,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
     super.initState();
     emptyToken = TokenStats();
-    emptyToken.numberOfTokensCancelled = 0;
-    emptyToken.numberOfTokensCreated = 0;
+    emptyToken!.numberOfTokensCancelled = 0;
+    emptyToken!.numberOfTokensCreated = 0;
 
     if (widget.defaultDate != null)
       selectedDate = widget.defaultDate;
@@ -90,14 +90,14 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     getGlobalState().whenComplete(() {
       dateForShowingList = selectedDate;
 
-      getSlotsListForEntity(widget.metaEntity, selectedDate).then((value) {
+      getSlotsListForEntity(widget.metaEntity!, selectedDate!).then((value) {
         Tuple<EntitySlots, List<Slot>> slotTuple = value;
         entitySlotsForDay = slotTuple.item1;
         allSlotsList = slotTuple.item2;
-        _gs
-            .getTokenService()
+        _gs!
+            .getTokenService()!
             .getTokenCounterForEntity(
-                widget.metaEntity.entityId, selectedDate.year.toString())
+                widget.metaEntity!.entityId!, selectedDate!.year.toString())
             .then((value) {
           tokenCounterForYear = value;
           prepareData(selectedDate, DateDisplayFormat.date).then((value) {
@@ -124,9 +124,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
   }
 
   Future<void> loadEntireYearData(String forYear) async {
-    _gs
-        .getTokenService()
-        .getTokenCounterForEntity(widget.metaEntity.entityId, forYear)
+    _gs!
+        .getTokenService()!
+        .getTokenCounterForEntity(widget.metaEntity!.entityId!, forYear)
         .then((value) {
       tokenCounterForYear = value;
     });
@@ -161,13 +161,13 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
 
   Future<void> getListOfDataForMonth(DateTime date) async {
     Tuple<EntitySlots, List<Slot>> slotTuple =
-        await getSlotsListForEntity(widget.metaEntity, date);
+        await getSlotsListForEntity(widget.metaEntity!, date);
     list = slotTuple.item2;
-    for (int i = 0; i <= list.length - 1; i++) {
-      List<UserToken> tokensForThisSlot =
-          await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
+    for (int i = 0; i <= list!.length - 1; i++) {
+      List<UserToken>? tokensForThisSlot =
+          await _gs!.getTokenService()!.getAllTokensForSlot(list![i].slotId);
       if (!Utils.isNullOrEmpty(tokensForThisSlot))
-        _tokensMap[list[i].slotId] = tokensForThisSlot;
+        _tokensMap[list![i].slotId] = tokensForThisSlot;
       // dataMap[Utils.formatTime(list[i].dateTime.hour.toString()) +
       //         ":" +
       //         Utils.formatTime(list[i].dateTime.minute.toString())] =
@@ -186,13 +186,13 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     //Dummy data for testing- start
 
     Tuple<EntitySlots, List<Slot>> slotTuple =
-        await getSlotsListForEntity(widget.metaEntity, dateForShowingList);
+        await getSlotsListForEntity(widget.metaEntity!, dateForShowingList!);
     list = slotTuple.item2;
-    for (int i = 0; i <= list.length - 1; i++) {
-      List<UserToken> tokensForThisSlot =
-          await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
+    for (int i = 0; i <= list!.length - 1; i++) {
+      List<UserToken>? tokensForThisSlot =
+          await _gs!.getTokenService()!.getAllTokensForSlot(list![i].slotId);
       if (!Utils.isNullOrEmpty(tokensForThisSlot))
-        _tokensMap[list[i].slotId] = tokensForThisSlot;
+        _tokensMap[list![i].slotId] = tokensForThisSlot;
       // dataMap[Utils.formatTime(list[i].dateTime.hour.toString()) +
       //         ":" +
       //         Utils.formatTime(list[i].dateTime.minute.toString())] =
@@ -210,10 +210,10 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     //return list;
   }
 
-  void addEmptySlots(Map<String, TokenStats> dataMap) {
-    allSlotsList.forEach((slot) {
+  void addEmptySlots(Map<String, TokenStats?> dataMap) {
+    allSlotsList!.forEach((slot) {
       String time =
-          slot.dateTime.hour.toString() + ':' + slot.dateTime.minute.toString();
+          slot.dateTime!.hour.toString() + ':' + slot.dateTime!.minute.toString();
       print(time);
       print(dataMap);
       if (!dataMap.containsKey(time)) {
@@ -226,11 +226,11 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
   Widget buildAllSlots(Slot slot) {
     bool isHighlighted = false;
     String time =
-        slot.dateTime.hour.toString() + ':' + slot.dateTime.minute.toString();
+        slot.dateTime!.hour.toString() + ':' + slot.dateTime!.minute.toString();
 
-    Color cardColor = Colors.grey[100];
-    Color textColor = highlightText;
-    TokenStats stats;
+    Color? cardColor = Colors.grey[100];
+    Color? textColor = highlightText;
+    TokenStats? stats;
     DateTime currentTime = DateTime.now();
 
     if (dataMap.containsKey(time)) {
@@ -239,9 +239,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     } else {
       stats = emptyToken;
     }
-    if (currentTime.isAfter(slot.dateTime) &&
+    if (currentTime.isAfter(slot.dateTime!) &&
         currentTime.isBefore(
-            slot.dateTime.add(Duration(minutes: slot.slotDuration)))) {
+            slot.dateTime!.add(Duration(minutes: slot.slotDuration!)))) {
       cardColor = highlightColor;
       isHighlighted = true;
     }
@@ -265,7 +265,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
             Row(
               children: [
                 AutoSizeText(
-                  "Booked - " + stats.numberOfTokensCreated.toString() + ", ",
+                  "Booked - " + stats!.numberOfTokensCreated.toString() + ", ",
                   minFontSize: 8,
                   maxFontSize: 13,
                   style: TextStyle(
@@ -292,15 +292,15 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
               onPressed: () {
                 //getTokens in this slot.
                 List<UserToken> tokenList = [];
-                List<UserTokens> tokensList = [];
-                for (var eSlot in entitySlotsForDay.slots) {
+                List<UserTokens?>? tokensList = [];
+                for (var eSlot in entitySlotsForDay!.slots!) {
                   if (eSlot.slotId == slot.slotId) {
                     tokensList = eSlot.tokens;
                   }
                 }
 
-                for (UserTokens uts in tokensList) {
-                  for (UserToken ut in uts.tokens) {
+                for (UserTokens? uts in tokensList!) {
+                  for (UserToken ut in uts!.tokens!) {
                     tokenList.add(ut);
                   }
                 }
@@ -330,12 +330,12 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
       ),
     );
     return (isHighlighted)
-        ? FadeTransition(opacity: animation, child: rowCard)
+        ? FadeTransition(opacity: animation as Animation<double>, child: rowCard)
         : rowCard;
   }
 
-  Future<void> prepareData(DateTime date, DateDisplayFormat format) async {
-    String formattedDate;
+  Future<void> prepareData(DateTime? date, DateDisplayFormat format) async {
+    String? formattedDate;
     dataMap.clear();
 
     setState(() {
@@ -343,7 +343,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     });
 
     Tuple<EntitySlots, List<Slot>> slotTuple =
-        await getSlotsListForEntity(widget.metaEntity, selectedDate);
+        await getSlotsListForEntity(widget.metaEntity!, selectedDate!);
 
     allSlotsList = slotTuple.item2;
     entitySlotsForDay = slotTuple.item1;
@@ -351,14 +351,14 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     switch (format) {
       case DateDisplayFormat.date:
         //Set display Date
-        formattedDate = DateFormat(dateDisplayFormat).format(date);
+        formattedDate = DateFormat(dateDisplayFormat).format(date!);
         //Fetch data of a day - which will be sorted based on time-slots
         if (tokenCounterForYear != null) {
-          if (tokenCounterForYear.year != date.year.toString()) {
-            _gs
-                .getTokenService()
+          if (tokenCounterForYear!.year != date.year.toString()) {
+            _gs!
+                .getTokenService()!
                 .getTokenCounterForEntity(
-                    widget.metaEntity.entityId, date.year.toString())
+                    widget.metaEntity!.entityId!, date.year.toString())
                 .then((value) {
               tokenCounterForYear = value;
               if (tokenCounterForYear == null) {
@@ -372,7 +372,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                 return;
               } else {
                 dataForDay =
-                    tokenCounterForYear.getTokenStatsSlotWiseForDay(date);
+                    tokenCounterForYear!.getTokenStatsSlotWiseForDay(date);
 
                 dataForDay.forEach((k, v) {
                   dataMap[k.replaceAll('~', ':')] = v;
@@ -380,7 +380,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
               }
             });
           } else {
-            dataForDay = tokenCounterForYear.getTokenStatsSlotWiseForDay(date);
+            dataForDay = tokenCounterForYear!.getTokenStatsSlotWiseForDay(date);
 
             if (dataForDay.length == 0) {
               listWidget = _emptyPage();
@@ -397,10 +397,10 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
             //addEmptySlots(dataMap);
           }
         } else {
-          _gs
-              .getTokenService()
+          _gs!
+              .getTokenService()!
               .getTokenCounterForEntity(
-                  widget.metaEntity.entityId, date.year.toString())
+                  widget.metaEntity!.entityId!, date.year.toString())
               .then((value) {
             tokenCounterForYear = value;
             if (tokenCounterForYear == null) {
@@ -414,7 +414,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
               return;
             } else {
               dataForDay =
-                  tokenCounterForYear.getTokenStatsSlotWiseForDay(date);
+                  tokenCounterForYear!.getTokenStatsSlotWiseForDay(date);
               dataForDay.forEach((k, v) {
                 dataMap[k.replaceAll('~', ':')] = v;
               });
@@ -423,12 +423,12 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
         }
         listWidget = Expanded(
           child: ListView.builder(
-              itemCount: allSlotsList.length,
+              itemCount: allSlotsList!.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   margin: EdgeInsets.fromLTRB(10, 0, 10, 5),
                   child: new Column(children: [
-                    buildAllSlots(allSlotsList[index]),
+                    buildAllSlots(allSlotsList![index]),
                   ]),
                 );
               }),
@@ -466,16 +466,16 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
         break;
       case DateDisplayFormat.month:
         //Set display Date
-        formattedDate = DateFormat.MMMM().format(date).substring(0, 3) +
+        formattedDate = DateFormat.MMMM().format(date!).substring(0, 3) +
             ", " +
             date.year.toString();
         //Fetch data of month - which will be sorted based on days
         if (tokenCounterForYear != null) {
-          if (tokenCounterForYear.year != date.year.toString()) {
-            _gs
-                .getTokenService()
+          if (tokenCounterForYear!.year != date.year.toString()) {
+            _gs!
+                .getTokenService()!
                 .getTokenCounterForEntity(
-                    widget.metaEntity.entityId, date.year.toString())
+                    widget.metaEntity!.entityId!, date.year.toString())
                 .then((value) {
               tokenCounterForYear = value;
               if (tokenCounterForYear == null) {
@@ -487,26 +487,26 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                 });
                 return;
               } else {
-                dataForMonth = tokenCounterForYear
+                dataForMonth = tokenCounterForYear!
                     .getTokenStatsDayWiseForMonth(date.month);
-                dataForMonth.forEach((k, v) {
+                dataForMonth!.forEach((k, v) {
                   dataMap[k.replaceAll('~', ':')] = v;
                 });
               }
             });
           } else {
             dataForMonth =
-                tokenCounterForYear.getTokenStatsDayWiseForMonth(date.month);
-            print(dataForMonth.length);
-            dataForMonth.forEach((k, v) {
+                tokenCounterForYear!.getTokenStatsDayWiseForMonth(date.month);
+            print(dataForMonth!.length);
+            dataForMonth!.forEach((k, v) {
               dataMap[k.replaceAll('~', ':')] = v;
             });
           }
         } else {
-          _gs
-              .getTokenService()
+          _gs!
+              .getTokenService()!
               .getTokenCounterForEntity(
-                  widget.metaEntity.entityId, date.year.toString())
+                  widget.metaEntity!.entityId!, date.year.toString())
               .then((value) {
             tokenCounterForYear = value;
             if (tokenCounterForYear == null) {
@@ -519,8 +519,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
               return;
             } else {
               dataForMonth =
-                  tokenCounterForYear.getTokenStatsDayWiseForMonth(date.month);
-              dataForMonth.forEach((k, v) {
+                  tokenCounterForYear!.getTokenStatsDayWiseForMonth(date.month);
+              dataForMonth!.forEach((k, v) {
                 dataMap[k.replaceAll('~', ':')] = v;
               });
             }
@@ -528,16 +528,16 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
         }
 
         listWidget = (dataForMonth != null)
-            ? (dataForMonth.length != 0
+            ? (dataForMonth!.length != 0
                 ? Expanded(
                     child: ListView.builder(
-                        itemCount: dataForMonth.length,
+                        itemCount: dataForMonth!.length,
                         itemBuilder: (BuildContext context, int index) {
-                          String key = dataForMonth.keys.elementAt(index);
+                          String key = dataForMonth!.keys.elementAt(index);
                           return Container(
                             margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
                             child: new Column(children: [
-                              buildItem(key, dataForMonth[key], date, format)
+                              buildItem(key, dataForMonth![key]!, date, format)
                             ]),
                           );
                         }),
@@ -558,14 +558,14 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
             : _emptyPage();
         break;
       case DateDisplayFormat.year:
-        formattedDate = date.year.toString();
+        formattedDate = date!.year.toString();
         if (tokenCounterForYear != null) {
-          if (tokenCounterForYear.year != date.year.toString()) {
+          if (tokenCounterForYear!.year != date.year.toString()) {
             //fetch data
-            _gs
-                .getTokenService()
+            _gs!
+                .getTokenService()!
                 .getTokenCounterForEntity(
-                    widget.metaEntity.entityId, date.year.toString())
+                    widget.metaEntity!.entityId!, date.year.toString())
                 .then((value) {
               tokenCounterForYear = value;
               if (tokenCounterForYear == null) {
@@ -579,23 +579,23 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                 return;
               } else {
                 dataForYear =
-                    tokenCounterForYear.getTokenStatsMonthWiseForYear();
-                dataForYear.forEach((k, v) {
+                    tokenCounterForYear!.getTokenStatsMonthWiseForYear();
+                dataForYear!.forEach((k, v) {
                   dataMap[k.replaceAll('~', ':')] = v;
                 });
               }
             });
           } else {
-            dataForYear = tokenCounterForYear.getTokenStatsMonthWiseForYear();
-            dataForYear.forEach((k, v) {
+            dataForYear = tokenCounterForYear!.getTokenStatsMonthWiseForYear();
+            dataForYear!.forEach((k, v) {
               dataMap[k.replaceAll('~', ':')] = v;
             });
           }
         } else {
-          _gs
-              .getTokenService()
+          _gs!
+              .getTokenService()!
               .getTokenCounterForEntity(
-                  widget.metaEntity.entityId, date.year.toString())
+                  widget.metaEntity!.entityId!, date.year.toString())
               .then((value) {
             tokenCounterForYear = value;
             if (tokenCounterForYear == null) {
@@ -608,24 +608,24 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
               });
               return;
             } else {
-              dataForYear = tokenCounterForYear.getTokenStatsMonthWiseForYear();
-              dataForYear.forEach((k, v) {
+              dataForYear = tokenCounterForYear!.getTokenStatsMonthWiseForYear();
+              dataForYear!.forEach((k, v) {
                 dataMap[k.replaceAll('~', ':')] = v;
               });
             }
           });
         }
         listWidget = dataForYear != null
-            ? ((dataForYear.length != 0)
+            ? ((dataForYear!.length != 0)
                 ? Expanded(
                     child: ListView.builder(
-                        itemCount: dataForYear.length,
+                        itemCount: dataForYear!.length,
                         itemBuilder: (BuildContext context, int index) {
-                          String key = dataForYear.keys.elementAt(index);
+                          String key = dataForYear!.keys.elementAt(index);
                           return Container(
                             margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
                             child: new Column(children: [
-                              buildItem(key, dataForYear[key], date, format)
+                              buildItem(key, dataForYear![key]!, date, format)
                             ]),
                           );
                         }),
@@ -734,7 +734,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
           Container(
               width: MediaQuery.of(context).size.width * .4,
               padding: EdgeInsets.all(8),
-              child: Text(token.parent.userId,
+              child: Text(token.parent!.userId!,
                   style: TextStyle(
                       //fontFamily: "RalewayRegular",
                       color: Colors.blueGrey[800],
@@ -743,7 +743,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
             Container(
                 width: MediaQuery.of(context).size.width * .4,
                 padding: EdgeInsets.all(8),
-                child: Text(token.bookingFormName,
+                child: Text(token.bookingFormName!,
                     style: TextStyle(
                         //fontFamily: "RalewayRegular",
                         color: Colors.blueGrey[800],
@@ -754,7 +754,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
   }
 
   Widget buildItem(
-      String key, TokenStats stats, DateTime date, DateDisplayFormat format) {
+      String key, TokenStats stats, DateTime? date, DateDisplayFormat format) {
     String timeSlot = key.replaceAll('~', ':');
 
     return Card(
@@ -808,13 +808,13 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     );
   }
 
-  Future<DateTime> pickAnyDate(BuildContext context) async {
-    DateTime date = await showDatePicker(
+  Future<DateTime?> pickAnyDate(BuildContext context) async {
+    DateTime? date = await showDatePicker(
       context: context,
       firstDate: DateTime.now().subtract(Duration(days: 365)),
       lastDate: DateTime.now().add(Duration(days: 60)),
-      initialDate: selectedDate,
-      builder: (BuildContext context, Widget child) {
+      initialDate: selectedDate!,
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
@@ -822,15 +822,15 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
             ),
             dialogBackgroundColor: Colors.white,
           ),
-          child: child,
+          child: child!,
         );
       },
     );
     return date;
   }
 
-  Future<DateTime> pickAnyYear(BuildContext context, DateTime date) async {
-    DateTime returnVal = await showDialog(
+  Future<DateTime?> pickAnyYear(BuildContext context, DateTime date) async {
+    DateTime? returnVal = await showDialog(
         context: context,
         builder: (BuildContext context) {
           DateTime selectedYear = date;
@@ -1031,7 +1031,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                             Container(
                               width: MediaQuery.of(context).size.width * .25,
                               child: AutoSizeText(
-                                formattedDateStr,
+                                formattedDateStr!,
                                 minFontSize: 10,
                                 maxFontSize: 17,
                                 maxLines: 2,
@@ -1085,7 +1085,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                             color: Colors.transparent,
                             textColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                                side: BorderSide(color: btnColor),
+                                side: BorderSide(color: btnColor!),
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(100.0))),
                             child: Row(
@@ -1102,9 +1102,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                             ),
                             onPressed: () {
                               selectedDate =
-                                  selectedDate.subtract(Duration(days: 1));
+                                  selectedDate!.subtract(Duration(days: 1));
                               formattedDateStr = DateFormat(dateDisplayFormat)
-                                  .format(selectedDate);
+                                  .format(selectedDate!);
                               setState(() {
                                 loadingData = true;
                               });
@@ -1183,9 +1183,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                                 //   if (value != null) {
                                 //     print(value);
                                 selectedDate =
-                                    selectedDate.add(Duration(days: 1));
+                                    selectedDate!.add(Duration(days: 1));
                                 formattedDateStr = DateFormat(dateDisplayFormat)
-                                    .format(selectedDate);
+                                    .format(selectedDate!);
                                 setState(() {
                                   loadingData = true;
                                 });

@@ -63,7 +63,7 @@ class DBTest {
   String HOME_APARTMENT = "HOME_APARTMENT";
   String HOME_APARTMENT_SINGH_CLINIC = "HOME_APARTMENT_SINGH_CLINIC";
 
-  GlobalState _gs;
+  GlobalState? _gs;
   DBTest() {
     GlobalState.clearGlobalState();
     GlobalState.getGlobalState().then((value) => _gs = value);
@@ -96,55 +96,55 @@ class DBTest {
 
   Future<void> deleteBookingForms() async {
     try {
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(COVID_VACCINATION_BOOKING_FORM_ID_OLD);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(COVID_VACCINATION_CLINIC_BOOKING_FORM_ID);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(COVID_VACCINATION_HOSPITAL_BOOKING_FORM_ID);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(COVID_VACCINATION_EMPLOYEES_BOOKING_FORM_ID);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(HOSPITAL_ADMISSION_FORM);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(DOCTOR_CONSULTATION_CLINIC_FORM);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(MEDICAL_TEST_HOSPITAL_FORM);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(MEDICAL_TEST_DIAGNOSTIC_FORM);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(GENERAL_VACCINE_HOSPITAL_FORM);
 
-      await _gs
-          .getApplicationService()
+      await _gs!
+          .getApplicationService()!
           .deleteBookingForm(GENERAL_VACCINE_CLINIC_FORM);
     } catch (e) {
       print("Error while cleaning the system booking forms");
@@ -158,18 +158,18 @@ class DBTest {
     }
 
     BookingForm form =
-        await _gs.getApplicationService().getBookingForm(templateFormID);
+        await (_gs!.getApplicationService()!.getBookingForm(templateFormID) as FutureOr<BookingForm>);
     form.id = templateFormID + "#" + Uuid().v1();
     form.autoApproved = autoApproved;
     form.allowedOnline = allowedOnline;
-    entity.forms.add(form.getMetaForm());
-    await _gs.getApplicationService().saveBookingForm(form);
+    entity.forms!.add(form.getMetaForm());
+    await _gs!.getApplicationService()!.saveBookingForm(form);
     if (Utils.isNotNullOrEmpty(entity.parentId)) {
-      await _gs
-          .getEntityService()
-          .upsertChildEntityToParent(entity, entity.parentId);
+      await _gs!
+          .getEntityService()!
+          .upsertChildEntityToParent(entity, entity.parentId!);
     } else {
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     }
     return entity;
   }
@@ -354,7 +354,7 @@ class DBTest {
         SILVER_APARTMENT);
 
     salon.offer = offer;
-    await _gs.getEntityService().upsertEntity(salon);
+    await _gs!.getEntityService()!.upsertEntity(salon);
 
     await createEntity(
         SILVER_APARTMENT_BADMINTON_COURT_1,
@@ -428,9 +428,9 @@ class DBTest {
       MyGeoFirePoint geoPoint,
       EntityType type,
       bool onlineConsultation,
-      int maxAllowed,
+      int? maxAllowed,
       bool isPrivate,
-      [String parentId]) async {
+      [String? parentId]) async {
     Entity entity = new Entity(
         entityId: id,
         name: name,
@@ -468,10 +468,10 @@ class DBTest {
     try {
       entity.regNum = "testReg";
       if (parentId == null) {
-        await _gs.getEntityService().upsertEntity(entity);
+        await _gs!.getEntityService()!.upsertEntity(entity);
       } else {
-        await _gs
-            .getEntityService()
+        await _gs!
+            .getEntityService()!
             .upsertChildEntityToParent(entity, parentId);
       }
     } catch (e) {
@@ -528,7 +528,7 @@ class DBTest {
     await deleteEntity('GymEntity110');
 
     try {
-      bool deleted = await _gs.getEntityService().deleteEntity('Entity101');
+      bool deleted = await _gs!.getEntityService()!.deleteEntity('Entity101');
       if (deleted) {
         print(
             "Entity101 deletion failed as per expectation as Child Enities Exists --> FAILURE");
@@ -584,44 +584,44 @@ class DBTest {
 
     //delete user
 
-    await _gs.getUserService().deleteCurrentUser();
+    await _gs!.getUserService()!.deleteCurrentUser();
     await deleteEntity(Covid_Vacination_Center);
     await deleteEntity(Multi_Forms_School_ID);
 
-    _gs.getUserService().deleteUser("+912626262626");
-    _gs.getUserService().deleteUser("+916565656565");
-    _gs.getUserService().deleteUser("+919611006955");
-    _gs.getUserService().deleteUser("+919611009823");
-    _gs.getUserService().deleteUser("+911111111111");
-    _gs.getUserService().deleteUser("+913611009823");
-    _gs.getUserService().deleteUser("+919999999999");
+    _gs!.getUserService()!.deleteUser("+912626262626");
+    _gs!.getUserService()!.deleteUser("+916565656565");
+    _gs!.getUserService()!.deleteUser("+919611006955");
+    _gs!.getUserService()!.deleteUser("+919611009823");
+    _gs!.getUserService()!.deleteUser("+911111111111");
+    _gs!.getUserService()!.deleteUser("+913611009823");
+    _gs!.getUserService()!.deleteUser("+919999999999");
   }
 
   Future<void> deleteEntity(String entityId) async {
     try {
-      await _gs.getEntityService().deleteEntity(entityId);
-      await _gs.getTokenService().deleteSlotsForEntity(entityId);
-      await _gs.getTokenService().deleteTokensForEntity(entityId);
-      await _gs.getTokenService().deleteTokenCountersForEntity(entityId);
-      await _gs.getApplicationService().deleteApplicationsForEntity(entityId);
+      await _gs!.getEntityService()!.deleteEntity(entityId);
+      await _gs!.getTokenService()!.deleteSlotsForEntity(entityId);
+      await _gs!.getTokenService()!.deleteTokensForEntity(entityId);
+      await _gs!.getTokenService()!.deleteTokenCountersForEntity(entityId);
+      await _gs!.getApplicationService()!.deleteApplicationsForEntity(entityId);
     } catch (e) {
       print(entityId + " is not cleared");
     }
   }
 
   Future<void> tests() async {
-    final User fireUser = _gs.getAuthService().getFirebaseAuth().currentUser;
+    final User? fireUser = _gs!.getAuthService()!.getFirebaseAuth().currentUser;
 
-    FirebaseApp secondaryApp = await _gs.initSecondaryFirebaseApp();
+    FirebaseApp secondaryApp = await (_gs!.initSecondaryFirebaseApp() as FutureOr<FirebaseApp>);
 
     FirebaseFirestore fStore = FirebaseFirestore.instanceFor(app: secondaryApp);
 
     print(
         "<==================================TESTING STARTED==========================================>");
 
-    Configurations conf = _gs.getConfigurations();
+    Configurations? conf = _gs!.getConfigurations();
 
-    AppUser u = await _gs.getUserService().getCurrentUser();
+    AppUser? u = await _gs!.getUserService()!.getCurrentUser();
 
     try {
       await createChildEntityAndAddToParent(
@@ -640,8 +640,8 @@ class DBTest {
     emp.ph = "+913611009823";
     emp.name = "FName1 User1";
 
-    await _gs
-        .getEntityService()
+    await _gs!
+        .getEntityService()!
         .upsertEmployee('Child101-1', emp, EntityRole.Admin);
 
     await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
@@ -652,18 +652,18 @@ class DBTest {
 
     await updateEntity("Inorbit_Modified_Again");
 
-    Entity ent = await _gs.getEntityService().getEntity('Entity101');
+    Entity? ent = await _gs!.getEntityService()!.getEntity('Entity101');
 
-    Entity child1 = await _gs.getEntityService().getEntity('Child101-1');
+    Entity child1 = await (_gs!.getEntityService()!.getEntity('Child101-1') as FutureOr<Entity>);
 
-    Entity child2 = await _gs.getEntityService().getEntity('Child101-2');
+    Entity? child2 = await _gs!.getEntityService()!.getEntity('Child101-2');
 
-    Entity child3 = await _gs.getEntityService().getEntity('Child101-3');
+    Entity? child3 = await _gs!.getEntityService()!.getEntity('Child101-3');
 
     print("Token generation started..");
 
     try {
-      await _gs.getTokenService().generateToken(
+      await _gs!.getTokenService()!.generateToken(
           child1.getMetaEntity(), new DateTime(2020, 7, 6, 10, 30, 0, 0));
     } catch (e) {
       print("generate token threw Slotful exception");
@@ -671,38 +671,38 @@ class DBTest {
 
     print("Tok1 generated");
 
-    await _gs.getTokenService().generateToken(
+    await _gs!.getTokenService()!.generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 7, 12, 30, 0, 0));
     print("Tok21 generated");
 
-    await _gs.getTokenService().generateToken(
+    await _gs!.getTokenService()!.generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 7, 10, 30, 0, 0));
     print("Tok22 generated");
 
-    await _gs.getTokenService().generateToken(
+    await _gs!.getTokenService()!.generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 8, 10, 30, 0, 0));
     print("Tok3 generated");
 
     print("Token generation ended.");
 
-    List<UserTokens> toks = await _gs
-        .getTokenService()
+    List<UserTokens?> toks = await (_gs!
+        .getTokenService()!
         .getAllTokensForCurrentUser(
-            new DateTime(2020, 7, 8), new DateTime(2020, 7, 9));
+            new DateTime(2020, 7, 8), new DateTime(2020, 7, 9)) as FutureOr<List<UserTokens?>>);
     print("Got the Tokens between 8th July and 9th July: " +
         toks.length.toString());
 
     bool isAdminAssignedOnEntity = false;
 
     final DocumentReference entityPrivateRef =
-        fStore.doc('entities/' + child1.entityId + '/private_data/private');
+        fStore.doc('entities/' + child1.entityId! + '/private_data/private');
     DocumentSnapshot doc = await entityPrivateRef.get();
 
-    EntityPrivate ePrivate;
+    EntityPrivate? ePrivate;
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
+      Map<String, dynamic>? map = doc.data();
       ePrivate = EntityPrivate.fromJson(map);
-      if (ePrivate.roles['+913611009823'] ==
+      if (ePrivate!.roles!['+913611009823'] ==
           EnumToString.convertToString(EntityRole.Admin)) {
         isAdminAssignedOnEntity = true;
       }
@@ -716,17 +716,17 @@ class DBTest {
 
     final DocumentReference userRef = fStore.doc('users/+913611009823');
     DocumentSnapshot doc1 = await userRef.get();
-    AppUser newAdmin;
+    AppUser? newAdmin;
     if (doc1.exists) {
-      Map<String, dynamic> map = doc1.data();
+      Map<String, dynamic> map = doc1.data()!;
       newAdmin = AppUser.fromJson(map);
     }
 
     bool isEntityAddedToAdmin = false;
 
     if (newAdmin != null) {
-      for (MetaEntity me in newAdmin.entities) {
-        if (me.entityId == "Child101-1") {
+      for (MetaEntity? me in newAdmin.entities!) {
+        if (me!.entityId == "Child101-1") {
           isEntityAddedToAdmin = true;
           break;
         }
@@ -749,8 +749,8 @@ class DBTest {
           "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
     }
 
-    List<UserTokens> toksBetween6thAnd9th = await _gs
-        .getTokenService()
+    List<UserTokens?>? toksBetween6thAnd9th = await _gs!
+        .getTokenService()!
         .getAllTokensForCurrentUser(
             new DateTime(2020, 7, 6), new DateTime(2020, 7, 9));
 
@@ -761,8 +761,8 @@ class DBTest {
           "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
     }
 
-    List<UserTokens> allToksFromToday = await _gs
-        .getTokenService()
+    List<UserTokens?>? allToksFromToday = await _gs!
+        .getTokenService()!
         .getAllTokensForCurrentUser(new DateTime(2020, 7, 7), null);
 
     if (allToksFromToday != null && allToksFromToday.length >= 3) {
@@ -773,18 +773,18 @@ class DBTest {
           "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
     }
 
-    EntitySlots es = await _gs
-        .getTokenService()
+    EntitySlots? es = await _gs!
+        .getTokenService()!
         .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
 
-    if (es != null && es.slots.length == 2) {
+    if (es != null && es.slots!.length == 2) {
       print("TokenService.getEntitySlots --> SUCCESS");
     } else {
       print("TokenService.getEntitySlots -----------------------> FAILURE");
     }
 
-    List<UserTokens> toksForDayForEntity = await _gs
-        .getTokenService()
+    List<UserTokens?> toksForDayForEntity = await _gs!
+        .getTokenService()!
         .getTokensForEntityBookedByCurrentUser(
             'Child101-1', new DateTime(2020, 7, 7));
 
@@ -795,25 +795,25 @@ class DBTest {
           "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
     }
 
-    Triplet<UserToken, TokenCounter, EntitySlots> cancelledTup;
-    cancelledTup = await _gs
-        .getTokenService()
+    Triplet<UserToken, TokenCounter, EntitySlots>? cancelledTup;
+    cancelledTup = await _gs!
+        .getTokenService()!
         .cancelToken("Child101-1#2020~7~7#10~30#+919999999999");
 
-    UserToken cancelledToken = cancelledTup.item1;
+    UserToken? cancelledToken = cancelledTup!.item1;
 
     if (cancelledToken == null) {
       print("TokenService.cancelToken ------> FAILURE");
     }
 
-    List<UserTokens> toksForDayForEntityAfterCancellation = await _gs
-        .getTokenService()
+    List<UserTokens?> toksForDayForEntityAfterCancellation = await _gs!
+        .getTokenService()!
         .getTokensForEntityBookedByCurrentUser(
             'Child101-1', new DateTime(2020, 7, 7));
-    for (UserTokens tokenOnSeventh in toksForDayForEntityAfterCancellation) {
-      if (tokenOnSeventh.slotId + "#" + tokenOnSeventh.userId ==
+    for (UserTokens? tokenOnSeventh in toksForDayForEntityAfterCancellation) {
+      if (tokenOnSeventh!.slotId! + "#" + tokenOnSeventh.userId! ==
           "Child101-1#2020~7~7#10~30#+919999999999") {
-        if (tokenOnSeventh.tokens[0].number == -1) {
+        if (tokenOnSeventh.tokens![0].number == -1) {
           print("TokenService.cancelToken ------> Success");
         } else {
           print("TokenService.cancelToken --------------------> FAILURE");
@@ -821,13 +821,13 @@ class DBTest {
       }
     }
 
-    EntitySlots esWithCancelledSlot = await _gs
-        .getTokenService()
+    EntitySlots? esWithCancelledSlot = await _gs!
+        .getTokenService()!
         .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
 
-    if (esWithCancelledSlot != null && esWithCancelledSlot.slots.length == 2) {
+    if (esWithCancelledSlot != null && esWithCancelledSlot.slots!.length == 2) {
       bool isSuccess = false;
-      for (Slot s in esWithCancelledSlot.slots) {
+      for (Slot s in esWithCancelledSlot.slots!) {
         if (s.maxAllowed == 51) {
           isSuccess = true;
         }
@@ -844,12 +844,12 @@ class DBTest {
 
     print("----------Search Only Type--with Name null ----------");
 
-    List<Entity> entitiesByTypeAndNameNull = await _gs
-        .getEntityService()
+    List<Entity> entitiesByTypeAndNameNull = await _gs!
+        .getEntityService()!
         .search(null, EntityType.PLACE_TYPE_SHOP, 71.70, -42.60, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameNull) {
-      print(me.name + ":" + me.distance.toString());
+      print(me.name! + ":" + me.distance.toString());
     }
 
     if (entitiesByTypeAndNameNull != null &&
@@ -861,12 +861,12 @@ class DBTest {
 
     print("----------Search Only Partial Name-- Type null-----------");
 
-    List<Entity> entitiesByTypeNullAndName = await _gs
-        .getEntityService()
+    List<Entity> entitiesByTypeNullAndName = await _gs!
+        .getEntityService()!
         .search("Habi", null, 71.70, -42.60, 2, 1, 2);
 
     for (Entity me in entitiesByTypeNullAndName) {
-      print(me.name + ":" + me.distance.toString());
+      print(me.name! + ":" + me.distance.toString());
     }
 
     if (entitiesByTypeNullAndName != null &&
@@ -879,12 +879,12 @@ class DBTest {
 
     print("---------Search By Partial Name and Type --------------");
 
-    List<Entity> entitiesByTypeAndName = await _gs
-        .getEntityService()
+    List<Entity> entitiesByTypeAndName = await _gs!
+        .getEntityService()!
         .search("Bat", EntityType.PLACE_TYPE_SHOP, 71.70, -42.60, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndName) {
-      print(me.name + ":" + me.distance.toString());
+      print(me.name! + ":" + me.distance.toString());
     }
 
     if (entitiesByTypeAndName != null && entitiesByTypeAndName.length == 1) {
@@ -897,12 +897,12 @@ class DBTest {
     print(
         "---------Search By Name and Type again for 2 Habi but of different type--------------");
 
-    List<Entity> entitiesByTypeAndNameAgain = await _gs
-        .getEntityService()
+    List<Entity> entitiesByTypeAndNameAgain = await _gs!
+        .getEntityService()!
         .search("Habina", EntityType.PLACE_TYPE_SHOP, 71.70, -42.60, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameAgain) {
-      print(me.name + ":" + me.distance.toString());
+      print(me.name! + ":" + me.distance.toString());
     }
 
     if (entitiesByTypeAndNameAgain != null &&
@@ -915,12 +915,12 @@ class DBTest {
     print(
         "---------Search By Name and Type Store (no intersection) --------------");
 
-    List<Entity> noIntersection = await _gs
-        .getEntityService()
+    List<Entity> noIntersection = await _gs!
+        .getEntityService()!
         .search("Bata", EntityType.PLACE_TYPE_POPSHOP, 71.70, -42.60, 2, 1, 2);
 
     for (Entity me in noIntersection) {
-      print(me.name + ":" + me.distance.toString());
+      print(me.name! + ":" + me.distance.toString());
     }
 
     if (noIntersection != null && noIntersection.length == 0) {
@@ -929,10 +929,10 @@ class DBTest {
       print("EntityService.search --------------------------> FAILURE");
     }
 
-    await _gs.getEntityService().removeEmployee('Child101-1', "+913611009823");
+    await _gs!.getEntityService()!.removeEmployee('Child101-1', "+913611009823");
 
     try {
-      bool removed = await _gs.removeEmployee('Child101-1', "+919999999999");
+      bool removed = await _gs!.removeEmployee('Child101-1', "+919999999999");
       if (removed) {
         print(
             "Remove Admin failed as per expectation, as +919999999999 was the only admin --> FAILURE");
@@ -947,7 +947,7 @@ class DBTest {
       }
     }
 
-    Entity child101 = await _gs.getEntityService().getEntity('Child101-1');
+    Entity? child101 = await _gs!.getEntityService()!.getEntity('Child101-1');
 
     bool isAdminRemovedFromEntity = true;
     // for (MetaUser me in child101.admins) {
@@ -958,14 +958,14 @@ class DBTest {
     // }
 
     final DocumentReference child101PrivateRef =
-        fStore.doc('entities/' + child1.entityId + '/private_data/private');
+        fStore.doc('entities/' + child1.entityId! + '/private_data/private');
     DocumentSnapshot docChild101 = await child101PrivateRef.get();
 
-    EntityPrivate ePrivateChild101;
+    EntityPrivate? ePrivateChild101;
     if (doc.exists) {
-      Map<String, dynamic> map = docChild101.data();
+      Map<String, dynamic>? map = docChild101.data();
       ePrivateChild101 = EntityPrivate.fromJson(map);
-      if (ePrivateChild101.roles['+913611009823'] ==
+      if (ePrivateChild101!.roles!['+913611009823'] ==
           EnumToString.convertToString(EntityRole.Admin)) {
         isAdminAssignedOnEntity = false;
       }
@@ -978,17 +978,17 @@ class DBTest {
     }
 
     DocumentSnapshot removedAdminDoc = await userRef.get();
-    AppUser removedAdmin;
+    AppUser? removedAdmin;
     if (doc.exists) {
-      Map<String, dynamic> map = removedAdminDoc.data();
+      Map<String, dynamic> map = removedAdminDoc.data()!;
       removedAdmin = AppUser.fromJson(map);
     }
 
     bool isEntityRemovedFromAdmin = true;
 
     if (removedAdmin != null) {
-      for (MetaEntity me in removedAdmin.entities) {
-        if (me.entityId == "Child101-1") {
+      for (MetaEntity? me in removedAdmin.entities!) {
+        if (me!.entityId == "Child101-1") {
           isEntityRemovedFromAdmin = false;
           break;
         }
@@ -1005,17 +1005,17 @@ class DBTest {
 
     //----------
 
-    await _gs
-        .getEntityService()
-        .addEntityToUserFavourite(child101.getMetaEntity());
+    await _gs!
+        .getEntityService()!
+        .addEntityToUserFavourite(child101!.getMetaEntity());
 
-    AppUser curUser = await _gs.getUserService().getCurrentUser();
+    AppUser? curUser = await _gs!.getUserService()!.getCurrentUser();
 
     bool isEntityAddedToCurrentUser = false;
 
     if (curUser != null) {
-      for (MetaEntity me in curUser.favourites) {
-        if (me.entityId == "Child101-1") {
+      for (MetaEntity? me in curUser.favourites!) {
+        if (me!.entityId == "Child101-1") {
           isEntityAddedToCurrentUser = true;
           break;
         }
@@ -1031,15 +1031,15 @@ class DBTest {
           "EntityService.addEntityToUserFavourite -----------------------> FAILURE");
     }
 
-    await _gs.getEntityService().removeEntityFromUserFavourite("Child101-1");
+    await _gs!.getEntityService()!.removeEntityFromUserFavourite("Child101-1");
 
-    curUser = await _gs.getUserService().getCurrentUser();
+    curUser = await _gs!.getUserService()!.getCurrentUser();
 
     bool isEntityRemovedFromCurrentUser = true;
 
     if (curUser != null) {
-      for (MetaEntity me in curUser.favourites) {
-        if (me.entityId == "Child101-1") {
+      for (MetaEntity? me in curUser.favourites!) {
+        if (me!.entityId == "Child101-1") {
           isEntityRemovedFromCurrentUser = false;
           break;
         }
@@ -1058,10 +1058,10 @@ class DBTest {
     //---- Update child entity with upsertChild method which should update the metaEntity in the parentEntity and Admin user
     await updateChild101();
 
-    Entity parentEnt = await _gs.getEntityService().getEntity('Entity101');
+    Entity parentEnt = await (_gs!.getEntityService()!.getEntity('Entity101') as FutureOr<Entity>);
     bool metaNameChangedInParent = false;
-    for (MetaEntity me in parentEnt.childEntities) {
-      if (me.name == "Bata updated") {
+    for (MetaEntity? me in parentEnt.childEntities!) {
+      if (me!.name == "Bata updated") {
         metaNameChangedInParent = true;
         break;
       }
@@ -1075,12 +1075,12 @@ class DBTest {
           "EntityService.upsertChildEntityToParent (metaEntity updated in the Parent) --> Failure");
     }
 
-    AppUser user = await _gs.getUserService().getCurrentUser();
+    AppUser user = await (_gs!.getUserService()!.getCurrentUser() as FutureOr<AppUser>);
 
     bool metaNameChangedInAdminUser = false;
 
-    for (MetaEntity me in user.entities) {
-      if (me.name == "Bata updated") {
+    for (MetaEntity? me in user.entities!) {
+      if (me!.name == "Bata updated") {
         metaNameChangedInAdminUser = true;
         break;
       }
@@ -1096,12 +1096,12 @@ class DBTest {
 
     await updateChildEntityBataWithOfferAndManager();
 
-    Entity bata = await _gs.getEntityService().getEntity('Child101-1');
+    Entity bata = await (_gs!.getEntityService()!.getEntity('Child101-1') as FutureOr<Entity>);
 
     if (bata.offer != null &&
-        bata.offer.coupon == "Coup10" &&
+        bata.offer!.coupon == "Coup10" &&
         bata.managers != null &&
-        bata.managers[0].employeeId == "Emp410") {
+        bata.managers![0].employeeId == "Emp410") {
       print("Offer and Manager added on Entity --> SUCCESS");
     } else {
       print(
@@ -1113,14 +1113,14 @@ class DBTest {
     emp2.name = "FName2 User2";
 
     bool admin6955 =
-        await _gs.addEmployee("Child101-3", emp2, EntityRole.Admin);
+        await _gs!.addEmployee("Child101-3", emp2, EntityRole.Admin);
 
     print(
         "+919611006955 added as an admin to the Child101-3, check on the real device");
 
-    List<UserToken> tokens = await _gs
-        .getTokenService()
-        .getAllTokensForSlot("Child101-1#2020~7~7#10~30");
+    List<UserToken> tokens = await (_gs!
+        .getTokenService()!
+        .getAllTokensForSlot("Child101-1#2020~7~7#10~30") as FutureOr<List<UserToken>>);
 
     if (tokens.length == 1) {
       print("TokenService.getAllTokensForSlot --> SUCCESS");
@@ -1130,7 +1130,7 @@ class DBTest {
     }
 
     BookingForm bf = await testCovidCenterBookingForm();
-    Entity covVacinationCenter = await testBookingApplicationSubmission(bf);
+    Entity covVacinationCenter = await (testBookingApplicationSubmission(bf) as FutureOr<Entity>);
     BookingApplication approvedBA = await testBookingApplicationStatusChange();
 
     await testApplicationCancellation(approvedBA);
@@ -1162,17 +1162,17 @@ class DBTest {
     Employee emp = new Employee();
     emp.ph = "+913611009823";
     emp.name = "FName1 User1";
-    await _gs
-        .getEntityService()
+    await _gs!
+        .getEntityService()!
         .upsertEmployee('Child101-1', emp, EntityRole.Admin);
-    await _gs
-        .getEntityService()
+    await _gs!
+        .getEntityService()!
         .upsertEmployee('Entity102', emp, EntityRole.Admin);
-    await _gs
-        .getEntityService()
+    await _gs!
+        .getEntityService()!
         .upsertEmployee('Entity102', emp, EntityRole.Admin);
-    await _gs
-        .getEntityService()
+    await _gs!
+        .getEntityService()!
         .upsertEmployee('Entity102', emp, EntityRole.Admin);
 
     print("Security permission test completed.");
@@ -1212,14 +1212,14 @@ class DBTest {
 
     try {
       entity.regNum = "testReg";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
   }
 
   Future<void> updateChildEntityBataWithOfferAndManager() async {
-    Entity ent = await _gs.getEntityService().getEntity("Child101-1");
+    Entity ent = await (_gs!.getEntityService()!.getEntity("Child101-1") as FutureOr<Entity>);
 
     Address adrs = new Address(
         city: "Hyderbad",
@@ -1248,18 +1248,18 @@ class DBTest {
     if (ent.managers == null) {
       ent.managers = [];
     }
-    ent.managers.add(manager1);
+    ent.managers!.add(manager1);
 
     try {
       ent.regNum = "BataRegNumber";
-      await _gs.getEntityService().upsertEntity(ent);
+      await _gs!.getEntityService()!.upsertEntity(ent);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
   }
 
   Future<void> updateEntity(String name) async {
-    Entity ent = await _gs.getEntityService().getEntity("Entity101");
+    Entity ent = await (_gs!.getEntityService()!.getEntity("Entity101") as FutureOr<Entity>);
     ent.name = name;
 
     Address adrs = new Address(
@@ -1269,7 +1269,7 @@ class DBTest {
         address: "Shop 10, Gachibowli");
 
     try {
-      await _gs.getEntityService().upsertEntity(ent);
+      await _gs!.getEntityService()!.upsertEntity(ent);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1311,8 +1311,8 @@ class DBTest {
         maxTokensByUserInDay: 15);
     try {
       child1.regNum = "testregnum";
-      bool added = await _gs
-          .getEntityService()
+      bool added = await _gs!
+          .getEntityService()!
           .upsertChildEntityToParent(child1, 'Entity101');
     } catch (e) {
       print("Exception while creating Child101: " + e.toString());
@@ -1391,7 +1391,7 @@ class DBTest {
     // Employee manager1 = new Employee(name: "Rakesh", ph: "+91888888888", employeeId: "empyId", shiftStartHour: );
 
     try {
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1419,76 +1419,76 @@ class DBTest {
 
   Future<void> testTokenCounter(Entity bata) async {
     //set the max token booked by a user in a slot to 3
-    await _gs.getEntityService().upsertEntity(bata);
-    MetaEntity me = bata.getMetaEntity();
+    await _gs!.getEntityService()!.upsertEntity(bata);
+    MetaEntity? me = bata.getMetaEntity();
 
     //book tokens for April 13th (10:30 - 3, 11:30 - 2, 3:30 - 3), April 14th (11:30 - 3) = Total: 11
 
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 4, 13, 10, 30));
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 4, 13, 10, 30));
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 4, 13, 10, 30));
 
-    Triplet<UserTokens, TokenCounter, EntitySlots> tup1 = await _gs
-        .getTokenService()
+    Triplet<UserTokens, TokenCounter, EntitySlots> tup1 = await (_gs!
+        .getTokenService()!
+        .generateToken(me, new DateTime(2021, 4, 13, 11, 30)) as FutureOr<Triplet<UserTokens, TokenCounter, EntitySlots>>);
+    UserTokens ut1 = tup1.item1!;
+
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 4, 13, 11, 30));
-    UserTokens ut1 = tup1.item1;
 
-    await _gs
-        .getTokenService()
-        .generateToken(me, new DateTime(2021, 4, 13, 11, 30));
-
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 4, 13, 15, 30));
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 4, 13, 15, 30));
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 4, 13, 15, 30));
 
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 4, 14, 11, 30));
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 4, 14, 11, 30));
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 4, 14, 11, 30));
 
     //book tokens for May 1st (10:30 - 2, 11:30 - 1, 12:30 - 1) = Total: 4
-    Triplet<UserTokens, TokenCounter, EntitySlots> tup2 = await _gs
-        .getTokenService()
+    Triplet<UserTokens, TokenCounter, EntitySlots> tup2 = await (_gs!
+        .getTokenService()!
+        .generateToken(me, new DateTime(2021, 5, 1, 10, 30)) as FutureOr<Triplet<UserTokens, TokenCounter, EntitySlots>>);
+    UserTokens ut2 = tup2.item1!;
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 5, 1, 10, 30));
-    UserTokens ut2 = tup2.item1;
-    await _gs
-        .getTokenService()
-        .generateToken(me, new DateTime(2021, 5, 1, 10, 30));
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 5, 1, 11, 30));
-    await _gs
-        .getTokenService()
+    await _gs!
+        .getTokenService()!
         .generateToken(me, new DateTime(2021, 5, 1, 12, 30));
 
     //cancel 3 tokens - 1 from April and 2 from May
 
-    await _gs.getTokenService().cancelToken(ut1.getTokenId(), 1);
+    await _gs!.getTokenService()!.cancelToken(ut1.getTokenId(), 1);
 
-    await _gs.getTokenService().cancelToken(ut2.getTokenId(), 1);
+    await _gs!.getTokenService()!.cancelToken(ut2.getTokenId(), 1);
 
-    await _gs.getTokenService().cancelToken(ut2.getTokenId(), 2);
+    await _gs!.getTokenService()!.cancelToken(ut2.getTokenId(), 2);
 
-    TokenCounter tc = await _gs
-        .getTokenService()
-        .getTokenCounterForEntity(bata.entityId, "2021");
+    TokenCounter tc = await (_gs!
+        .getTokenService()!
+        .getTokenCounterForEntity(bata.entityId!, "2021") as FutureOr<TokenCounter>);
 
     if (tc.getTokenStatsForDay(DateTime(2021, 4, 14)).numberOfTokensCreated ==
             3 &&
@@ -1526,7 +1526,7 @@ class DBTest {
     Map<String, TokenStats> slotWiseStats =
         tc.getTokenStatsSlotWiseForDay(DateTime(2021, 4, 13));
 
-    TokenStats ts = slotWiseStats[slot13April1130];
+    TokenStats ts = slotWiseStats[slot13April1130]!;
     if (ts.numberOfTokensCreated == 2 && ts.numberOfTokensCancelled == 1) {
       print("TokenCounter.getTokenStatsSlotWiseForDay() --> SUCCESS");
     } else {
@@ -1573,8 +1573,8 @@ class DBTest {
 
     try {
       entity.regNum = "SampleChildRegNum";
-      await _gs
-          .getEntityService()
+      await _gs!
+          .getEntityService()!
           .upsertChildEntityToParent(entity, "Entity101");
     } catch (e) {
       print("Exception occured " + e.toString());
@@ -1642,7 +1642,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1687,7 +1687,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(
+      await _gs!.getEntityService()!.upsertEntity(
             entity,
           );
     } catch (e) {
@@ -1738,7 +1738,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1787,7 +1787,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1839,7 +1839,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1891,7 +1891,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1943,7 +1943,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1994,7 +1994,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -2046,7 +2046,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -2082,8 +2082,8 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111123";
-      await _gs
-          .getEntityService()
+      await _gs!
+          .getEntityService()!
           .upsertChildEntityToParent(childEntity, "MyHomeApartment");
     } catch (e) {
       print("Exception occured " + e.toString());
@@ -2095,11 +2095,11 @@ class DBTest {
     secondAdmin.ph = "+911111111111";
 
     try {
-      await _gs
-          .getEntityService()
+      await _gs!
+          .getEntityService()!
           .upsertEmployee("MyHomeApartment", secondAdmin, EntityRole.Admin);
 
-      await _gs.getEntityService().upsertEmployee(
+      await _gs!.getEntityService()!.upsertEmployee(
           "SalonMyHomeApartment", secondAdmin, EntityRole.Admin);
     } catch (e) {
       print("Exception occured " + e.toString());
@@ -2118,27 +2118,27 @@ class DBTest {
     executive1.ph = "+912626262626"; //Nokia - Apartment Executive
 
     try {
-      await _gs.getEntityService().upsertEmployee(
+      await _gs!.getEntityService()!.upsertEmployee(
           "MyHomeApartment", managerMyHomeApt, EntityRole.Manager);
-      await _gs
-          .getEntityService()
+      await _gs!
+          .getEntityService()!
           .upsertEmployee("MyHomeApartment", executive1, EntityRole.Executive);
-      await _gs
-          .getEntityService()
+      await _gs!
+          .getEntityService()!
           .upsertEmployee("SalonMyHomeApartment", adminSalon, EntityRole.Admin);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
 
-    AppUser salonAdmin = await _gs.getUserService().getUser("+912626262626");
-    Entity salon =
-        await _gs.getEntityService().getEntity("SalonMyHomeApartment");
+    AppUser salonAdmin = await (_gs!.getUserService()!.getUser("+912626262626") as FutureOr<AppUser>);
+    Entity? salon =
+        await _gs!.getEntityService()!.getEntity("SalonMyHomeApartment");
 
-    EntityPrivate salonPrivate =
-        await _gs.getEntityService().getEntityPrivate("SalonMyHomeApartment");
-    if (salonAdmin.entityVsRole["SalonMyHomeApartment"] == EntityRole.Admin &&
-        salon.getRole("+912626262626") == EntityRole.Admin &&
-        salonPrivate.roles["+912626262626"] ==
+    EntityPrivate? salonPrivate =
+        await _gs!.getEntityService()!.getEntityPrivate("SalonMyHomeApartment");
+    if (salonAdmin.entityVsRole!["SalonMyHomeApartment"] == EntityRole.Admin &&
+        salon!.getRole("+912626262626") == EntityRole.Admin &&
+        salonPrivate!.roles!["+912626262626"] ==
             EnumToString.convertToString(EntityRole.Admin)) {
       print("AddEmployee as an Admin is working fine --> SUCCESS");
     } else {
@@ -2146,16 +2146,16 @@ class DBTest {
     }
 
     AppUser apartmentManager =
-        await _gs.getUserService().getUser("+916565656565");
-    Entity apartment =
-        await _gs.getEntityService().getEntity("MyHomeApartment");
+        await (_gs!.getUserService()!.getUser("+916565656565") as FutureOr<AppUser>);
+    Entity? apartment =
+        await _gs!.getEntityService()!.getEntity("MyHomeApartment");
 
-    EntityPrivate apartmentPrivate =
-        await _gs.getEntityService().getEntityPrivate("MyHomeApartment");
-    if (apartmentManager.entityVsRole["MyHomeApartment"] ==
+    EntityPrivate? apartmentPrivate =
+        await _gs!.getEntityService()!.getEntityPrivate("MyHomeApartment");
+    if (apartmentManager.entityVsRole!["MyHomeApartment"] ==
             EntityRole.Manager &&
-        apartment.getRole("+916565656565") == EntityRole.Manager &&
-        apartmentPrivate.roles["+916565656565"] ==
+        apartment!.getRole("+916565656565") == EntityRole.Manager &&
+        apartmentPrivate!.roles!["+916565656565"] ==
             EnumToString.convertToString(EntityRole.Manager)) {
       print("AddEmployee as an Manager is working fine --> SUCCESS");
     } else {
@@ -2163,12 +2163,12 @@ class DBTest {
     }
 
     AppUser apartmentExecutive =
-        await _gs.getUserService().getUser("+912626262626");
+        await (_gs!.getUserService()!.getUser("+912626262626") as FutureOr<AppUser>);
 
-    if (apartmentExecutive.entityVsRole["MyHomeApartment"] ==
+    if (apartmentExecutive.entityVsRole!["MyHomeApartment"] ==
             EntityRole.Executive &&
-        apartment.getRole("+912626262626") == EntityRole.Executive &&
-        apartmentPrivate.roles["+912626262626"] ==
+        apartment!.getRole("+912626262626") == EntityRole.Executive &&
+        apartmentPrivate!.roles!["+912626262626"] ==
             EnumToString.convertToString(EntityRole.Executive)) {
       print("AddEmployee as an Executive is working fine --> SUCCESS");
     } else {
@@ -2177,22 +2177,22 @@ class DBTest {
 
     //now make the manager as Admin of the Apartment
     try {
-      await _gs.getEntityService().upsertEmployee(
+      await _gs!.getEntityService()!.upsertEmployee(
           "MyHomeApartment", managerMyHomeApt, EntityRole.Admin);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
 
-    apartmentManager = await _gs.getUserService().getUser("+916565656565");
-    apartment = await _gs.getEntityService().getEntity("MyHomeApartment");
+    apartmentManager = await (_gs!.getUserService()!.getUser("+916565656565") as FutureOr<AppUser>);
+    apartment = await _gs!.getEntityService()!.getEntity("MyHomeApartment");
 
     apartmentPrivate =
-        await _gs.getEntityService().getEntityPrivate("MyHomeApartment");
-    if (apartmentManager.entityVsRole["MyHomeApartment"] !=
+        await _gs!.getEntityService()!.getEntityPrivate("MyHomeApartment");
+    if (apartmentManager.entityVsRole!["MyHomeApartment"] !=
             EntityRole.Manager &&
-        apartmentManager.entityVsRole["MyHomeApartment"] == EntityRole.Admin &&
-        apartment.getRole("+916565656565") == EntityRole.Admin &&
-        apartmentPrivate.roles["+916565656565"] ==
+        apartmentManager.entityVsRole!["MyHomeApartment"] == EntityRole.Admin &&
+        apartment!.getRole("+916565656565") == EntityRole.Admin &&
+        apartmentPrivate!.roles!["+916565656565"] ==
             EnumToString.convertToString(EntityRole.Admin)) {
       print(
           "AddEmployee to promote Manager to Admin is working fine --> SUCCESS");
@@ -2204,54 +2204,54 @@ class DBTest {
 
   Future<void> testRemoveAdminManagerAndExecutive() async {
     try {
-      await _gs
-          .getEntityService()
+      await _gs!
+          .getEntityService()!
           .removeEmployee("MyHomeApartment", "+916565656565");
-      await _gs
-          .getEntityService()
+      await _gs!
+          .getEntityService()!
           .removeEmployee("MyHomeApartment", "+912626262626");
-      await _gs
-          .getEntityService()
+      await _gs!
+          .getEntityService()!
           .removeEmployee("SalonMyHomeApartment", "+912626262626");
     } catch (e) {
       print("Exception occured " + e.toString());
     }
 
-    AppUser salonAdmin = await _gs.getUserService().getUser("+912626262626");
-    Entity salon =
-        await _gs.getEntityService().getEntity("SalonMyHomeApartment");
+    AppUser salonAdmin = await (_gs!.getUserService()!.getUser("+912626262626") as FutureOr<AppUser>);
+    Entity? salon =
+        await _gs!.getEntityService()!.getEntity("SalonMyHomeApartment");
 
-    EntityPrivate salonPrivate =
-        await _gs.getEntityService().getEntityPrivate("SalonMyHomeApartment");
-    if (!salonAdmin.entityVsRole.containsKey("SalonMyHomeApartment") &&
-        salon.getRole("+912626262626") == null &&
-        !salonPrivate.roles.containsKey("+912626262626")) {
+    EntityPrivate? salonPrivate =
+        await _gs!.getEntityService()!.getEntityPrivate("SalonMyHomeApartment");
+    if (!salonAdmin.entityVsRole!.containsKey("SalonMyHomeApartment") &&
+        salon!.getRole("+912626262626") == null &&
+        !salonPrivate!.roles!.containsKey("+912626262626")) {
       print("RemoveEmployee as an Admin is working fine --> SUCCESS");
     } else {
       print("RemoveEmployee as an Admin -----------------------> FAILURE");
     }
 
     AppUser apartmentManager =
-        await _gs.getUserService().getUser("+916565656565");
-    Entity apartment =
-        await _gs.getEntityService().getEntity("MyHomeApartment");
+        await (_gs!.getUserService()!.getUser("+916565656565") as FutureOr<AppUser>);
+    Entity? apartment =
+        await _gs!.getEntityService()!.getEntity("MyHomeApartment");
 
-    EntityPrivate apartmentPrivate =
-        await _gs.getEntityService().getEntityPrivate("MyHomeApartment");
-    if (!apartmentManager.entityVsRole.containsKey("MyHomeApartment") &&
-        apartment.getRole("+916565656565") == null &&
-        !apartmentPrivate.roles.containsKey("+916565656565")) {
+    EntityPrivate? apartmentPrivate =
+        await _gs!.getEntityService()!.getEntityPrivate("MyHomeApartment");
+    if (!apartmentManager.entityVsRole!.containsKey("MyHomeApartment") &&
+        apartment!.getRole("+916565656565") == null &&
+        !apartmentPrivate!.roles!.containsKey("+916565656565")) {
       print("RemoveEmployee for a Manager is working fine --> SUCCESS");
     } else {
       print("RemoveEmployee for a Manager -----------------------> FAILURE");
     }
 
     AppUser apartmentExecutive =
-        await _gs.getUserService().getUser("+912626262626");
+        await (_gs!.getUserService()!.getUser("+912626262626") as FutureOr<AppUser>);
 
-    if (!apartmentExecutive.entityVsRole.containsKey("MyHomeApartment") &&
-        apartment.getRole("+912626262626") == null &&
-        !apartmentPrivate.roles.containsKey("+912626262626")) {
+    if (!apartmentExecutive.entityVsRole!.containsKey("MyHomeApartment") &&
+        apartment!.getRole("+912626262626") == null &&
+        !apartmentPrivate!.roles!.containsKey("+912626262626")) {
       print("RemoveEmployee for an Executive is working fine --> SUCCESS");
     } else {
       print("RemoveEmployee for an Executive -----------------------> FAILURE");
@@ -2265,9 +2265,9 @@ class DBTest {
         country: "India",
         address: "Shop 61, Towli Chowk Bazar, Gachibowli");
 
-    BookingForm bf = await _gs
-        .getApplicationService()
-        .getBookingForm(COVID_VACCINATION_BOOKING_FORM_ID_OLD);
+    BookingForm bf = await (_gs!
+        .getApplicationService()!
+        .getBookingForm(COVID_VACCINATION_BOOKING_FORM_ID_OLD) as FutureOr<BookingForm>);
 
     List<MetaForm> forms = [];
     forms.add(bf.getMetaForm());
@@ -2307,7 +2307,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -2326,46 +2326,46 @@ class DBTest {
     // }
   }
 
-  Future<Entity> testBookingApplicationSubmission(BookingForm bf) async {
+  Future<Entity?> testBookingApplicationSubmission(BookingForm bf) async {
     //Case 1: Application submission
     //Case 2: Application state change by Admin
     //Case 3: Counter increment for Global and Local both
 
-    Entity vacinationCenter =
-        await _gs.getEntityService().getEntity(Covid_Vacination_Center);
+    Entity? vacinationCenter =
+        await _gs!.getEntityService()!.getEntity(Covid_Vacination_Center);
 
     for (int i = 0; i < 10; i++) {
-      FormInputFieldText nameInput = bf.getFormFields()[0];
+      FormInputFieldText nameInput = bf.getFormFields()[0] as FormInputFieldText;
       nameInput.response = "FN LN " + i.toString();
 
-      FormInputFieldDateTime ageInput = bf.getFormFields()[1];
+      FormInputFieldDateTime ageInput = bf.getFormFields()[1] as FormInputFieldDateTime;
       ageInput.responseDateTime = DateTime(2001, 8, 6);
 
       FormInputFieldOptionsWithAttachments healthDetailsInput =
-          bf.getFormFields()[2];
+          bf.getFormFields()[2] as FormInputFieldOptionsWithAttachments;
       healthDetailsInput.responseValues = [];
-      healthDetailsInput.responseValues.add(healthDetailsInput.options[1]);
-      healthDetailsInput.responseValues.add(healthDetailsInput.options[3]);
+      healthDetailsInput.responseValues!.add(healthDetailsInput.options![1]);
+      healthDetailsInput.responseValues!.add(healthDetailsInput.options![3]);
 
-      FormInputFieldOptionsWithAttachments idProof = bf.getFormFields()[3];
+      FormInputFieldOptionsWithAttachments idProof = bf.getFormFields()[3] as FormInputFieldOptionsWithAttachments;
       idProof.responseValues = [];
-      idProof.responseValues.add(idProof.options[1]);
-      idProof.responseValues.add(idProof.options[3]);
+      idProof.responseValues!.add(idProof.options![1]);
+      idProof.responseValues!.add(idProof.options![3]);
       idProof.responseFilePaths = [];
-      idProof.responseFilePaths.add(
+      idProof.responseFilePaths!.add(
           "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/8d33fca0-567c-11eb-ab9e-3186f616ddb9%238d3200d0-567c-11eb-8f72-39e1ef14fb06%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_f511c73a-5c2b-43b6-91b7-fe1698dffb671714737705318816047.jpg?alt=media&token=d4b890c9-ff3c-4529-a65f-493e29763b61");
-      idProof.responseFilePaths.add(
+      idProof.responseFilePaths!.add(
           "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
 
       FormInputFieldOptionsWithAttachments frontLineWorker =
-          bf.getFormFields()[4];
+          bf.getFormFields()[4] as FormInputFieldOptionsWithAttachments;
       frontLineWorker.responseValues = [];
-      frontLineWorker.responseValues.add(frontLineWorker.options[0]);
-      frontLineWorker.responseValues.add(frontLineWorker.options[2]);
+      frontLineWorker.responseValues!.add(frontLineWorker.options![0]);
+      frontLineWorker.responseValues!.add(frontLineWorker.options![2]);
       frontLineWorker.responseFilePaths = [];
-      frontLineWorker.responseFilePaths.add(
+      frontLineWorker.responseFilePaths!.add(
           "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/8d33fca0-567c-11eb-ab9e-3186f616ddb9%238d3200d0-567c-11eb-8f72-39e1ef14fb06%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_f511c73a-5c2b-43b6-91b7-fe1698dffb671714737705318816047.jpg?alt=media&token=d4b890c9-ff3c-4529-a65f-493e29763b61");
-      frontLineWorker.responseFilePaths.add(
+      frontLineWorker.responseFilePaths!.add(
           "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
 
       BookingApplication ba = new BookingApplication();
@@ -2377,15 +2377,15 @@ class DBTest {
           i.toString();
       DateTime now = DateTime.now();
       ba.preferredSlotTiming = DateTime(now.year, now.month, now.day,
-              vacinationCenter.startTimeHour, vacinationCenter.startTimeMinute)
+              vacinationCenter!.startTimeHour!, vacinationCenter.startTimeMinute!)
           .add(Duration(days: 1));
 
       if (Utils.checkIfClosed(
-          ba.preferredSlotTiming, vacinationCenter.closedOn)) {
-        ba.preferredSlotTiming = ba.preferredSlotTiming.add(Duration(days: 1));
+          ba.preferredSlotTiming, vacinationCenter.closedOn!)) {
+        ba.preferredSlotTiming = ba.preferredSlotTiming!.add(Duration(days: 1));
       }
 
-      BookingApplicationService tas = _gs.getApplicationService();
+      BookingApplicationService tas = _gs!.getApplicationService()!;
 
       await tas.submitApplication(ba, vacinationCenter.getMetaEntity());
     }
@@ -2395,10 +2395,10 @@ class DBTest {
     //     .getApplicationsOverview(
     //         COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, null, DateTime.now().year);
 
-    BookingApplicationCounter localOverView = await _gs
-        .getApplicationService()
+    BookingApplicationCounter localOverView = await (_gs!
+        .getApplicationService()!
         .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID_OLD,
-            Covid_Vacination_Center, DateTime.now().year);
+            Covid_Vacination_Center, DateTime.now().year) as FutureOr<BookingApplicationCounter>);
 
     // if (globalOverView.numberOfApproved == 0 &&
     //     globalOverView.numberOfNew == 10 &&
@@ -2424,8 +2424,8 @@ class DBTest {
   }
 
   Future<BookingApplication> testBookingApplicationStatusChange() async {
-    List<Tuple<BookingApplication, DocumentSnapshot>> applications = await _gs
-        .getApplicationService()
+    List<Tuple<BookingApplication, DocumentSnapshot>> applications = await _gs!
+        .getApplicationService()!
         .getApplications(
             COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center,
@@ -2441,35 +2441,35 @@ class DBTest {
             -1);
 
     Entity testingCenter =
-        await _gs.getEntityService().getEntity(Covid_Vacination_Center);
+        await (_gs!.getEntityService()!.getEntity(Covid_Vacination_Center) as FutureOr<Entity>);
 
-    BookingApplication bs1 = applications[0].item1;
-    await _gs.getApplicationService().updateApplicationStatus(
-        bs1.id,
+    BookingApplication bs1 = applications[0].item1!;
+    await _gs!.getApplicationService()!.updateApplicationStatus(
+        bs1.id!,
         ApplicationStatus.APPROVED,
         "Notes on Approval",
         testingCenter.getMetaEntity(),
         bs1.preferredSlotTiming);
 
-    BookingApplication bs2 = applications[1].item1;
-    await _gs.getApplicationService().updateApplicationStatus(
-        bs2.id,
+    BookingApplication bs2 = applications[1].item1!;
+    await _gs!.getApplicationService()!.updateApplicationStatus(
+        bs2.id!,
         ApplicationStatus.APPROVED,
         "Notes on Approval for app 2",
         testingCenter.getMetaEntity(),
         bs2.preferredSlotTiming);
 
-    BookingApplication bs3 = applications[2].item1;
-    await _gs.getApplicationService().updateApplicationStatus(
-        bs3.id, ApplicationStatus.COMPLETED, "Notes on Completion", null, null);
+    BookingApplication bs3 = applications[2].item1!;
+    await _gs!.getApplicationService()!.updateApplicationStatus(
+        bs3.id!, ApplicationStatus.COMPLETED, "Notes on Completion", null, null);
 
-    BookingApplication bs7 = applications[6].item1;
-    await _gs.getApplicationService().updateApplicationStatus(bs7.id,
+    BookingApplication bs7 = applications[6].item1!;
+    await _gs!.getApplicationService()!.updateApplicationStatus(bs7.id!,
         ApplicationStatus.ONHOLD, "Notes on putting on Hold", null, null);
 
-    BookingApplication bs10 = applications[9].item1;
-    await _gs.getApplicationService().updateApplicationStatus(
-        bs10.id,
+    BookingApplication bs10 = applications[9].item1!;
+    await _gs!.getApplicationService()!.updateApplicationStatus(
+        bs10.id!,
         ApplicationStatus.REJECTED,
         "Notes on rejecting this application",
         null,
@@ -2481,10 +2481,10 @@ class DBTest {
     //     .getApplicationsOverview(
     //         COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, null, DateTime.now().year);
 
-    BookingApplicationCounter localOverView = await _gs
-        .getApplicationService()
+    BookingApplicationCounter localOverView = await (_gs!
+        .getApplicationService()!
         .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID_OLD,
-            Covid_Vacination_Center, DateTime.now().year);
+            Covid_Vacination_Center, DateTime.now().year) as FutureOr<BookingApplicationCounter>);
 
     // if (globalOverView.numberOfApproved == 2 &&
     //     globalOverView.numberOfNew == 5 &&
@@ -2516,7 +2516,7 @@ class DBTest {
         "~" +
         DateTime.now().day.toString();
 
-    ApplicationStats localStats = localOverView.dailyStats[dailyStatsKey];
+    ApplicationStats localStats = localOverView.dailyStats![dailyStatsKey]!;
 
     if (localStats.numberOfApproved == 2 && localStats.numberOfNew == 10) {
       print(
@@ -2537,7 +2537,7 @@ class DBTest {
     // }
 
     List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
-        await _gs.getApplicationService().getApplications(
+        await _gs!.getApplicationService()!.getApplications(
             COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center,
             ApplicationStatus.APPROVED,
@@ -2564,11 +2564,11 @@ class DBTest {
   Future<void> testApplicationCancellation(
       BookingApplication approvedBA) async {
     bool isCancelled = false;
-    UserToken token;
+    UserToken? token;
 
-    Triplet<UserToken, TokenCounter, EntitySlots> tuple = await _gs
-        .getApplicationService()
-        .withDrawApplication(approvedBA.id,
+    Triplet<UserToken, TokenCounter, EntitySlots> tuple = await _gs!
+        .getApplicationService()!
+        .withDrawApplication(approvedBA.id!,
             "Cancelled the application and as a result the token should also get cancelled");
     token = tuple.item1;
 
@@ -2580,10 +2580,10 @@ class DBTest {
     //     .getApplicationsOverview(
     //         COVID_VACCINATION_CLINIC_BOOKING_FORM_ID, null, DateTime.now().year);
 
-    BookingApplicationCounter localOverView = await _gs
-        .getApplicationService()
+    BookingApplicationCounter localOverView = await (_gs!
+        .getApplicationService()!
         .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID_OLD,
-            Covid_Vacination_Center, DateTime.now().year);
+            Covid_Vacination_Center, DateTime.now().year) as FutureOr<BookingApplicationCounter>);
 
     // if (globalOverView.numberOfApproved == 1 &&
     //     globalOverView.numberOfNew == 5 &&
@@ -2616,7 +2616,7 @@ class DBTest {
         "~" +
         DateTime.now().day.toString();
 
-    ApplicationStats localStats = localOverView.dailyStats[dailyStatsKey];
+    ApplicationStats localStats = localOverView.dailyStats![dailyStatsKey]!;
 
     if (localStats.numberOfCancelled == 1 &&
         localStats.numberOfApproved == 2 &&
@@ -2641,7 +2641,7 @@ class DBTest {
     // }
 
     List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
-        await _gs.getApplicationService().getApplications(
+        await _gs!.getApplicationService()!.getApplications(
             COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center,
             ApplicationStatus.APPROVED,
@@ -2663,9 +2663,9 @@ class DBTest {
     }
   }
 
-  Future<void> testAvailableFreeSlots(MetaEntity me) async {
+  Future<void> testAvailableFreeSlots(MetaEntity? me) async {
     List<List<Slot>> listOfslots =
-        await _gs.getTokenService().getSlotsFromNow(me, false);
+        await _gs!.getTokenService()!.getSlotsFromNow(me, false);
     if (listOfslots.length == 7 && listOfslots[6].length == 9) {
       print("Getting all slots --> SUCCESS");
     } else {
@@ -2673,7 +2673,7 @@ class DBTest {
     }
 
     List<List<Slot>> listOfFreeSlots =
-        await _gs.getTokenService().getSlotsFromNow(me, true);
+        await _gs!.getTokenService()!.getSlotsFromNow(me, true);
     if (listOfFreeSlots.length == 7 && listOfFreeSlots[6].length == 9) {
       print("Getting free slots --> SUCCESS");
     } else {
@@ -2689,16 +2689,16 @@ class DBTest {
         address: "Shop 61, Towli Chowk Bazar, Gachibowli");
 
     //admission form
-    BookingForm admissionForm = await _gs
-        .getApplicationService()
-        .getBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
+    BookingForm admissionForm = await (_gs!
+        .getApplicationService()!
+        .getBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID) as FutureOr<BookingForm>);
 
     print("AdmissionForm for a school with is created");
 
     //TC request
-    BookingForm tcForm = await _gs
-        .getApplicationService()
-        .getBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
+    BookingForm tcForm = await (_gs!
+        .getApplicationService()!
+        .getBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID) as FutureOr<BookingForm>);
 
     print("TCForm for a school with is created");
 
@@ -2740,7 +2740,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg2222";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
       print("Creating a school with multiple forms");
     } catch (e) {
       print("Exception occured while creating a school with multiple form " +
@@ -2750,7 +2750,7 @@ class DBTest {
 
   void testPaginationInFetchingApplication() async {
     List<Tuple<BookingApplication, DocumentSnapshot>> top5Applications =
-        await _gs.getApplicationService().getApplications(
+        await _gs!.getApplicationService()!.getApplications(
             COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center,
             null,
@@ -2771,10 +2771,10 @@ class DBTest {
           "Top 5 applications fetched ------------------------------> Failure");
     }
 
-    DocumentSnapshot lastDoc = top5Applications[4].item2;
+    DocumentSnapshot? lastDoc = top5Applications[4].item2;
 
     List<Tuple<BookingApplication, DocumentSnapshot>> next5Applications =
-        await _gs.getApplicationService().getApplications(
+        await _gs!.getApplicationService()!.getApplications(
             COVID_VACCINATION_BOOKING_FORM_ID_OLD,
             Covid_Vacination_Center,
             null,
@@ -2796,8 +2796,8 @@ class DBTest {
     }
 
     List<Tuple<BookingApplication, DocumentSnapshot>>
-        previousApplicationsFrom6thTo9th = await _gs
-            .getApplicationService()
+        previousApplicationsFrom6thTo9th = await _gs!
+            .getApplicationService()!
             .getApplications(
                 COVID_VACCINATION_BOOKING_FORM_ID_OLD,
                 Covid_Vacination_Center,
@@ -2934,7 +2934,7 @@ class DBTest {
     admissionForm.addField(parentPhone);
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(admissionForm);
+    await _gs!.getApplicationService()!.saveBookingForm(admissionForm);
 
     return admissionForm;
   }
@@ -3009,7 +3009,7 @@ class DBTest {
     relationWithStudent.isMandatory = true;
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(tcForm);
+    await _gs!.getApplicationService()!.saveBookingForm(tcForm);
 
     return tcForm;
   }
@@ -3110,7 +3110,7 @@ class DBTest {
 
     bf.addField(phoneField);
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(bf);
+    await _gs!.getApplicationService()!.saveBookingForm(bf);
     return bf;
   }
 
@@ -3218,7 +3218,7 @@ class DBTest {
     }
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(bf);
+    await _gs!.getApplicationService()!.saveBookingForm(bf);
     return bf;
   }
 
@@ -3322,7 +3322,7 @@ class DBTest {
     admissionForm.addField(specialNotes);
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(admissionForm);
+    await _gs!.getApplicationService()!.saveBookingForm(admissionForm);
 
     return admissionForm;
   }
@@ -3444,7 +3444,7 @@ class DBTest {
     vaccineForm.addField(specialNotes);
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(vaccineForm);
+    await _gs!.getApplicationService()!.saveBookingForm(vaccineForm);
 
     return vaccineForm;
   }
@@ -3585,7 +3585,7 @@ class DBTest {
     doctorConsultationForm.addField(specialNotes);
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(doctorConsultationForm);
+    await _gs!.getApplicationService()!.saveBookingForm(doctorConsultationForm);
 
     return doctorConsultationForm;
   }
@@ -3595,7 +3595,7 @@ class DBTest {
     BookingForm form = createMedicalTestRequestForm(formId);
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(form);
+    await _gs!.getApplicationService()!.saveBookingForm(form);
 
     return form;
   }
@@ -3605,7 +3605,7 @@ class DBTest {
     BookingForm form = createMedicalTestRequestForm(formId);
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(form);
+    await _gs!.getApplicationService()!.saveBookingForm(form);
 
     return form;
   }
@@ -3627,7 +3627,7 @@ class DBTest {
     form.addField(atHomeSampleCollection);
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(form);
+    await _gs!.getApplicationService()!.saveBookingForm(form);
 
     return form;
   }
@@ -3752,15 +3752,15 @@ class DBTest {
 
     List<MetaForm> forms = [];
 
-    BookingForm hospitalMedicalCheckup = await _gs
-        .getApplicationService()
-        .getBookingForm(MEDICAL_TEST_HOSPITAL_FORM);
+    BookingForm hospitalMedicalCheckup = await (_gs!
+        .getApplicationService()!
+        .getBookingForm(MEDICAL_TEST_HOSPITAL_FORM) as FutureOr<BookingForm>);
     hospitalMedicalCheckup.autoApproved = false;
     hospitalMedicalCheckup.allowedOnline = false;
 
-    BookingForm hospitalAdmission = await _gs
-        .getApplicationService()
-        .getBookingForm(HOSPITAL_ADMISSION_FORM);
+    BookingForm hospitalAdmission = await (_gs!
+        .getApplicationService()!
+        .getBookingForm(HOSPITAL_ADMISSION_FORM) as FutureOr<BookingForm>);
     hospitalAdmission.autoApproved = false;
     hospitalAdmission.allowedOnline = false;
 
@@ -3805,7 +3805,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await _gs.getEntityService().upsertEntity(entity);
+      await _gs!.getEntityService()!.upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -3817,9 +3817,9 @@ class DBTest {
     print("Creating the Test Hospital Child clinic...");
     List<MetaForm> clinicForms = [];
 
-    BookingForm hospitalDoctorConsultation = await _gs
-        .getApplicationService()
-        .getBookingForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
+    BookingForm hospitalDoctorConsultation = await (_gs!
+        .getApplicationService()!
+        .getBookingForm(DOCTOR_CONSULTATION_HOSPITAL_FORM) as FutureOr<BookingForm>);
     hospitalDoctorConsultation.autoApproved = true;
     hospitalDoctorConsultation.allowedOnline = true;
     clinicForms.add(hospitalDoctorConsultation.getMetaForm());
@@ -3858,9 +3858,9 @@ class DBTest {
         allowOnlineAppointment: true,
         allowWalkinAppointment: true);
     try {
-      await _gs
-          .getEntityService()
-          .upsertChildEntityToParent(childClinic, entity.entityId);
+      await _gs!
+          .getEntityService()!
+          .upsertChildEntityToParent(childClinic, entity.entityId!);
     } catch (e) {
       print("Exception occured " + e.toString());
     }

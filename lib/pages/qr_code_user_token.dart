@@ -36,7 +36,7 @@ class ShowQrBookingToken extends StatefulWidget {
   final UserTokens userTokens;
   final bool isAdmin;
   ShowQrBookingToken(
-      {Key key, @required this.userTokens, @required this.isAdmin})
+      {Key? key, required this.userTokens, required this.isAdmin})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => ShowQrBookingTokenState();
@@ -45,18 +45,18 @@ class ShowQrBookingToken extends StatefulWidget {
 class ShowQrBookingTokenState extends State<ShowQrBookingToken>
     with SingleTickerProviderStateMixin {
   bool initCompleted = false;
-  GlobalState _gs;
+  GlobalState? _gs;
   TextEditingController notesController = new TextEditingController();
-  MetaEntity metaEntity;
-  UserTokens token;
-  String entityName;
-  String dateTime;
-  String time;
+  MetaEntity? metaEntity;
+  late UserTokens token;
+  String? entityName;
+  late String dateTime;
+  late String time;
   List<UserToken> listOfTokens = new List<UserToken>();
   Map<String, BookingApplication> mapOfBa =
       new Map<String, BookingApplication>();
-  AnimationController _animationController;
-  Animation animation;
+  late AnimationController _animationController;
+  late Animation animation;
   String tokenStatus = '';
 
   @override
@@ -68,11 +68,11 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
     super.initState();
     entityName = widget.userTokens.entityName;
     token = widget.userTokens;
-    dateTime = DateFormat(dateDisplayFormat).format(token.dateTime);
+    dateTime = DateFormat(dateDisplayFormat).format(token.dateTime!);
 
-    time = token.dateTime.hour.toString() +
+    time = token.dateTime!.hour.toString() +
         ': ' +
-        token.dateTime.minute.toString();
+        token.dateTime!.minute.toString();
 
     getGlobalState().whenComplete(() {
       fetchTokens().then((value) {
@@ -124,9 +124,9 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
   }
 
   Future<void> fetchTokens() async {
-    if (token.tokens.length != 0) {
-      for (int i = 0; i < token.tokens.length; i++) {
-        listOfTokens.add(token.tokens[i]);
+    if (token.tokens!.length != 0) {
+      for (int i = 0; i < token.tokens!.length; i++) {
+        listOfTokens.add(token.tokens![i]);
       }
     }
     setState(() {});
@@ -165,28 +165,28 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
 
   Widget buildTokenCard(UserToken bookingToken) {
     DateTime currentTime = DateTime.now();
-    String statusText;
-    Color textColor;
+    late String statusText;
+    Color? textColor;
     //BookingApplication ba;
 
     // if (mapOfBa.containsKey(bookingToken.getID())) {
     //   ba = mapOfBa[bookingToken.getID()];
     // }
-    if (currentTime.isAfter(token.dateTime) &&
+    if (currentTime.isAfter(token.dateTime!) &&
         currentTime.isBefore(
-            token.dateTime.add(Duration(minutes: token.slotDuration)))) {
+            token.dateTime!.add(Duration(minutes: token.slotDuration!)))) {
       statusText = "Current";
       textColor = Colors.green;
     }
-    if (currentTime.isAfter(token.dateTime) &&
+    if (currentTime.isAfter(token.dateTime!) &&
         currentTime.isAfter(
-            token.dateTime.add(Duration(minutes: token.slotDuration)))) {
+            token.dateTime!.add(Duration(minutes: token.slotDuration!)))) {
       statusText = "Expired";
       textColor = Colors.red;
     }
-    if (currentTime.isBefore(token.dateTime) &&
+    if (currentTime.isBefore(token.dateTime!) &&
         currentTime.isBefore(
-            token.dateTime.add(Duration(minutes: token.slotDuration)))) {
+            token.dateTime!.add(Duration(minutes: token.slotDuration!)))) {
       statusText = "Upcoming";
       textColor = Colors.blue;
     }
@@ -234,8 +234,8 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                 ),
               ],
             ),
-            nameValueText('User', bookingToken.parent.userId),
-            nameValueText('Place', Utils.stringToPascalCase(entityName)),
+            nameValueText('User', bookingToken.parent!.userId!),
+            nameValueText('Place', Utils.stringToPascalCase(entityName!)),
             nameValueText('Date', dateTime),
             Row(
               children: [
@@ -268,7 +268,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                   ),
                 ),
                 FadeTransition(
-                  opacity: animation,
+                  opacity: animation as Animation<double>,
                   child: Text(
                     statusText,
                     style: TextStyle(
@@ -300,30 +300,30 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                       print('tapped');
                       bool isReadOnly = true;
 
-                      _gs
-                          .getApplicationService()
-                          .getApplication(token.tokens[0].applicationId)
+                      _gs!
+                          .getApplicationService()!
+                          .getApplication(token.tokens![0].applicationId)
                           .then((newBaFromGS) {
 //Check if the person scanning the token is exec, mgr, or admin
                         tokenStatus =
-                            EnumToString.convertToString(newBaFromGS.status);
-                        if (_gs
-                            .getCurrentUser()
-                            .entityVsRole
-                            .containsKey(bookingToken.parent.entityId)) {
-                          if (_gs
-                                  .getCurrentUser()
-                                  .entityVsRole[bookingToken.parent.entityId] !=
+                            EnumToString.convertToString(newBaFromGS!.status);
+                        if (_gs!
+                            .getCurrentUser()!
+                            .entityVsRole!
+                            .containsKey(bookingToken.parent!.entityId)) {
+                          if (_gs!
+                                  .getCurrentUser()!
+                                  .entityVsRole![bookingToken.parent!.entityId] !=
                               EntityRole.Executive) {
                             isReadOnly = false;
                           }
                         }
 
                         if (newBaFromGS != null) {
-                          mapOfBa[token.tokens[0].getID()] = newBaFromGS;
-                          _gs
-                              .getEntityService()
-                              .getEntity(bookingToken.parent.entityId)
+                          mapOfBa[token.tokens![0].getID()] = newBaFromGS;
+                          _gs!
+                              .getEntityService()!
+                              .getEntity(bookingToken.parent!.entityId!)
                               .then((entity) {
                             Navigator.of(context)
                                 .push(new MaterialPageRoute(
@@ -331,7 +331,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                                         ShowApplicationDetails(
                                           bookingApplication: newBaFromGS,
                                           showReject: false,
-                                          metaEntity: entity.getMetaEntity(),
+                                          metaEntity: entity!.getMetaEntity(),
                                           newBookingDate: null,
                                           isReadOnly: isReadOnly,
                                           isAvailable: true,
@@ -364,7 +364,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                               'Oho! Could not fetch the Application details.',
                               'Please try again later.');
                         }
-                      }).onError((error, stackTrace) {
+                      }).onError((dynamic error, stackTrace) {
                         if (error is AccessDeniedException) {
                           Utils.showMyFlushbar(
                               context,

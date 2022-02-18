@@ -23,13 +23,13 @@ void writeData(Map<String, dynamic> gsJson) async {
   await file.writeAsString("$fileData");
 }
 
-Future<Map<String, dynamic>> readData() async {
+Future<Map<String, dynamic>?> readData() async {
   try {
     final file = await localFile;
     //TODO: SAmita Exception here
     String body = await file.readAsString();
     print('Reading data: $body');
-    Map<String, dynamic> json = jsonDecode(body);
+    Map<String, dynamic>? json = jsonDecode(body);
     return json;
   } catch (e) {
     print("Couldn't read the file");

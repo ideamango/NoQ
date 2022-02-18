@@ -15,7 +15,7 @@ class TermsOfUsePage extends StatefulWidget {
 
 class _TermsOfUsePageState extends State<TermsOfUsePage> {
   Future<bool> userAlreadyLoggedIn() async {
-    final User fireUser = FirebaseAuth.instance.currentUser;
+    final User? fireUser = FirebaseAuth.instance.currentUser;
     if (fireUser == null) {
       return false;
     } else
@@ -39,7 +39,7 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
             color: Colors.white,
             onPressed: () {
               print("going back");
-              User value = FirebaseAuth.instance.currentUser;
+              User? value = FirebaseAuth.instance.currentUser;
               if (value == null) {
                 print("No user");
                 Navigator.of(context)
@@ -72,7 +72,7 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
                       children: [
                         Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: borderColor),
+                                border: Border.all(color: borderColor!),
                                 color: Colors.white,
                                 shape: BoxShape.rectangle,
                                 borderRadius:

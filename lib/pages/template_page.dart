@@ -6,14 +6,14 @@ import '../widget/appbar.dart';
 
 class TemplatePage extends StatefulWidget {
   final String entityId;
-  TemplatePage({Key key, @required this.entityId}) : super(key: key);
+  TemplatePage({Key? key, required this.entityId}) : super(key: key);
   @override
   _TemplatePageState createState() => _TemplatePageState();
 }
 
 class _TemplatePageState extends State<TemplatePage> {
   bool initCompleted = false;
-  GlobalState _gs;
+  GlobalState? _gs;
 
   @override
   void initState() {

@@ -16,11 +16,11 @@ import '../utils.dart';
 
 Future<Tuple<EntitySlots, List<Slot>>> getSlotsListForEntity(
     MetaEntity entity, DateTime dateTime) async {
-  EntitySlots entitySlots;
+  EntitySlots? entitySlots;
 
-  GlobalState gs = await GlobalState.getGlobalState();
+  GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
   entitySlots =
-      await gs.getTokenService().getEntitySlots(entity.entityId, dateTime);
+      await gs.getTokenService()!.getEntitySlots(entity.entityId!, dateTime);
   List<Slot> slots = Utils.getSlots(entitySlots, entity, dateTime);
 
   return new Tuple(item1: entitySlots, item2: slots);
@@ -52,12 +52,12 @@ Future<Tuple<EntitySlots, List<Slot>>> getSlotsListForEntity(
 //   return returnVal;
 // }
 
-Future<bool> updateToken(UserTokens tokens) async {
-  GlobalState gs = await GlobalState.getGlobalState();
+Future<bool?> updateToken(UserTokens tokens) async {
+  GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
 
-  bool result;
+  bool? result;
   try {
-    result = await gs.getTokenService().updateToken(tokens);
+    result = await gs.getTokenService()!.updateToken(tokens);
     print('Updated token successfully');
   } catch (e) {
     print(e.toString());

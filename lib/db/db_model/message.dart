@@ -1,14 +1,14 @@
 class Message {
   Message({this.userId, this.content, this.time});
 
-  String userId;
-  String content;
-  DateTime time;
+  String? userId;
+  String? content;
+  DateTime? time;
 
   Map<String, dynamic> toJson() => {
         'userId': userId,
         'content': content,
-        'time': time.millisecondsSinceEpoch
+        'time': time!.millisecondsSinceEpoch
       };
 
   static Message fromJson(Map<String, dynamic> json) {

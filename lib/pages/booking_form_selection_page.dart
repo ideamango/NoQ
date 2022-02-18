@@ -19,22 +19,22 @@ import '../widget/header.dart';
 import '../widget/page_animation.dart';
 
 class BookingFormSelection extends StatefulWidget {
-  final String entityId;
-  final Entity entity;
-  final DateTime preferredSlotTime;
+  final String? entityId;
+  final Entity? entity;
+  final DateTime? preferredSlotTime;
   final dynamic isFullAccess;
   final bool forUser;
-  final bool isOnlineToken;
+  final bool? isOnlineToken;
   final dynamic backRoute;
   BookingFormSelection(
-      {Key key,
-      @required this.entityId,
-      @required this.entity,
-      @required this.preferredSlotTime,
-      @required this.isFullAccess,
-      @required this.forUser,
-      @required this.isOnlineToken,
-      @required this.backRoute})
+      {Key? key,
+      required this.entityId,
+      required this.entity,
+      required this.preferredSlotTime,
+      required this.isFullAccess,
+      required this.forUser,
+      required this.isOnlineToken,
+      required this.backRoute})
       : super(key: key);
 
   @override
@@ -42,17 +42,17 @@ class BookingFormSelection extends StatefulWidget {
 }
 
 class _BookingFormSelectionState extends State<BookingFormSelection> {
-  MetaEntity metaEntity;
-  Entity entity;
-  List<MetaForm> forms = [];
-  GlobalState _gs;
+  MetaEntity? metaEntity;
+  Entity? entity;
+  List<MetaForm>? forms = [];
+  GlobalState? _gs;
   bool initCompleted = false;
   int _radioValue1 = -1;
-  int _selectedValue = -1;
+  int? _selectedValue = -1;
   int index = 0;
   dynamic dashBoardRoute;
   dynamic reportsRoute;
-  String errStr;
+  String? errStr;
   @override
   void initState() {
     super.initState();
@@ -60,18 +60,18 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
 
     getGlobalState().whenComplete(() {
       if (widget.entity == null) {
-        _gs.getEntity(widget.entityId).then((value) {
+        _gs!.getEntity(widget.entityId).then((value) {
           if (value == null) {
             errStr =
                 "Oops..There seems to some problem. Please try again later.";
           } else {
             entity = value.item1;
-            for (var form in entity.forms) {
-              if (widget.forUser && (form.isActive != null && !form.isActive)) {
+            for (var form in entity!.forms!) {
+              if (widget.forUser && (form.isActive != null && !form.isActive!)) {
                 continue;
               } else {
                 // if (form.isActive == null || form.isActive) {
-                forms.add(form);
+                forms!.add(form);
               }
               //}
             }
@@ -82,7 +82,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
         });
       } else {
         entity = widget.entity;
-        forms = entity.forms;
+        forms = entity!.forms;
         setState(() {
           initCompleted = true;
         });
@@ -94,29 +94,29 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
     _gs = await GlobalState.getGlobalState();
   }
 
-  void _handleRadioValueChange1(int value) {
+  void _handleRadioValueChange1(int? value) {
     setState(() {
       _selectedValue = value;
       if (widget.forUser) {
         dashBoardRoute = CreateFormFields(
-          bookingFormId: forms[_selectedValue].id,
-          metaEntity: entity.getMetaEntity(),
+          bookingFormId: forms![_selectedValue!].id,
+          metaEntity: entity!.getMetaEntity(),
           preferredSlotTime: widget.preferredSlotTime,
           isOnlineToken: widget.isOnlineToken,
           backRoute: SearchEntityPage(),
         );
       } else {
         reportsRoute = EntityApplicationListPage(
-          bookingFormId: forms[_selectedValue].id,
-          metaEntity: entity.getMetaEntity(),
-          bookingFormName: forms[_selectedValue].name,
+          bookingFormId: forms![_selectedValue!].id,
+          metaEntity: entity!.getMetaEntity(),
+          bookingFormName: forms![_selectedValue!].name,
           isReadOnly: !widget.isFullAccess,
         );
         //If admin then show overview page as per selected form id
         dashBoardRoute = OverviewPage(
-          bookingFormId: forms[_selectedValue].id,
-          metaEntity: entity.getMetaEntity(),
-          bookingFormName: forms[_selectedValue].name,
+          bookingFormId: forms![_selectedValue!].id,
+          metaEntity: entity!.getMetaEntity(),
+          bookingFormName: forms![_selectedValue!].name,
           isReadOnly: !widget.isFullAccess,
         );
       }
@@ -129,7 +129,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
       return WillPopScope(
         child: Scaffold(
           drawer: CustomDrawer(
-            phone: _gs.getCurrentUser().ph,
+            phone: _gs!.getCurrentUser()!.ph,
           ),
           appBar: AppBar(
             // key: _appBarKey,
@@ -188,7 +188,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                           child: Container(
                             padding: EdgeInsets.only(top: 10),
                             child: ListView.builder(
-                                itemCount: forms.length,
+                                itemCount: forms!.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return GestureDetector(
                                     onTap: () {
@@ -223,11 +223,11 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                                           .width *
                                                       .77,
                                                   child: new Text(
-                                                    forms[index].name +
-                                                        ((forms[index].isActive ==
+                                                    forms![index].name! +
+                                                        ((forms![index].isActive ==
                                                                     null ||
-                                                                forms[index]
-                                                                    .isActive)
+                                                                forms![index]
+                                                                    .isActive!)
                                                             ? ""
                                                             : " (Deleted)"),
                                                     maxLines: null,
@@ -248,9 +248,9 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                                 ),
                                               ]),
                                               Utils.isNotNullOrEmpty(
-                                                      forms[index].description)
+                                                      forms![index].description)
                                                   ? new Text(
-                                                      forms[index].description,
+                                                      forms![index].description!,
                                                       style: TextStyle(
                                                           fontSize: 10,
                                                           color: (_selectedValue ==
@@ -306,7 +306,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                     MediaQuery.of(context).size.width * .4,
                                 elevation: _selectedValue != -1 ? 8 : 0,
                                 shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: btnDisabledolor),
+                                    side: BorderSide(color: btnDisabledolor!),
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5.0))),
                                 child: (widget.forUser)
@@ -393,7 +393,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                   ),
                 )
               : Center(
-                  child: Container(child: Text(errStr)),
+                  child: Container(child: Text(errStr!)),
                 ),
         ),
         onWillPop: () async {

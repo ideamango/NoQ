@@ -12,18 +12,18 @@ class AppUser {
   AppUser({this.id = "", this.name = "", this.ph = ""});
 
   //just need an id which is unique even if later phone or firebase id changes
-  String id;
-  String name;
+  String? id;
+  String? name;
 
-  MyGeoFirePoint loc;
-  String ph;
-  List<MetaEntity> entities;
-  List<MetaEntity> favourites;
-  Map<String, EntityRole> entityVsRole;
-  String country;
-  String state;
-  String city;
-  String zip;
+  MyGeoFirePoint? loc;
+  String? ph;
+  List<MetaEntity?>? entities;
+  List<MetaEntity?>? favourites;
+  Map<String?, EntityRole?>? entityVsRole;
+  String? country;
+  String? state;
+  String? city;
+  String? zip;
 
   // factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
@@ -35,7 +35,7 @@ class AppUser {
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
-        'loc': loc != null ? loc.toJson() : null,
+        'loc': loc != null ? loc!.toJson() : null,
         'ph': ph,
         'entities': metaEntitiesToJson(entities),
         'favourites': metaEntitiesToJson(favourites),
@@ -62,8 +62,8 @@ class AppUser {
     return appUser;
   }
 
-  Map<String, dynamic> convertFromMap(Map<String, EntityRole> entityRoles) {
-    Map<String, dynamic> map = Map<String, dynamic>();
+  Map<String?, dynamic> convertFromMap(Map<String?, EntityRole?>? entityRoles) {
+    Map<String?, dynamic> map = Map<String?, dynamic>();
     if (entityRoles == null) {
       return map;
     }
@@ -71,9 +71,9 @@ class AppUser {
     return map;
   }
 
-  static Map<String, EntityRole> convertToMapFromJSON(
-      Map<dynamic, dynamic> map) {
-    Map<String, EntityRole> roles = new Map<String, EntityRole>();
+  static Map<String?, EntityRole?> convertToMapFromJSON(
+      Map<dynamic, dynamic>? map) {
+    Map<String?, EntityRole?> roles = new Map<String?, EntityRole?>();
     if (map != null) {
       map.forEach(
           (k, v) => roles[k] = EnumToString.fromString(EntityRole.values, v));
@@ -81,34 +81,34 @@ class AppUser {
     return roles;
   }
 
-  List<dynamic> metaEntitiesToJson(List<MetaEntity> metaEntities) {
+  List<dynamic> metaEntitiesToJson(List<MetaEntity?>? metaEntities) {
     List<dynamic> usersJson = [];
     if (metaEntities == null) return usersJson;
-    for (MetaEntity meta in metaEntities) {
-      usersJson.add(meta.toJson());
+    for (MetaEntity? meta in metaEntities) {
+      usersJson.add(meta!.toJson());
     }
     return usersJson;
   }
 
-  static List<MetaEntity> convertToMetaEntitiesFromJson(
-      List<dynamic> metaEntityJson) {
-    List<MetaEntity> metaEntities = [];
+  static List<MetaEntity?> convertToMetaEntitiesFromJson(
+      List<dynamic>? metaEntityJson) {
+    List<MetaEntity?> metaEntities = [];
     if (Utils.isNullOrEmpty(metaEntityJson)) return metaEntities;
 
-    for (Map<String, dynamic> json in metaEntityJson) {
+    for (Map<String, dynamic> json in metaEntityJson as Iterable<Map<String, dynamic>>) {
       MetaEntity metaEnt = MetaEntity.fromJson(json);
       metaEntities.add(metaEnt);
     }
     return metaEntities;
   }
 
-  int getAdminIndex(String entityId) {
+  int getAdminIndex(String? entityId) {
     int count = -1;
     if (entities == null) return count;
 
-    for (MetaEntity meta in entities) {
+    for (MetaEntity? meta in entities!) {
       count++;
-      if (meta.entityId == entityId) {
+      if (meta!.entityId == entityId) {
         return count;
       }
     }
@@ -117,8 +117,8 @@ class AppUser {
 
   bool isEntityAdmin(String entityId) {
     if (entityVsRole != null &&
-        entityVsRole.containsKey(entityId) &&
-        entityVsRole[entityId] == EntityRole.Admin) {
+        entityVsRole!.containsKey(entityId) &&
+        entityVsRole![entityId] == EntityRole.Admin) {
       return true;
     } else {
       return false;
@@ -127,8 +127,8 @@ class AppUser {
 
   bool isEntityManager(String entityId) {
     if (entityVsRole != null &&
-        entityVsRole.containsKey(entityId) &&
-        entityVsRole[entityId] == EntityRole.Manager) {
+        entityVsRole!.containsKey(entityId) &&
+        entityVsRole![entityId] == EntityRole.Manager) {
       return true;
     } else {
       return false;
@@ -137,8 +137,8 @@ class AppUser {
 
   bool isEntityExecutive(String entityId) {
     if (entityVsRole != null &&
-        entityVsRole.containsKey(entityId) &&
-        entityVsRole[entityId] == EntityRole.Executive) {
+        entityVsRole!.containsKey(entityId) &&
+        entityVsRole![entityId] == EntityRole.Executive) {
       return true;
     } else {
       return false;

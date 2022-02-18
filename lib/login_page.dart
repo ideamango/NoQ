@@ -34,17 +34,17 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  String _errorMsg;
+  String? _errorMsg;
   String _mobile, smsCode;
-  String verificationId;
+  String? verificationId;
   final _loginPageFormKey = new GlobalKey<FormState>();
   bool codeSent = false;
   bool _autoValidate = false;
   bool isButtonPressed = false;
-  String _errorMessage;
-  GlobalState _state;
+  String? _errorMessage;
+  GlobalState? _state;
 
-  int _forceResendingToken;
+  int? _forceResendingToken;
   bool showLoading = false;
 
   //UI ELEMENTS
@@ -83,9 +83,10 @@ class _LoginPageState extends State<LoginPage> {
       maxLines: 1,
       minLines: 1,
       style: lightInputTextStyle,
-      inputFormatters: <TextInputFormatter>[
-        WhitelistingTextInputFormatter.digitsOnly,
-      ],
+      //TODO Smita - commented while migrating
+      // inputFormatters: <TextInputFormatter>[
+      //   WhitelistingTextInputFormatter.digitsOnly,
+      // ],
       keyboardType: TextInputType.phone,
 
       decoration: InputDecoration(
@@ -101,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: Utils.validateMobile,
-      onSaved: (value) => _mobile = "+91" + value,
+      onSaved: (value) => _mobile = "+91" + value!,
       onChanged: (value) {
         setState(() {
           // if (_errorMsg != null) {
@@ -152,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                 margin: new EdgeInsets.fromLTRB(10, 5.0, 10, 5),
                 child: new Form(
                   key: _loginPageFormKey,
-                  autovalidate: _autoValidate,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -361,12 +362,12 @@ class _LoginPageState extends State<LoginPage> {
     EventBus.registerEvent(OTP_RESEND_EVENT, context, (evt, obj) {
       resendOTP(_mobile);
     });
-    if (_loginPageFormKey.currentState.validate()) {
+    if (_loginPageFormKey.currentState!.validate()) {
       _errorMsg = null;
-      _loginPageFormKey.currentState.save();
+      _loginPageFormKey.currentState!.save();
       codeSent
-          ? _state
-              .getAuthService()
+          ? _state!
+              .getAuthService()!
               .signInWithOTP(smsCode, verificationId, context)
           : verifyPhone(_mobile);
     } else {
@@ -399,7 +400,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   handleAuthException(FirebaseAuthException authException) {
-    String message;
+    String? message;
 //Handle errors -
 //1.User Not found
 //2. OTP invalid
@@ -433,7 +434,7 @@ class _LoginPageState extends State<LoginPage> {
         //  message = 'Something has gone wrong, please try again later.';
         // else
         if (authException.message != null) {
-          if (authException.message.contains('network'))
+          if (authException.message!.contains('network'))
             message =
                 'There seems to be some problem with your internet connection. Please Check.';
         } else {
@@ -452,7 +453,7 @@ class _LoginPageState extends State<LoginPage> {
         Duration(seconds: 6),
         Utils.isStrNullOrEmpty(message)
             ? 'Oops, Something went wrong.'
-            : message,
+            : message!,
         "Please try again later");
   }
 
@@ -482,7 +483,7 @@ class _LoginPageState extends State<LoginPage> {
         //handleError(authException);
       };
 
-      final PhoneCodeSent otpSent = (String verId, [int forceResend]) {
+      final PhoneCodeSent otpSent = (String verId, [int? forceResend]) {
         print("Main - code sent");
         this.verificationId = verId;
         if (mounted) {
@@ -503,7 +504,7 @@ class _LoginPageState extends State<LoginPage> {
         print("Main - Time out");
       };
 
-      _state.getAuthService().verifyPhoneNumber(
+      _state!.getAuthService()!.verifyPhoneNumber(
           phoneNo,
           Duration(seconds: 30),
           phoneVerified,
@@ -519,9 +520,9 @@ class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController _pinPutController = TextEditingController();
   final FocusNode _pinPutFocusNode = FocusNode();
-  String _pin;
+  String? _pin;
 
-  String _phoneNo;
+  String? _phoneNo;
 
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
@@ -530,7 +531,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  showDialogForOtp(String verId) async {
+  showDialogForOtp(String? verId) async {
     String last4digits = _mobile.substring(_mobile.length - 4);
     _errorMessage = "";
     bool timeLapsed = false;
@@ -541,14 +542,14 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          String _errorMessage;
+          String? _errorMessage;
           return StatefulBuilder(builder: (context, setState) {
             //this dialog is shown on Login once, but the event should be unregistered when the user logs-out
             EventBus.registerEvent(AUTO_VERIFICATION_COMPLETED_EVENT, context,
                 (evt, obj) {
               AutoVerificationCompletedData data =
                   evt.eventData as AutoVerificationCompletedData;
-              _pinPutController.text = data.code;
+              _pinPutController.text = data.code!;
               //Highlight approve
               codeFilled = true;
               if (mounted) {
@@ -748,7 +749,7 @@ class _LoginPageState extends State<LoginPage> {
                         followingFieldDecoration: _pinPutDecoration.copyWith(
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(
-                            color: btnColor,
+                            color: btnColor!,
                           ),
                         ),
                       ),
@@ -843,7 +844,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.white,
                     textColor: btnColor,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: btnColor),
+                        side: BorderSide(color: btnColor!),
                         borderRadius: BorderRadius.all(Radius.circular(3.0))),
                     child: Text(
                       'Clear',
@@ -866,7 +867,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: timeLapsed ? btnColor : Colors.white,
                       textColor: timeLapsed ? Colors.white : btnColor,
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: btnColor),
+                          side: BorderSide(color: btnColor!),
                           borderRadius: BorderRadius.all(Radius.circular(3.0))),
                       child: Text(
                         'Resend OTP',
@@ -888,7 +889,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: !timeLapsed ? btnColor : Colors.white,
                       textColor: !timeLapsed ? Colors.white : btnColor,
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: btnColor),
+                          side: BorderSide(color: btnColor!),
                           borderRadius: BorderRadius.all(Radius.circular(3.0))),
                       child: Text('Approve OTP',
                           style: TextStyle(fontSize: dialogWidth * .047)),
@@ -898,8 +899,8 @@ class _LoginPageState extends State<LoginPage> {
                           _pin = _pinPutController.text;
 
                           try {
-                            User user = _state
-                                .getAuthService()
+                            User? user = _state!
+                                .getAuthService()!
                                 .getFirebaseAuth()
                                 .currentUser;
 
@@ -920,10 +921,10 @@ class _LoginPageState extends State<LoginPage> {
                               } else {
                                 AuthCredential authCreds =
                                     PhoneAuthProvider.credential(
-                                        verificationId: verificationId,
-                                        smsCode: _pin);
-                                _state
-                                    .getAuthService()
+                                        verificationId: verificationId!,
+                                        smsCode: _pin!);
+                                _state!
+                                    .getAuthService()!
                                     .getFirebaseAuth()
                                     .signInWithCredential(authCreds)
                                     .then((UserCredential authResult) {

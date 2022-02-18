@@ -26,16 +26,16 @@ enum SelectedView { list, bar, pie, line }
 enum DateDisplayFormat { date, month, year }
 
 class EntityApplicationListPage extends StatefulWidget {
-  final String bookingFormId;
-  final String bookingFormName;
-  final MetaEntity metaEntity;
+  final String? bookingFormId;
+  final String? bookingFormName;
+  final MetaEntity? metaEntity;
   final bool isReadOnly;
   EntityApplicationListPage(
-      {Key key,
-      @required this.bookingFormId,
-      @required this.bookingFormName,
-      @required this.metaEntity,
-      @required this.isReadOnly})
+      {Key? key,
+      required this.bookingFormId,
+      required this.bookingFormName,
+      required this.metaEntity,
+      required this.isReadOnly})
       : super(key: key);
   @override
   _EntityApplicationListPageState createState() =>
@@ -45,26 +45,26 @@ class EntityApplicationListPage extends StatefulWidget {
 class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   bool initCompleted = false;
   bool loadingData = false;
-  GlobalState _gs;
-  List<Slot> list;
-  String formattedDateStr;
-  DateTime dateForShowingList;
-  DateTime yearForShowingList;
-  DateTime monthForShowingList;
-  String weekForShowingList;
-  Map<String, List<UserToken>> _tokensMap = new Map<String, List<UserToken>>();
+  GlobalState? _gs;
+  List<Slot>? list;
+  String? formattedDateStr;
+  DateTime? dateForShowingList;
+  DateTime? yearForShowingList;
+  DateTime? monthForShowingList;
+  String? weekForShowingList;
+  Map<String?, List<UserToken>> _tokensMap = new Map<String?, List<UserToken>>();
   Map<String, int> dataMap = new Map<String, int>();
   SelectedView selectedView = SelectedView.bar;
-  BookingApplicationCounter _bookingApplicationsOverview;
+  BookingApplicationCounter? _bookingApplicationsOverview;
   Map<String, double> pieChartDataMap = new Map<String, double>();
-  String dailyStatsKey;
+  String? dailyStatsKey;
   bool dataMapZeroValues = true;
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       dateForShowingList = DateTime.now();
-      getListOfData(dateForShowingList);
+      getListOfData(dateForShowingList!);
       setShowDate(DateTime.now(), DateDisplayFormat.date);
       dailyStatsKey = DateTime.now().year.toString() +
           "~" +
@@ -72,33 +72,33 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
           "~" +
           DateTime.now().day.toString();
 
-      _gs
-          .getApplicationService()
+      _gs!
+          .getApplicationService()!
           .getApplicationsOverview(widget.bookingFormId,
-              widget.metaEntity.entityId, DateTime.now().year)
+              widget.metaEntity!.entityId, DateTime.now().year)
           .then((value) {
         _bookingApplicationsOverview = value;
 
         //Before accessing check if there are any request for today.
-        if (_bookingApplicationsOverview.dailyStats
+        if (_bookingApplicationsOverview!.dailyStats!
             .containsKey(dailyStatsKey)) {
-          pieChartDataMap["New"] = _bookingApplicationsOverview
-              .dailyStats[dailyStatsKey].numberOfNew
+          pieChartDataMap["New"] = _bookingApplicationsOverview!
+              .dailyStats![dailyStatsKey!]!.numberOfNew!
               .toDouble();
 
-          pieChartDataMap["On-Hold"] = _bookingApplicationsOverview
-              .dailyStats[dailyStatsKey].numberOfPutOnHold
+          pieChartDataMap["On-Hold"] = _bookingApplicationsOverview!
+              .dailyStats![dailyStatsKey!]!.numberOfPutOnHold!
               .toDouble();
-          pieChartDataMap["Rejected"] = _bookingApplicationsOverview
-              .dailyStats[dailyStatsKey].numberOfRejected
-              .toDouble();
-
-          pieChartDataMap["Approved"] = _bookingApplicationsOverview
-              .dailyStats[dailyStatsKey].numberOfApproved
+          pieChartDataMap["Rejected"] = _bookingApplicationsOverview!
+              .dailyStats![dailyStatsKey!]!.numberOfRejected!
               .toDouble();
 
-          pieChartDataMap["Completed"] = _bookingApplicationsOverview
-              .dailyStats[dailyStatsKey].numberOfCompleted
+          pieChartDataMap["Approved"] = _bookingApplicationsOverview!
+              .dailyStats![dailyStatsKey!]!.numberOfApproved!
+              .toDouble();
+
+          pieChartDataMap["Completed"] = _bookingApplicationsOverview!
+              .dailyStats![dailyStatsKey!]!.numberOfCompleted!
               .toDouble();
         } else {
           print("No Data");
@@ -121,16 +121,16 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   Future<void> getListOfData(DateTime date) async {
     dataMapZeroValues = true;
     Tuple<EntitySlots, List<Slot>> slotTuple =
-        await getSlotsListForEntity(widget.metaEntity, date);
+        await getSlotsListForEntity(widget.metaEntity!, date);
     list = slotTuple.item2;
-    for (int i = 0; i <= list.length - 1; i++) {
+    for (int i = 0; i <= list!.length - 1; i++) {
       List<UserToken> tokensForThisSlot =
-          await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
+          await (_gs!.getTokenService()!.getAllTokensForSlot(list![i].slotId) as FutureOr<List<UserToken>>);
       if (!Utils.isNullOrEmpty(tokensForThisSlot))
-        _tokensMap[list[i].slotId] = tokensForThisSlot;
-      dataMap[Utils.formatTime(list[i].dateTime.hour.toString()) +
+        _tokensMap[list![i].slotId] = tokensForThisSlot;
+      dataMap[Utils.formatTime(list![i].dateTime!.hour.toString()) +
               ":" +
-              Utils.formatTime(list[i].dateTime.minute.toString())] =
+              Utils.formatTime(list![i].dateTime!.minute.toString())] =
           tokensForThisSlot.length;
       if (tokensForThisSlot.length != 0) dataMapZeroValues = false;
     }
@@ -144,16 +144,16 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   Future<void> getListOfDataForMonth(DateTime date) async {
     dataMapZeroValues = true;
     Tuple<EntitySlots, List<Slot>> slotTuple =
-        await getSlotsListForEntity(widget.metaEntity, date);
+        await getSlotsListForEntity(widget.metaEntity!, date);
     list = slotTuple.item2;
-    for (int i = 0; i <= list.length - 1; i++) {
+    for (int i = 0; i <= list!.length - 1; i++) {
       List<UserToken> tokensForThisSlot =
-          await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
+          await (_gs!.getTokenService()!.getAllTokensForSlot(list![i].slotId) as FutureOr<List<UserToken>>);
       if (!Utils.isNullOrEmpty(tokensForThisSlot))
-        _tokensMap[list[i].slotId] = tokensForThisSlot;
-      dataMap[Utils.formatTime(list[i].dateTime.hour.toString()) +
+        _tokensMap[list![i].slotId] = tokensForThisSlot;
+      dataMap[Utils.formatTime(list![i].dateTime!.hour.toString()) +
               ":" +
-              Utils.formatTime(list[i].dateTime.minute.toString())] =
+              Utils.formatTime(list![i].dateTime!.minute.toString())] =
           tokensForThisSlot.length;
       if (tokensForThisSlot.length != 0) dataMapZeroValues = false;
     }
@@ -171,16 +171,16 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
     //Dummy data for testing- start
 
     Tuple<EntitySlots, List<Slot>> slotTuple =
-        await getSlotsListForEntity(widget.metaEntity, dateForShowingList);
+        await getSlotsListForEntity(widget.metaEntity!, dateForShowingList!);
     list = slotTuple.item2;
-    for (int i = 0; i <= list.length - 1; i++) {
+    for (int i = 0; i <= list!.length - 1; i++) {
       List<UserToken> tokensForThisSlot =
-          await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
+          await (_gs!.getTokenService()!.getAllTokensForSlot(list![i].slotId) as FutureOr<List<UserToken>>);
       if (!Utils.isNullOrEmpty(tokensForThisSlot))
-        _tokensMap[list[i].slotId] = tokensForThisSlot;
-      dataMap[Utils.formatTime(list[i].dateTime.hour.toString()) +
+        _tokensMap[list![i].slotId] = tokensForThisSlot;
+      dataMap[Utils.formatTime(list![i].dateTime!.hour.toString()) +
               ":" +
-              Utils.formatTime(list[i].dateTime.minute.toString())] =
+              Utils.formatTime(list![i].dateTime!.minute.toString())] =
           tokensForThisSlot.length;
       if (tokensForThisSlot.length != 0) dataMapZeroValues = false;
     }
@@ -197,7 +197,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   }
 
   void setShowDate(DateTime date, DateDisplayFormat format) {
-    String formattedDate;
+    String? formattedDate;
     switch (format) {
       case DateDisplayFormat.date:
         formattedDate = DateFormat(dateDisplayFormat).format(date);
@@ -299,7 +299,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
     //       }),
     // );
 
-    return list.map(buildItem).toList();
+    return list!.map(buildItem).toList();
   }
 
   refreshDataView(DateTime date, DateDisplayFormat format) {
@@ -307,10 +307,10 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
     bool statsPresent = false;
     switch (format) {
       case DateDisplayFormat.date:
-        _gs
-            .getApplicationService()
+        _gs!
+            .getApplicationService()!
             .getApplicationsOverview(
-                widget.bookingFormId, widget.metaEntity.entityId, date.year)
+                widget.bookingFormId, widget.metaEntity!.entityId, date.year)
             .then((value) {
           _bookingApplicationsOverview = value;
           dailyStatsKey = date.year.toString() +
@@ -318,44 +318,44 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
               date.month.toString() +
               "~" +
               date.day.toString();
-          statsPresent = (_bookingApplicationsOverview.dailyStats
+          statsPresent = (_bookingApplicationsOverview!.dailyStats!
                   .containsKey(dailyStatsKey))
               ? true
               : false;
 
           pieChartDataMap["New"] = statsPresent
-              ? _bookingApplicationsOverview
-                  .dailyStats[dailyStatsKey].numberOfNew
+              ? _bookingApplicationsOverview!
+                  .dailyStats![dailyStatsKey!]!.numberOfNew!
                   .toDouble()
               : 0;
           pieChartDataMap["On-Hold"] = statsPresent
-              ? _bookingApplicationsOverview
-                  .dailyStats[dailyStatsKey].numberOfPutOnHold
+              ? _bookingApplicationsOverview!
+                  .dailyStats![dailyStatsKey!]!.numberOfPutOnHold!
                   .toDouble()
               : 0;
           pieChartDataMap["Rejected"] = statsPresent
-              ? _bookingApplicationsOverview
-                  .dailyStats[dailyStatsKey].numberOfRejected
+              ? _bookingApplicationsOverview!
+                  .dailyStats![dailyStatsKey!]!.numberOfRejected!
                   .toDouble()
               : 0;
           pieChartDataMap["Approved"] = statsPresent
-              ? _bookingApplicationsOverview
-                  .dailyStats[dailyStatsKey].numberOfApproved
+              ? _bookingApplicationsOverview!
+                  .dailyStats![dailyStatsKey!]!.numberOfApproved!
                   .toDouble()
               : 0;
           pieChartDataMap["Completed"] = statsPresent
-              ? _bookingApplicationsOverview
-                  .dailyStats[dailyStatsKey].numberOfCompleted
+              ? _bookingApplicationsOverview!
+                  .dailyStats![dailyStatsKey!]!.numberOfCompleted!
                   .toDouble()
               : 0;
           setState(() {});
         });
         break;
       case DateDisplayFormat.month:
-        _gs
-            .getApplicationService()
+        _gs!
+            .getApplicationService()!
             .getApplicationsOverview(
-                widget.bookingFormId, widget.metaEntity.entityId, date.year)
+                widget.bookingFormId, widget.metaEntity!.entityId, date.year)
             .then((value) {
           _bookingApplicationsOverview = value;
           dailyStatsKey = date.year.toString() + "~" + date.month.toString();
@@ -366,20 +366,20 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
           int numberOfApproved = 0;
           int numberOfCompleted = 0;
 
-          for (var key in _bookingApplicationsOverview.dailyStats.keys) {
-            if (key.contains(dailyStatsKey)) {
+          for (var key in _bookingApplicationsOverview!.dailyStats!.keys) {
+            if (key.contains(dailyStatsKey!)) {
               numberOfNew = numberOfNew +
-                  _bookingApplicationsOverview.dailyStats[key].numberOfNew;
+                  _bookingApplicationsOverview!.dailyStats![key]!.numberOfNew!;
               numberOfPutOnHold = numberOfPutOnHold +
-                  _bookingApplicationsOverview
-                      .dailyStats[key].numberOfPutOnHold;
+                  _bookingApplicationsOverview!
+                      .dailyStats![key]!.numberOfPutOnHold!;
               numberOfRejected = numberOfRejected +
-                  _bookingApplicationsOverview.dailyStats[key].numberOfRejected;
+                  _bookingApplicationsOverview!.dailyStats![key]!.numberOfRejected!;
               numberOfApproved = numberOfApproved +
-                  _bookingApplicationsOverview.dailyStats[key].numberOfApproved;
+                  _bookingApplicationsOverview!.dailyStats![key]!.numberOfApproved!;
               numberOfCompleted = numberOfCompleted +
-                  _bookingApplicationsOverview
-                      .dailyStats[key].numberOfCompleted;
+                  _bookingApplicationsOverview!
+                      .dailyStats![key]!.numberOfCompleted!;
             }
           }
 
@@ -392,27 +392,27 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
         });
         break;
       case DateDisplayFormat.year:
-        _gs
-            .getApplicationService()
+        _gs!
+            .getApplicationService()!
             .getApplicationsOverview(
-                widget.bookingFormId, widget.metaEntity.entityId, date.year)
+                widget.bookingFormId, widget.metaEntity!.entityId, date.year)
             .then((value) {
           _bookingApplicationsOverview = value;
           statsPresent = _bookingApplicationsOverview != null ? true : false;
           pieChartDataMap["New"] = statsPresent
-              ? _bookingApplicationsOverview.numberOfNew.toDouble()
+              ? _bookingApplicationsOverview!.numberOfNew!.toDouble()
               : 0;
           pieChartDataMap["On-Hold"] = statsPresent
-              ? _bookingApplicationsOverview.numberOfPutOnHold.toDouble()
+              ? _bookingApplicationsOverview!.numberOfPutOnHold!.toDouble()
               : 0;
           pieChartDataMap["Rejected"] = statsPresent
-              ? _bookingApplicationsOverview.numberOfRejected.toDouble()
+              ? _bookingApplicationsOverview!.numberOfRejected!.toDouble()
               : 0;
           pieChartDataMap["Approved"] = statsPresent
-              ? _bookingApplicationsOverview.numberOfApproved.toDouble()
+              ? _bookingApplicationsOverview!.numberOfApproved!.toDouble()
               : 0;
           pieChartDataMap["Completed"] = statsPresent
-              ? _bookingApplicationsOverview.numberOfCompleted.toDouble()
+              ? _bookingApplicationsOverview!.numberOfCompleted!.toDouble()
               : 0;
           setState(() {});
         });
@@ -432,7 +432,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
           Container(
               width: MediaQuery.of(context).size.width * .4,
               padding: EdgeInsets.all(8),
-              child: Text(token.parent.userId,
+              child: Text(token.parent!.userId!,
                   style: TextStyle(
                       //fontFamily: "RalewayRegular",
                       color: Colors.blueGrey[800],
@@ -441,7 +441,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
             Container(
                 width: MediaQuery.of(context).size.width * .4,
                 padding: EdgeInsets.all(8),
-                child: Text(token.bookingFormName,
+                child: Text(token.bookingFormName!,
                     style: TextStyle(
                         //fontFamily: "RalewayRegular",
                         color: Colors.blueGrey[800],
@@ -452,18 +452,18 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   }
 
   Widget buildItem(Slot slot) {
-    List<UserToken> tokens = _tokensMap[slot.slotId];
-    String fromTime = Utils.formatTime(slot.dateTime.hour.toString()) +
+    List<UserToken>? tokens = _tokensMap[slot.slotId];
+    String fromTime = Utils.formatTime(slot.dateTime!.hour.toString()) +
         ":" +
-        Utils.formatTime(slot.dateTime.minute.toString());
+        Utils.formatTime(slot.dateTime!.minute.toString());
 
-    String toTime = Utils.formatTime(slot.dateTime
-            .add(new Duration(minutes: slot.slotDuration))
+    String toTime = Utils.formatTime(slot.dateTime!
+            .add(new Duration(minutes: slot.slotDuration!))
             .hour
             .toString()) +
         ":" +
-        Utils.formatTime(slot.dateTime
-            .add(new Duration(minutes: slot.slotDuration))
+        Utils.formatTime(slot.dateTime!
+            .add(new Duration(minutes: slot.slotDuration!))
             .minute
             .toString());
 
@@ -497,7 +497,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                       ? new Container(
                           width: MediaQuery.of(context).size.width * .94,
                           decoration: new BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]),
+                              border: Border.all(color: Colors.grey[300]!),
                               shape: BoxShape.rectangle,
                               color: Colors.grey[300],
                               borderRadius: BorderRadius.only(
@@ -519,10 +519,10 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
                                     //  height: MediaQuery.of(context).size.height * .3,
-                                    child: buildChildItem(tokens[index]),
+                                    child: buildChildItem(tokens![index]),
                                   );
                                 },
-                                itemCount: tokens.length,
+                                itemCount: tokens!.length,
                               ),
                             ),
                           ),
@@ -546,13 +546,13 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
     super.dispose();
   }
 
-  Future<DateTime> pickAnyDate(BuildContext context) async {
-    DateTime date = await showDatePicker(
+  Future<DateTime?> pickAnyDate(BuildContext context) async {
+    DateTime? date = await showDatePicker(
       context: context,
       firstDate: DateTime.now().subtract(Duration(days: 365)),
       lastDate: DateTime.now().add(Duration(days: 60)),
       initialDate: DateTime.now(),
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
@@ -560,18 +560,18 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
             ),
             dialogBackgroundColor: Colors.white,
           ),
-          child: child,
+          child: child!,
         );
       },
     );
     return date;
   }
 
-  Future<DateTime> pickAnyYear(BuildContext context, DateTime date) async {
-    DateTime returnVal = await showDialog(
+  Future<DateTime?> pickAnyYear(BuildContext context, DateTime? date) async {
+    DateTime? returnVal = await showDialog(
         context: context,
         builder: (BuildContext context) {
-          DateTime selectedYear = date;
+          DateTime? selectedYear = date;
           String yearStr;
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
@@ -581,7 +581,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                 height: MediaQuery.of(context).size.height * .08,
                 padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
                 color: Colors.cyan,
-                child: Text("Year ${selectedYear.year.toString()}",
+                child: Text("Year ${selectedYear!.year.toString()}",
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.normal)),
               ),
@@ -594,23 +594,23 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                     child: FlatButton(
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
-                      color: (selectedYear.year == date.year - 1)
+                      color: (selectedYear!.year == date!.year - 1)
                           ? Colors.cyan
                           : Colors.transparent,
-                      textColor: (selectedYear.year == date.year - 1)
+                      textColor: (selectedYear!.year == date.year - 1)
                           ? Colors.white
                           : Colors.cyan,
                       shape: CircleBorder(
                         side: BorderSide(
-                            color: (selectedYear.year == date.year - 1)
-                                ? btnColor
+                            color: (selectedYear!.year == date.year - 1)
+                                ? btnColor!
                                 : Colors.transparent),
                       ),
                       child: Text(
                         (date.year - 1).toString(),
                         style: TextStyle(
                             fontSize: 15,
-                            color: (selectedYear.year == date.year - 1)
+                            color: (selectedYear!.year == date.year - 1)
                                 ? Colors.white
                                 : Colors.blueGrey[600],
                             fontWeight: FontWeight.normal),
@@ -629,23 +629,23 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                     child: FlatButton(
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
-                      color: (selectedYear.year == date.year)
+                      color: (selectedYear!.year == date.year)
                           ? Colors.cyan
                           : Colors.transparent,
-                      textColor: (selectedYear.year == date.year)
+                      textColor: (selectedYear!.year == date.year)
                           ? Colors.white
                           : Colors.blueGrey[700],
                       shape: CircleBorder(
                         side: BorderSide(
-                            color: (selectedYear.year == date.year)
-                                ? btnColor
+                            color: (selectedYear!.year == date.year)
+                                ? btnColor!
                                 : Colors.transparent),
                       ),
                       child: Text(
                         (date.year).toString(),
                         style: TextStyle(
                             fontSize: 15,
-                            color: (selectedYear.year == date.year)
+                            color: (selectedYear!.year == date.year)
                                 ? Colors.white
                                 : Colors.blueGrey[600],
                             fontWeight: FontWeight.normal),
@@ -663,23 +663,23 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                     child: FlatButton(
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
-                      color: (selectedYear.year == date.year + 1)
+                      color: (selectedYear!.year == date.year + 1)
                           ? Colors.cyan
                           : Colors.transparent,
-                      textColor: (selectedYear.year == date.year + 1)
+                      textColor: (selectedYear!.year == date.year + 1)
                           ? Colors.white
                           : Colors.cyan,
                       shape: CircleBorder(
                         side: BorderSide(
-                            color: (selectedYear.year == date.year + 1)
-                                ? btnColor
+                            color: (selectedYear!.year == date.year + 1)
+                                ? btnColor!
                                 : Colors.transparent),
                       ),
                       child: Text(
                         (date.year + 1).toString(),
                         style: TextStyle(
                             fontSize: 15,
-                            color: (selectedYear.year == date.year + 1)
+                            color: (selectedYear!.year == date.year + 1)
                                 ? Colors.white
                                 : Colors.blueGrey[600],
                             fontWeight: FontWeight.normal),
@@ -842,7 +842,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                               color: Colors.transparent,
                               textColor: btnColor,
                               shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: btnColor),
+                                  side: BorderSide(color: btnColor!),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(100.0))),
                               child: Text(
@@ -875,7 +875,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                               color: Colors.transparent,
                               textColor: btnColor,
                               shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: btnColor),
+                                  side: BorderSide(color: btnColor!),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(100.0))),
                               child: Text(
@@ -890,7 +890,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                                             DateTime.now().year - 2, 12),
                                         lastDate: DateTime(
                                             DateTime.now().year + 1, 12),
-                                        initialDate: dateForShowingList)
+                                        initialDate: dateForShowingList!)
                                     .then((date) => setState(() {
                                           print(date);
                                           if (date != null) {
@@ -918,7 +918,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                               color: Colors.transparent,
                               textColor: btnColor,
                               shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: btnColor),
+                                  side: BorderSide(color: btnColor!),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(100.0))),
                               child: Text(
@@ -1015,7 +1015,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                                               10, 0, 10, 50),
                                           child: new Column(
                                             children:
-                                                list.map(buildItem).toList(),
+                                                list!.map(buildItem).toList(),
                                           ),
                                         );
                                       }),

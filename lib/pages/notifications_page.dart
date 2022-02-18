@@ -14,11 +14,11 @@ class UserNotificationsPage extends StatefulWidget {
 }
 
 class _UserNotificationsPageState extends State<UserNotificationsPage> {
-  int i;
-  List<dynamic> _bookings;
-  bool _notificationsFlg;
-  List<String> _notificationsList;
-  GlobalState _state;
+  int? i;
+  late List<dynamic> _bookings;
+  bool? _notificationsFlg;
+  List<String>? _notificationsList;
+  GlobalState? _state;
   bool _initCompleted = false;
 
   @override
@@ -37,7 +37,7 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
   void _loadNotifications() async {
     setState(() {
       //TODO: SMita - no logic for notifications
-      _notificationsFlg = (_state.getConfigurations() != null) ? true : false;
+      _notificationsFlg = (_state!.getConfigurations() != null) ? true : false;
     });
   }
 
@@ -58,7 +58,7 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
     return WillPopScope(
       child: Scaffold(
         drawer: CustomDrawer(
-          phone: _state.getCurrentUser().ph,
+          phone: _state!.getCurrentUser()!.ph,
         ),
         appBar: CustomAppBar(
           titleTxt: title,
@@ -91,7 +91,7 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
     String title = "My Notifications";
     return Scaffold(
       drawer: CustomDrawer(
-        phone: _state.getCurrentUser().ph,
+        phone: _state!.getCurrentUser()!.ph,
       ),
       appBar: CustomAppBar(
         titleTxt: title,

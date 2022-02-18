@@ -9,31 +9,31 @@ import '../userHomePage.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerApp extends StatefulWidget {
-  final String videoNwLink;
-  VideoPlayerApp({Key key, @required this.videoNwLink}) : super(key: key);
+  final String? videoNwLink;
+  VideoPlayerApp({Key? key, required this.videoNwLink}) : super(key: key);
   @override
   _VideoPlayerAppState createState() => _VideoPlayerAppState();
 }
 
 class _VideoPlayerAppState extends State<VideoPlayerApp> {
-  VideoPlayerController _controller;
+  VideoPlayerController? _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.videoNwLink);
+    _controller = VideoPlayerController.network(widget.videoNwLink!);
 
-    _controller.addListener(() {
+    _controller!.addListener(() {
       setState(() {});
     });
-    _controller.setLooping(true);
-    _controller.initialize().then((_) => setState(() {}));
-    _controller.play();
+    _controller!.setLooping(true);
+    _controller!.initialize().then((_) => setState(() {}));
+    _controller!.play();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -92,14 +92,14 @@ class _VideoPlayerAppState extends State<VideoPlayerApp> {
           Container(
             padding: const EdgeInsets.all(0),
             child: AspectRatio(
-              aspectRatio: _controller.value.aspectRatio,
+              aspectRatio: _controller!.value.aspectRatio,
               child: Stack(
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
-                  VideoPlayer(_controller),
+                  VideoPlayer(_controller!),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(
-                    _controller,
+                    _controller!,
                     allowScrubbing: true,
                     colors:
                         VideoProgressColors(playedColor: primaryAccentColor),
@@ -115,7 +115,7 @@ class _VideoPlayerAppState extends State<VideoPlayerApp> {
 }
 
 class _ControlsOverlay extends StatelessWidget {
-  const _ControlsOverlay({Key key, this.controller}) : super(key: key);
+  const _ControlsOverlay({Key? key, this.controller}) : super(key: key);
 
   static const _examplePlaybackRates = [
     0.25,
@@ -128,7 +128,7 @@ class _ControlsOverlay extends StatelessWidget {
     10.0,
   ];
 
-  final VideoPlayerController controller;
+  final VideoPlayerController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +137,7 @@ class _ControlsOverlay extends StatelessWidget {
         AnimatedSwitcher(
           duration: Duration(milliseconds: 50),
           reverseDuration: Duration(milliseconds: 200),
-          child: controller.value.isPlaying
+          child: controller!.value.isPlaying
               ? SizedBox.shrink()
               : Container(
                   color: Colors.black26,
@@ -152,16 +152,16 @@ class _ControlsOverlay extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            controller.value.isPlaying ? controller.pause() : controller.play();
+            controller!.value.isPlaying ? controller!.pause() : controller!.play();
           },
         ),
         Align(
           alignment: Alignment.topRight,
           child: PopupMenuButton<double>(
-            initialValue: controller.value.playbackSpeed,
+            initialValue: controller!.value.playbackSpeed,
             tooltip: 'Playback speed',
             onSelected: (speed) {
-              controller.setPlaybackSpeed(speed);
+              controller!.setPlaybackSpeed(speed);
             },
             itemBuilder: (context) {
               return [

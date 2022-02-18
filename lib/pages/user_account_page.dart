@@ -47,13 +47,13 @@ class UserAccountPage extends StatefulWidget {
 class _UserAccountPageState extends State<UserAccountPage>
     with TickerProviderStateMixin {
   int _page = 0;
-  PageController _pageController;
-  int i;
-  List<UserToken> _pastBookingsList;
-  List<UserToken> _newBookingsList;
-  List<Tuple<BookingApplication, DocumentSnapshot>> _listOfApplications;
-  String _upcomingBkgStatus;
-  String _pastBkgStatus;
+  late PageController _pageController;
+  int? i;
+  List<UserToken?>? _pastBookingsList;
+  List<UserToken?>? _newBookingsList;
+  List<Tuple<BookingApplication, DocumentSnapshot>>? _listOfApplications;
+  String? _upcomingBkgStatus;
+  String? _pastBkgStatus;
   // UserAppData _userProfile;
   DateTime now = DateTime.now();
   final dtFormat = new DateFormat(dateDisplayFormat);
@@ -61,30 +61,30 @@ class _UserAccountPageState extends State<UserAccountPage>
   bool isPastSet = false;
 //Qr code scan result
   //ScanResult scanResult;
-  GlobalState _gs;
-  String _dynamicLink;
-  String appID = "";
+  GlobalState? _gs;
+  String? _dynamicLink;
+  String? appID = "";
   String output = "";
   bool _initCompleted = false;
-  Eventify.Listener _eventListener;
+  Eventify.Listener? _eventListener;
   //ScrollController _scrollController;
   // bool _expansionClick = false;
-  AnimationController _animationController;
-  Animation animation;
-  String loadMoreApplicationsMsg;
-  String loadUpcomingTokensMsg;
+  late AnimationController _animationController;
+  late Animation animation;
+  String? loadMoreApplicationsMsg;
+  String? loadUpcomingTokensMsg;
   bool noAppls = false;
   bool noUpcomingTokens = false;
   bool noPastTokens = false;
-  String loadPastTokensMsg;
+  String? loadPastTokensMsg;
   bool keepExpandedAppls = false;
-  ScrollController _childScrollControllerAppls;
-  ScrollController _childScrollControllerUpcomingTokens;
+  ScrollController? _childScrollControllerAppls;
+  ScrollController? _childScrollControllerUpcomingTokens;
   bool keepExpandedPastTokens = false;
-  ScrollController _childScrollControllerPastTokens;
+  ScrollController? _childScrollControllerPastTokens;
   bool showLoadingAppls = false;
 
-  List<Tuple<UserTokens, DocumentSnapshot>> _listOfUpcomingTokens;
+  List<Tuple<UserTokens, DocumentSnapshot>>? _listOfUpcomingTokens;
 
   @override
   void initState() {
@@ -106,7 +106,7 @@ class _UserAccountPageState extends State<UserAccountPage>
         setState(() {
           appID = onValue;
         });
-        print("App ID" + appID);
+        print("App ID" + appID!);
       });
       _loadInitialUpcomingBookings().then((value) {
         setState(() {
@@ -120,13 +120,13 @@ class _UserAccountPageState extends State<UserAccountPage>
 
   Future<void> _loadInitialUpcomingBookings() async {
     _upcomingBkgStatus = 'Loading';
-    _newBookingsList = await _gs.getUpcomingBookings(1, 3);
+    _newBookingsList = await _gs!.getUpcomingBookings(1, 3);
 
     setState(() {
       if (_newBookingsList != null) {
-        if (_newBookingsList.length != 0) {
+        if (_newBookingsList!.length != 0) {
           _upcomingBkgStatus = 'Success';
-          if (_newBookingsList.length < 3) {
+          if (_newBookingsList!.length < 3) {
             noUpcomingTokens = true;
           }
         } else {
@@ -140,7 +140,7 @@ class _UserAccountPageState extends State<UserAccountPage>
   Future<void> _loadInitialPastBookings() async {
     _pastBkgStatus = 'Loading';
     try {
-      _pastBookingsList = await _gs.getPastBookings(1, 3);
+      _pastBookingsList = await _gs!.getPastBookings(1, 3);
     } catch (e) {
       print(e.toString());
       Utils.showMyFlushbar(
@@ -151,7 +151,7 @@ class _UserAccountPageState extends State<UserAccountPage>
           "Please restart the app and try again.");
     }
     if (_pastBookingsList != null) {
-      if (_pastBookingsList.length != 0) {
+      if (_pastBookingsList!.length != 0) {
         _pastBkgStatus = 'Success';
       } else
         _pastBkgStatus = 'NoBookings';
@@ -163,20 +163,20 @@ class _UserAccountPageState extends State<UserAccountPage>
     //  _upcomingBkgStatus = 'Loading';
     // _pastBkgStatus = 'Loading';
     showLoadingAppls = true;
-    _gs
-        .getApplicationService()
+    _gs!
+        .getApplicationService()!
         .getApplications(
             null,
             null,
             null,
-            _gs.getCurrentUser().ph,
+            _gs!.getCurrentUser()!.ph,
             null,
             null,
             null,
             "timeOfSubmission",
             true,
             null,
-            _listOfApplications[_listOfApplications.length - 1].item2,
+            _listOfApplications![_listOfApplications!.length - 1].item2,
             3)
         .then((value) {
       if (Utils.isNullOrEmpty(value)) {
@@ -186,7 +186,7 @@ class _UserAccountPageState extends State<UserAccountPage>
           noAppls = true;
           loadMoreApplicationsMsg = thatsAllStr;
         }
-        _listOfApplications.addAll(value);
+        _listOfApplications!.addAll(value);
         keepExpandedAppls = true;
         // if (_childScrollController.hasClients) {
         //   _childScrollController.animateTo(
@@ -198,7 +198,7 @@ class _UserAccountPageState extends State<UserAccountPage>
       setState(() {
         showLoadingAppls = false;
       });
-    }).onError((error, stackTrace) {
+    }).onError((dynamic error, stackTrace) {
       setState(() {
         loadMoreApplicationsMsg =
             'Couldn\'t load more Applications, Please try again later.';
@@ -211,7 +211,7 @@ class _UserAccountPageState extends State<UserAccountPage>
     // _upcomingBkgStatus = 'Loading';
     _pastBkgStatus = 'Loading';
     //  showLoadingAppls = true;
-    _gs.getPastBookings(_pastBookingsList.length + 1, 5).then((value) {
+    _gs!.getPastBookings(_pastBookingsList!.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
         loadPastTokensMsg = thatsAllStr;
       } else {
@@ -219,7 +219,7 @@ class _UserAccountPageState extends State<UserAccountPage>
           noPastTokens = true;
           loadPastTokensMsg = thatsAllStr;
         }
-        _pastBookingsList.addAll(value);
+        _pastBookingsList!.addAll(value);
         _pastBkgStatus = 'Success';
         keepExpandedPastTokens = true;
       }
@@ -227,7 +227,7 @@ class _UserAccountPageState extends State<UserAccountPage>
         //  showLoadingAppls = false;
         _pastBkgStatus = 'Success';
       });
-    }).onError((error, stackTrace) {
+    }).onError((dynamic error, stackTrace) {
       setState(() {
         loadPastTokensMsg =
             'Couldn\'t load more Tokens, Please try again later.';
@@ -242,7 +242,7 @@ class _UserAccountPageState extends State<UserAccountPage>
     _upcomingBkgStatus = 'Loading';
     // _pastBkgStatus = 'Loading';
     //  showLoadingAppls = true;
-    _gs.getUpcomingBookings(_newBookingsList.length + 1, 5).then((value) {
+    _gs!.getUpcomingBookings(_newBookingsList!.length + 1, 5).then((value) {
       if (Utils.isNullOrEmpty(value)) {
         loadUpcomingTokensMsg = thatsAllStr;
         noUpcomingTokens = true;
@@ -251,7 +251,7 @@ class _UserAccountPageState extends State<UserAccountPage>
           noUpcomingTokens = true;
           loadUpcomingTokensMsg = thatsAllStr;
         }
-        _newBookingsList.addAll(value);
+        _newBookingsList!.addAll(value);
         _upcomingBkgStatus = 'Success';
       }
       setState(() {
@@ -259,7 +259,7 @@ class _UserAccountPageState extends State<UserAccountPage>
         _upcomingBkgStatus = 'Success';
         // _pastBkgStatus = 'Success';
       });
-    }).onError((error, stackTrace) {
+    }).onError((dynamic error, stackTrace) {
       setState(() {
         loadUpcomingTokensMsg =
             'Couldn\'t load more Tokens, Please try again later.';
@@ -274,9 +274,9 @@ class _UserAccountPageState extends State<UserAccountPage>
     _initCompleted = false;
     getGlobalState().whenComplete(() {
       _loadInitialUpcomingBookings().then((value) {
-        _gs
-            .getApplicationService()
-            .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
+        _gs!
+            .getApplicationService()!
+            .getApplications(null, null, null, _gs!.getCurrentUser()!.ph, null,
                 null, null, "timeOfSubmission", true, null, null, 1)
             .then((value) {
           _listOfApplications = value;
@@ -295,9 +295,9 @@ class _UserAccountPageState extends State<UserAccountPage>
     if (event == null) {
       return;
     }
-    String updatedTokenId = event.eventData;
-    for (UserToken token in _newBookingsList) {
-      print(token.getID());
+    String? updatedTokenId = event.eventData;
+    for (UserToken? token in _newBookingsList!) {
+      print(token!.getID());
       if (token.getID() == updatedTokenId) {
         loadGS();
       }
@@ -305,7 +305,7 @@ class _UserAccountPageState extends State<UserAccountPage>
   }
 
   void _setTargetPlatformForDesktop() {
-    TargetPlatform targetPlatform;
+    TargetPlatform? targetPlatform;
     if (Platform.isMacOS) {
       targetPlatform = TargetPlatform.iOS;
     } else if (Platform.isLinux || Platform.isWindows) {
@@ -346,8 +346,8 @@ class _UserAccountPageState extends State<UserAccountPage>
   }
 
   List cardList = [Item1(), Item2(), Item3(), Item4(), Item5(), Item6()];
-  List<T> map<T>(List list, Function handler) {
-    List<T> result = [];
+  List<T?> map<T>(List list, Function handler) {
+    List<T?> result = [];
     for (var i = 0; i < list.length; i++) {
       result.add(handler(i, list[i]));
     }
@@ -377,7 +377,7 @@ class _UserAccountPageState extends State<UserAccountPage>
     ]));
   }
 
-  Widget _buildItem(UserToken booking, List<UserToken> list, int index) {
+  Widget _buildItem(UserToken booking, List<UserToken?>? list, int index) {
     double ticketwidth = MediaQuery.of(context).size.width * .95;
     double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.65;
     return Container(
@@ -441,9 +441,9 @@ class _UserAccountPageState extends State<UserAccountPage>
                               0,
                               0),
                           child: Text(
-                            booking.parent.entityName +
-                                (booking.parent.address != null
-                                    ? (', ' + booking.parent.address)
+                            booking.parent!.entityName! +
+                                (booking.parent!.address != null
+                                    ? (', ' + booking.parent!.address!)
                                     : ''),
                             overflow: TextOverflow.ellipsis,
                             style: tokenDataTextStyle,
@@ -472,15 +472,15 @@ class _UserAccountPageState extends State<UserAccountPage>
                                       size: 20,
                                     ),
                                     onPressed: () {
-                                      if (booking.parent.phone != null) {
+                                      if (booking.parent!.phone != null) {
                                         try {
-                                          callPhone(booking.parent.phone);
+                                          callPhone(booking.parent!.phone);
                                         } catch (error) {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.error,
                                               Duration(seconds: 5),
-                                              "Could not connect call to the number ${booking.parent.phone} !!",
+                                              "Could not connect call to the number ${booking.parent!.phone} !!",
                                               "Try again later.");
                                         }
                                       } else {
@@ -508,7 +508,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     ),
                                     onPressed: () {
                                       //If booking is past booking then no sense of cancelling , show msg to user
-                                      if (booking.parent.dateTime
+                                      if (booking.parent!.dateTime!
                                           .isBefore(DateTime.now())) {
                                         Utils.showMyFlushbar(
                                             context,
@@ -545,10 +545,10 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     onPressed: () {
                                       try {
                                         launchURL(
-                                            booking.parent.entityName,
-                                            booking.parent.address,
-                                            booking.parent.lat,
-                                            booking.parent.lon);
+                                            booking.parent!.entityName,
+                                            booking.parent!.address,
+                                            booking.parent!.lat!,
+                                            booking.parent!.lon!);
                                       } catch (error) {
                                         Utils.showMyFlushbar(
                                             context,
@@ -572,8 +572,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     color: tokenIconColor,
                                   ),
                                   onPressed: () {
-                                    String phoneNo =
-                                        booking.parent.entityWhatsApp;
+                                    String? phoneNo =
+                                        booking.parent!.entityWhatsApp;
                                     if (phoneNo != null && phoneNo != "") {
                                       try {
                                         launchWhatsApp(
@@ -629,18 +629,18 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     AssetImage('assets/rupee_icon.png'),
                                     size: 16,
                                     color: (Utils.isNotNullOrEmpty(
-                                            booking.parent.upiId)
+                                            booking.parent!.upiId)
                                         ? tokenIconColor
                                         : Colors.blueGrey[400]),
                                   ),
                                   onPressed: () {
                                     if (Utils.isNotNullOrEmpty(
-                                        booking.parent.upiId)) {
+                                        booking.parent!.upiId)) {
                                       Navigator.of(context).push(
                                           new MaterialPageRoute(
                                               builder: (BuildContext context) =>
                                                   UPIPaymentPage(
-                                                    upiId: booking.parent.upiId,
+                                                    upiId: booking.parent!.upiId,
                                                     upiQrCodeImgPath: null,
                                                     backRoute:
                                                         UserAccountPage(),
@@ -666,8 +666,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                         if (Utils.isNotNullOrEmpty(booking.applicationId))
                           GestureDetector(
                             onTap: () {
-                              _gs
-                                  .getApplicationService()
+                              _gs!
+                                  .getApplicationService()!
                                   .getApplication(booking.applicationId)
                                   .then((bookingApplication) {
                                 if (bookingApplication != null) {
@@ -718,12 +718,12 @@ class _UserAccountPageState extends State<UserAccountPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    if (booking.parent.isOnlineAppointment)
+                    if (booking.parent!.isOnlineAppointment!)
                       FadeTransition(
-                        opacity: animation,
+                        opacity: animation as Animation<double>,
                         child: GestureDetector(
                           onTap: () {
-                            if (booking.parent.dateTime
+                            if (booking.parent!.dateTime!
                                 .isBefore(DateTime.now())) {
                               Utils.showMyFlushbar(
                                   context,
@@ -732,7 +732,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                   "Could not start WhatsApp call as this Booking has expired.",
                                   "Please contact Owner/Manager of this Place");
                             } else {
-                              String phoneNo = booking.parent.entityWhatsApp;
+                              String? phoneNo = booking.parent!.entityWhatsApp;
                               if (phoneNo != null && phoneNo != "") {
                                 try {
                                   launchWhatsApp(
@@ -771,7 +771,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                           ),
                         ),
                       ),
-                    if (!booking.parent.isOnlineAppointment)
+                    if (!booking.parent!.isOnlineAppointment!)
                       Container(
                         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                         margin: EdgeInsets.all(0),
@@ -791,19 +791,19 @@ class _UserAccountPageState extends State<UserAccountPage>
                               print(booking.applicationId);
 
                               print('Unique identifier for TOKEN -  ' +
-                                  booking.parent.slotId +
+                                  booking.parent!.slotId! +
                                   '%3A' +
-                                  booking.parent.userId);
+                                  booking.parent!.userId!);
 
                               String id =
-                                  booking.parent.slotId.replaceAll('#', ':') +
+                                  booking.parent!.slotId!.replaceAll('#', ':') +
                                       ':' +
-                                      booking.parent.userId;
+                                      booking.parent!.userId!;
 
                               Navigator.of(context).push(new MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                       GenerateQrUserApplication(
-                                        entityName: booking.parent.entityName,
+                                        entityName: booking.parent!.entityName,
                                         backRoute: "UserAppsList",
                                         uniqueTokenIdentifier: id,
                                         baId: null,
@@ -814,7 +814,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                       height: 5,
                     ),
                     AutoSizeText(
-                      dtFormat.format(booking.parent.dateTime),
+                      dtFormat.format(booking.parent!.dateTime!),
                       minFontSize: 10,
                       maxFontSize: 12,
                       maxLines: 1,
@@ -832,10 +832,10 @@ class _UserAccountPageState extends State<UserAccountPage>
                         // Text('Time: ', style: tokenHeadingTextStyle),
                         Text(
                           Utils.formatTime(
-                                  booking.parent.dateTime.hour.toString()) +
+                                  booking.parent!.dateTime!.hour.toString()) +
                               ':' +
                               Utils.formatTime(
-                                  booking.parent.dateTime.minute.toString()),
+                                  booking.parent!.dateTime!.minute.toString()),
                           style: tokenDateTextStyle,
                         ),
                       ],
@@ -887,7 +887,7 @@ class _UserAccountPageState extends State<UserAccountPage>
     }
   }
 
-  void showCancelBooking(UserToken booking, List<UserToken> list, int index) {
+  void showCancelBooking(UserToken booking, List<UserToken?>? list, int index) {
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -934,8 +934,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                     onPressed: () {
                       Navigator.of(_).pop();
                       if (Utils.isNotNullOrEmpty(booking.applicationId)) {
-                        _gs
-                            .getApplicationService()
+                        _gs!
+                            .getApplicationService()!
                             .getApplication(booking.applicationId)
                             .then((bookingApplication) {
                           if (bookingApplication != null) {
@@ -967,14 +967,14 @@ class _UserAccountPageState extends State<UserAccountPage>
                             ),
                             "Cancelling your booking",
                             "Please wait..");
-                        _gs.cancelBooking(booking.parent.getTokenId())
+                        _gs!.cancelBooking(booking.parent!.getTokenId())
                             // .getTokenService()
                             // .cancelToken(
                             //     booking.parent.getTokenId(), booking.number)
                             .then((value) {
                           if (value != null) {
                             setState(() {
-                              list[index] = value.item1;
+                              list![index] = value.item1;
                             });
                           } else {
                             Utils.showMyFlushbar(
@@ -1052,8 +1052,8 @@ class _UserAccountPageState extends State<UserAccountPage>
 
     //  openRateReviewForIos();
     launchPlayStore(
-        packageName: _gs.getConfigurations().packageName,
-        iOSAppId: _gs.getConfigurations().iOSAppId,
+        packageName: _gs!.getConfigurations()!.packageName,
+        iOSAppId: _gs!.getConfigurations()!.iOSAppId,
         forReview: true);
 
     // launch("https://play.google.com/store/apps/details?id=" + packageName);
@@ -1127,8 +1127,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                                       TextSpan(text: userAccountHeadingTxt),
                                       TextSpan(text: "\n"),
                                       TextSpan(
-                                        text: _gs.getCurrentUser() != null
-                                            ? _gs.getCurrentUser().ph
+                                        text: _gs!.getCurrentUser() != null
+                                            ? _gs!.getCurrentUser()!.ph
                                             : "",
                                       )
                                     ])),
@@ -1205,18 +1205,18 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               // RenderObject in its descendent tree when it's not
                                               // a RenderObjectWidget. The RaisedButton's RenderObject
                                               // has its position and size after it's built.
-                                              final RenderBox box =
-                                                  context.findRenderObject();
+                                              final RenderBox? box =
+                                                  context.findRenderObject() as RenderBox?;
 
                                               Utils.generateLinkAndShare(
                                                   null,
                                                   appShareHeading,
                                                   appShareMessage,
-                                                  _gs
-                                                      .getConfigurations()
-                                                      .packageName,
-                                                  _gs
-                                                      .getConfigurations()
+                                                  _gs!
+                                                      .getConfigurations()!
+                                                      .packageName!,
+                                                  _gs!
+                                                      .getConfigurations()!
                                                       .iOSAppId);
                                             },
                                       child: Row(
@@ -1269,13 +1269,13 @@ class _UserAccountPageState extends State<UserAccountPage>
                                     showLoadingAppls = true;
                                   });
 
-                                  _gs
-                                      .getApplicationService()
+                                  _gs!
+                                      .getApplicationService()!
                                       .getApplications(
                                           null,
                                           null,
                                           null,
-                                          _gs.getCurrentUser().ph,
+                                          _gs!.getCurrentUser()!.ph,
                                           null,
                                           null,
                                           null,
@@ -1314,11 +1314,11 @@ class _UserAccountPageState extends State<UserAccountPage>
                                       return Container(
                                         //margin: EdgeInsets.only(bottom: 5),
                                         child: UserApplicationsList(
-                                          ba: _listOfApplications[index].item1,
+                                          ba: _listOfApplications![index].item1,
                                         ),
                                       );
                                     },
-                                    itemCount: _listOfApplications.length,
+                                    itemCount: _listOfApplications!.length,
                                   ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1332,7 +1332,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               margin: EdgeInsets.only(
                                                   top: 10, bottom: 15),
                                               child: AutoSizeText(
-                                                loadMoreApplicationsMsg,
+                                                loadMoreApplicationsMsg!,
                                                 minFontSize: 11,
                                                 maxFontSize: 17,
                                                 style: TextStyle(
@@ -1349,7 +1349,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         child: MaterialButton(
                                           shape: RoundedRectangleBorder(
                                               side: BorderSide(
-                                                  color: Colors.blueGrey[700]),
+                                                  color: Colors.blueGrey[700]!),
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(5.0))),
                                           child: Column(
@@ -1411,14 +1411,14 @@ class _UserAccountPageState extends State<UserAccountPage>
                                           (BuildContext context, int index) {
                                         return Container(
                                             child: _buildItem(
-                                                _newBookingsList[index],
+                                                _newBookingsList![index]!,
                                                 _newBookingsList,
                                                 index)
 
                                             //children: <Widget>[firstRow, secondRow],
                                             );
                                       },
-                                      itemCount: _newBookingsList.length,
+                                      itemCount: _newBookingsList!.length,
                                     ),
                                   ),
                                 Row(
@@ -1433,7 +1433,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               margin: EdgeInsets.only(
                                                   top: 10, bottom: 15),
                                               child: AutoSizeText(
-                                                loadUpcomingTokensMsg,
+                                                loadUpcomingTokensMsg!,
                                                 minFontSize: 11,
                                                 maxFontSize: 17,
                                                 style: TextStyle(
@@ -1451,7 +1451,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                         child: MaterialButton(
                                           shape: RoundedRectangleBorder(
                                               side: BorderSide(
-                                                  color: Colors.blueGrey[700]),
+                                                  color: Colors.blueGrey[700]!),
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(5.0))),
                                           child: Column(
@@ -1518,11 +1518,11 @@ class _UserAccountPageState extends State<UserAccountPage>
                                             (BuildContext context, int index) {
                                           return Container(
                                               child: _buildItem(
-                                                  _pastBookingsList[index],
+                                                  _pastBookingsList![index]!,
                                                   _pastBookingsList,
                                                   index));
                                         },
-                                        itemCount: _pastBookingsList.length,
+                                        itemCount: _pastBookingsList!.length,
                                       ),
                                     Row(
                                       mainAxisAlignment:
@@ -1538,7 +1538,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                                   margin: EdgeInsets.only(
                                                       top: 10, bottom: 15),
                                                   child: AutoSizeText(
-                                                    loadPastTokensMsg,
+                                                    loadPastTokensMsg!,
                                                     minFontSize: 9,
                                                     maxFontSize: 17,
                                                     style: TextStyle(
@@ -1557,7 +1557,7 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               shape: RoundedRectangleBorder(
                                                   side: BorderSide(
                                                       color: Colors
-                                                          .blueGrey[700]),
+                                                          .blueGrey[700]!),
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(

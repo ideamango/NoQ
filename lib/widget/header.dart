@@ -15,21 +15,21 @@ import 'package:intl/intl.dart';
 import '../widget/page_animation.dart';
 
 class CustomDrawer extends StatefulWidget {
-  final String phone;
-  CustomDrawer({Key key, @required this.phone}) : super(key: key);
+  final String? phone;
+  CustomDrawer({Key? key, required this.phone}) : super(key: key);
 
   @override
   _CustomDrawerState createState() => _CustomDrawerState();
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-  PageController _pageController;
+  late PageController _pageController;
   int _page = 0;
-  String _phone;
-  List drawerItems;
+  String? _phone;
+  late List drawerItems;
   //Getting dummy list of stores from store class and storing in local variable
   //List<StoreAppData> _stores = getLocalStoreList();
-  int i;
+  int? i;
 
   void navigationTapped(int page) {
     _pageController.jumpToPage(page);
@@ -172,14 +172,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     item['icon'],
                     color: _page == index
                         ? highlightColor
-                        : Theme.of(context).textTheme.title.color,
+                        : Theme.of(context).textTheme.headline6!.color,
                   ),
                   title: Text(
                     item['name'],
                     style: TextStyle(
                       color: _page == index
                           ? highlightColor
-                          : Theme.of(context).textTheme.title.color,
+                          : Theme.of(context).textTheme.headline6!.color,
                     ),
                   ),
                   children: <Widget>[
@@ -195,14 +195,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             subItem['icon'],
                             color: _page == index
                                 ? highlightColor
-                                : Theme.of(context).textTheme.title.color,
+                                : Theme.of(context).textTheme.headline6!.color,
                           ),
                           title: Text(
                             subItem['name'],
                             style: TextStyle(
                               color: _page == index
                                   ? highlightColor
-                                  : Theme.of(context).textTheme.title.color,
+                                  : Theme.of(context).textTheme.headline6!.color,
                             ),
                           ),
                           onTap: () {
@@ -224,14 +224,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     item['icon'],
                     color: _page == index
                         ? highlightColor
-                        : Theme.of(context).textTheme.title.color,
+                        : Theme.of(context).textTheme.headline6!.color,
                   ),
                   title: Text(
                     item['name'],
                     style: TextStyle(
                       color: _page == index
                           ? highlightColor
-                          : Theme.of(context).textTheme.title.color,
+                          : Theme.of(context).textTheme.headline6!.color,
                     ),
                   ),
                   onTap: () {

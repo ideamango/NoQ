@@ -10,14 +10,14 @@ import '../widget/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PlaceDetailsPage extends StatefulWidget {
-  final Entity entity;
-  PlaceDetailsPage({Key key, @required this.entity}) : super(key: key);
+  final Entity? entity;
+  PlaceDetailsPage({Key? key, required this.entity}) : super(key: key);
   @override
   _PlaceDetailsPageState createState() => _PlaceDetailsPageState();
 }
 
 class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
-  Entity entity;
+  Entity? entity;
   final dtFormat = new DateFormat(dateDisplayFormat);
   @override
   Widget build(BuildContext context) {
@@ -43,8 +43,8 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                     Expanded(
                       child: SingleChildScrollView(
                         child: Text(
-                            entity.description != null
-                                ? entity.description
+                            entity!.description != null
+                                ? entity!.description!
                                 : "No Description found",
                             // overflow: TextOverflow.ellipsis,
                             maxLines: 4,
@@ -79,7 +79,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                           child: Row(children: <Widget>[
                         Text('Address - ', style: placeDetailsHeadingTextStyle),
                         Expanded(
-                          child: Text(Utils.getFormattedAddress(entity.address),
+                          child: Text(Utils.getFormattedAddress(entity!.address!),
                               maxLines: 4,
                               overflow: TextOverflow.ellipsis,
                               style: highlightSubTextStyle),
@@ -93,17 +93,17 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                   Row(children: <Widget>[
                     Text("Opens at - ", style: placeDetailsHeadingTextStyle),
                     Text(
-                        Utils.formatTime(entity.startTimeHour.toString()) +
+                        Utils.formatTime(entity!.startTimeHour.toString()) +
                             ':' +
-                            Utils.formatTime(entity.startTimeMinute.toString()),
+                            Utils.formatTime(entity!.startTimeMinute.toString()),
                         style: highlightSubTextStyle),
                     horizontalSpacer,
                     horizontalSpacer,
                     Text("Closes at - ", style: placeDetailsHeadingTextStyle),
                     Text(
-                        Utils.formatTime(entity.endTimeHour.toString()) +
+                        Utils.formatTime(entity!.endTimeHour.toString()) +
                             ':' +
-                            Utils.formatTime(entity.endTimeMinute.toString()),
+                            Utils.formatTime(entity!.endTimeMinute.toString()),
                         style: highlightSubTextStyle),
                   ]),
                 ],
@@ -122,10 +122,10 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                         children: [
                           Text('Offers - ',
                               style: placeDetailsHeadingTextStyle),
-                          entity.offer != null
+                          entity!.offer != null
                               ? Expanded(
                                   child: Text(
-                                    entity.offer.message,
+                                    entity!.offer!.message!,
                                     maxLines: 4,
                                     overflow: TextOverflow.ellipsis,
                                     style: highlightSubTextStyle,
@@ -135,17 +135,17 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                                   style: highlightSubTextStyle),
                         ],
                       ),
-                      if (entity.offer != null)
+                      if (entity!.offer != null)
                         Row(
                             // mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               verticalSpacer,
                               Text("Valid from - ",
                                   style: placeDetailsHeadingTextStyle),
-                              Text(dtFormat.format(entity.offer.startDateTime),
+                              Text(dtFormat.format(entity!.offer!.startDateTime!),
                                   style: highlightSubTextStyle),
                               Text(" till ", style: highlightSubTextStyle),
-                              Text(dtFormat.format(entity.offer.endDateTime),
+                              Text(dtFormat.format(entity!.offer!.endDateTime!),
                                   style: highlightSubTextStyle),
                             ]),
                     ],
@@ -175,15 +175,15 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                               size: 20,
                             ),
                             onPressed: () {
-                              if (entity.phone != null) {
+                              if (entity!.phone != null) {
                                 try {
-                                  callPhone(entity.phone);
+                                  callPhone(entity!.phone);
                                 } catch (error) {
                                   Utils.showMyFlushbar(
                                       context,
                                       Icons.error,
                                       Duration(seconds: 5),
-                                      "Could not connect call to the number ${entity.phone} !!",
+                                      "Could not connect call to the number ${entity!.phone} !!",
                                       "Try again later.");
                                 }
                               } else {
@@ -210,16 +210,16 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                             color: Colors.black,
                           ),
                           onPressed: () {
-                            if (Utils.isNotNullOrEmpty(entity.whatsapp)) {
+                            if (Utils.isNotNullOrEmpty(entity!.whatsapp)) {
                               try {
                                 launchWhatsApp(
-                                    message: "", phone: entity.whatsapp);
+                                    message: "", phone: entity!.whatsapp);
                               } catch (error) {
                                 Utils.showMyFlushbar(
                                     context,
                                     Icons.error,
                                     Duration(seconds: 5),
-                                    "Could not connect to the WhatsApp number ${entity.whatsapp} !!",
+                                    "Could not connect to the WhatsApp number ${entity!.whatsapp} !!",
                                     "Try again later");
                               }
                             } else {
@@ -247,12 +247,12 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                               size: 20,
                             ),
                             onPressed: () {
-                              if (entity.supportEmail != null) {
+                              if (entity!.supportEmail != null) {
                                 String _subjectOfMail =
                                     'Mail from LESSs app user';
                                 String _mailBody = 'Your Message here..';
                                 try {
-                                  launchMail(entity.supportEmail,
+                                  launchMail(entity!.supportEmail,
                                           _subjectOfMail, _mailBody)
                                       .then((retVal) {
                                     if (retVal) {
@@ -277,7 +277,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                                       context,
                                       Icons.error,
                                       Duration(seconds: 5),
-                                      "Could not connect to ${entity.supportEmail} !!",
+                                      "Could not connect to ${entity!.supportEmail} !!",
                                       "Try again later.");
                                 }
                               } else {

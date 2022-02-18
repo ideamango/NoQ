@@ -16,8 +16,8 @@ import '../lib/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    GlobalState gs = await GlobalState.getGlobalState();
-    AppUser u = await gs.getCurrentUser();
+    GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+    AppUser? u = await gs.getCurrentUser();
 
     // Verify that our counter starts at 0.
     expect(u, null);

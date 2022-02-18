@@ -22,16 +22,16 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 
 class GenerateQrUserApplication extends StatefulWidget {
-  final String uniqueTokenIdentifier;
-  final String baId;
-  final String entityName;
+  final String? uniqueTokenIdentifier;
+  final String? baId;
+  final String? entityName;
   final String backRoute;
   GenerateQrUserApplication(
-      {Key key,
-      @required this.uniqueTokenIdentifier,
-      @required this.baId,
-      @required this.entityName,
-      @required this.backRoute})
+      {Key? key,
+      required this.uniqueTokenIdentifier,
+      required this.baId,
+      required this.entityName,
+      required this.backRoute})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => GenerateQrUserApplicationState();
@@ -41,23 +41,23 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
   dynamic route;
 
   GlobalKey globalKey = new GlobalKey();
-  String _dataString;
-  Directory tempDir;
-  Uri uriLink;
+  late String _dataString;
+  late Directory tempDir;
+  Uri? uriLink;
   bool _initCompleted = false;
-  String iosAppId;
-  String packageId;
-  String msgTitle;
-  String msgBody;
+  String? iosAppId;
+  String? packageId;
+  String? msgTitle;
+  late String msgBody;
   @override
   void initState() {
     super.initState();
-    msgTitle = applicationShareMessage + widget.entityName;
+    msgTitle = applicationShareMessage + widget.entityName!;
     msgBody = qrCodeShareMessage;
 
     GlobalState.getGlobalState().then((value) {
-      iosAppId = value.getConfigurations().iOSAppId;
-      packageId = value.getConfigurations().packageName;
+      iosAppId = value!.getConfigurations()!.iOSAppId;
+      packageId = value.getConfigurations()!.packageName;
       generateQrCode();
     });
 
@@ -76,7 +76,7 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
     //dataString needs to be set, using this the Qr code is generated.
     if (Utils.isNotNullOrEmpty(widget.uniqueTokenIdentifier)) {
       Utils.createQrScreenForBookingTokens(widget.uniqueTokenIdentifier,
-              widget.entityName, packageId, iosAppId)
+              widget.entityName!, packageId!, iosAppId)
           .then((value) {
         uriLink = value;
         // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
@@ -88,7 +88,7 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
       });
     } else if (Utils.isNotNullOrEmpty(widget.baId)) {
       Utils.createQrScreenForUserApplications(
-              widget.baId, widget.entityName, packageId, iosAppId)
+              widget.baId, widget.entityName!, packageId!, iosAppId)
           .then((value) {
         uriLink = value;
         // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
@@ -136,9 +136,9 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
       // String msgTitle = qrCodeShareHeading + " - " + widget.entityName;
 
       RenderRepaintBoundary boundary =
-          globalKey.currentContext.findRenderObject();
+          globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       var image = await boundary.toImage();
-      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+      ByteData byteData = await (image.toByteData(format: ImageByteFormat.png) as FutureOr<ByteData>);
       Uint8List pngBytes = byteData.buffer.asUint8List();
       tempDir = await getTemporaryDirectory();
       // final file =
@@ -147,18 +147,18 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
       await file.writeAsBytes(pngBytes);
       // final channel = const MethodChannel('channel:me.sukoon.share/share');
       // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
-      final RenderBox box = context.findRenderObject();
+      final RenderBox? box = context.findRenderObject() as RenderBox?;
       if (Platform.isAndroid) {
         Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
             subject: msgTitle,
-            text: msgTitle + '\n\n' + msgBody,
-            sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+            text: msgTitle! + '\n\n' + msgBody,
+            sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
       }
       if (Platform.isIOS) {
         Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
             //subject: msgTitle,
             //text: msgBody,
-            sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+            sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
       }
     } catch (e) {
       print(e.toString());
@@ -258,7 +258,7 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(msgTitle + '\n'),
+                                              Text(msgTitle! + '\n'),
                                               Text(msgBody),
                                             ],
                                           ),
@@ -274,7 +274,7 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
                         margin: EdgeInsets.all(10),
                         child: MaterialButton(
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.blueGrey[400]),
+                            side: BorderSide(color: Colors.blueGrey[400]!),
                             borderRadius: BorderRadius.circular(5),
                           ),
                           color: btnColor,
