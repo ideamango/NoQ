@@ -426,19 +426,19 @@ String upiShareBody = 'Share UPI body';
 String faqHead1 = "How LESSs helps bring Sukoon to your life?";
 String faq1 = "Why use LESSs?";
 String faqAns1 =
-    '''There is not just one, but numerous reasons how this helps you. Here is how - Maintaing social distance is need of the hour. Sometimes just unavoidable when you visit your favourite grocery store for example, you see people standing in queue and wait-time could be anything from 10 mins to an hour. Another problem is, Shopping at place this crowded is not at all advisable. So, Not just you waste your precious time in waiting but also risk exposing yourself to virus(Covid-19).''';
+    '''There is not just one, but numerous reasons how this helps you. Here is how - Maintaing social distance is need of the hour. Sometimes just unavoidable when you visit your favourite grocery store for example, you see people standing in queue and wait-time could be anything from 10 mins to an hour. Another problem is, visiting crowded places is not advisable. So, Not just you waste your precious time in waiting but also risk exposing yourself to infection.''';
 
 String faq2 = "Where LESSs can be used? ";
 String faqAns2 =
-    '''We have listed few places where we felt pre-planning and booking time-slot would be help. But owner of any place where crowd is expected and pre-panning would be of help, would definitely can be added here for benefit of all. Few Examples of Places are Shopping Marts, Gaming Zones in Mall, Apartment amenities such as Lawn Tennis Court, Grocery Store, Gym, Local vegetable vendor etc.''';
+    '''We have listed few places where we felt pre-planning and booking time-slot would be help. But owner of any place where crowd is expected and pre-panning would be of help, would definitely can be added here for benefit of all. Few Examples of Places are u decide  Marts, Gaming Zones in Mall, Apartment amenities such as Lawn Tennis Court, Grocery Store, Gym, Local vegetable vendor etc.''';
 String faqHead2 = "Registration";
 String faq3 = "How do I login? ";
 String faqAns3 =
-    '''Registering with us is very simple and safe. We just ask for your phone number and NO other details will be asked. After providing your number, you will recieve an OTP on your phone number, just enter that and Done!! ''';
+    '''Registering with us is very simple and safe. We just require your phone number and NO other details will be asked. After providing your number, you will recieve an OTP on your phone number, just enter that and Done!! ''';
 
 String faq4 = "What are the charges for booking tokens? ";
 String faqAns4 =
-    '''There is absolutely no charge for registration or for using this app. However, If you like our work, you can always donate any amount as per your wish to keep us motivated.''';
+    '''There is absolutely no charge for registration or for using this app. However, If you like our work, you can always donate any amount as per your wish to keep us motivated. ''';
 String faqAns4_2 = 'Click here to donate!!';
 String faq5 =
     'Can I use same login if I need to book token for a family member? ';
@@ -452,10 +452,10 @@ String faq7 = "How to find the place where I am planning to go? ";
 String faqAns7 = "";
 String faq8 = "Cannot find the place I was planning to visit? ";
 String faqAns8 =
-    '''You can contact us and leave message about the same. We will try our best to get them onboard.Our ultimate purpose is to help create safe environment for all.''';
+    '''You can contact us and leave message about the same. We will try our best to get them onboard. Our ultimate purpose is to help create safe and convenient environment for all.''';
 String faq9 = "How to book a time-slot? ";
 String faqAns9 =
-    'You can search for different places using \'Search\' feature. Futher, select date and time when you are planing to visit that place. See how many people have booked that slot, in case, u decide to visit the place when less people are visiting you can just so do it. \nNow, visit store conveniently at booked time and avoid all that rush!!';
+    'You can search for different places using \'Search\' feature. Futher, select date and time when you are planing to visit that place. See how many people have booked that slot, in case, you decide to visit the place when less people are visiting you can just so do it. \nNow, visit store conveniently at booked time and avoid all that rush!!';
 String faq10 = "How to contact the Admin of the place? ";
 String faqAns10 = "";
 String faq11 =
@@ -533,7 +533,7 @@ String ourStory7 =
 
 String ourStory8 =
     '''\n\nThat was it! Because that’s when we decided on making the move ourselves creating magic with technology and finally finding what we seek!  
-\nFounded at the time when the world stood still due to the pandemic in early 2020, BIGPIQ was developed keeping only one thing in mind- REVIVAL! After seeing ration hoarding, long queues, full car parking, and no distancing despite the guidelines, we knew that a solution was required. Not just for us as end-users but also businesses who were incapable of meeting demands and were losing out on the opportunity while others struggled to survive!  
+\nFounded at the time when the world stood still due to the pandemic in early 2020, BIGPIQ was developed keeping only one thing in mind- REVIVAL! After seeing ration hoarding, long queues, rush hours due to shortage of essentials, and no distancing despite the guidelines, we knew that a solution was required. Not just for us as end-users but also businesses who were incapable of meeting demands and were losing out on the opportunity while others struggled to survive!  
 \nSince the pandemic broke, there is loss of work, depressing news, uncertainty about the future, and monotonicity due to prolonged containment and restricted life activities have started to impact the mental health of the people. If people go out there is risk of contracting the virus. Avoiding crowded places and following suggested safety measures is the only thing people can do to bring back the life to normalcy.  
 Facing the issues first-hand made it easier for us to work out a solution in the form of a mobile application and named it LESSs. Even though it is the result of long brainstorming sessions, it is worth all the pulled-out hair and sleepless nights. LESSs has the capacity to balance out the business growth opportunity in the current times and give consumers the surety of services without compromising their safety. LESSs means more Satisfaction to consumers and more Opportunity to businesses.\n\nLESSs is the go-to platform that ensures optimum safety for you and your family. If your mind is full of What? Why? How? Read more about ''';
 String ourStory8_0 = ' LESSs here.';

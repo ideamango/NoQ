@@ -202,7 +202,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             style: TextStyle(
                               color: _page == index
                                   ? highlightColor
-                                  : Theme.of(context).textTheme.headline6!.color,
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .color,
                             ),
                           ),
                           onTap: () {

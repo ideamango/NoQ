@@ -121,7 +121,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             style: TextStyle(
                               color: _page == index
                                   ? highlightColor
-                                  : Theme.of(context).textTheme.headline6!.color,
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .color,
                             ),
                           ),
                           onTap: () {

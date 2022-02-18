@@ -110,9 +110,7 @@ class _WeekDaySelectorFormFieldState extends State<WeekDaySelectorFormField> {
         boxConstraints: widget.boxConstraints,
         selected: widget.initialValue == null
             ? false
-            : widget.initialValue!
-                        .firstWhereOrNull((d) => day == d) ==
-                    null
+            : widget.initialValue!.firstWhereOrNull((d) => day == d) == null
                 ? false
                 : true,
       ));

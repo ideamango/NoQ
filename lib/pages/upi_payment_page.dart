@@ -554,12 +554,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                             Container(
                               alignment: Alignment.centerRight,
                               width: MediaQuery.of(context).size.width * .4,
-                              child: Text("App Image"),
-                              //  Image.memory(
-                              //   _appsFuture[index].iconImage(64).image.,
-                              //   width: 64,
-                              //   height: 64,
-                              // ),
+                              child: _appsFuture![index].iconImage(64),
                             ),
                             Container(
                               alignment: Alignment.centerLeft,
@@ -776,9 +771,11 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
 
   Future<void> shareQR() async {
     Directory tempDir = await getTemporaryDirectory();
-    RenderRepaintBoundary boundary = upiKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    RenderRepaintBoundary boundary =
+        upiKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     var image = await boundary.toImage();
-    ByteData byteData = await (image.toByteData(format: ImageByteFormat.png) as FutureOr<ByteData>);
+    ByteData byteData = await (image.toByteData(format: ImageByteFormat.png)
+        as FutureOr<ByteData>);
     Uint8List pngBytes = byteData.buffer.asUint8List();
     tempDir = await getTemporaryDirectory();
     // final file =

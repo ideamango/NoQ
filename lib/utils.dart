@@ -102,15 +102,16 @@ class Utils {
   }
 
   static String getFormattedAddress(Address address) {
-    String adr =
-        (Utils.isNotNullOrEmpty(address.address) ? (address.address) : "")! +
-            (Utils.isNotNullOrEmpty(address.locality)
-                ? (', ' + address.locality!)
-                : "") +
-            (Utils.isNotNullOrEmpty(address.landmark)
-                ? (', ' + address.landmark!)
-                : "") +
-            (Utils.isNotNullOrEmpty(address.city) ? (', ' + address.city!) : "");
+    String adr = (Utils.isNotNullOrEmpty(address.address)
+            ? (address.address)
+            : "")! +
+        (Utils.isNotNullOrEmpty(address.locality)
+            ? (', ' + address.locality!)
+            : "") +
+        (Utils.isNotNullOrEmpty(address.landmark)
+            ? (', ' + address.landmark!)
+            : "") +
+        (Utils.isNotNullOrEmpty(address.city) ? (', ' + address.city!) : "");
     return adr;
   }
 
@@ -440,7 +441,8 @@ class Utils {
     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
         "Adding the Place to your Favourites...", "Hold on!");
 
-    GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+    GlobalState gs =
+        await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
     Entity? entity;
 
     gs.getEntity(id).then((value) {
@@ -473,7 +475,8 @@ class Utils {
     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
         "Loading the Booking details...", "Hold on!");
 
-    GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+    GlobalState gs =
+        await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
     UserTokens userTokenId;
     print(tokenId);
     tokenId = tokenId.replaceAll(' ', '+');
@@ -505,7 +508,8 @@ class Utils {
     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
         "Loading the Application details...", "Hold on!");
 
-    GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+    GlobalState gs =
+        await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
     print(applicationId);
     bool isReadOnly = true;
 
@@ -514,7 +518,10 @@ class Utils {
         .getApplication(applicationId)
         .then((newBaFromGS) {
       //SMITA Check this, Application QR scan
-      if (gs.getCurrentUser()!.entityVsRole!.containsKey(newBaFromGS!.entityId)) {
+      if (gs
+          .getCurrentUser()!
+          .entityVsRole!
+          .containsKey(newBaFromGS!.entityId)) {
         if (gs.getCurrentUser()!.entityVsRole![newBaFromGS.entityId] !=
             EntityRole.Executive) {
           isReadOnly = false;
@@ -878,7 +885,7 @@ class Utils {
         minimumVersion: 1,
         //fallbackUrl: Uri.parse('https://bigpiq.com/#product')
       ),
-      iosParameters: IosParameters(
+      iosParameters: IOSParameters(
         bundleId: bundleId,
         minimumVersion: '1',
         appStoreId: appStoreId,
@@ -890,7 +897,7 @@ class Utils {
             'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
       ),
     );
-    final link = await parameters.buildUrl();
+    final link = parameters.link;
     // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
     // print("short url");
     // print(shortenedLink);
@@ -911,7 +918,7 @@ class Utils {
         minimumVersion: 1,
         //  fallbackUrl: Uri.parse('https://bigpiq.com/#product')
       ),
-      iosParameters: IosParameters(
+      iosParameters: IOSParameters(
         bundleId: bundleId,
         minimumVersion: '1',
         appStoreId: appStoreId,
@@ -923,7 +930,7 @@ class Utils {
             'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
       ),
     );
-    final link = await parameters.buildUrl();
+    final link = parameters.link;
     // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
     // print("short url");
     // print(shortenedLink);
@@ -944,7 +951,7 @@ class Utils {
         minimumVersion: 1,
         //  fallbackUrl: Uri.parse('https://bigpiq.com/#product')
       ),
-      iosParameters: IosParameters(
+      iosParameters: IOSParameters(
         bundleId: bundleId,
         minimumVersion: '1',
         appStoreId: appStoreId,
@@ -956,12 +963,22 @@ class Utils {
             'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
       ),
     );
-    final link = await parameters.buildUrl();
+
+    Uri url;
+    bool short = false;
+    if (short) {
+      final Uri shortLink = parameters.link;
+      url = shortLink;
+    } else {
+      url = parameters.link;
+    }
+
+    //final link = await parameters.buildUrl();
     // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
     // print("short url");
     // print(shortenedLink);
     //return shortenedLink.shortUrl;
-    return link;
+    return url;
   }
 
   static Future<Uri> createDynamicLinkWithParams(String? entityId,
@@ -990,12 +1007,12 @@ class Utils {
             'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
       ),
     );
-    final link = await parameters.buildUrl();
-    final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+    //final link = await parameters.buildUrl();
+    final Uri shortenedLink = parameters.link;
     print("short url");
     print(shortenedLink);
     //return shortenedLink.shortUrl;
-    return shortenedLink.shortUrl;
+    return shortenedLink;
   }
 
   static generateLinkAndShare(String? entityId, String msgTitle, String msgBody,
@@ -1091,6 +1108,9 @@ class Utils {
         icon = Icons.laptop_mac;
         break;
       case EntityType.PLACE_TYPE_OTHERS:
+        icon = Icons.add_shopping_cart;
+        break;
+      default:
         icon = Icons.add_shopping_cart;
         break;
     }
@@ -1396,7 +1416,8 @@ class Utils {
     return returnVal;
   }
 
-  static Future<bool?> showImagePopUp(BuildContext context, Image? image) async {
+  static Future<bool?> showImagePopUp(
+      BuildContext context, Image? image) async {
     bool? returnVal = await showDialog(
         barrierDismissible: false,
         context: context,

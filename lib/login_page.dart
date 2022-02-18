@@ -35,7 +35,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   String? _errorMsg;
-  String _mobile, smsCode;
+  String? _mobile, smsCode;
   String? verificationId;
   final _loginPageFormKey = new GlobalKey<FormState>();
   bool codeSent = false;
@@ -83,10 +83,9 @@ class _LoginPageState extends State<LoginPage> {
       maxLines: 1,
       minLines: 1,
       style: lightInputTextStyle,
-      //TODO Smita - commented while migrating
-      // inputFormatters: <TextInputFormatter>[
-      //   WhitelistingTextInputFormatter.digitsOnly,
-      // ],
+      inputFormatters: <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly
+      ],
       keyboardType: TextInputType.phone,
 
       decoration: InputDecoration(

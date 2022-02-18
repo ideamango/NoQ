@@ -160,7 +160,7 @@ class DynamicLinkService {
         //     context, MaterialPageRoute(builder: (context) => FavsListPage()));
       }
 
-      FirebaseDynamicLinks.instance.onLink(onSuccess: (dynamicLink) async {
+      FirebaseDynamicLinks.instance.onLink.listen((dynamicLink) {
         final Uri deepLink = dynamicLink?.link;
         print(deepLink.queryParameters);
         print("Deep link path ");

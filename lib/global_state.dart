@@ -1061,7 +1061,7 @@ class GlobalState {
     EventBus.registerEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null,
         (event, arg) {
       var androidDetails = new AndroidNotificationDetails(
-          "channelId", "channelName", "channelDescription",
+          "channelId", "channelName",
           importance: Importance.max, priority: Priority.high);
 
       var iOSDetails = new IOSNotificationDetails();
