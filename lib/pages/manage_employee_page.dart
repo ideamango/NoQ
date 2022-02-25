@@ -423,7 +423,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
   }
 
   refreshContacts() {
-    List<Widget> newList = new List<Widget>();
+    List<Widget> newList = [];
     for (int i = 0; i < managersList.length; i++) {
       newList.add(new ContactRow(
         contact: managersList[i],
@@ -468,7 +468,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     contact.id = uuid.v1();
     managersList.add(contact);
 
-    List<Widget> newList = new List<Widget>();
+    List<Widget> newList = [];
     // for (int i = 0; i < contactList.length; i++) {
     Widget newContact = new ContactRow(
       contact: managersList[managersList.length - 1],

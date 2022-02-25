@@ -46,14 +46,14 @@ class _FavsListPageState extends State<FavsListPage>
   SharedPreferences? _prefs;
   PersistentBottomSheetController? placeDetailsSheetController;
 
-  List<MetaEntity?> _stores = new List<MetaEntity?>();
+  List<MetaEntity?> _stores = [];
 
   String? _entityType;
 
   bool fetchFromServer = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
-  List<DateTime> _dateList = new List<DateTime>();
+  List<DateTime> _dateList = [];
 
   Icon actionIcon = new Icon(
     Icons.search,
@@ -162,7 +162,7 @@ class _FavsListPageState extends State<FavsListPage>
 //If nothing in list then displays message.
     MetaEntity? metaEn = strData;
     _gs!.removeFavourite(metaEn).then((value) {
-      _stores?.remove(strData);
+      _stores.remove(strData);
       setState(() {});
     });
     setState(() {});
@@ -231,8 +231,12 @@ class _FavsListPageState extends State<FavsListPage>
     String msgTitle = entityShareByUserHeading + name;
     String msgBody = entityShareByUserMessage;
 
-    Utils.generateLinkAndShare(entityId, msgTitle, msgBody,
-        _gs!.getConfigurations()!.packageName!, _gs!.getConfigurations()!.iOSAppId);
+    Utils.generateLinkAndShare(
+        entityId,
+        msgTitle,
+        msgBody,
+        _gs!.getConfigurations()!.packageName!,
+        _gs!.getConfigurations()!.iOSAppId);
   }
 
   Widget _emptyFavsPage() {
@@ -413,7 +417,8 @@ class _FavsListPageState extends State<FavsListPage>
                                 (str.allowOnlineAppointment != null)
                                     ? (str.allowOnlineAppointment!
                                         ? FadeTransition(
-                                            opacity: animation as Animation<double>,
+                                            opacity:
+                                                animation as Animation<double>,
                                             child: GestureDetector(
                                               onTap: () {
                                                 Utils.showMyFlushbar(
@@ -959,13 +964,13 @@ class _FavsListPageState extends State<FavsListPage>
             )));
   }
 
-  List<Widget> _buildDateGridItems(MetaEntity? store, String? sid, String? sname,
-      List<String>? daysClosed, int? advanceDays) {
+  List<Widget> _buildDateGridItems(MetaEntity? store, String? sid,
+      String? sname, List<String>? daysClosed, int? advanceDays) {
     bool isClosed = false;
     bool isBookingAllowed = false;
     String dayOfWeek;
     int daysCounter = 0;
-    var dateWidgets = List<Widget>();
+    List<Widget> dateWidgets = [];
     for (var date in _dateList) {
       daysCounter++;
       if (daysCounter <= advanceDays!) {

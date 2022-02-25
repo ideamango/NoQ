@@ -117,11 +117,11 @@ class _WeekDaySelectorFormFieldState extends State<WeekDaySelectorFormField> {
     });
   }
 
-  _dayTap(days day) {
+  _dayTap(days? day) {
     if (daysSelected!.contains(day)) {
       daysSelected!.remove(day);
     } else {
-      daysSelected!.add(day);
+      daysSelected!.add(day!);
     }
     if (widget.onChange != null) {
       widget.onChange!(daysSelected);
@@ -172,7 +172,7 @@ class _DayItem extends StatefulWidget {
       this.fillColor,
       this.selectedFillColor = Colors.red,
       this.label,
-      this.onTap,
+      required this.onTap,
       this.value,
       this.textStyle,
       this.borderSide,
@@ -187,7 +187,7 @@ class _DayItem extends StatefulWidget {
   final selected;
   final Color? fillColor;
   final Color? selectedFillColor;
-  final Function(days?)? onTap;
+  final Function(days) onTap;
   final String? label;
   final days? value;
   final TextStyle? textStyle;
@@ -218,7 +218,7 @@ class __DayItemState extends State<_DayItem> {
       child: RawMaterialButton(
           onPressed: () {
             if (widget.onTap != null) {
-              widget.onTap!(widget.value);
+              widget.onTap(widget.value!);
             }
             setState(() {
               selected = !selected!;

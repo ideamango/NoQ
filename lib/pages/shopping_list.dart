@@ -51,8 +51,8 @@ class _ShoppingListState extends State<ShoppingList> {
     if (token.order == null) {
       Order ord = new Order(
           billNo: "",
-          items: List<ListItem>(),
-          comments: List<Message>(),
+          items: [],
+          comments: [],
           status: null,
           billAmount: null,
           deliveryMode: null,

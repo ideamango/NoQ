@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:LESSs/db/db_model/entity_slots.dart';
 import 'package:LESSs/tuple.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +54,8 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   DateTime? yearForShowingList;
   DateTime? monthForShowingList;
   String? weekForShowingList;
-  Map<String?, List<UserToken>> _tokensMap = new Map<String?, List<UserToken>>();
+  Map<String?, List<UserToken>> _tokensMap =
+      new Map<String?, List<UserToken>>();
   Map<String, int> dataMap = new Map<String, int>();
   SelectedView selectedView = SelectedView.bar;
   BookingApplicationCounter? _bookingApplicationsOverview;
@@ -124,8 +127,9 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
         await getSlotsListForEntity(widget.metaEntity!, date);
     list = slotTuple.item2;
     for (int i = 0; i <= list!.length - 1; i++) {
-      List<UserToken> tokensForThisSlot =
-          await (_gs!.getTokenService()!.getAllTokensForSlot(list![i].slotId) as FutureOr<List<UserToken>>);
+      List<UserToken> tokensForThisSlot = await (_gs!
+          .getTokenService()!
+          .getAllTokensForSlot(list![i].slotId) as FutureOr<List<UserToken>>);
       if (!Utils.isNullOrEmpty(tokensForThisSlot))
         _tokensMap[list![i].slotId] = tokensForThisSlot;
       dataMap[Utils.formatTime(list![i].dateTime!.hour.toString()) +
@@ -138,7 +142,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
       loadingData = false;
     });
 
-    return list;
+    // return list;
   }
 
   Future<void> getListOfDataForMonth(DateTime date) async {
@@ -147,8 +151,9 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
         await getSlotsListForEntity(widget.metaEntity!, date);
     list = slotTuple.item2;
     for (int i = 0; i <= list!.length - 1; i++) {
-      List<UserToken> tokensForThisSlot =
-          await (_gs!.getTokenService()!.getAllTokensForSlot(list![i].slotId) as FutureOr<List<UserToken>>);
+      List<UserToken> tokensForThisSlot = await (_gs!
+          .getTokenService()!
+          .getAllTokensForSlot(list![i].slotId) as FutureOr<List<UserToken>>);
       if (!Utils.isNullOrEmpty(tokensForThisSlot))
         _tokensMap[list![i].slotId] = tokensForThisSlot;
       dataMap[Utils.formatTime(list![i].dateTime!.hour.toString()) +
@@ -161,7 +166,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
       loadingData = false;
     });
 
-    return list;
+    //  return list;
   }
 
   Future<void> getListOfDataForYear(DateTime year) async {
@@ -174,8 +179,9 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
         await getSlotsListForEntity(widget.metaEntity!, dateForShowingList!);
     list = slotTuple.item2;
     for (int i = 0; i <= list!.length - 1; i++) {
-      List<UserToken> tokensForThisSlot =
-          await (_gs!.getTokenService()!.getAllTokensForSlot(list![i].slotId) as FutureOr<List<UserToken>>);
+      List<UserToken> tokensForThisSlot = await (_gs!
+          .getTokenService()!
+          .getAllTokensForSlot(list![i].slotId) as FutureOr<List<UserToken>>);
       if (!Utils.isNullOrEmpty(tokensForThisSlot))
         _tokensMap[list![i].slotId] = tokensForThisSlot;
       dataMap[Utils.formatTime(list![i].dateTime!.hour.toString()) +
@@ -374,9 +380,11 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                   _bookingApplicationsOverview!
                       .dailyStats![key]!.numberOfPutOnHold!;
               numberOfRejected = numberOfRejected +
-                  _bookingApplicationsOverview!.dailyStats![key]!.numberOfRejected!;
+                  _bookingApplicationsOverview!
+                      .dailyStats![key]!.numberOfRejected!;
               numberOfApproved = numberOfApproved +
-                  _bookingApplicationsOverview!.dailyStats![key]!.numberOfApproved!;
+                  _bookingApplicationsOverview!
+                      .dailyStats![key]!.numberOfApproved!;
               numberOfCompleted = numberOfCompleted +
                   _bookingApplicationsOverview!
                       .dailyStats![key]!.numberOfCompleted!;
@@ -1030,7 +1038,9 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
           return true;
         },
       );
-    } else if (!initCompleted || loadingData) {
+    } else
+    //if (!initCompleted || loadingData)
+    {
       return new WillPopScope(
         child: Scaffold(
           appBar: CustomAppBarWithBackButton(

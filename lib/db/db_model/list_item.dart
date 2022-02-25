@@ -7,7 +7,7 @@ class ListItem {
 
   Map<String, dynamic> toJson() => {'itemName': itemName, 'isDone': isDone};
 
-  static ListItem fromJson(Map<String, dynamic> json) {
+  static ListItem? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return new ListItem(itemName: json['itemName'], isDone: json['isDone']);
   }

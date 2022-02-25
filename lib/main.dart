@@ -160,88 +160,89 @@ class DynamicLinkService {
         //     context, MaterialPageRoute(builder: (context) => FavsListPage()));
       }
 
-      FirebaseDynamicLinks.instance.onLink.listen((dynamicLink) {
-        final Uri deepLink = dynamicLink?.link;
-        print(deepLink.queryParameters);
-        print("Deep link path ");
-        print(deepLink.path);
-        if (deepLink.queryParameters.containsKey("entityId")) {
-          print("there are query params");
-          //check if user authenticated
-          if (FirebaseAuth.instance.currentUser != null) {
-            // signed in
-            print("current user already logged in");
-            // Call method to add entity to favs list, if not already present,
-            // else just load favs page.
-            String? entityId = deepLink.queryParameters['entityId'];
-            Utils.addEntityToFavs(context, entityId);
-          } else {
-            //TODO: Smita: User not logged in, but app is installed
-            Utils.showMyFlushbar(
-                context,
-                Icons.info_outline,
-                Duration(seconds: 6),
-                "You have to login first.",
-                "Instant Login using Mobile number and an OTP.");
-          }
-        } else if (deepLink.queryParameters.containsKey("tokenIdentifier")) {
-          print("there are an user application");
-          //check if user authenticated
-          if (FirebaseAuth.instance.currentUser != null) {
-            // signed in
-            print("current user already logged in");
-            // Call method to add entity to favs list, if not already present,
-            // else just load favs page.
-            String tokenID = deepLink.queryParameters['tokenIdentifier']!;
-            print(deepLink.data);
-            print(deepLink.query);
+      // FirebaseDynamicLinks.instance.onLink ((dynamicLink) {
+      //   final Uri? deepLink = dynamicLink?.link;
+      //   print(deepLink?.queryParameters);
+      //   print("Deep link path ");
+      //   print(deepLink?.path);
 
-            tokenID = tokenID.replaceAll(':', '#');
-            Utils.showBookingDetails(context, tokenID);
-          } else {
-            //TODO: Smita: User not logged in, but app is installed
-            Utils.showMyFlushbar(
-                context,
-                Icons.info_outline,
-                Duration(seconds: 6),
-                "You have to login first.",
-                "Instant Login using Mobile number and an OTP.");
-          }
-        } else if (deepLink.queryParameters.containsKey("applicationID")) {
-          print("there is an user application");
-          //check if user authenticated
-          if (FirebaseAuth.instance.currentUser != null) {
-            // signed in
-            print("current user already logged in");
-            // Call method to add entity to favs list, if not already present,
-            // else just load favs page.
-            String applicationId = deepLink.queryParameters['applicationID']!;
-            print(deepLink.data);
-            print(deepLink.query);
+      //   if (deepLink!.queryParameters.containsKey("entityId")) {
+      //     print("there are query params");
+      //     //check if user authenticated
+      //     if (FirebaseAuth.instance.currentUser != null) {
+      //       // signed in
+      //       print("current user already logged in");
+      //       // Call method to add entity to favs list, if not already present,
+      //       // else just load favs page.
+      //       String? entityId = deepLink.queryParameters['entityId'];
+      //       Utils.addEntityToFavs(context, entityId);
+      //     } else {
+      //       Utils.showMyFlushbar(
+      //           context,
+      //           Icons.info_outline,
+      //           Duration(seconds: 6),
+      //           "You have to login first.",
+      //           "Instant Login using Mobile number and an OTP.");
+      //     }
+      //   } else if (deepLink.queryParameters.containsKey("tokenIdentifier")) {
+      //     print("there are an user application");
+      //     //check if user authenticated
+      //     if (FirebaseAuth.instance.currentUser != null) {
+      //       // signed in
+      //       print("current user already logged in");
+      //       // Call method to add entity to favs list, if not already present,
+      //       // else just load favs page.
+      //       String? tokenID = deepLink.queryParameters['tokenIdentifier'];
+      //       print(deepLink.data);
+      //       print(deepLink.query);
 
-            applicationId = applicationId.replaceAll(':', '#');
-            Utils.showApplicationDetails(context, applicationId);
-          } else {
-            //TODO: Smita: User not logged in, but app is installed
-            Utils.showMyFlushbar(
-                context,
-                Icons.info_outline,
-                Duration(seconds: 6),
-                "You have to login first.",
-                "Instant Login using Mobile number and an OTP.");
-          }
-        } else {
-          //Check if user is logged-in, then redirect to UserHomePage else Login page
+      //       tokenID = tokenID?.replaceAll(':', '#');
+      //       Utils.showBookingDetails(context, tokenID!);
+      //     } else {
+      //       //TODO: Smita: User not logged in, but app is installed
+      //       Utils.showMyFlushbar(
+      //           context,
+      //           Icons.info_outline,
+      //           Duration(seconds: 6),
+      //           "You have to login first.",
+      //           "Instant Login using Mobile number and an OTP.");
+      //     }
+      //   } else if (deepLink.queryParameters.containsKey("applicationID")) {
+      //     print("there is an user application");
+      //     //check if user authenticated
+      //     if (FirebaseAuth.instance.currentUser != null) {
+      //       // signed in
+      //       print("current user already logged in");
+      //       // Call method to add entity to favs list, if not already present,
+      //       // else just load favs page.
+      //       String applicationId = deepLink.queryParameters['applicationID']!;
+      //       print(deepLink.data);
+      //       print(deepLink.query);
 
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => SplashScreen()));
+      //       applicationId = applicationId.replaceAll(':', '#');
+      //       Utils.showApplicationDetails(context, applicationId);
+      //     } else {
+      //       //TODO: Smita: User not logged in, but app is installed
+      //       Utils.showMyFlushbar(
+      //           context,
+      //           Icons.info_outline,
+      //           Duration(seconds: 6),
+      //           "You have to login first.",
+      //           "Instant Login using Mobile number and an OTP.");
+      //     }
+      //   } else {
+      //     //Check if user is logged-in, then redirect to UserHomePage else Login page
 
-          // Navigator.pushNamed(context, deepLink.path);
-        }
-      });
+      //     Navigator.pushReplacement(
+      //         context, MaterialPageRoute(builder: (context) => SplashScreen()));
+
+      //     // Navigator.pushNamed(context, deepLink.path);
+      //   }
+      // });
+
     } catch (e) {
       print(e.toString());
-      print(e.message);
+      print((e as Exception).toString());
     }
   }
 }

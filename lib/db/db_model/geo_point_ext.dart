@@ -8,7 +8,7 @@ class GeoPointExt extends GeoPoint {
         'longitude': longitude,
       };
 
-  static GeoPointExt fromJson(Map<String, dynamic> json) {
+  static GeoPointExt? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     double lat = json['latitude'];
     double lon = json['longitude'];

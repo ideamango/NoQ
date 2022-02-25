@@ -316,7 +316,7 @@ class _CreateFieldsState extends State<CreateFields> {
                               maxLength: null,
                               maxLines: 3,
                               onChanged: (value) {
-                                if (_msgController.text?.length != 0)
+                                if (_msgController.text.length != 0)
                                   setState(() {
                                     _errMsg = null;
                                   });
@@ -349,7 +349,8 @@ class _CreateFieldsState extends State<CreateFields> {
                               padding: EdgeInsets.all(5),
                               // alignment: Alignment.center,
                               shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[200]!),
+                                  side:
+                                      BorderSide(color: Colors.blueGrey[200]!),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(5.0))),
                               color: btnColor,
@@ -373,9 +374,13 @@ class _CreateFieldsState extends State<CreateFields> {
                               ),
 
                               onPressed: () {
-                                if (_state!.getConfigurations()!.whatsappPhone !=
+                                if (_state!
+                                            .getConfigurations()!
+                                            .whatsappPhone !=
                                         null &&
-                                    _state!.getConfigurations()!.whatsappPhone !=
+                                    _state!
+                                            .getConfigurations()!
+                                            .whatsappPhone !=
                                         "") {
                                   try {
                                     launchWhatsApp(
@@ -415,7 +420,8 @@ class _CreateFieldsState extends State<CreateFields> {
                               color: btnColor,
                               textColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[200]!),
+                                  side:
+                                      BorderSide(color: Colors.blueGrey[200]!),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(5.0))),
                               splashColor: highlightColor,

@@ -428,7 +428,7 @@ class ContactRowState extends State<ContactRow> {
               } else {
                 print("Days off: " + days.toString());
                 _daysOff!.clear();
-                days.forEach((element) {
+                days!.forEach((element) {
                   var day = element.toString().substring(5);
                   _daysOff!.add(day);
                 });

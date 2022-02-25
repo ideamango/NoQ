@@ -117,36 +117,38 @@ class BookingForm {
     return bf;
   }
 
-  static List<Field>? _convertToOptionValuesFromJson(List<dynamic>? fieldsJson) {
+  static List<Field>? _convertToOptionValuesFromJson(
+      List<dynamic>? fieldsJson) {
     List<Field> values = [];
     if (fieldsJson == null) return null;
 
-    for (Map<String, dynamic> value in fieldsJson as Iterable<Map<String, dynamic>>) {
+    for (Map<String, dynamic> value
+        in fieldsJson as Iterable<Map<String, dynamic>>) {
       if (value["type"] == EnumToString.convertToString(FieldType.TEXT)) {
-        values.add(FormInputFieldText.fromJson(value));
+        values.add(FormInputFieldText.fromJson(value)!);
       } else if (value["type"] == EnumToString.convertToString(FieldType.INT)) {
-        values.add(FormInputFieldInt.fromJson(value));
+        values.add(FormInputFieldInt.fromJson(value)!);
       } else if (value["type"] ==
           EnumToString.convertToString(FieldType.NUMBER)) {
-        values.add(FormInputFieldNumber.fromJson(value));
+        values.add(FormInputFieldNumber.fromJson(value)!);
       } else if (value["type"] ==
           EnumToString.convertToString(FieldType.OPTIONS)) {
-        values.add(FormInputFieldOptions.fromJson(value));
+        values.add(FormInputFieldOptions.fromJson(value)!);
       } else if (value["type"] ==
           EnumToString.convertToString(FieldType.ATTACHMENT)) {
-        values.add(FormInputFieldAttachment.fromJson(value));
+        values.add(FormInputFieldAttachment.fromJson(value)!);
       } else if (value["type"] ==
           EnumToString.convertToString(FieldType.DATETIME)) {
-        values.add(FormInputFieldDateTime.fromJson(value));
+        values.add(FormInputFieldDateTime.fromJson(value)!);
       } else if (value["type"] ==
           EnumToString.convertToString(FieldType.PHONE)) {
-        values.add(FormInputFieldPhone.fromJson(value));
+        values.add(FormInputFieldPhone.fromJson(value)!);
       } else if (value["type"] ==
           EnumToString.convertToString(FieldType.OPTIONS_ATTACHMENTS)) {
-        values.add(FormInputFieldOptionsWithAttachments.fromJson(value));
+        values.add(FormInputFieldOptionsWithAttachments.fromJson(value)!);
       } else if (value["type"] ==
           EnumToString.convertToString(FieldType.BOOL)) {
-        values.add(FormInputFieldBool.fromJson(value));
+        values.add(FormInputFieldBool.fromJson(value)!);
       }
     }
     return values;
@@ -199,7 +201,7 @@ class FormInputFieldText extends Field {
         'isEmail': isEmail
       };
 
-  static FormInputFieldText fromJson(Map<String, dynamic> json) {
+  static FormInputFieldText? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
 
     FormInputFieldText field = FormInputFieldText(json['label'],
@@ -247,7 +249,7 @@ class FormInputFieldInt extends Field {
         'minLength': minLength
       };
 
-  static FormInputFieldInt fromJson(Map<String, dynamic> json) {
+  static FormInputFieldInt? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     FormInputFieldInt field = FormInputFieldInt(
         json['label'],
@@ -295,7 +297,7 @@ class FormInputFieldNumber extends Field {
         'response': response
       };
 
-  static FormInputFieldNumber fromJson(Map<String, dynamic> json) {
+  static FormInputFieldNumber? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     FormInputFieldNumber field = FormInputFieldNumber(
         json['label'],
@@ -343,7 +345,7 @@ class FormInputFieldOptions extends Field {
         'defaultValueIndex': defaultValueIndex
       };
 
-  static FormInputFieldOptions fromJson(Map<String, dynamic> json) {
+  static FormInputFieldOptions? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     FormInputFieldOptions field = FormInputFieldOptions(
         json['label'],
@@ -363,8 +365,9 @@ class FormInputFieldOptions extends Field {
     List<Value> values = [];
     if (valuesJson == null) return values;
 
-    for (Map<String, dynamic> json in valuesJson as Iterable<Map<String, dynamic>>) {
-      values.add(Value.fromJson(json));
+    for (Map<String, dynamic> json
+        in valuesJson as Iterable<Map<String, dynamic>>) {
+      values.add(Value.fromJson(json)!);
     }
     return values;
   }
@@ -418,7 +421,7 @@ class FormInputFieldAttachment extends Field {
     return values;
   }
 
-  static FormInputFieldAttachment fromJson(Map<String, dynamic> json) {
+  static FormInputFieldAttachment? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     FormInputFieldAttachment field = FormInputFieldAttachment(
         json['label'], json['isMandatory'], json['infoMessage']);
@@ -441,7 +444,8 @@ class FormInputFieldDateTime extends Field {
   bool? isAge = false;
   bool? yearOnly = false;
 
-  FormInputFieldDateTime(String? label, bool? isMandatory, String? infoMessage) {
+  FormInputFieldDateTime(
+      String? label, bool? isMandatory, String? infoMessage) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -463,7 +467,7 @@ class FormInputFieldDateTime extends Field {
         'yearOnly': yearOnly
       };
 
-  static FormInputFieldDateTime fromJson(Map<String, dynamic> json) {
+  static FormInputFieldDateTime? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     FormInputFieldDateTime field = FormInputFieldDateTime(
         json['label'], json['isMandatory'], json['infoMessage']);
@@ -503,7 +507,7 @@ class FormInputFieldPhone extends Field {
         'responsePhone': responsePhone
       };
 
-  static FormInputFieldPhone fromJson(Map<String, dynamic> json) {
+  static FormInputFieldPhone? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     FormInputFieldPhone field = FormInputFieldPhone(
         json['label'], json['isMandatory'], json['infoMessage']);
@@ -553,15 +557,15 @@ class FormInputFieldOptionsWithAttachments extends Field {
         'paymentProofRequired': paymentProofRequired
       };
 
-  static FormInputFieldOptionsWithAttachments fromJson(
-      Map<String, dynamic> json) {
+  static FormInputFieldOptionsWithAttachments? fromJson(
+      Map<String, dynamic>? json) {
     if (json == null) return null;
     FormInputFieldOptionsWithAttachments field =
         FormInputFieldOptionsWithAttachments(
             json['label'],
             json['isMandatory'],
             json['infoMessage'],
-            convertToValuesFromJson(json['options']),
+            convertToValuesFromJson(json['options'])!,
             json['isMultiSelect']);
     field.isMeta = json["isMeta"];
     field.id = json['id'];
@@ -577,12 +581,13 @@ class FormInputFieldOptionsWithAttachments extends Field {
     return field;
   }
 
-  static List<Value> convertToValuesFromJson(List<dynamic>? valuesJson) {
-    List<Value> values = [];
+  static List<Value>? convertToValuesFromJson(List<dynamic>? valuesJson) {
+    List<Value>? values = [];
     if (valuesJson == null) return values;
 
-    for (Map<String, dynamic> json in valuesJson as Iterable<Map<String, dynamic>>) {
-      values.add(Value.fromJson(json));
+    for (Map<String, dynamic> json
+        in valuesJson as Iterable<Map<String, dynamic>>) {
+      values.add(Value.fromJson(json)!);
     }
     return values;
   }
@@ -611,8 +616,8 @@ class FormInputFieldBool extends Field {
   bool? response;
   bool? defaultValue;
 
-  FormInputFieldBool(
-      String? label, bool? isMandatory, String? infoMessage, bool? defaultValue) {
+  FormInputFieldBool(String? label, bool? isMandatory, String? infoMessage,
+      bool? defaultValue) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -632,7 +637,7 @@ class FormInputFieldBool extends Field {
         'response': response
       };
 
-  static FormInputFieldBool fromJson(Map<String, dynamic> json) {
+  static FormInputFieldBool? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
 
     FormInputFieldBool field = FormInputFieldBool(json['label'],
@@ -658,7 +663,7 @@ class Value {
 
   Map<String, dynamic> toJson() => {'key': key, 'value': value};
 
-  static Value fromJson(Map<String, dynamic> json) {
+  static Value? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
 
     Value textValue = Value(json['value']);

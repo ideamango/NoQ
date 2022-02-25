@@ -65,9 +65,10 @@ class EntitySlots {
   static List<Slot> convertToSlotsFromJson(List<dynamic> slotsJson) {
     List<Slot> slots = [];
 
-    for (Map<String, dynamic> json in slotsJson as Iterable<Map<String, dynamic>>) {
-      Slot sl = Slot.fromJson(json);
-      slots.add(sl);
+    for (Map<String, dynamic> json
+        in slotsJson as Iterable<Map<String, dynamic>>) {
+      Slot? sl = Slot.fromJson(json);
+      slots.add(sl!);
     }
     return slots;
   }

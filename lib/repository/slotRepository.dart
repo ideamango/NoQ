@@ -2,6 +2,8 @@
 //Cancel Slot
 //List Slots for particular store
 
+import 'dart:async';
+
 import 'package:LESSs/triplet.dart';
 
 import '../db/db_model/entity_slots.dart';
@@ -18,7 +20,8 @@ Future<Tuple<EntitySlots, List<Slot>>> getSlotsListForEntity(
     MetaEntity entity, DateTime dateTime) async {
   EntitySlots? entitySlots;
 
-  GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState gs =
+      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
   entitySlots =
       await gs.getTokenService()!.getEntitySlots(entity.entityId!, dateTime);
   List<Slot> slots = Utils.getSlots(entitySlots, entity, dateTime);
@@ -53,7 +56,8 @@ Future<Tuple<EntitySlots, List<Slot>>> getSlotsListForEntity(
 // }
 
 Future<bool?> updateToken(UserTokens tokens) async {
-  GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState gs =
+      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
 
   bool? result;
   try {

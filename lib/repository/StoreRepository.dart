@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../db/db_model/employee.dart';
 import '../db/db_model/entity.dart';
 import '../db/db_model/entity_private.dart';
@@ -10,7 +12,8 @@ import '../enum/entity_role.dart';
 
 Future<bool> upsertEntity(Entity entity, String regNum) async {
   entity.regNum = regNum;
-  GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState gs =
+      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
   return await gs.putEntity(entity, true);
 }
 
@@ -20,7 +23,8 @@ Future<bool> upsertEntity(Entity entity, String regNum) async {
 // }
 
 Future<Tuple<Entity, bool>?> getEntity(String entityId) async {
-  GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState gs =
+      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
   return await gs.getEntity(entityId);
 }
 
@@ -46,7 +50,8 @@ Future<bool> assignAdminsFromList(
 }
 
 Future<EntityPrivate?> fetchAdmins(String entityId) async {
-  GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState gs =
+      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
   EntityPrivate? entityPrivateList =
       await gs.getEntityService()!.getEntityPrivate(entityId);
 
@@ -54,14 +59,16 @@ Future<EntityPrivate?> fetchAdmins(String entityId) async {
 }
 
 Future<bool> removeAdmin(String? entityId, String? phone) async {
-  GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState gs =
+      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
   bool status = await gs.removeEmployee(entityId, phone);
   return status;
 }
 
 Future<String?> fetchRegNum(String entityId) async {
   String? regNum;
-  GlobalState gs = await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState gs =
+      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
   EntityPrivate? entityPrivateList =
       await gs.getEntityService()!.getEntityPrivate(entityId);
   if (entityPrivateList != null) {

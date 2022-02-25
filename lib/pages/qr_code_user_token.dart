@@ -52,7 +52,7 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
   String? entityName;
   late String dateTime;
   late String time;
-  List<UserToken> listOfTokens = new List<UserToken>();
+  List<UserToken> listOfTokens = [];
   Map<String, BookingApplication> mapOfBa =
       new Map<String, BookingApplication>();
   late AnimationController _animationController;
@@ -311,9 +311,8 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
                             .getCurrentUser()!
                             .entityVsRole!
                             .containsKey(bookingToken.parent!.entityId)) {
-                          if (_gs!
-                                  .getCurrentUser()!
-                                  .entityVsRole![bookingToken.parent!.entityId] !=
+                          if (_gs!.getCurrentUser()!.entityVsRole![
+                                  bookingToken.parent!.entityId] !=
                               EntityRole.Executive) {
                             isReadOnly = false;
                           }

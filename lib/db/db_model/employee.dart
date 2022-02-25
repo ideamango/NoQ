@@ -26,7 +26,7 @@ class Employee {
       this.daysOff,
       this.altPhone});
 
-  static Employee fromJson(Map<String, dynamic> json) {
+  static Employee? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return Employee(
         id: json['id'],
@@ -42,7 +42,7 @@ class Employee {
   }
 
   static List<String> convertList(List<dynamic>? list) {
-    List<String> newList = new List();
+    List<String> newList = [];
     if (Utils.isNullOrEmpty(list)) return newList;
     for (dynamic day in list!) {
       newList.add(day.toString());

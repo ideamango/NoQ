@@ -128,7 +128,8 @@ class BookingApplication {
         FormInputFieldPhone t = f as FormInputFieldPhone;
         map[t.key] = t.responsePhone;
       } else if (f.type == FieldType.OPTIONS_ATTACHMENTS) {
-        FormInputFieldOptionsWithAttachments t = f as FormInputFieldOptionsWithAttachments;
+        FormInputFieldOptionsWithAttachments t =
+            f as FormInputFieldOptionsWithAttachments;
         List<String?> fieldValueIds = [];
         if (t.responseValues != null) {
           for (Value val in t.responseValues!) {
@@ -283,7 +284,7 @@ class BookingApplicationCounter {
   static Map<String, ApplicationStats> convertToMapFromJSON(
       Map<dynamic, dynamic> map) {
     Map<String, ApplicationStats> roles = new Map<String, ApplicationStats>();
-    map.forEach((k, v) => roles[k] = ApplicationStats.fromJson(v));
+    map.forEach((k, v) => roles[k] = ApplicationStats.fromJson(v)!);
     return roles;
   }
 }
@@ -307,7 +308,7 @@ class ApplicationStats {
         'numberOfCancelled': numberOfCancelled
       };
 
-  static ApplicationStats fromJson(Map<String, dynamic> json) {
+  static ApplicationStats? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
 
     ApplicationStats overview = ApplicationStats();

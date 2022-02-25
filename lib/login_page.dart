@@ -35,7 +35,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   String? _errorMsg;
-  String? _mobile, smsCode;
+  late String _mobile, smsCode;
   String? verificationId;
   final _loginPageFormKey = new GlobalKey<FormState>();
   bool codeSent = false;
@@ -513,7 +513,7 @@ class _LoginPageState extends State<LoginPage> {
           autoTimeout);
     } catch (e) {
       print(e.toString());
-      handleError(e);
+      handleError(e as FirebaseAuthException);
     }
   }
 

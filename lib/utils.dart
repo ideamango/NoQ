@@ -317,7 +317,7 @@ class Utils {
   }
 
   static List<days> convertStringsToDays(List<String> stringsList) {
-    List<days> daysList = List<days>();
+    List<days> daysList = [];
     stringsList.forEach((element) {
       print(element);
       switch (element) {
@@ -404,6 +404,8 @@ class Utils {
         {
           return 7;
         }
+      default:
+        return 7;
     }
   }
 
@@ -996,7 +998,7 @@ class Utils {
         minimumVersion: 1,
         // fallbackUrl: Uri.parse('https://bigpiq.com/#product')
       ),
-      iosParameters: IosParameters(
+      iosParameters: IOSParameters(
         bundleId: bundleId,
         minimumVersion: '1',
         appStoreId: appStoreId,

@@ -95,8 +95,8 @@ class AppUser {
     List<MetaEntity?> metaEntities = [];
     if (Utils.isNullOrEmpty(metaEntityJson)) return metaEntities;
 
-    for (Map<String, dynamic> json in metaEntityJson as Iterable<Map<String, dynamic>>) {
-      MetaEntity metaEnt = MetaEntity.fromJson(json);
+    for (Map<String, dynamic> json in metaEntityJson as List<dynamic>) {
+      MetaEntity? metaEnt = MetaEntity.fromJson(json);
       metaEntities.add(metaEnt);
     }
     return metaEntities;

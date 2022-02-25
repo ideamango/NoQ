@@ -108,8 +108,9 @@ class UserTokens {
     List<UserToken> toks = [];
     if (toksJson == null) return toks;
 
-    for (Map<String, dynamic> json in toksJson as Iterable<Map<String, dynamic>>) {
-      UserToken sl = UserToken.fromJson(json);
+    for (Map<String, dynamic> json
+        in toksJson as Iterable<Map<String, dynamic>>) {
+      UserToken sl = UserToken.fromJson(json)!;
       toks.add(sl);
     }
     return toks;
@@ -166,9 +167,10 @@ class UserTokens {
     List<ListItem> items = [];
     if (Utils.isNullOrEmpty(listItemsJson)) return items;
 
-    for (Map<String, dynamic> json in listItemsJson as Iterable<Map<String, dynamic>>) {
-      ListItem item = ListItem.fromJson(json);
-      items.add(item);
+    for (Map<String, dynamic> json
+        in listItemsJson as Iterable<Map<String, dynamic>>) {
+      ListItem? item = ListItem.fromJson(json);
+      items.add(item!);
     }
     return items;
   }
@@ -208,7 +210,7 @@ class UserToken {
         'numberBeforeCancellation': numberBeforeCancellation
       };
 
-  static UserToken fromJson(Map<String, dynamic> json) {
+  static UserToken? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return new UserToken(
         number: json['number'],
@@ -251,7 +253,7 @@ class TokenStats {
         'numberOfTokensCancelled': numberOfTokensCancelled,
       };
 
-  static TokenStats fromJson(Map<String, dynamic> json) {
+  static TokenStats? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
 
     TokenStats overview = TokenStats();
@@ -305,8 +307,16 @@ class TokenCounter {
     slotWiseStats!.forEach((key, value) {
       int tokenMonth = int.parse(key.split('~')[1]);
       if (tokenMonth == month) {
-        ts.numberOfTokensCreated += value.numberOfTokensCreated!;
-        ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
+        if (ts.numberOfTokensCreated != null &&
+            value.numberOfTokensCreated != null) {
+          ts.numberOfTokensCreated =
+              (ts.numberOfTokensCreated! + value.numberOfTokensCreated!);
+        }
+        if (ts.numberOfTokensCancelled != null &&
+            value.numberOfTokensCancelled != null) {
+          ts.numberOfTokensCancelled =
+              ts.numberOfTokensCancelled! + value.numberOfTokensCancelled!;
+        }
       }
     });
 
@@ -322,8 +332,16 @@ class TokenCounter {
       if (int.parse(dateList[0]) == date.year &&
           int.parse(dateList[1]) == date.month &&
           int.parse(dateList[2]) == date.day) {
-        ts.numberOfTokensCreated += value.numberOfTokensCreated!;
-        ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
+        if (ts.numberOfTokensCreated != null &&
+            value.numberOfTokensCreated != null) {
+          ts.numberOfTokensCreated =
+              (ts.numberOfTokensCreated! + value.numberOfTokensCreated!);
+        }
+        if (ts.numberOfTokensCancelled != null &&
+            value.numberOfTokensCancelled != null) {
+          ts.numberOfTokensCancelled =
+              ts.numberOfTokensCancelled! + value.numberOfTokensCancelled!;
+        }
       }
     });
 
@@ -336,13 +354,29 @@ class TokenCounter {
       String tokenMonth = key.split('#')[1];
       if (map.containsKey(tokenMonth)) {
         TokenStats ts = map[tokenMonth]!;
-        ts.numberOfTokensCreated += value.numberOfTokensCreated!;
-        ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
+        if (ts.numberOfTokensCreated != null &&
+            value.numberOfTokensCreated != null) {
+          ts.numberOfTokensCreated =
+              (ts.numberOfTokensCreated! + value.numberOfTokensCreated!);
+        }
+        if (ts.numberOfTokensCancelled != null &&
+            value.numberOfTokensCancelled != null) {
+          ts.numberOfTokensCancelled =
+              ts.numberOfTokensCancelled! + value.numberOfTokensCancelled!;
+        }
       } else {
         TokenStats ts = new TokenStats();
         map[tokenMonth] = ts;
-        ts.numberOfTokensCreated += value.numberOfTokensCreated!;
-        ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
+        if (ts.numberOfTokensCreated != null &&
+            value.numberOfTokensCreated != null) {
+          ts.numberOfTokensCreated =
+              (ts.numberOfTokensCreated! + value.numberOfTokensCreated!);
+        }
+        if (ts.numberOfTokensCancelled != null &&
+            value.numberOfTokensCancelled != null) {
+          ts.numberOfTokensCancelled =
+              ts.numberOfTokensCancelled! + value.numberOfTokensCancelled!;
+        }
       }
     });
 
@@ -393,8 +427,16 @@ class TokenCounter {
   TokenStats getTokenStatsForYear() {
     TokenStats ts = new TokenStats();
     slotWiseStats!.forEach((key, value) {
-      ts.numberOfTokensCreated += value.numberOfTokensCreated!;
-      ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
+      if (ts.numberOfTokensCreated != null &&
+          value.numberOfTokensCreated != null) {
+        ts.numberOfTokensCreated =
+            (ts.numberOfTokensCreated! + value.numberOfTokensCreated!);
+      }
+      if (ts.numberOfTokensCancelled != null &&
+          value.numberOfTokensCancelled != null) {
+        ts.numberOfTokensCancelled =
+            ts.numberOfTokensCancelled! + value.numberOfTokensCancelled!;
+      }
     });
 
     return ts;
@@ -416,12 +458,28 @@ class TokenCounter {
       if (dt.isAfter(to) && dt.isBefore(from)) {
         if (slotWiseStatsForRange.containsKey(timeSlot)) {
           TokenStats ts = slotWiseStatsForRange[timeSlot]!;
-          ts.numberOfTokensCreated += value.numberOfTokensCreated!;
-          ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
+          if (ts.numberOfTokensCreated != null &&
+              value.numberOfTokensCreated != null) {
+            ts.numberOfTokensCreated =
+                (ts.numberOfTokensCreated! + value.numberOfTokensCreated!);
+          }
+          if (ts.numberOfTokensCancelled != null &&
+              value.numberOfTokensCancelled != null) {
+            ts.numberOfTokensCancelled =
+                ts.numberOfTokensCancelled! + value.numberOfTokensCancelled!;
+          }
         } else {
           TokenStats ts = new TokenStats();
-          ts.numberOfTokensCreated += value.numberOfTokensCreated!;
-          ts.numberOfTokensCancelled += value.numberOfTokensCancelled!;
+          if (ts.numberOfTokensCreated != null &&
+              value.numberOfTokensCreated != null) {
+            ts.numberOfTokensCreated =
+                (ts.numberOfTokensCreated! + value.numberOfTokensCreated!);
+          }
+          if (ts.numberOfTokensCancelled != null &&
+              value.numberOfTokensCancelled != null) {
+            ts.numberOfTokensCancelled =
+                ts.numberOfTokensCancelled! + value.numberOfTokensCancelled!;
+          }
           slotWiseStatsForRange[timeSlot] = ts;
         }
       }
@@ -433,7 +491,7 @@ class TokenCounter {
   static Map<String, TokenStats> convertToMapFromJSON(
       Map<dynamic, dynamic> map) {
     Map<String, TokenStats> roles = new Map<String, TokenStats>();
-    map.forEach((k, v) => roles[k] = TokenStats.fromJson(v));
+    map.forEach((k, v) => roles[k] = TokenStats.fromJson(v)!);
     return roles;
   }
 }

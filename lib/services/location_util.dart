@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:LESSs/db/db_model/configurations.dart';
 
 import '../location.dart';
@@ -20,8 +22,9 @@ class LocationUtil {
 
       if (locData == null) {
         //fallback to ipstack.com
-        IPStackLocation ipStackLocation = await (_getLocationFromIPStack(conf) as FutureOr<IPStackLocation>);
-        locData = _convertFromIPStack(ipStackLocation);
+        IPStackLocation? ipStackLocation =
+            await (_getLocationFromIPStack(conf));
+        locData = _convertFromIPStack(ipStackLocation!);
       }
 
       if (locData != null) {

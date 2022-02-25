@@ -53,7 +53,7 @@ class _TokensInSlotState extends State<TokensInSlot>
     with TickerProviderStateMixin {
   GlobalState? _gs;
   bool initCompleted = false;
-  List<UserToken?> listOfTokens = new List<UserToken?>();
+  List<UserToken?> listOfTokens = [];
   late String timeSlot;
   String? slotId;
   String? dateTime;
@@ -312,6 +312,7 @@ class _TokensInSlotState extends State<TokensInSlot>
                                           backRoute: TokensInSlot(
                                             slotKey: widget.slotKey,
                                             stats: widget.stats,
+                                            tokensList: [],
                                             date: widget.date,
                                             format: widget.format,
                                             metaEntity: widget.metaEntity,

@@ -39,7 +39,7 @@ class ConfigurationService {
     Configurations? conf;
 
     if (doc.exists) {
-      conf = Configurations.fromJson(doc.data());
+      conf = Configurations.fromJson(doc.data() as Map<String, dynamic>);
     }
     return conf;
   }

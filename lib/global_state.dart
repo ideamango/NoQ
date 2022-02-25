@@ -227,7 +227,8 @@ class GlobalState {
     return await GlobalState.getGlobalStateForCountry(loc);
   }
 
-  static Future<GlobalState?> getGlobalStateForCountry(Location? location) async {
+  static Future<GlobalState?> getGlobalStateForCountry(
+      Location? location) async {
     if (isWorking != null) {
       await isWorking; // wait for future complete
       return getGlobalStateForCountry(location);
@@ -311,7 +312,8 @@ class GlobalState {
         _gs!._conf != null &&
         _gs!._fbAuth!.currentUser != null) {
       try {
-        _gs!._currentUser = await _gs!._userService!.getCurrentUser(_gs!._locData);
+        _gs!._currentUser =
+            await _gs!._userService!.getCurrentUser(_gs!._locData);
         if (_gs!._currentUser != null &&
             Utils.isNullOrEmpty(_gs!._currentUser!.favourites))
           _gs!._currentUser!.favourites = [];
@@ -438,7 +440,8 @@ class GlobalState {
       _entities!.remove(id);
       _entityState!.remove(id);
       if (Utils.isNotNullOrEmpty(parentId)) {
-        Tuple<Entity, bool> parent = await (getEntity(parentId, false) as FutureOr<Tuple<Entity, bool>>);
+        Tuple<Entity, bool> parent =
+            await (getEntity(parentId, false) as FutureOr<Tuple<Entity, bool>>);
         Entity parentEnt = parent.item1!;
         parentEnt.removeChildEntity(id);
       }
@@ -504,7 +507,8 @@ class GlobalState {
     DateTime now = DateTime.now();
 
     for (Tuple<UserToken, DocumentSnapshot> tok in _gs!.bookings!) {
-      if (tok.item1!.parent!.dateTime!.isBefore(now)) newBookings.add(tok.item1);
+      if (tok.item1!.parent!.dateTime!.isBefore(now))
+        newBookings.add(tok.item1);
     }
 
     newBookings.sort((a, b) => (a!.parent!.dateTime!.millisecondsSinceEpoch >
@@ -642,7 +646,8 @@ class GlobalState {
     DateTime now = DateTime.now();
 
     for (Tuple<UserToken, DocumentSnapshot> tok in _gs!.bookings!) {
-      if (!tok.item1!.parent!.dateTime!.isBefore(now)) newBookings.add(tok.item1);
+      if (!tok.item1!.parent!.dateTime!.isBefore(now))
+        newBookings.add(tok.item1);
     }
 
     newBookings.sort((a, b) => (a!.parent!.dateTime!.millisecondsSinceEpoch >
@@ -867,8 +872,8 @@ class GlobalState {
       MetaEntity? meta, Slot slot, bool enableVideoChat) async {
     UserTokens? tokens;
     Triplet<UserTokens, TokenCounter, EntitySlots>? triplet;
-    triplet =
-        await _tokenService!.generateToken(meta, slot.dateTime, enableVideoChat);
+    triplet = await _tokenService!
+        .generateToken(meta, slot.dateTime, enableVideoChat);
 
     tokens = triplet!.item1;
 
@@ -931,8 +936,8 @@ class GlobalState {
         !Utils.isNotNullOrEmpty(applicationId)) return null;
 
     Triplet<UserToken, TokenCounter, EntitySlots> triplet =
-        await _applicationService!.withDrawApplication(
-            applicationId!, notesOnCancellation);
+        await _applicationService!
+            .withDrawApplication(applicationId!, notesOnCancellation);
 
     _updateTokensCacheAndCancelNotification(triplet.item1!);
 
@@ -996,7 +1001,8 @@ class GlobalState {
     List<Entity?> metaEntities = [];
 
     if (metaEntityJson != null) {
-      for (Map<String, dynamic> json in metaEntityJson as Iterable<Map<String, dynamic>>) {
+      for (Map<String, dynamic> json
+          in metaEntityJson as Iterable<Map<String, dynamic>>) {
         Entity? metaEnt = Entity.fromJson(json);
         metaEntities.add(metaEnt);
       }
@@ -1060,9 +1066,11 @@ class GlobalState {
   void registerForLocalNotificationCreatedEvent() {
     EventBus.registerEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null,
         (event, arg) {
-      var androidDetails = new AndroidNotificationDetails(
-          "channelId", "channelName",
-          importance: Importance.max, priority: Priority.high);
+      var androidDetails =
+          new AndroidNotificationDetails("channelId", "channelName",
+              //  "ChannelDescription",
+              importance: Importance.max,
+              priority: Priority.high);
 
       var iOSDetails = new IOSNotificationDetails();
 

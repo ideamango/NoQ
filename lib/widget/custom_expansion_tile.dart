@@ -181,15 +181,10 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
     final ThemeData theme = Theme.of(context);
     _borderColor.end = theme.dividerColor;
     _headerColor
-<<<<<<< HEAD
-      ..begin = theme.textTheme.subtitle1!.color
+      ?..begin = theme.textTheme.subtitle1!.color
       ..end = theme.accentColor;
-=======
-      ..begin = theme.textTheme.subtitle1.color
-      ..end = theme.colorScheme.secondary;
->>>>>>> be35bf55e9a192fd81e692a7421a9b4d78c9f909
     _iconColor
-      ..begin = theme.unselectedWidgetColor
+      ?..begin = theme.unselectedWidgetColor
       ..end = theme.colorScheme.secondary;
     _backgroundColor.end = widget.backgroundColor;
 

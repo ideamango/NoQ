@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:LESSs/db/exceptions/no_token_found_exception.dart';
 import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
 import 'package:LESSs/pages/show_user_application_details.dart';
-import 'package:LESSs/pages/upi_payment_page.dart';
+// import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:LESSs/pages/help_page.dart';
 import 'package:LESSs/services/qr_code_user_application.dart';
 import 'package:LESSs/widget/countdown_timer.dart';
@@ -77,10 +77,10 @@ class _UserHomePageState extends State<UserHomePage>
   int _currentIndex = 0;
   List cardList = [
     Item1(),
-    Item2(),
+    //Item2(),
     Item3(),
-    Item4(),
-    Item5(),
+    //Item4(),
+    //Item5(),
     Item6(),
     //  Item7()
   ];
@@ -424,30 +424,38 @@ class _UserHomePageState extends State<UserHomePage>
                                     });
                                   }).toList(),
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children:
-                                          map<Widget>(cardList, (index, url) {
-                                        return Container(
-                                          width: 7.0,
-                                          height: 7.0,
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 2.0, horizontal: 2.0),
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: _currentIndex == index
-                                                ? highlightColor
-                                                : Colors.grey,
-                                          ),
-                                        );
-                                      }) as List<Widget>,
-                                    ),
-                                  ],
-                                )
+                                //TODO SMITA uncomment and fix the error
+
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.center,
+                                //   children: <Widget>[
+                                //     Row(
+                                //       mainAxisAlignment:
+                                //           MainAxisAlignment.center,
+                                //       children: ListView.builder(
+                                //         itemCount: cardList.length,
+                                //         physics: NeverScrollableScrollPhysics(),
+                                //         shrinkWrap: true,
+                                //         //reverse: false,
+                                //         itemBuilder:
+                                //             (BuildContext context, int index) {
+                                //           return Container(
+                                //             width: 7.0,
+                                //             height: 7.0,
+                                //             margin: EdgeInsets.symmetric(
+                                //                 vertical: 2.0, horizontal: 2.0),
+                                //             decoration: BoxDecoration(
+                                //               shape: BoxShape.circle,
+                                //               color: _currentIndex == index
+                                //                   ? highlightColor
+                                //                   : Colors.grey,
+                                //             ),
+                                //           );
+                                //         },
+                                //       ) as List<Widget>,
+                                //     ),
+                                //   ],
+                                // )
                               ],
                             ),
                             Column(
@@ -488,15 +496,16 @@ class _UserHomePageState extends State<UserHomePage>
                           elevation: 20,
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.of(context).push(new MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      UPIPaymentPage(
-                                        upiId: upiId,
-                                        upiQrCodeImgPath: upiQrImgPath,
-                                        backRoute: UserHomePage(),
-                                        isDonation: true,
-                                        showMinimum: false,
-                                      )));
+                              print("TODO: Removed UPI PAY FOR NOW");
+                              // Navigator.of(context).push(new MaterialPageRoute(
+                              //     builder: (BuildContext context) =>
+                              //         UPIPaymentPage(
+                              //           upiId: upiId,
+                              //           upiQrCodeImgPath: upiQrImgPath,
+                              //           backRoute: UserHomePage(),
+                              //           isDonation: true,
+                              //           showMinimum: false,
+                              //         )));
                               // Navigator.of(context).push(
                               //     PageAnimation.createRoute(UPIPaymentPage(
                               //   upiId: upiId,
@@ -693,7 +702,8 @@ class _UserHomePageState extends State<UserHomePage>
                   ),
                   backgroundColor: primaryAccentColor,
                   onPressed: () {
-                    QrCodeScanner.scan(context);
+                    //TODO SMITA - enable this later
+                    //QrCodeScanner.scan(context);
                   }),
             ),
             floatingActionButtonLocation:
@@ -1080,16 +1090,17 @@ class _UserHomePageState extends State<UserHomePage>
                                   onPressed: () {
                                     if (Utils.isNotNullOrEmpty(
                                         token.parent!.upiId)) {
-                                      Navigator.of(context).push(
-                                          new MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  UPIPaymentPage(
-                                                    upiId: token.parent!.upiId,
-                                                    upiQrCodeImgPath: null,
-                                                    backRoute: UserHomePage(),
-                                                    isDonation: false,
-                                                    showMinimum: false,
-                                                  )));
+                                      print("TODO: Removed UPI PAY FOR NOW");
+                                      // Navigator.of(context).push(
+                                      //     new MaterialPageRoute(
+                                      //         builder: (BuildContext context) =>
+                                      //             UPIPaymentPage(
+                                      //               upiId: token.parent!.upiId,
+                                      //               upiQrCodeImgPath: null,
+                                      //               backRoute: UserHomePage(),
+                                      //               isDonation: false,
+                                      //               showMinimum: false,
+                                      //             )));
                                     } else {
                                       Utils.showMyFlushbar(
                                           context,

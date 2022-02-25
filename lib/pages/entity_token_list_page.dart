@@ -57,7 +57,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
   DateTime? yearForShowingList;
   DateTime? monthForShowingList;
   String? weekForShowingList;
-  Map<String?, List<UserToken>?> _tokensMap = new Map<String?, List<UserToken>?>();
+  Map<String?, List<UserToken>?> _tokensMap =
+      new Map<String?, List<UserToken>?>();
   Map<String, TokenStats> dataMap = new Map<String, TokenStats>();
   DateDisplayFormat selectedDateFormat = DateDisplayFormat.date;
   SelectedView selectedView = SelectedView.list;
@@ -177,7 +178,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
       loadingData = false;
     });
 
-    return list;
+    //  return list;
   }
 
   Future<void> getListOfDataForYear(DateTime year) async {
@@ -212,8 +213,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
 
   void addEmptySlots(Map<String, TokenStats?> dataMap) {
     allSlotsList!.forEach((slot) {
-      String time =
-          slot.dateTime!.hour.toString() + ':' + slot.dateTime!.minute.toString();
+      String time = slot.dateTime!.hour.toString() +
+          ':' +
+          slot.dateTime!.minute.toString();
       print(time);
       print(dataMap);
       if (!dataMap.containsKey(time)) {
@@ -330,7 +332,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
       ),
     );
     return (isHighlighted)
-        ? FadeTransition(opacity: animation as Animation<double>, child: rowCard)
+        ? FadeTransition(
+            opacity: animation as Animation<double>, child: rowCard)
         : rowCard;
   }
 
@@ -608,7 +611,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
               });
               return;
             } else {
-              dataForYear = tokenCounterForYear!.getTokenStatsMonthWiseForYear();
+              dataForYear =
+                  tokenCounterForYear!.getTokenStatsMonthWiseForYear();
               dataForYear!.forEach((k, v) {
                 dataMap[k.replaceAll('~', ':')] = v;
               });
@@ -1301,7 +1305,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
           ),
         ),
       );
-    } else if (!initCompleted || loadingData) {
+    } else
+    // if (!initCompleted || loadingData)
+    {
       return new WillPopScope(
         child: Scaffold(
           appBar: CustomAppBarWithBackButton(

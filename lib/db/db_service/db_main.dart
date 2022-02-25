@@ -54,8 +54,12 @@ class DBLayer {
         .within(center: center, radius: radius, field: field);
 
     stream.listen((List<DocumentSnapshot> documentList) {
-      documentList.forEach(
-          (doc) => {print(AppUser.fromJson(doc.data()!).loc!.geopoint!.latitude)});
+      documentList.forEach((doc) => {
+            print(AppUser.fromJson(doc.data() as Map<String, dynamic>)
+                .loc!
+                .geopoint!
+                .latitude)
+          });
     });
   }
 }

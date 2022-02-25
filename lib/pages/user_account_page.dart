@@ -5,7 +5,7 @@ import 'package:LESSs/events/event_bus.dart';
 import 'package:LESSs/events/events.dart';
 import 'package:LESSs/pages/show_application_details.dart';
 import 'package:LESSs/pages/show_user_application_details.dart';
-import 'package:LESSs/pages/upi_payment_page.dart';
+//import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -636,17 +636,18 @@ class _UserAccountPageState extends State<UserAccountPage>
                                   onPressed: () {
                                     if (Utils.isNotNullOrEmpty(
                                         booking.parent!.upiId)) {
-                                      Navigator.of(context).push(
-                                          new MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  UPIPaymentPage(
-                                                    upiId: booking.parent!.upiId,
-                                                    upiQrCodeImgPath: null,
-                                                    backRoute:
-                                                        UserAccountPage(),
-                                                    isDonation: false,
-                                                    showMinimum: false,
-                                                  )));
+                                      print("TODO: Removed UPI PAY FOR NOW");
+                                      // Navigator.of(context).push(
+                                      //     new MaterialPageRoute(
+                                      //         builder: (BuildContext context) =>
+                                      //             UPIPaymentPage(
+                                      //               upiId: booking.parent!.upiId,
+                                      //               upiQrCodeImgPath: null,
+                                      //               backRoute:
+                                      //                   UserAccountPage(),
+                                      //               isDonation: false,
+                                      //               showMinimum: false,
+                                      //             )));
                                     } else {
                                       Utils.showMyFlushbar(
                                           context,
@@ -1206,7 +1207,8 @@ class _UserAccountPageState extends State<UserAccountPage>
                                               // a RenderObjectWidget. The RaisedButton's RenderObject
                                               // has its position and size after it's built.
                                               final RenderBox? box =
-                                                  context.findRenderObject() as RenderBox?;
+                                                  context.findRenderObject()
+                                                      as RenderBox?;
 
                                               Utils.generateLinkAndShare(
                                                   null,

@@ -57,9 +57,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   final dtFormat = new DateFormat('dd');
   SharedPreferences? _prefs;
   GlobalState? _globalState;
-  List<Entity?> _stores = new List<Entity?>();
+  List<Entity?> _stores = [];
   //List<Entity> _pastSearches = new List<Entity>();
-  List<Entity> _searchResultstores = new List<Entity>();
+  List<Entity> _searchResultstores = [];
   String? _entityType;
   String _searchInAll = 'Search in All';
   bool searchBoxClicked = false;
@@ -73,10 +73,10 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   // Map<String, String> categoryList = new Map<String, String>();
   late double fontSize;
   var sideInfoGrp = new AutoSizeGroup();
-  List<String>? searchTypes = new List<String>();
+  List<String>? searchTypes = [];
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
-  List<DateTime> _dateList = new List<DateTime>();
+  List<DateTime> _dateList = [];
 
   Icon actionIcon = new Icon(
     Icons.search,
@@ -97,7 +97,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   String? _dynamicLink;
   late String title;
   String? _fromPage;
-  List<Entity?> enList = new List<Entity?>();
+  List<Entity?> enList = [];
   ScrollController? _selectCategoryBtnController;
   Widget? _msgOnboard;
   late AnimationController controller;
@@ -224,7 +224,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         Entity? entity = value.item1;
 
         if (value != null) {
-          if (entity!.isActive != null) if (entity.isActive!) enList.add(entity);
+          if (entity!.isActive != null) if (entity.isActive!)
+            enList.add(entity);
         }
       }
     }
@@ -296,8 +297,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   generateLinkAndShareWithParams(String? entityId, String name) async {
     String msgTitle = entityShareByUserHeading + name;
     String msgBody = entityShareByUserMessage;
-    Utils.generateLinkAndShare(entityId, msgTitle, msgBody,
-        _gs!.getConfigurations()!.packageName!, _gs!.getConfigurations()!.iOSAppId);
+    Utils.generateLinkAndShare(
+        entityId,
+        msgTitle,
+        msgBody,
+        _gs!.getConfigurations()!.packageName!,
+        _gs!.getConfigurations()!.iOSAppId);
   }
 
   Widget _emptySearchPage() {
@@ -499,30 +504,28 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   }
 
   Widget _listSearchResults() {
-    if (_stores.length != 0) {
-      //Add search results to past searches.
-      // _state.setPastSearch(_stores, _searchText, _entityType);
-      return Center(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                  controller: _selectCategoryBtnController,
-                  itemCount: 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      margin: EdgeInsets.fromLTRB(
-                          10, 0, 10, MediaQuery.of(context).size.height * .15),
-                      child: new Column(
-                        children: showSearchResults(),
-                      ),
-                    );
-                  }),
-            ),
-          ],
-        ),
-      );
-    }
+    //Add search results to past searches.
+    // _state.setPastSearch(_stores, _searchText, _entityType);
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+                controller: _selectCategoryBtnController,
+                itemCount: 1,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    margin: EdgeInsets.fromLTRB(
+                        10, 0, 10, MediaQuery.of(context).size.height * .15),
+                    child: new Column(
+                      children: showSearchResults(),
+                    ),
+                  );
+                }),
+          ),
+        ],
+      ),
+    );
 
     //}
   }
@@ -1113,7 +1116,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                 (str.allowOnlineAppointment != null)
                                     ? (str.allowOnlineAppointment!
                                         ? FadeTransition(
-                                            opacity: animation as Animation<double>,
+                                            opacity:
+                                                animation as Animation<double>,
                                             child: GestureDetector(
                                               onTap: () {
                                                 Utils.showMyFlushbar(
@@ -1687,7 +1691,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     bool isBookingAllowed = false;
     String dayOfWeek;
     int daysCounter = 0;
-    var dateWidgets = List<Widget>();
+    List<Widget> dateWidgets = [];
     for (var date in _dateList) {
       daysCounter++;
       if (daysCounter <= advanceDays!) {
@@ -1929,7 +1933,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   // }
 
   Future<void> _buildSearchList() async {
-    List<Entity?> searchList = new List<Entity?>();
+    List<Entity?> searchList = [];
     if ((!Utils.isNotNullOrEmpty(_entityType) &&
         !Utils.isNotNullOrEmpty(_searchText))) {
       _stores.clear();

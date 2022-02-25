@@ -51,7 +51,8 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
     getGlobalState().whenComplete(() {
       //get Token details from GS
       if (Utils.isNotNullOrEmpty(widget.ba!.tokenId)) {
-        List<Tuple<UserToken, DocumentSnapshot>>? listOfAllTokens = _gs!.bookings;
+        List<Tuple<UserToken, DocumentSnapshot>>? listOfAllTokens =
+            _gs!.bookings;
         if (!Utils.isNullOrEmpty(listOfAllTokens)) {
           tokens = [];
           for (var token in listOfAllTokens!) {
@@ -1412,7 +1413,8 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
           break;
         case FieldType.OPTIONS_ATTACHMENTS:
           {
-            FormInputFieldOptionsWithAttachments newfield = field as FormInputFieldOptionsWithAttachments;
+            FormInputFieldOptionsWithAttachments newfield =
+                field as FormInputFieldOptionsWithAttachments;
             String? responseVals;
             for (Value val in newfield.responseValues!) {
               if (!Utils.isNotNullOrEmpty(responseVals)) {
@@ -1585,7 +1587,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
   }
 
   Widget _buildItem(BookingApplication ba) {
-    List<Field> listOfMeta = new List<Field>();
+    List<Field> listOfMeta = [];
     // if (!listOfControllers.containsKey(ba.id)) {
     //   listOfControllers[ba.id] = new TextEditingController();
     // }

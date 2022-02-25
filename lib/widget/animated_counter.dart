@@ -34,8 +34,8 @@ class _AnimatedCountState extends AnimatedWidgetBaseState<AnimatedCount> {
   }
 
   @override
-  void forEachTween(TweenVisitor visitor) {
-    _count = visitor(
-        _count, widget.count!, (dynamic value) => new IntTween(begin: value)) as IntTween?;
+  void forEachTween(TweenVisitor<dynamic> visitor) {
+    _count = visitor(_count, widget.count!,
+        (dynamic value) => new IntTween(begin: value)) as IntTween?;
   }
 }

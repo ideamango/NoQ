@@ -147,7 +147,7 @@ class _ManageChildEntityDetailsPageState
   TextEditingController _upiIdController = TextEditingController();
   final GlobalKey<FormFieldState> whatsappPhnKey =
       new GlobalKey<FormFieldState>();
-  List<String> _closedOnDays = List<String>();
+  List<String> _closedOnDays = [];
 
   TextEditingController _offerMessageController = TextEditingController();
   TextEditingController _offerCouponController = TextEditingController();
@@ -179,7 +179,7 @@ class _ManageChildEntityDetailsPageState
   TextEditingController _ctAvlFromTimeController = TextEditingController();
   TextEditingController _ctAvlTillTimeController = TextEditingController();
 
-  List<days> _daysOff = List<days>();
+  List<days> _daysOff = [];
   Entity? serviceEntity;
 
   //bool _autoPopulate = false;
@@ -199,10 +199,10 @@ class _ManageChildEntityDetailsPageState
   bool isBookable = false;
 // ChildEntityAppData serviceEntity;
 
-  List<Employee> contactList = new List<Employee>();
-  List<String> adminsList = new List<String>();
-  List<Widget> contactRowWidgets = new List<Widget>();
-  List<Widget> adminRowWidgets = new List<Widget>();
+  List<Employee> contactList = [];
+  List<String> adminsList = [];
+  List<Widget> contactRowWidgets = [];
+  List<Widget> adminRowWidgets = [];
   int _contactCount = 0;
   String? _roleType;
 
@@ -252,7 +252,8 @@ class _ManageChildEntityDetailsPageState
     // serviceEntity = await getEntity(_metaEntity.entityId);
 
     Tuple<Entity, bool> entityTuple =
-        await (_gs!.getEntity(widget.childMetaEntity!.entityId) as FutureOr<Tuple<Entity, bool>>);
+        await (_gs!.getEntity(widget.childMetaEntity!.entityId)
+            as FutureOr<Tuple<Entity, bool>>);
     serviceEntity = entityTuple.item1;
 
     if (serviceEntity != null) {
@@ -358,9 +359,10 @@ class _ManageChildEntityDetailsPageState
           Utils.isNotNullOrEmpty(serviceEntity!.whatsapp)
               ? serviceEntity!.whatsapp.toString().substring(3)
               : "";
-      _contactPhoneController.text = Utils.isNotNullOrEmpty(serviceEntity!.phone)
-          ? serviceEntity!.phone.toString().substring(3)
-          : "";
+      _contactPhoneController.text =
+          Utils.isNotNullOrEmpty(serviceEntity!.phone)
+              ? serviceEntity!.phone.toString().substring(3)
+              : "";
       _emailIdController.text =
           Utils.isNotNullOrEmpty(serviceEntity!.supportEmail)
               ? serviceEntity!.supportEmail!
@@ -713,7 +715,9 @@ class _ManageChildEntityDetailsPageState
       print("Saved formmmmmmm");
       serviceEntity!.regNum = _regNumController.text;
 
-      _gs!.putEntity(serviceEntity!, true, serviceEntity!.parentId).then((value) {
+      _gs!
+          .putEntity(serviceEntity!, true, serviceEntity!.parentId)
+          .then((value) {
         if (value) {
           Navigator.of(context).push(new MaterialPageRoute(
               builder: (BuildContext context) =>
@@ -1206,7 +1210,7 @@ class _ManageChildEntityDetailsPageState
               isAnythingChanged = true;
               print("Selected Days: " + days.toString());
               _closedOnDays.clear();
-              days.forEach((element) {
+              days?.forEach((element) {
                 var day = element.toString().substring(5);
                 _closedOnDays.add(day);
               });
@@ -2158,7 +2162,7 @@ class _ManageChildEntityDetailsPageState
     }
 
     String msg;
-    Flushbar? flush;
+    late Flushbar flush;
     //bool _wasButtonClicked;
     backRoute() {
       //Navigator.of(context).pop();
@@ -2350,7 +2354,8 @@ class _ManageChildEntityDetailsPageState
           showProgressIndicator: true,
           progressIndicatorBackgroundColor: Colors.blueGrey[900],
           progressIndicatorValueColor:
-              new AlwaysStoppedAnimation<Color?>(Colors.cyan[500]) as Animation<Color>?,
+              new AlwaysStoppedAnimation<Color?>(Colors.cyan[500])
+                  as Animation<Color>?,
           routeBlur: 10.0,
           titleText: Text(
             "Are you sure you want to leave this page?",
@@ -2374,7 +2379,7 @@ class _ManageChildEntityDetailsPageState
                 padding: EdgeInsets.all(0),
                 onPressed: () {
                   flushStatus = "Empty";
-                  flush!.dismiss(false); // result = true
+                  flush.dismiss(false); // result = true
                 },
                 child: Text(
                   "No",
@@ -2382,11 +2387,11 @@ class _ManageChildEntityDetailsPageState
                       color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
-              FlatButton(
+              MaterialButton(
                 padding: EdgeInsets.all(0),
                 onPressed: () {
                   flushStatus = "Empty";
-                  flush!.dismiss(true); // result = true
+                  flush.dismiss(true); // result = true
                 },
                 child: Text(
                   "Yes",
@@ -4031,7 +4036,8 @@ class _ManageChildEntityDetailsPageState
                                       Entity? parentEntity;
 
                                       _gs!
-                                          .removeEntity(serviceEntity!.entityId!,
+                                          .removeEntity(
+                                              serviceEntity!.entityId!,
                                               parentEntityId)
                                           .then((value) {
                                         if (value) {

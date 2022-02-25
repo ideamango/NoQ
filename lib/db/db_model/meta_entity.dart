@@ -91,7 +91,7 @@ class MetaEntity {
   bool? allowOnlineAppointment;
   bool? allowWalkinAppointment;
 
-  static MetaEntity fromJson(Map<String, dynamic> json) {
+  static MetaEntity? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return new MetaEntity(
         entityId: json['entityId'],
@@ -144,11 +144,12 @@ class MetaEntity {
     return days;
   }
 
-  static List<MetaForm> convertToMetaFormsFromJson(List<dynamic>? metaFormJson) {
+  static List<MetaForm> convertToMetaFormsFromJson(
+      List<dynamic>? metaFormJson) {
     List<MetaForm> metaForms = [];
     if (metaFormJson == null) return metaForms;
 
-    for (Map<String, dynamic> json in metaFormJson as Iterable<Map<String, dynamic>>) {
+    for (Map<String, dynamic> json in metaFormJson) {
       MetaForm metaEnt = MetaForm.fromJson(json);
       metaForms.add(metaEnt);
     }

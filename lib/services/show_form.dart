@@ -47,10 +47,10 @@ class _EntityFormState extends State<EntityForm> {
       new Map<String?, TextEditingController>();
 
   final GlobalKey<FormState> _bookingFormKey = new GlobalKey<FormState>();
-  List<TextEditingController> _controllers = new List();
+  List<TextEditingController> _controllers = [];
   BookingForm? dummyForm;
   final itemSize = 100.0;
-  List<String> dumList = new List<String>();
+  List<String> dumList = [];
 
   bool _initCompleted = false;
 
@@ -644,7 +644,8 @@ class _EntityFormState extends State<EntityForm> {
         break;
       case FieldType.OPTIONS:
         {
-          FormInputFieldOptions newOptionsField = field as FormInputFieldOptions;
+          FormInputFieldOptions newOptionsField =
+              field as FormInputFieldOptions;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -757,7 +758,8 @@ class _EntityFormState extends State<EntityForm> {
         break;
       case FieldType.ATTACHMENT:
         {
-          FormInputFieldAttachment attsField = field as FormInputFieldAttachment;
+          FormInputFieldAttachment attsField =
+              field as FormInputFieldAttachment;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -901,7 +903,8 @@ class _EntityFormState extends State<EntityForm> {
         break;
       case FieldType.OPTIONS_ATTACHMENTS:
         {
-          FormInputFieldOptionsWithAttachments optsAttsField = field as FormInputFieldOptionsWithAttachments;
+          FormInputFieldOptionsWithAttachments optsAttsField =
+              field as FormInputFieldOptionsWithAttachments;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -1265,8 +1268,8 @@ class _EntityFormState extends State<EntityForm> {
       if (listOfFields[i].isMandatory!) {
         if (!Utils.isNotNullOrEmpty(
             listOfControllers[listOfFields[i].label]!.text)) {
-          validationErrMsg =
-              validationErrMsg! + "\n ${listOfFields[i].label} cannot be empty.";
+          validationErrMsg = validationErrMsg! +
+              "\n ${listOfFields[i].label} cannot be empty.";
         }
       }
     }
@@ -1307,7 +1310,7 @@ class _EntityFormState extends State<EntityForm> {
       for (int i = 0; i < listOfFields.length; i++) {
         switch (listOfFields[i].type) {
           case FieldType.ATTACHMENT:
-            List<String> targetPaths = List<String>();
+            List<String> targetPaths = [];
             for (String path in (listOfFields[i] as FormInputFieldAttachment)
                 .responseFilePaths!) {
               String fileName = pathfile.basename(path);
@@ -1328,7 +1331,7 @@ class _EntityFormState extends State<EntityForm> {
             break;
           case FieldType.OPTIONS_ATTACHMENTS:
             print("df");
-            List<String> targetPaths = List<String>();
+            List<String> targetPaths = [];
             for (String path
                 in (listOfFields[i] as FormInputFieldOptionsWithAttachments)
                     .responseFilePaths!) {
@@ -1721,7 +1724,9 @@ class _EntityFormState extends State<EntityForm> {
                             //   height: MediaQuery.of(context).size.height * .55,
                             width: MediaQuery.of(context).size.width * .95,
                             child: buildChildItem(
-                                dummyForm!.getFormFields()[index], index, false),
+                                dummyForm!.getFormFields()[index],
+                                index,
+                                false),
                           );
                         },
                         itemCount: dummyForm!.getFormFields().length,

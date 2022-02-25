@@ -58,7 +58,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> contactPhoneKey =
       new GlobalKey<FormFieldState>();
-  List<String> saveData = List<String>();
+  List<String> saveData = [];
 
   //Fields used in info - animated container
   double _width = 0;
@@ -98,8 +98,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   TextEditingController _slotDurationController = TextEditingController();
   TextEditingController _advBookingInDaysController = TextEditingController();
 
-  List<String> _closedOnDays = List<String>();
-  List<days> _daysOff = List<days>();
+  List<String> _closedOnDays = [];
+  List<days> _daysOff = [];
   TextEditingController _latController = TextEditingController();
   TextEditingController _lonController = TextEditingController();
   // TextEditingController _subAreaController = TextEditingController();
@@ -168,9 +168,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   late FormInputFieldOptionsWithAttachments idProofField;
   late FormInputFieldOptionsWithAttachments frontlineWorkerField;
   late FormInputFieldOptionsWithAttachments medConditionsField;
-  List<Item> idProofTypesList = List<Item>();
-  List<Item> frontlineTypesList = List<Item>();
-  List<Item> medConditionsList = List<Item>();
+  List<Item> idProofTypesList = [];
+  List<Item> frontlineTypesList = [];
+  List<Item> medConditionsList = [];
   // FormInputFieldText healthDetailsDesc;
   // FormInputFieldText latInput;
   // FormInputFieldText lonInput;
@@ -215,8 +215,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           else if (f.key == "KEY20")
             dobInput = f as FormInputFieldDateTime;
           else if (f.key == "KEY30") {
-            medConditionsField = f as FormInputFieldOptionsWithAttachments; //Validate this field
-            medConditionsField.responseValues = new List<Value>();
+            medConditionsField =
+                f as FormInputFieldOptionsWithAttachments; //Validate this field
+            medConditionsField.responseValues = [];
             for (int i = 0; i < medConditionsField.options!.length; i++) {
               if (medConditionsField.defaultValueIndex == i)
                 medConditionsList
@@ -225,10 +226,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                 medConditionsList
                     .add(Item(medConditionsField.options![i], false));
             }
-            medConditionsField.responseFilePaths = new List<String>();
+            medConditionsField.responseFilePaths = [];
           } else if (f.key == "KEY40") {
             frontlineWorkerField = f as FormInputFieldOptionsWithAttachments;
-            frontlineWorkerField.responseValues = new List<Value>();
+            frontlineWorkerField.responseValues = [];
             for (int i = 0; i < frontlineWorkerField.options!.length; i++) {
               if (frontlineWorkerField.defaultValueIndex == i)
                 frontlineTypesList
@@ -237,14 +238,14 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                 frontlineTypesList
                     .add(Item(frontlineWorkerField.options![i], false));
             }
-            frontlineWorkerField.responseFilePaths = new List<String>();
+            frontlineWorkerField.responseFilePaths = [];
           } else if (f.key == "KEY50") {
             idProofField = f as FormInputFieldOptionsWithAttachments;
-            idProofField.responseValues = new List<Value>();
+            idProofField.responseValues = [];
             for (Value val in idProofField.options!) {
               idProofTypesList.add(Item(val, false));
             }
-            idProofField.responseFilePaths = new List<String>();
+            idProofField.responseFilePaths = [];
           } else if (f.key == "KEY60") primaryPhone = f as FormInputFieldPhone?;
         }
         bookingApplication = new BookingApplication();
@@ -790,7 +791,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                               medConditionsField.responseValues!
                                   .remove(item.value);
                             else {
-                              medConditionsField.responseValues!.add(item.value);
+                              medConditionsField.responseValues!
+                                  .add(item.value);
                             }
 
                             setState(() {
@@ -856,8 +858,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         controller: _primaryPhoneController,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText:
-              (primaryPhone != null) ? primaryPhone!.label : "Name of Applicant",
+          labelText: (primaryPhone != null)
+              ? primaryPhone!.label
+              : "Name of Applicant",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -1148,7 +1151,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
           // bookingApplication.preferredSlotTiming =
           //TODO:Save Files and then submit application with the updated file path
-          List<String> idProofTargetPaths = List<String>();
+          List<String> idProofTargetPaths = [];
           for (String path in idProofField.responseFilePaths!) {
             String fileName = basename(path);
             print(fileName);
@@ -1163,7 +1166,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
           idProofField.responseFilePaths = idProofTargetPaths;
 
-          List<String> medCondsTargetPaths = List<String>();
+          List<String> medCondsTargetPaths = [];
           for (String path in medConditionsField.responseFilePaths!) {
             String fileName = basename(path);
             print(fileName);
@@ -1288,7 +1291,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     showProgressIndicator: true,
                     progressIndicatorBackgroundColor: Colors.blueGrey[900],
                     progressIndicatorValueColor:
-                        new AlwaysStoppedAnimation<Color?>(Colors.cyan[500]) as Animation<Color>?,
+                        new AlwaysStoppedAnimation<Color?>(Colors.cyan[500])
+                            as Animation<Color>?,
                     routeBlur: 10.0,
                     titleText: Text(
                       "Are you sure you want to leave this page?",
@@ -1345,7 +1349,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                   //   };
 
                   flush
-                    ..show(context).then((result) {
+                    ?..show(context).then((result) {
                       _wasButtonClicked = result;
                       flushStatus = "Empty";
                       if (_wasButtonClicked!) processGoBackWithTimer();
@@ -1364,7 +1368,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
               bottom: true,
               child: new Form(
                 key: _tokenBookingDetailsFormKey,
-                autovalidateMode:AutovalidateMode.onUserInteraction,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: new ListView(
                   padding: const EdgeInsets.all(5.0),
                   children: <Widget>[

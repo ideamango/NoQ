@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../db/db_model/entity.dart';
 import '../db/db_model/meta_entity.dart';
@@ -25,10 +27,11 @@ showDialogForPlaceDetails(
   GlobalState state;
 //Fetch Entity
   if (entity == null) {
+    // ignore: unnecessary_cast
     GlobalState.getGlobalState().then((value) {
-      state = value;
+      state = value!;
       state.getEntity(metaEntity.entityId);
-    } as FutureOr<_> Function(GlobalState?));
+    });
   }
 
   showDialog(

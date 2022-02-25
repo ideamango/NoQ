@@ -11,7 +11,7 @@ class Message {
         'time': time!.millisecondsSinceEpoch
       };
 
-  static Message fromJson(Map<String, dynamic> json) {
+  static Message? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return new Message(
         userId: json['userId'],

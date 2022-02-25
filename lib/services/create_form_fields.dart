@@ -7,7 +7,7 @@ import 'package:LESSs/db/exceptions/invalid_slottime_exception.dart';
 import 'package:LESSs/pages/contact_us.dart';
 import 'package:LESSs/pages/search_entity_page.dart';
 import 'package:LESSs/pages/token_alert.dart';
-import 'package:LESSs/pages/upi_payment_page.dart';
+//import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:LESSs/widget/page_animation.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -412,13 +412,14 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               color: primaryDarkColor,
             ),
             Expanded(
-              child: UPIPaymentPage(
-                backRoute: null,
-                isDonation: false,
-                upiQrCodeImgPath: widget.metaEntity!.upiQRImagePath,
-                upiId: widget.metaEntity!.upiId,
-                showMinimum: true,
-              ),
+              child: Text("UPI removed for now"),
+              // UPIPaymentPage(
+              //   backRoute: null,
+              //   isDonation: false,
+              //   upiQrCodeImgPath: widget.metaEntity!.upiQRImagePath,
+              //   upiId: widget.metaEntity!.upiId,
+              //   showMinimum: true,
+              // ),
             ),
           ],
         ),
@@ -1210,7 +1211,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
       case FieldType.OPTIONS:
         {
-          FormInputFieldOptions newOptionsField = field as FormInputFieldOptions;
+          FormInputFieldOptions newOptionsField =
+              field as FormInputFieldOptions;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -1332,7 +1334,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         break;
       case FieldType.ATTACHMENT:
         {
-          FormInputFieldAttachment attsField = field as FormInputFieldAttachment;
+          FormInputFieldAttachment attsField =
+              field as FormInputFieldAttachment;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -1642,7 +1645,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         break;
       case FieldType.OPTIONS_ATTACHMENTS:
         {
-          FormInputFieldOptionsWithAttachments optsAttsField = field as FormInputFieldOptionsWithAttachments;
+          FormInputFieldOptionsWithAttachments optsAttsField =
+              field as FormInputFieldOptionsWithAttachments;
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -1815,7 +1819,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                     color: primaryDarkColor,
                                   ),
                                   onPressed: () {
-                                    if (optsAttsField.responseFilePaths!.length <
+                                    if (optsAttsField
+                                            .responseFilePaths!.length <
                                         optsAttsField.maxAttachments!) {
                                       captureImage(false).then((value) {
                                         if (value != null) {
@@ -1843,7 +1848,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                     color: primaryDarkColor,
                                   ),
                                   onPressed: () {
-                                    if (optsAttsField.responseFilePaths!.length <
+                                    if (optsAttsField
+                                            .responseFilePaths!.length <
                                         optsAttsField.maxAttachments!) {
                                       captureImage(true).then((value) {
                                         if (value != null) {
@@ -2049,7 +2055,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
     print("Target file name " + targetFileName);
 
-    Reference ref = _gs!.firebaseStorage!.ref().child('uploads/$targetFileName');
+    Reference ref =
+        _gs!.firebaseStorage!.ref().child('uploads/$targetFileName');
 
     await ref.putFile(localImage);
 
@@ -2377,7 +2384,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         showProgressIndicator: true,
         progressIndicatorBackgroundColor: Colors.blueGrey[900],
         progressIndicatorValueColor:
-            new AlwaysStoppedAnimation<Color?>(Colors.cyan[500]) as Animation<Color>?,
+            new AlwaysStoppedAnimation<Color?>(Colors.cyan[500])
+                as Animation<Color>?,
         routeBlur: 10.0,
         titleText: Text(
           "Are you sure you want to leave this page?",
@@ -2433,7 +2441,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       //   };
 
       flush
-        ..show(context).then((result) {
+        ?..show(context).then((result) {
           _wasButtonClicked = result;
           flushStatus = "Empty";
           if (_wasButtonClicked!) {

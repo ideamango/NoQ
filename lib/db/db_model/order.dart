@@ -74,7 +74,7 @@ class Order {
   }
 
   List<dynamic> listOfMessagesToJson(List<Message>? items) {
-    List<dynamic> itemsJson = new List<dynamic>();
+    List<dynamic> itemsJson = [];
     if (items == null) return itemsJson;
     for (Message item in items) {
       itemsJson.add(item.toJson());
@@ -83,7 +83,7 @@ class Order {
   }
 
   List<dynamic> listOfItemsToJson(List<ListItem>? items) {
-    List<dynamic> itemsJson = new List<dynamic>();
+    List<dynamic> itemsJson = [];
     if (items == null) return itemsJson;
     for (ListItem item in items) {
       itemsJson.add(item.toJson());
@@ -92,24 +92,26 @@ class Order {
   }
 
   static List<Message> convertToMessageFromJson(List<dynamic>? listItemsJson) {
-    List<Message> items = new List<Message>();
+    List<Message> items = [];
     if (Utils.isNullOrEmpty(listItemsJson)) return items;
 
-    for (Map<String, dynamic> json in listItemsJson as Iterable<Map<String, dynamic>>) {
-      Message item = Message.fromJson(json);
-      items.add(item);
+    for (Map<String, dynamic> json
+        in listItemsJson as Iterable<Map<String, dynamic>>) {
+      Message? item = Message.fromJson(json);
+      items.add(item!);
     }
     return items;
   }
 
   static List<ListItem> convertToListItemsFromJson(
       List<dynamic>? listItemsJson) {
-    List<ListItem> items = new List<ListItem>();
+    List<ListItem> items = [];
     if (Utils.isNullOrEmpty(listItemsJson)) return items;
 
-    for (Map<String, dynamic> json in listItemsJson as Iterable<Map<String, dynamic>>) {
-      ListItem item = ListItem.fromJson(json);
-      items.add(item);
+    for (Map<String, dynamic> json
+        in listItemsJson as Iterable<Map<String, dynamic>>) {
+      ListItem? item = ListItem.fromJson(json);
+      items.add(item!);
     }
     return items;
   }

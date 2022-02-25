@@ -175,7 +175,7 @@ class Configurations {
     List<MetaForm> metaForms = [];
     if (json == null) return metaForms;
 
-    for (Map<String, dynamic> metaFormJson in json as Iterable<Map<String, dynamic>>) {
+    for (Map<String, dynamic> metaFormJson in json) {
       MetaForm sl = MetaForm.fromJson(metaFormJson);
       metaForms.add(sl);
     }
@@ -200,7 +200,7 @@ class Configurations {
     List<String> strs = [];
     if (Utils.isNullOrEmpty(json)) return strs;
 
-    for (String str in json as Iterable<String>) {
+    for (String str in json as List<dynamic>) {
       strs.add(str);
     }
     return strs;

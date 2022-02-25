@@ -100,7 +100,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
               lastDocOfPage,
               2)
           .then((value) {
-        listOfBa = value as List<Tuple<BookingApplication, QueryDocumentSnapshot>>?;
+        listOfBa =
+            value as List<Tuple<BookingApplication, QueryDocumentSnapshot>>?;
         lastDocOfPage =
             Utils.isNullOrEmpty(listOfBa) ? null : listOfBa!.last.item2;
         if (this.mounted) {
@@ -151,7 +152,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
         loadMoreMsg = 'Thats all.';
       } else {
         value.forEach((element) {
-          listOfBa!.add(element as Tuple<BookingApplication, QueryDocumentSnapshot>);
+          listOfBa!
+              .add(element as Tuple<BookingApplication, QueryDocumentSnapshot>);
         });
         //listOfBa.addAll(value);
       }
@@ -720,7 +722,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
           break;
         case FieldType.OPTIONS_ATTACHMENTS:
           {
-            FormInputFieldOptionsWithAttachments newfield = field as FormInputFieldOptionsWithAttachments;
+            FormInputFieldOptionsWithAttachments newfield =
+                field as FormInputFieldOptionsWithAttachments;
             String? responseVals;
             for (Value val in newfield.responseValues!) {
               if (!Utils.isNotNullOrEmpty(responseVals)) {
@@ -853,7 +856,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   Widget _buildItem(BookingApplication ba) {
     DateTime newSlot;
-    List<Field> listOfMeta = new List<Field>();
+    List<Field> listOfMeta = [];
     // if (!listOfControllers.containsKey(ba.id)) {
     //   listOfControllers[ba.id] = new TextEditingController();
     // }
@@ -1500,8 +1503,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                             ? applicationNewSlotMap[ba.id]
                                             : ba.preferredSlotTiming),
                                         isReadOnly: widget.isReadOnly,
-                                        isAvailable:
-                                            isAvailable(ba.preferredSlotTiming!),
+                                        isAvailable: isAvailable(
+                                            ba.preferredSlotTiming!),
                                         tokenCounter: tokenCounterForEntity,
                                         backRoute: ApplicationsList(
                                             metaEntity: widget.metaEntity,

@@ -68,15 +68,15 @@ class BookingApplicationService {
       DocumentSnapshot doc = await appRef.get();
 
       if (doc.exists) {
-        Map<String, dynamic>? map = doc.data();
+        Map<String, dynamic>? map = doc.data() as Map<String, dynamic>?;
 
         ba = BookingApplication.fromJson(map);
       }
     } catch (e) {
-      if (e.code == "permission-denied") {
-        throw new AccessDeniedException(
-            "You do not have permission to view the Application details.");
-      }
+      // if (e.code == "permission-denied") {
+      //   throw new AccessDeniedException(
+      //       "You do not have permission to view the Application details.");
+      // }
     }
 
     return ba;
@@ -129,10 +129,10 @@ class BookingApplicationService {
     if (multipleValueFields != null) {
       for (MultiValuedQuery multiValuedQuery in multipleValueFields) {
         if (multiValuedQuery.partialMatch!) {
-          query = query.where(multiValuedQuery.key,
+          query = query.where(multiValuedQuery.key!,
               arrayContainsAny: multiValuedQuery.values);
         } else {
-          query = query.where(multiValuedQuery.key,
+          query = query.where(multiValuedQuery.key!,
               arrayContains: multiValuedQuery.values);
         }
       }
@@ -143,7 +143,7 @@ class BookingApplicationService {
     }
 
     if (Utils.isNotNullOrEmpty(orderByFieldName)) {
-      query = query.orderBy(orderByFieldName, descending: isDescending!);
+      query = query.orderBy(orderByFieldName!, descending: isDescending!);
     }
     //TODO - takeCount coming as null
     if (takeCount > 0) {
@@ -164,7 +164,9 @@ class BookingApplicationService {
       if (doc.exists) {
         Tuple<BookingApplication, QueryDocumentSnapshot> tup =
             Tuple<BookingApplication, QueryDocumentSnapshot>(
-                item1: BookingApplication.fromJson(doc.data()), item2: doc);
+                item1: BookingApplication.fromJson(
+                    doc.data() as Map<String, dynamic>),
+                item2: doc);
         applications.add(tup);
         print(tup.item1!.id);
       }
@@ -242,7 +244,7 @@ class BookingApplicationService {
         now.day.toString();
 
     if (doc.exists) {
-      Map<String, dynamic>? map = doc.data();
+      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>?;
 
       bf = BookingForm.fromJson(map);
     } else {
@@ -256,7 +258,8 @@ class BookingApplicationService {
         DocumentSnapshot localCounterSnapshot = await tx.get(localCounterRef);
 
         if (applicationSnapshot.exists) {
-          baDraft = BookingApplication.fromJson(applicationSnapshot.data());
+          baDraft = BookingApplication.fromJson(
+              applicationSnapshot.data() as Map<String, dynamic>);
           if (baDraft!.timeOfSubmission != null) {
             throw new Exception(
                 "Application is already submitted, can't submit again.");
@@ -294,7 +297,8 @@ class BookingApplicationService {
 
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
-          Map<String, dynamic>? map = localCounterSnapshot.data();
+          Map<String, dynamic>? map =
+              localCounterSnapshot.data() as Map<String, dynamic>?;
           localCounter = BookingApplicationCounter.fromJson(map);
         } else {
           localCounter = new BookingApplicationCounter(
@@ -316,9 +320,12 @@ class BookingApplicationService {
           //   globalCounter.dailyStats[dailyStatsKey].numberOfNew++;
           //   globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
           // }
-          localCounter!.numberOfApproved++;
-          localCounter!.dailyStats![dailyStatsKey]!.numberOfNew++;
-          localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved++;
+
+          localCounter!.numberOfApproved = localCounter!.numberOfApproved! + 1;
+          localCounter!.dailyStats![dailyStatsKey]!.numberOfNew =
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfNew! + 1;
+          localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved =
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved! + 1;
           ba.approvedBy = SYSTEM;
           ba.notesOnApproval = AUTO_APPROVED;
           ba.status = ApplicationStatus.APPROVED;
@@ -328,13 +335,14 @@ class BookingApplicationService {
           //   globalCounter.numberOfNew++;
           //   globalCounter.dailyStats[dailyStatsKey].numberOfNew++;
           // }
-          localCounter!.numberOfNew++;
-          localCounter!.dailyStats![dailyStatsKey]!.numberOfNew++;
+          localCounter!.numberOfNew = localCounter!.numberOfNew! + 1;
+          localCounter!.dailyStats![dailyStatsKey]!.numberOfNew =
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfNew! + 1;
         }
         // if (globalCounter != null) {
         //   globalCounter.totalApplications++;
         // }
-        localCounter!.totalApplications++;
+        localCounter!.totalApplications = localCounter!.totalApplications! + 1;
 
         //if auto approved, then generate the token
         if (bf.appointmentRequired! &&
@@ -388,7 +396,7 @@ class BookingApplicationService {
         print("Exception in Application submission $bookingApplicationId " +
             e.toString());
 
-        e = ex;
+        e = ex as Exception;
         isSuccess = false;
       }
     });
@@ -452,7 +460,8 @@ class BookingApplicationService {
         DocumentSnapshot applicationSnapshot = await tx.get(applicationRef);
 
         if (applicationSnapshot.exists) {
-          ba = BookingApplication.fromJson(applicationSnapshot.data());
+          ba = BookingApplication.fromJson(
+              applicationSnapshot.data() as Map<String, dynamic>);
         } else {
           throw new Exception(
               "Application does not exists, it can't be cancelled");
@@ -501,7 +510,8 @@ class BookingApplicationService {
 
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
-          Map<String, dynamic>? map = localCounterSnapshot.data();
+          Map<String, dynamic>? map =
+              localCounterSnapshot.data() as Map<String, dynamic>;
           localCounter = BookingApplicationCounter.fromJson(map);
         } else {
           localCounter = new BookingApplicationCounter(
@@ -521,8 +531,9 @@ class BookingApplicationService {
         //   globalCounter.numberOfCancelled++;
         //   globalCounter.dailyStats[dailyStatsKey].numberOfCancelled++;
         // }
-        localCounter!.numberOfCancelled++;
-        localCounter!.dailyStats![dailyStatsKey]!.numberOfCancelled++;
+        localCounter!.numberOfCancelled = localCounter!.numberOfCancelled! + 1;
+        localCounter!.dailyStats![dailyStatsKey]!.numberOfCancelled =
+            localCounter!.dailyStats![dailyStatsKey]!.numberOfCancelled! + 1;
 
         //token id should be stored as part of the application
         if (Utils.isNotNullOrEmpty(ba!.tokenId)) {
@@ -572,42 +583,47 @@ class BookingApplicationService {
           //   globalCounter.numberOfApproved--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfApproved--;
+            localCounter!.numberOfApproved =
+                localCounter!.numberOfApproved! - 1;
           }
         } else if (existingStatus == ApplicationStatus.NEW) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfNew--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfNew--;
+            localCounter!.numberOfNew = localCounter!.numberOfNew! - 1;
           }
         } else if (existingStatus == ApplicationStatus.COMPLETED) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfCompleted--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfCompleted--;
+            localCounter!.numberOfCompleted =
+                localCounter!.numberOfCompleted! - 1;
           }
         } else if (existingStatus == ApplicationStatus.INPROCESS) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfInProcess--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfInProcess--;
+            localCounter!.numberOfInProcess =
+                localCounter!.numberOfInProcess! - 1;
           }
         } else if (existingStatus == ApplicationStatus.ONHOLD) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfPutOnHold--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfPutOnHold--;
+            localCounter!.numberOfPutOnHold =
+                localCounter!.numberOfPutOnHold! - 1;
           }
         } else if (existingStatus == ApplicationStatus.REJECTED) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfRejected--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfRejected--;
+            localCounter!.numberOfRejected =
+                localCounter!.numberOfRejected! - 1;
           }
         }
 
@@ -629,7 +645,7 @@ class BookingApplicationService {
         print("Exception in Application submission $bookingApplicationId " +
             ex.toString());
         isSuccess = false;
-        e = ex;
+        e = ex as Exception;
       }
     });
 
@@ -703,7 +719,8 @@ class BookingApplicationService {
         DocumentSnapshot applicationSnapshot = await tx.get(applicationRef);
 
         if (applicationSnapshot.exists) {
-          application = BookingApplication.fromJson(applicationSnapshot.data());
+          application = BookingApplication.fromJson(
+              applicationSnapshot.data() as Map<String, dynamic>);
           existingStatus = application!.status;
           bf = application!.responseForm;
           if (application!.timeOfSubmission == null ||
@@ -744,7 +761,8 @@ class BookingApplicationService {
 
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
-          Map<String, dynamic>? map = localCounterSnapshot.data();
+          Map<String, dynamic>? map =
+              localCounterSnapshot.data() as Map<String, dynamic>;
           localCounter = BookingApplicationCounter.fromJson(map);
         }
 
@@ -764,13 +782,18 @@ class BookingApplicationService {
           //   }
           // }
           if (localCounter != null) {
-            localCounter!.numberOfApproved++;
+            localCounter!.numberOfApproved =
+                localCounter!.numberOfApproved! + 1;
             if (localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
-              localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved++;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved =
+                  localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved! +
+                      1;
             } else {
               ApplicationStats todayStats = new ApplicationStats();
               localCounter!.dailyStats![dailyStatsKey] = todayStats;
-              localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved++;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved =
+                  localCounter!.dailyStats![dailyStatsKey]!.numberOfApproved! +
+                      1;
             }
           }
 
@@ -781,15 +804,17 @@ class BookingApplicationService {
           Triplet<UserTokens, TokenCounter, EntitySlots> triplet;
           if (bf!.generateTokenOnApproval! && bf!.appointmentRequired!) {
             try {
-              triplet = await _gs!.getTokenService()!.generateTokenInTransaction(
-                  tx,
-                  requestingUser!,
-                  metaEntity!,
-                  tokenTime!,
-                  application!.id,
-                  application!.bookingFormId,
-                  application!.responseForm!.formName,
-                  enableVideoChat);
+              triplet = await _gs!
+                  .getTokenService()!
+                  .generateTokenInTransaction(
+                      tx,
+                      requestingUser!,
+                      metaEntity!,
+                      tokenTime!,
+                      application!.id,
+                      application!.bookingFormId,
+                      application!.responseForm!.formName,
+                      enableVideoChat);
               toks = triplet.item1;
               tokenCounter = triplet.item2;
               es = triplet.item3;
@@ -815,13 +840,18 @@ class BookingApplicationService {
           //   }
           // }
           if (localCounter != null) {
-            localCounter!.numberOfCompleted++;
+            localCounter!.numberOfCompleted =
+                localCounter!.numberOfCompleted! + 1;
             if (localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
-              localCounter!.dailyStats![dailyStatsKey]!.numberOfCompleted++;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfCompleted =
+                  localCounter!.dailyStats![dailyStatsKey]!.numberOfCompleted! +
+                      1;
             } else {
               ApplicationStats todayStats = new ApplicationStats();
               localCounter!.dailyStats![dailyStatsKey] = todayStats;
-              localCounter!.dailyStats![dailyStatsKey]!.numberOfCompleted++;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfCompleted =
+                  localCounter!.dailyStats![dailyStatsKey]!.numberOfCompleted! +
+                      1;
             }
           }
         } else if (status == ApplicationStatus.INPROCESS) {
@@ -839,13 +869,18 @@ class BookingApplicationService {
           //   }
           // }
           if (localCounter != null) {
-            localCounter!.numberOfInProcess++;
+            localCounter!.numberOfInProcess =
+                localCounter!.numberOfInProcess! + 1;
             if (localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
-              localCounter!.dailyStats![dailyStatsKey]!.numberOfInProcess++;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfInProcess =
+                  localCounter!.dailyStats![dailyStatsKey]!.numberOfInProcess! +
+                      1;
             } else {
               ApplicationStats todayStats = new ApplicationStats();
               localCounter!.dailyStats![dailyStatsKey] = todayStats;
-              localCounter!.dailyStats![dailyStatsKey]!.numberOfInProcess++;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfInProcess =
+                  localCounter!.dailyStats![dailyStatsKey]!.numberOfInProcess! +
+                      1;
             }
           }
         } else if (status == ApplicationStatus.ONHOLD) {
@@ -884,13 +919,18 @@ class BookingApplicationService {
           }
 
           if (localCounter != null) {
-            localCounter!.numberOfPutOnHold++;
+            localCounter!.numberOfPutOnHold =
+                localCounter!.numberOfPutOnHold! + 1;
             if (localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
-              localCounter!.dailyStats![dailyStatsKey]!.numberOfPutOnHold++;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfPutOnHold =
+                  localCounter!.dailyStats![dailyStatsKey]!.numberOfPutOnHold! +
+                      1;
             } else {
               ApplicationStats todayStats = new ApplicationStats();
               localCounter!.dailyStats![dailyStatsKey] = todayStats;
-              localCounter!.dailyStats![dailyStatsKey]!.numberOfPutOnHold++;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfPutOnHold =
+                  localCounter!.dailyStats![dailyStatsKey]!.numberOfPutOnHold! +
+                      1;
             }
           }
         } else if (status == ApplicationStatus.REJECTED) {
@@ -924,13 +964,18 @@ class BookingApplicationService {
           }
 
           if (localCounter != null) {
-            localCounter!.numberOfRejected++;
+            localCounter!.numberOfRejected =
+                localCounter!.numberOfRejected! + 1;
             if (localCounter!.dailyStats!.containsKey(dailyStatsKey)) {
-              localCounter!.dailyStats![dailyStatsKey]!.numberOfRejected++;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfRejected =
+                  localCounter!.dailyStats![dailyStatsKey]!.numberOfRejected! +
+                      1;
             } else {
               ApplicationStats todayStats = new ApplicationStats();
               localCounter!.dailyStats![dailyStatsKey] = todayStats;
-              localCounter!.dailyStats![dailyStatsKey]!.numberOfRejected++;
+              localCounter!.dailyStats![dailyStatsKey]!.numberOfRejected =
+                  localCounter!.dailyStats![dailyStatsKey]!.numberOfRejected! +
+                      1;
             }
           }
         }
@@ -940,42 +985,47 @@ class BookingApplicationService {
           //   globalCounter.numberOfApproved--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfApproved--;
+            localCounter!.numberOfApproved =
+                localCounter!.numberOfApproved! - 1;
           }
         } else if (existingStatus == ApplicationStatus.NEW) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfNew--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfNew--;
+            localCounter!.numberOfNew = localCounter!.numberOfNew! - 1;
           }
         } else if (existingStatus == ApplicationStatus.COMPLETED) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfCompleted--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfCompleted--;
+            localCounter!.numberOfCompleted =
+                localCounter!.numberOfCompleted! - 1;
           }
         } else if (existingStatus == ApplicationStatus.INPROCESS) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfInProcess--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfInProcess--;
+            localCounter!.numberOfInProcess =
+                localCounter!.numberOfInProcess! - 1;
           }
         } else if (existingStatus == ApplicationStatus.ONHOLD) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfPutOnHold--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfPutOnHold--;
+            localCounter!.numberOfPutOnHold =
+                localCounter!.numberOfPutOnHold! - 1;
           }
         } else if (existingStatus == ApplicationStatus.REJECTED) {
           // if (globalCounter != null) {
           //   globalCounter.numberOfRejected--;
           // }
           if (localCounter != null) {
-            localCounter!.numberOfRejected--;
+            localCounter!.numberOfRejected =
+                localCounter!.numberOfRejected! - 1;
           }
         }
 
@@ -998,7 +1048,7 @@ class BookingApplicationService {
       } catch (ex) {
         requestProcessed = false;
         print(ex.toString());
-        e = ex;
+        e = ex as Exception;
       }
     });
 
@@ -1034,7 +1084,7 @@ class BookingApplicationService {
     DocumentSnapshot doc = await counterRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic>? map = doc.data();
+      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>;
       counter = BookingApplicationCounter.fromJson(map);
     } else {
       counter = BookingApplicationCounter(
@@ -1053,7 +1103,7 @@ class BookingApplicationService {
     DocumentSnapshot doc = await formRef.get();
     BookingForm? form;
     if (doc.exists) {
-      Map<String, dynamic>? map = doc.data();
+      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>;
 
       form = BookingForm.fromJson(map);
     }
@@ -1078,7 +1128,7 @@ class BookingApplicationService {
       DocumentSnapshot doc = await formRef.get();
 
       if (doc.exists) {
-        Map<String, dynamic>? map = doc.data();
+        Map<String, dynamic>? map = doc.data() as Map<String, dynamic>;
         form = BookingForm.fromJson(map);
       }
     } catch (e) {

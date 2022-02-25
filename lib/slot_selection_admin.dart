@@ -144,9 +144,7 @@ class _SlotSelectionAdminState extends State<SlotSelectionAdmin> {
     List<Slot>? list = slotListTuple.item2;
     if (widget.tokenCounter != null) {
       for (int i = 0; i <= list!.length - 1; i++) {
-        List<String> slotIdVals = Utils.isNotNullOrEmpty(list[i].slotId)
-            ? list[i].slotId!.split('#')
-            : null;
+        List<String> slotIdVals = list[i].slotId!.split('#');
 
         String slotId = slotIdVals[1] + '#' + slotIdVals[2];
         if (widget.tokenCounter!.slotWiseStats!.containsKey(slotId)) {
@@ -262,8 +260,9 @@ class _SlotSelectionAdminState extends State<SlotSelectionAdmin> {
                                     ),
                                     Text("Prev",
                                         style: TextStyle(
-                                            color: (slotSelectionDate!.compareTo(
-                                                        currDateTime) >=
+                                            color: (slotSelectionDate!
+                                                        .compareTo(
+                                                            currDateTime) >=
                                                     0)
                                                 ? Colors.white
                                                 : Colors.blueGrey[300])),

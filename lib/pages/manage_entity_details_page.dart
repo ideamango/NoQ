@@ -145,8 +145,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   TextEditingController _slotDurationController = TextEditingController();
   TextEditingController _advBookingInDaysController = TextEditingController();
 
-  List<String> _closedOnDays = List<String>();
-  List<days> _daysOff = List<days>();
+  List<String> _closedOnDays = [];
+  List<days> _daysOff = [];
   TextEditingController _latController = TextEditingController();
   TextEditingController _lonController = TextEditingController();
   // TextEditingController _subAreaController = TextEditingController();
@@ -171,11 +171,11 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   MetaEntity? _metaEntity;
   Entity? entity;
 
-  List<Employee> contactList = new List<Employee>();
-  List<String> adminsList = new List<String>();
-  List<Widget> contactRowWidgets = new List<Widget>();
-  List<Widget> contactRowWidgetsNew = new List<Widget>();
-  List<Widget> adminRowWidgets = new List<Widget>();
+  List<Employee> contactList = [];
+  List<String> adminsList = [];
+  List<Widget> contactRowWidgets = [];
+  List<Widget> contactRowWidgetsNew = [];
+  List<Widget> adminRowWidgets = [];
 
   ScrollController? _scrollController;
   final itemSize = 80.0;
@@ -274,10 +274,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
       if (entity!.offer != null) {
         insertOffer = entity!.offer;
-        _offerMessageController.text =
-            entity!.offer!.message != null ? entity!.offer!.message.toString() : "";
-        _offerCouponController.text =
-            entity!.offer!.coupon != null ? entity!.offer!.coupon.toString() : "";
+        _offerMessageController.text = entity!.offer!.message != null
+            ? entity!.offer!.message.toString()
+            : "";
+        _offerCouponController.text = entity!.offer!.coupon != null
+            ? entity!.offer!.coupon.toString()
+            : "";
 
         _startDateController.text = entity!.offer!.startDateTime != null
             ? entity!.offer!.startDateTime!.day.toString() +
@@ -373,8 +375,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       //     : "";
 
       if (entity!.coordinates != null) {
-        _latController.text = entity!.coordinates!.geopoint!.latitude.toString();
-        _lonController.text = entity!.coordinates!.geopoint!.longitude.toString();
+        _latController.text =
+            entity!.coordinates!.geopoint!.latitude.toString();
+        _lonController.text =
+            entity!.coordinates!.geopoint!.longitude.toString();
       }
 
       //address
@@ -423,7 +427,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     _stateController.text = entity!.address!.state!;
     _countryController.text = entity!.address!.country!;
     _pinController.text = entity!.address!.zipcode!;
-    contactList = contactList ?? [];
+    contactList = contactList;
 
     //  _ctNameController.text = entity.contactPersons[0].perName;
   }
@@ -1073,7 +1077,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               onChange: (days) {
                 print("Selected Days: " + days.toString());
                 _closedOnDays.clear();
-                days.forEach((element) {
+                days!.forEach((element) {
                   var day = element.toString().substring(5);
                   _closedOnDays.add(day);
                 });
@@ -1616,7 +1620,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               ? insertOffer!.endDateTime!.isBefore(DateTime.now()) &&
                       insertOffer!.startDateTime!.isBefore(DateTime.now())
                   ? DateTime.now()
-                  : insertOffer!.endDateTime!.isAfter(insertOffer!.startDateTime!)
+                  : insertOffer!.endDateTime!
+                          .isAfter(insertOffer!.startDateTime!)
                       ? insertOffer!.endDateTime!
                       : insertOffer!.startDateTime!
               : insertOffer!.startDateTime != null
@@ -2041,13 +2046,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           _entityDetailsFormKey.currentState!.save();
 
           //TODO: this hardcoding is to be removed, BookingFORM should be assigned dynamically by the Admin (either create or choose existing form)
-          if (entity!.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER &&
+          if (entity!.type ==
+                  EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER &&
               Utils.isNullOrEmpty(entity!.forms)) {
             MetaForm mForm = MetaForm(
                 id: COVID_VACCINATION_BOOKING_FORM_ID_OLD,
                 name: COVID_BOOKING_FORM_NAME);
             if (entity!.forms == null) {
-              entity!.forms = List<MetaForm>();
+              entity!.forms = [];
             }
             entity!.forms!.add(mForm);
           }
@@ -2349,7 +2355,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             showProgressIndicator: true,
             progressIndicatorBackgroundColor: Colors.blueGrey[900],
             progressIndicatorValueColor:
-                new AlwaysStoppedAnimation<Color?>(Colors.cyan[500]) as Animation<Color>?,
+                new AlwaysStoppedAnimation<Color?>(Colors.cyan[500])
+                    as Animation<Color>?,
             routeBlur: 10.0,
             titleText: Text(
               "Are you sure you want to leave this page?",
@@ -2397,7 +2404,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           );
 
           flush
-            ..show(context).then((result) {
+            ?..show(context).then((result) {
               _wasButtonClicked = result;
               flushStatus = "Empty";
               if (_wasButtonClicked!) processGoBackWithTimer();

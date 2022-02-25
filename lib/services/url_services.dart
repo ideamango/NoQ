@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -24,14 +25,16 @@ launchURL(String? title, String? addr, double lat, double long) async {
         description:
             "", //in Iphone not opening with lat,lon but instead with the name
       );
-    } else if (await (MapLauncher.isMapAvailable(MapType.apple) as FutureOr<bool>)) {
+    } else if (await (MapLauncher.isMapAvailable(MapType.apple)
+        as FutureOr<bool>)) {
       await MapLauncher.launchMap(
         mapType: MapType.apple,
         coords: coords,
         title: title!,
         description: description,
       );
-    } else if (await (MapLauncher.isMapAvailable(MapType.amap) as FutureOr<bool>)) {
+    } else if (await (MapLauncher.isMapAvailable(MapType.amap)
+        as FutureOr<bool>)) {
       await MapLauncher.launchMap(
         mapType: MapType.apple,
         coords: coords,
@@ -39,7 +42,8 @@ launchURL(String? title, String? addr, double lat, double long) async {
         description: description,
       );
     }
-  } else if (await (MapLauncher.isMapAvailable(MapType.google) as FutureOr<bool>)) {
+  } else if (await (MapLauncher.isMapAvailable(MapType.google)
+      as FutureOr<bool>)) {
     await MapLauncher.launchMap(
       mapType: MapType.google,
       coords: coords,
@@ -67,6 +71,7 @@ Future<bool> launchMail(String? toMailId, String subject, String body) async {
     //throw 'Could not launch $url';
     return false;
   }
+  return false;
 }
 
 callPhone(String? phone) async {

@@ -74,7 +74,7 @@ class EntityService {
           currentUser = new AppUser(
               id: user.uid, ph: user.phoneNumber, name: user.displayName);
         } else {
-          currentUser = AppUser.fromJson(usrDoc.data()!);
+          currentUser = AppUser.fromJson(usrDoc.data() as Map<String, dynamic>);
         }
 
         Entity? existingEntity;
@@ -82,9 +82,10 @@ class EntityService {
 
         if (entityDoc.exists) {
           //check if the current user is admin else it is not allowed
-          Map<String, dynamic>? map = entityDoc.data();
+          Map<String, dynamic>? map = entityDoc.data() as Map<String, dynamic>?;
           existingEntity = Entity.fromJson(map);
-          ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
+          ePrivate = EntityPrivate.fromJson(
+              ePrivateDoc.data() as Map<String, dynamic>);
 
           //if (existingEntity.isAdmin(fireUser.uid) == -1) {
           if (ePrivate!.roles![user.phoneNumber] !=
@@ -159,7 +160,8 @@ class EntityService {
           DocumentSnapshot userDoc = await tx.get(userRef);
 
           if (userDoc.exists) {
-            AppUser u = AppUser.fromJson(userDoc.data()!);
+            AppUser u =
+                AppUser.fromJson(userDoc.data() as Map<String, dynamic>);
             int indexOfEntityInUser = -1;
             bool entityExistsInUser = false;
             for (MetaEntity? me in u.entities!) {
@@ -217,7 +219,7 @@ class EntityService {
     DocumentSnapshot doc = await entityRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic>? map = doc.data();
+      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>;
       entity = Entity.fromJson(map);
     }
 
@@ -234,7 +236,7 @@ class EntityService {
     DocumentSnapshot doc = await entityPrivateRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic>? map = doc.data();
+      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>;
       entityPrivate = EntityPrivate.fromJson(map);
     }
 
@@ -273,9 +275,10 @@ class EntityService {
               "Given entity does not exist");
         }
 
-        Entity ent = Entity.fromJson(entityDoc.data())!;
+        Entity ent = Entity.fromJson(entityDoc.data() as Map<String, dynamic>)!;
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
-        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data())!;
+        EntityPrivate ePrivate =
+            EntityPrivate.fromJson(ePrivateDoc.data() as Map<String, dynamic>)!;
 
         if (ePrivate.roles![user!.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
@@ -298,7 +301,8 @@ class EntityService {
           parentEntityRef = fStore.doc('entities/' + ent.parentId!);
           DocumentSnapshot parentEntityDoc = await tx.get(parentEntityRef!);
 
-          parentEnt = Entity.fromJson(parentEntityDoc.data());
+          parentEnt =
+              Entity.fromJson(parentEntityDoc.data() as Map<String, dynamic>);
 
           //check if the user is admin for the partent entity, if no throw the exception
           bool isParentAdmin = false;
@@ -337,7 +341,8 @@ class EntityService {
           DocumentSnapshot userDoc = await tx.get(userRef);
 
           if (userDoc.exists) {
-            AppUser u = AppUser.fromJson(userDoc.data()!);
+            AppUser u =
+                AppUser.fromJson(userDoc.data() as Map<String, dynamic>);
             int indexOfEntityInUser = -1;
             bool entityExistsInUser = false;
             for (MetaEntity? me in u.entities!) {
@@ -427,9 +432,10 @@ class EntityService {
         }
 
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
-        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data())!;
+        EntityPrivate ePrivate =
+            EntityPrivate.fromJson(ePrivateDoc.data() as Map<String, dynamic>)!;
 
-        Entity? ent = Entity.fromJson(entityDoc.data());
+        Entity? ent = Entity.fromJson(entityDoc.data() as Map<String, dynamic>);
         //if (ent.isAdmin(fireUser.uid) == -1) {
         if (ePrivate.roles![user!.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
@@ -453,7 +459,7 @@ class EntityService {
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = AppUser.fromJson(usrDoc.data()!);
+          u = AppUser.fromJson(usrDoc.data() as Map<String, dynamic>);
           if (u.entities == null) {
             u.entities = [];
           }
@@ -619,14 +625,15 @@ class EntityService {
 
         if (parentEntityDoc.exists) {
           //check if the current user is admin
-          Map<String, dynamic>? map = parentEntityDoc.data();
+          Map<String, dynamic>? map =
+              parentEntityDoc.data() as Map<String, dynamic>;
           parentEntity = Entity.fromJson(map);
 
           DocumentSnapshot parentEntityPrivateDoc =
               await tx.get(parentEntityPrivateRef);
 
-          parentEntityPrivate =
-              EntityPrivate.fromJson(parentEntityPrivateDoc.data());
+          parentEntityPrivate = EntityPrivate.fromJson(
+              parentEntityPrivateDoc.data() as Map<String, dynamic>);
 
           //if (parentEntity.isAdmin(fireUser.uid) == -1) {
           if (parentEntityPrivate!.roles![user.phoneNumber] !=
@@ -660,8 +667,8 @@ class EntityService {
             DocumentSnapshot childEntityPrivateDoc =
                 await tx.get(childEntityPrivateRef);
 
-            childEntityPrivate =
-                EntityPrivate.fromJson(childEntityPrivateDoc.data());
+            childEntityPrivate = EntityPrivate.fromJson(
+                childEntityPrivateDoc.data() as Map<String, dynamic>);
 
             //int userIndex = existingChildEntity.isAdmin(fireUser.uid);
             //if (userIndex == -1) {
@@ -684,7 +691,7 @@ class EntityService {
           DocumentSnapshot userDoc = await tx.get(userRef);
           AppUser usr;
           if (userDoc.exists) {
-            usr = AppUser.fromJson(userDoc.data()!);
+            usr = AppUser.fromJson(userDoc.data() as Map<String, dynamic>);
           } else {
             //user should exist, as this user is the admin of the parent entity
             throw new UserDoesNotExistsException("User does not exist");
@@ -781,7 +788,8 @@ class EntityService {
           throw entityDoesNotExistsException!;
         }
 
-        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data())!;
+        EntityPrivate ePrivate =
+            EntityPrivate.fromJson(ePrivateDoc.data() as Map<String, dynamic>)!;
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
         if (ePrivate.roles![user!.phoneNumber] !=
@@ -809,14 +817,14 @@ class EntityService {
         }
 
         DocumentSnapshot entityDoc = await tx.get(entityRef);
-        Entity? ent = Entity.fromJson(entityDoc.data());
+        Entity? ent = Entity.fromJson(entityDoc.data() as Map<String, dynamic>);
 
         DocumentSnapshot usrDoc = await tx.get(userRef);
         bool entityAlreadyExistsInUser = false;
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = AppUser.fromJson(usrDoc.data()!);
+          u = AppUser.fromJson(usrDoc.data() as Map<String, dynamic>);
           if (u.entities == null) {
             u.entities = [];
           }
@@ -934,7 +942,7 @@ class EntityService {
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = AppUser.fromJson(usrDoc.data()!);
+          u = AppUser.fromJson(usrDoc.data() as Map<String, dynamic>);
           if (u.favourites == null) {
             u.favourites = [];
           }
@@ -978,9 +986,9 @@ class EntityService {
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = AppUser.fromJson(usrDoc.data()!);
+          u = AppUser.fromJson(usrDoc.data() as Map<String, dynamic>);
           if (u.favourites == null) {
-            u.favourites = new List<MetaEntity?>();
+            u.favourites = [];
           }
 
           int index = -1;
@@ -1056,7 +1064,7 @@ class EntityService {
 
     try {
       for (DocumentSnapshot ds in await stream.first) {
-        Entity me = Entity.fromJson(ds.data())!;
+        Entity me = Entity.fromJson(ds.data() as Map<String, dynamic>)!;
         me.distance = center.distance(
             lat: me.coordinates!.geopoint!.latitude,
             lng: me.coordinates!.geopoint!.longitude);

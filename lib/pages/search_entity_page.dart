@@ -46,8 +46,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
-  List<Entity>? _stores = new List<Entity>();
-  List<Entity> _pastSearches = new List<Entity>();
+  List<Entity>? _stores = [];
+  List<Entity> _pastSearches = [];
   EntityType? _entityType;
   String _searchInAll = 'Search in All';
   bool searchBoxClicked = false;
@@ -58,9 +58,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   bool showFab = true;
   String? categoryType;
   Widget? _msgOnboard;
-  List<String>? searchTypes = new List<String>();
+  List<String>? searchTypes = [];
   final compareDateFormat = new DateFormat('YYYYMMDD');
-  List<DateTime> _dateList = new List<DateTime>();
+  List<DateTime> _dateList = [];
 
   Icon actionIcon = new Icon(
     Icons.search,
@@ -242,8 +242,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   bool isFavourite(MetaEntity? en) {
-    List<MetaEntity?>? favs =
-        _gs!.getCurrentUser() != null ? _gs!.getCurrentUser()!.favourites : null;
+    List<MetaEntity?>? favs = _gs!.getCurrentUser() != null
+        ? _gs!.getCurrentUser()!.favourites
+        : null;
     if (Utils.isNullOrEmpty(favs)) return false;
 
     for (int i = 0; i < favs!.length; i++) {
@@ -284,8 +285,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
 
     String appShareHeading = entityShareByUserHeading + entityName;
     String appShareMessage = entityShareByUserMessage;
-    Utils.generateLinkAndShare(entityId, appShareHeading, appShareMessage,
-        _gs!.getConfigurations()!.packageName!, _gs!.getConfigurations()!.iOSAppId);
+    Utils.generateLinkAndShare(
+        entityId,
+        appShareHeading,
+        appShareMessage,
+        _gs!.getConfigurations()!.packageName!,
+        _gs!.getConfigurations()!.iOSAppId);
   }
 
   Widget _emptySearchPage() {
@@ -499,31 +504,29 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   Widget _listSearchResults() {
-    if (_stores!.length != 0) {
-      //Add search results to past searches.
-      _gs!.setPastSearch(_stores, _searchText, _entityType);
-      // _state.pastSearches = _stores;
-      return Center(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                  controller: _selectCategoryBtnController,
-                  itemCount: 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      margin: EdgeInsets.fromLTRB(
-                          10, 0, 10, MediaQuery.of(context).size.height * .15),
-                      child: new Column(
-                        children: showSearchResults(),
-                      ),
-                    );
-                  }),
-            ),
-          ],
-        ),
-      );
-    }
+    //Add search results to past searches.
+    _gs!.setPastSearch(_stores, _searchText, _entityType);
+    // _state.pastSearches = _stores;
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+                controller: _selectCategoryBtnController,
+                itemCount: 1,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    margin: EdgeInsets.fromLTRB(
+                        10, 0, 10, MediaQuery.of(context).size.height * .15),
+                    child: new Column(
+                      children: showSearchResults(),
+                    ),
+                  );
+                }),
+          ),
+        ],
+      ),
+    );
   }
 
   void searchClicked() {
@@ -1156,7 +1159,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 (str.allowOnlineAppointment != null)
                                     ? (str.allowOnlineAppointment!
                                         ? FadeTransition(
-                                            opacity: animation as Animation<double>,
+                                            opacity:
+                                                animation as Animation<double>,
                                             child: GestureDetector(
                                               onTap: () {
                                                 Utils.showMyFlushbar(
@@ -1783,7 +1787,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     bool isBookingAllowed = false;
     String dayOfWeek;
     int daysCounter = 0;
-    var dateWidgets = List<Widget>();
+    List<Widget> dateWidgets = [];
     for (var date in _dateList) {
       daysCounter++;
       if (daysCounter <= advanceDays!) {

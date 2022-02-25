@@ -13,7 +13,7 @@ import '../userHomePage.dart';
 import '../widget/appbar.dart';
 import '../widget/header.dart';
 import '../widget/widgets.dart';
-import 'upi_payment_page.dart';
+//import 'upi_payment_page.dart';
 
 class HelpPage extends StatefulWidget {
   HelpPage({
@@ -201,19 +201,21 @@ class _HelpPageState extends State<HelpPage> {
                                               color: Colors.orange[700]),
                                           recognizer: new TapGestureRecognizer()
                                             ..onTap = () {
-                                              Navigator.of(context).push(
-                                                  new MaterialPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          UPIPaymentPage(
-                                                            upiId: upiId,
-                                                            upiQrCodeImgPath:
-                                                                upiQrImgPath,
-                                                            backRoute:
-                                                                HelpPage(),
-                                                            isDonation: true,
-                                                            showMinimum: false,
-                                                          )));
+                                              print(
+                                                  "TODO: Removed UPI PAY FOR NOW");
+                                              // Navigator.of(context).push(
+                                              //     new MaterialPageRoute(
+                                              //         builder: (BuildContext
+                                              //                 context) =>
+                                              //             UPIPaymentPage(
+                                              //               upiId: upiId,
+                                              //               upiQrCodeImgPath:
+                                              //                   upiQrImgPath,
+                                              //               backRoute:
+                                              //                   HelpPage(),
+                                              //               isDonation: true,
+                                              //               showMinimum: false,
+                                              //             )));
                                             },
                                         ),
                                       ])),

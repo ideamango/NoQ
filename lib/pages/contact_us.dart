@@ -327,7 +327,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                             maxLength: null,
                             maxLines: null,
                             onChanged: (value) {
-                              if (_msgController.text?.length != 0)
+                              if (_msgController.text.length != 0)
                                 setState(() {
                                   _errMsg = null;
                                 });
@@ -359,8 +359,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 padding: EdgeInsets.all(5),
                                 // alignment: Alignment.center,
                                 shape: RoundedRectangleBorder(
-                                    side:
-                                        BorderSide(color: Colors.blueGrey[200]!),
+                                    side: BorderSide(
+                                        color: Colors.blueGrey[200]!),
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5.0))),
                                 color: btnColor,
@@ -431,8 +431,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 color: btnColor,
                                 textColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                    side:
-                                        BorderSide(color: Colors.blueGrey[200]!),
+                                    side: BorderSide(
+                                        color: Colors.blueGrey[200]!),
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5.0))),
                                 splashColor: highlightColor,
@@ -452,7 +452,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                   if (_errMsg == null) {
                                     if (_mailBody == null) _mailBody = "";
                                     _launchURL(
-                                        _state!.getConfigurations()!.contactEmail,
+                                        _state!
+                                            .getConfigurations()!
+                                            .contactEmail,
                                         subjectOfMail,
                                         _mailBody);
                                   }

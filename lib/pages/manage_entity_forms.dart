@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:LESSs/constants.dart';
 import 'package:LESSs/db/db_model/booking_form.dart';
 import 'package:LESSs/db/db_service/booking_application_service.dart';
@@ -49,7 +51,7 @@ class ManageEntityForms extends StatefulWidget {
 
 class _ManageEntityFormsState extends State<ManageEntityForms> {
   MetaEntity? metaEntity;
-  List<MetaForm> forms = List<MetaForm>();
+  List<MetaForm> forms = [];
   List<MetaForm> selectedForms = [];
   List<BookingForm> newlyAddedForms = [];
   List<String?> entityDeletedForms = [];
@@ -266,7 +268,8 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                         "");
                                                     return;
                                                   } else {
-                                                    checkBoxListTileModel![index]
+                                                    checkBoxListTileModel![
+                                                            index]
                                                         .isCheck = true;
 
                                                     bool isFormAlreadyAdded =
@@ -303,7 +306,8 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                                   .id!)
                                                           .then((value) {
                                                         BookingForm
-                                                            bookingForm = value!;
+                                                            bookingForm =
+                                                            value!;
 
                                                         BookingForm cloneForm =
                                                             bookingForm.clone();
@@ -493,7 +497,8 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                         size: 30,
                                                       ),
                                                       onPressed: () {
-                                                        if (widget.isReadOnly!) {
+                                                        if (widget
+                                                            .isReadOnly!) {
                                                           Utils.showMyFlushbar(
                                                               context,
                                                               Icons.info,
@@ -529,14 +534,16 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                           newlyAddedForms.removeAt(
                                                               indexToBeRemoved);
                                                         else {
-                                                          int? indexToBeRemovedForEntityForms;
+                                                          int?
+                                                              indexToBeRemovedForEntityForms;
 
                                                           for (int i = 0;
                                                               i <
                                                                   entity!.forms!
                                                                       .length;
                                                               i++) {
-                                                            if (entity!.forms![i]
+                                                            if (entity!
+                                                                    .forms![i]
                                                                     .id ==
                                                                 selectedForms[
                                                                         index]
@@ -822,8 +829,10 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                           entityModifiedForms[i].autoApproved;
                                       entityModified = true;
                                       BookingForm bf = await (_gs!
-                                          .getApplicationService()!
-                                          .getBookingForm(entity!.forms![j].id!) as FutureOr<BookingForm>);
+                                              .getApplicationService()!
+                                              .getBookingForm(
+                                                  entity!.forms![j].id!)
+                                          as FutureOr<BookingForm>);
                                       bf.autoApproved =
                                           entityModifiedForms[i].autoApproved;
                                       bool isFormSaved = await _gs!
@@ -1039,7 +1048,7 @@ class CheckBoxListTileModel {
   CheckBoxListTileModel({this.form, this.isCheck});
 
   static List<CheckBoxListTileModel> getForms(List<MetaForm> forms) {
-    List<CheckBoxListTileModel> list = List<CheckBoxListTileModel>();
+    List<CheckBoxListTileModel> list = [];
     for (var form in forms) {
       list.add(CheckBoxListTileModel(form: form, isCheck: false));
     }

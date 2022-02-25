@@ -82,10 +82,10 @@ class _ShowUserApplicationDetailsState
   //   return list;
   // }
 
-  List<Value> idProofTypesStrList = List<Value>();
-  List<Item> idProofTypes = List<Item>();
-  List<Value> medConditionsStrList = List<Value>();
-  List<Item> medConditions = List<Item>();
+  List<Value> idProofTypesStrList = [];
+  List<Item> idProofTypes = [];
+  List<Value> medConditionsStrList = [];
+  List<Item> medConditions = [];
   Map<String?, TextEditingController> listOfControllers =
       new Map<String?, TextEditingController>();
 
@@ -114,7 +114,7 @@ class _ShowUserApplicationDetailsState
   FormInputFieldText? addressPin;
 
   initBookingForm() {
-    fields = List<Field?>();
+    fields = [];
     idProofTypesStrList.add(Value('Passport'));
     idProofTypesStrList.add(Value('Driving License'));
     idProofTypesStrList.add(Value('Aadhar'));
@@ -164,8 +164,8 @@ class _ShowUserApplicationDetailsState
 
     idProofField = FormInputFieldOptionsWithAttachments("Id Proof", true,
         "Please upload Government Id proof", idProofTypesStrList, false);
-    idProofField!.responseFilePaths = List<String>();
-    idProofField!.responseValues = new List<Value>();
+    idProofField!.responseFilePaths = [];
+    idProofField!.responseValues = [];
     idProofField!.responseValues!.add(Value("DL"));
 
     healthDetailsInput = FormInputFieldOptions(
@@ -174,7 +174,7 @@ class _ShowUserApplicationDetailsState
         "Please select all known medical conditions you have",
         medConditionsStrList,
         true);
-    healthDetailsInput!.responseValues = new List<Value>();
+    healthDetailsInput!.responseValues = [];
     healthDetailsInput!.responseValues!.add(Value("liver"));
     healthDetailsInput!.responseValues!.add(Value("heart"));
 
@@ -528,7 +528,8 @@ class _ShowUserApplicationDetailsState
           break;
         case FieldType.ATTACHMENT:
           {
-            FormInputFieldAttachment newfield = field as FormInputFieldAttachment;
+            FormInputFieldAttachment newfield =
+                field as FormInputFieldAttachment;
 
             fieldWidget = Container(
               padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
@@ -573,7 +574,8 @@ class _ShowUserApplicationDetailsState
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent? loadingProgress) {
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
                                             if (loadingProgress == null)
                                               return child;
                                             return Center(
@@ -613,7 +615,8 @@ class _ShowUserApplicationDetailsState
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent? loadingProgress) {
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
                                             if (loadingProgress == null)
                                               return child;
                                             return Center(
@@ -668,7 +671,8 @@ class _ShowUserApplicationDetailsState
           break;
         case FieldType.OPTIONS_ATTACHMENTS:
           {
-            FormInputFieldOptionsWithAttachments newfield = field as FormInputFieldOptionsWithAttachments;
+            FormInputFieldOptionsWithAttachments newfield =
+                field as FormInputFieldOptionsWithAttachments;
 
             fieldWidget = Container(
               padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
@@ -721,7 +725,8 @@ class _ShowUserApplicationDetailsState
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent? loadingProgress) {
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
                                             if (loadingProgress == null)
                                               return child;
                                             return Center(
@@ -761,7 +766,8 @@ class _ShowUserApplicationDetailsState
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent? loadingProgress) {
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
                                             if (loadingProgress == null)
                                               return child;
                                             return Center(
@@ -796,7 +802,8 @@ class _ShowUserApplicationDetailsState
               if (newfield.isMultiSelect!) {
                 for (int i = 0; i < newfield.responseValues!.length; i++) {
                   if (conds != "")
-                    conds = conds! + "  &  " + newfield.responseValues![i].value;
+                    conds =
+                        conds! + "  &  " + newfield.responseValues![i].value;
                   else
                     conds = conds! + newfield.responseValues![i].value;
                 }

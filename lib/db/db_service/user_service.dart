@@ -37,7 +37,7 @@ class UserService {
     DocumentSnapshot doc = await userRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data()!;
+      Map<String, dynamic> map = doc.data() as Map<String, dynamic>;
 
       u = AppUser.fromJson(map);
     } else {
@@ -60,7 +60,8 @@ class UserService {
     User user = getFirebaseAuth().currentUser!;
     FirebaseFirestore fStore = getFirestore();
     try {
-      final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber!);
+      final DocumentReference userRef =
+          fStore.doc('users/' + user.phoneNumber!);
       userRef.delete();
     } catch (e) {
       return false;
@@ -89,7 +90,7 @@ class UserService {
     DocumentSnapshot doc = await userRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data()!;
+      Map<String, dynamic> map = doc.data() as Map<String, dynamic>;
 
       u = AppUser.fromJson(map);
     }

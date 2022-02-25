@@ -295,7 +295,8 @@ class Entity {
     List<MetaUser> users = [];
     if (usersJson == null) return users;
 
-    for (Map<String, dynamic> json in usersJson as Iterable<Map<String, dynamic>>) {
+    for (Map<String, dynamic> json
+        in usersJson as Iterable<Map<String, dynamic>>) {
       MetaUser sl = MetaUser.fromJson(json);
       users.add(sl);
     }
@@ -306,9 +307,10 @@ class Entity {
     List<Employee> users = [];
     if (usersJson == null) return users;
 
-    for (Map<String, dynamic> json in usersJson as Iterable<Map<String, dynamic>>) {
-      Employee emp = Employee.fromJson(json);
-      users.add(emp);
+    for (Map<String, dynamic> json
+        in usersJson as Iterable<Map<String, dynamic>>) {
+      Employee? emp = Employee.fromJson(json);
+      users.add(emp!);
     }
     return users;
   }
@@ -318,18 +320,21 @@ class Entity {
     List<MetaEntity> metaEntities = [];
     if (metaEntityJson == null) return metaEntities;
 
-    for (Map<String, dynamic> json in metaEntityJson as Iterable<Map<String, dynamic>>) {
-      MetaEntity metaEnt = MetaEntity.fromJson(json);
-      metaEntities.add(metaEnt);
+    for (Map<String, dynamic> json
+        in metaEntityJson as Iterable<Map<String, dynamic>>) {
+      MetaEntity? metaEnt = MetaEntity.fromJson(json);
+      metaEntities.add(metaEnt!);
     }
     return metaEntities;
   }
 
-  static List<MetaForm> convertToMetaFormsFromJson(List<dynamic>? metaFormJson) {
+  static List<MetaForm> convertToMetaFormsFromJson(
+      List<dynamic>? metaFormJson) {
     List<MetaForm> metaForms = [];
     if (metaFormJson == null) return metaForms;
 
-    for (Map<String, dynamic> json in metaFormJson as Iterable<Map<String, dynamic>>) {
+    for (Map<String, dynamic> json
+        in metaFormJson as Iterable<Map<String, dynamic>>) {
       MetaForm metaEnt = MetaForm.fromJson(json);
       metaForms.add(metaEnt);
     }
@@ -406,8 +411,10 @@ class Entity {
       _meta!.endTimeHour = endTimeHour;
       _meta!.endTimeMinute = endTimeMinute;
       _meta!.isActive = isActive;
-      _meta!.lat = (coordinates != null) ? coordinates!.geopoint!.latitude : null;
-      _meta!.lon = (coordinates != null) ? coordinates!.geopoint!.longitude : null;
+      _meta!.lat =
+          (coordinates != null) ? coordinates!.geopoint!.latitude : null;
+      _meta!.lon =
+          (coordinates != null) ? coordinates!.geopoint!.longitude : null;
       _meta!.slotDuration = slotDuration;
       _meta!.maxAllowed = maxAllowed;
       _meta!.distance = distance;

@@ -628,7 +628,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       for (int i = 0; i <= _slotList!.length - 1; i++) {
 //Update SlotList with new Slot details.
         if (bookedSlot != null) {
-          if (_slotList![i].dateTime!.difference(bookedSlot.dateTime!).inSeconds ==
+          if (_slotList![i]
+                  .dateTime!
+                  .difference(bookedSlot.dateTime!)
+                  .inSeconds ==
               0) {
             updatedIndex = i;
             break;
@@ -650,21 +653,23 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       }
 
       for (int i = 0; i <= _slotList!.length - 1; i++) {
-        List<String> slotIdVals = Utils.isNotNullOrEmpty(_slotList![i].slotId)
-            ? _slotList![i].slotId!.split('#')
-            : null;
-        String slotId = slotIdVals[1] + '#' + slotIdVals[2];
-        if (counter.slotWiseStats!.containsKey(slotId)) {
-          TokenStats slotStats = counter.slotWiseStats![slotId]!;
+        List<String> slotIdVals = [];
+        if (Utils.isNotNullOrEmpty(_slotList![i].slotId)) {
+          slotIdVals = _slotList![i].slotId!.split('#');
 
-          int numberOfBookingsLeft = (entitySlot != null
-                  ? entitySlot!.maxAllowed
-                  : widget.metaEntity!.maxAllowed)! -
-              (slotStats.numberOfTokensCreated! -
-                  slotStats.numberOfTokensCancelled!);
-          //   if (_tokensMap.containsKey(_slotList[i].slotId)) {
-          _tokensMap[_slotList![i].slotId] = numberOfBookingsLeft;
-          //  }
+          String slotId = slotIdVals[1] + '#' + slotIdVals[2];
+          if (counter.slotWiseStats!.containsKey(slotId)) {
+            TokenStats slotStats = counter.slotWiseStats![slotId]!;
+
+            int numberOfBookingsLeft = (entitySlot != null
+                    ? entitySlot!.maxAllowed
+                    : widget.metaEntity!.maxAllowed)! -
+                (slotStats.numberOfTokensCreated! -
+                    slotStats.numberOfTokensCancelled!);
+            //   if (_tokensMap.containsKey(_slotList[i].slotId)) {
+            _tokensMap[_slotList![i].slotId] = numberOfBookingsLeft;
+            //  }
+          }
         }
       }
     }
@@ -839,7 +844,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           _gs!.getNotificationService()!.registerTokenNotification(tokens!);
 
           //update in global State
-          selectedSlot!.totalBooked++;
+          selectedSlot!.totalBooked = selectedSlot!.totalBooked! + 1;
 
           _token = tokens.tokens!.last.getDisplayName();
           final dtFormat = new DateFormat(dateDisplayFormat);

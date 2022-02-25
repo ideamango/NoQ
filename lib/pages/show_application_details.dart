@@ -94,10 +94,10 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   //   return list;
   // }
 
-  List<Value> idProofTypesStrList = List<Value>();
-  List<Item> idProofTypes = List<Item>();
-  List<Value> medConditionsStrList = List<Value>();
-  List<Item> medConditions = List<Item>();
+  List<Value> idProofTypesStrList = [];
+  List<Item> idProofTypes = [];
+  List<Value> medConditionsStrList = [];
+  List<Item> medConditions = [];
   Map<String?, TextEditingController> listOfControllers =
       new Map<String?, TextEditingController>();
 
@@ -451,7 +451,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
           break;
         case FieldType.ATTACHMENT:
           {
-            FormInputFieldAttachment newfield = field as FormInputFieldAttachment;
+            FormInputFieldAttachment newfield =
+                field as FormInputFieldAttachment;
             fieldWidget = Container(
               padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
               decoration: BoxDecoration(
@@ -530,7 +531,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent? loadingProgress) {
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
                                             if (loadingProgress == null) {
                                               return child;
                                             }
@@ -580,7 +582,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
           }
         case FieldType.OPTIONS_ATTACHMENTS:
           {
-            FormInputFieldOptionsWithAttachments newfield = field as FormInputFieldOptionsWithAttachments;
+            FormInputFieldOptionsWithAttachments newfield =
+                field as FormInputFieldOptionsWithAttachments;
             // Widget attachmentList = Container(
             //     child: ListView.builder(
             //   itemBuilder: (BuildContext context, int index) {
@@ -679,7 +682,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           item,
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
-                                              ImageChunkEvent? loadingProgress) {
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
                                             if (loadingProgress == null) {
                                               return child;
                                             }
@@ -713,7 +717,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
               } else {
                 for (int i = 0; i < newfield.responseValues!.length; i++) {
                   if (conds != "")
-                    conds = conds! + "  |  " + newfield.responseValues![i].value;
+                    conds =
+                        conds! + "  |  " + newfield.responseValues![i].value;
                   else
                     conds = conds! + newfield.responseValues![i].value;
                 }
@@ -1712,12 +1717,13 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                 newBa.item1!.putOnHoldBy;
                                             widget.bookingApplication
                                                     .notesOnPuttingOnHold =
-                                                newBa
-                                                    .item1!.notesOnPuttingOnHold;
+                                                newBa.item1!
+                                                    .notesOnPuttingOnHold;
 
                                             widget.bookingApplication
                                                     .timeOfPuttingOnHold =
-                                                newBa.item1!.timeOfPuttingOnHold;
+                                                newBa
+                                                    .item1!.timeOfPuttingOnHold;
                                           });
                                           applicationUpdated = true;
                                           returnTupleNewBa = newBa;
@@ -1882,11 +1888,12 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                                 newBa.item1!.putOnHoldBy;
                                             widget.bookingApplication
                                                     .notesOnPuttingOnHold =
-                                                newBa
-                                                    .item1!.notesOnPuttingOnHold;
+                                                newBa.item1!
+                                                    .notesOnPuttingOnHold;
                                             widget.bookingApplication
                                                     .timeOfPuttingOnHold =
-                                                newBa.item1!.timeOfPuttingOnHold;
+                                                newBa
+                                                    .item1!.timeOfPuttingOnHold;
                                           });
                                           applicationUpdated = true;
                                           returnTupleNewBa = newBa;

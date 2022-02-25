@@ -84,7 +84,7 @@ class TokenService {
     List<QueryDocumentSnapshot> qds = qs.docs;
     for (QueryDocumentSnapshot doc in qds) {
       if (doc.exists) {
-        entitySlots.add(EntitySlots.fromJson(doc.data()));
+        entitySlots.add(EntitySlots.fromJson(doc.data()  as Map<String, dynamic>));
       }
     }
 
@@ -161,15 +161,16 @@ class TokenService {
       DocumentSnapshot doc = await tokenCounterRef.get();
 
       if (doc.exists) {
-        Map<String, dynamic>? map = doc.data();
+        Map<String, dynamic>? map = doc.data() as Map<String, dynamic>;
 
         userToks = UserTokens.fromJson(map);
       }
     } catch (e) {
-      if (e.code == "permission-denied") {
-        throw new AccessDeniedException(
-            "You do not have permission to view the Token.");
-      }
+      //TODO Smita - check this exception
+      //if (e as  == "permission-denied") {
+      throw new AccessDeniedException(
+          "You do not have permission to view the Token.");
+      //}
     }
 
     return userToks;
@@ -189,7 +190,7 @@ class TokenService {
     DocumentSnapshot doc = await tokenCounterRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic>? map = doc.data();
+      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>;
 
       tokenCounter = TokenCounter.fromJson(map);
     }
@@ -216,7 +217,7 @@ class TokenService {
     DocumentSnapshot doc = await entitySlotsRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic>? map = doc.data();
+      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>;
 
       es = EntitySlots.fromJson(map);
     }
@@ -277,7 +278,8 @@ class TokenService {
       if (entitySlotsSnapshot.exists) {
         DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
         if (tokenSnapshot.exists) {
-          tokens = UserTokens.fromJson(tokenSnapshot.data());
+          tokens =
+              UserTokens.fromJson(tokenSnapshot.data() as Map<String, dynamic>);
         }
         // if (tokenSnapshot.exists && metaEntity.maxTokensPerSlotByUser == 1) {
         //   if (tokens.tokens[0].number != -1)
@@ -285,7 +287,8 @@ class TokenService {
         //         "Token for this user is already booked");
         // }
         //atleast one token is issued for the given entity for that day
-        es = EntitySlots.fromJson(entitySlotsSnapshot.data());
+        es = EntitySlots.fromJson(
+            entitySlotsSnapshot.data() as Map<String, dynamic>);
         int? maxAllowed = es!.maxAllowed;
         int? maxTokensPerSlotByUser = es.maxTokensPerSlotByUser;
 
@@ -517,7 +520,8 @@ class TokenService {
       DocumentSnapshot tokenCounterSnapshot = await tx.get(tokenCounterRef);
 
       if (tokenCounterSnapshot.exists) {
-        Map<String, dynamic>? map = tokenCounterSnapshot.data();
+        Map<String, dynamic>? map =
+            tokenCounterSnapshot.data() as Map<String, dynamic>;
         tokenCounter = TokenCounter.fromJson(map);
       } else {
         tokenCounter = new TokenCounter(
@@ -549,8 +553,8 @@ class TokenService {
     return new Triplet(item1: tokens, item2: tokenCounter, item3: es);
   }
 
-  Future<UserToken> autoGenerateTokenForNextAvailableSlot(
-      MetaEntity metaEntity, DateTime preferredDateTime, Transaction tx) {}
+  // Future<UserToken> autoGenerateTokenForNextAvailableSlot(
+  //     MetaEntity metaEntity, DateTime preferredDateTime, Transaction tx) {}
 
   //this method is used to generate the Token by the current user for himself
   //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
@@ -560,7 +564,7 @@ class TokenService {
     User user = getFirebaseAuth().currentUser!;
     FirebaseFirestore fStore = getFirestore();
     String? userPhone = user.phoneNumber;
-    Exception? exception;
+    Object? exception;
     SlotFullException? slotFullException;
     TokenAlreadyExistsException? tokenAlreadyExistsException;
     MaxTokenReachedByUserPerDayException? maxTokenReachedByUserPerDayException;
@@ -622,7 +626,8 @@ class TokenService {
     try {
       DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
       if (tokenSnapshot.exists) {
-        UserTokens tokens = UserTokens.fromJson(tokenSnapshot.data())!;
+        UserTokens tokens =
+            UserTokens.fromJson(tokenSnapshot.data() as Map<String, dynamic>)!;
         // if (tokens.userId != userPhone) {
         //   throw new NoTokenFoundException(
         //       "Token does not belong to the requested user");
@@ -679,13 +684,16 @@ class TokenService {
 
         DocumentSnapshot doc = await tx.get(entitySlotsRef);
 
-        Map<String, dynamic>? map = doc.data();
+        Map<String, dynamic>? map = doc.data() as Map<String, dynamic>;
 
         EntitySlots es = EntitySlots.fromJson(map)!;
         for (Slot sl in es.slots!) {
           if (sl.slotId == slotId) {
-            sl.maxAllowed++;
-            sl.totalCancelled++;
+            sl.maxAllowed =
+                sl.maxAllowed != null ? (sl.maxAllowed! + 1) : sl.maxAllowed;
+            sl.totalCancelled = sl.totalCancelled != null
+                ? (sl.totalCancelled! + 1)
+                : sl.totalCancelled;
             sl.isFull = false;
             break;
           }
@@ -700,7 +708,8 @@ class TokenService {
         DocumentSnapshot tokenCounterSnapshot = await tx.get(tokenCounterRef);
 
         if (tokenCounterSnapshot.exists) {
-          Map<String, dynamic>? map = tokenCounterSnapshot.data();
+          Map<String, dynamic>? map =
+              tokenCounterSnapshot.data() as Map<String, dynamic>;
           tokenCounter = TokenCounter.fromJson(map);
         } else {
           tokenCounter = new TokenCounter(entityId: entityId, year: year);
@@ -717,7 +726,7 @@ class TokenService {
 
         //update slot object with the new state of token
         Slot? slot;
-        int? count;
+        int count = -1;
         for (Slot sl in es.slots!) {
           count = -1;
           for (UserTokens? uts in sl.tokens!) {
@@ -732,7 +741,7 @@ class TokenService {
           }
         }
 
-        if (slot != null && count! > -1) {
+        if (slot != null && count > -1) {
           slot.tokens![count] = tokens;
         }
 
@@ -796,7 +805,8 @@ class TokenService {
           .get();
 
       for (DocumentSnapshot ds in qs.docs) {
-        UserTokens tokens = UserTokens.fromJson(ds.data())!;
+        UserTokens tokens =
+            UserTokens.fromJson(ds.data() as Map<String, dynamic>)!;
         for (UserToken tok in tokens.tokens!) {
           userTokens.add(tok);
         }
@@ -837,7 +847,8 @@ class TokenService {
       }
 
       for (DocumentSnapshot ds in qs.docs) {
-        UserTokens? tok = UserTokens.fromJson(ds.data());
+        UserTokens? tok =
+            UserTokens.fromJson(ds.data() as Map<String, dynamic>);
         tokens.add(tok);
       }
     } catch (e) {
@@ -871,7 +882,8 @@ class TokenService {
       QuerySnapshot qs = await q.get();
 
       for (DocumentSnapshot ds in qs.docs) {
-        UserTokens? tok = UserTokens.fromJson(ds.data());
+        UserTokens? tok =
+            UserTokens.fromJson(ds.data() as Map<String, dynamic>);
         tokens.add(tok);
       }
     } catch (e) {
@@ -1077,7 +1089,8 @@ class TokenService {
       if (doc.exists) {
         Tuple<UserTokens, QueryDocumentSnapshot> tup =
             Tuple<UserTokens, QueryDocumentSnapshot>(
-                item1: UserTokens.fromJson(doc.data()), item2: doc);
+                item1: UserTokens.fromJson(doc.data() as Map<String, dynamic>),
+                item2: doc);
         toks.add(tup);
       }
     }
@@ -1096,7 +1109,7 @@ class TokenService {
     DocumentSnapshot doc = await tokRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic>? map = doc.data();
+      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>;
       UserTokens? u = UserTokens.fromJson(map);
       return new Tuple<UserTokens, DocumentSnapshot>(item1: u, item2: doc);
     }
