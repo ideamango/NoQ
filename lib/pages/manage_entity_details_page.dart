@@ -2334,6 +2334,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
       backPressed() {
         //Show flush bar to notify user
+        Animation<Color> animationColor =
+            AlwaysStoppedAnimation<Color>(Color(0xFF00ACC1));
         if (flushStatus != "Showing") {
           flush = Flushbar<bool>(
             //padding: EdgeInsets.zero,
@@ -2355,7 +2357,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             ),
             showProgressIndicator: true,
             progressIndicatorBackgroundColor: Colors.blueGrey[900],
-            //progressIndicatorValueColor: Animation<Color>(Colors.cyan[500]),
+            progressIndicatorValueColor: animationColor,
 
             routeBlur: 10.0,
             titleText: Text(
