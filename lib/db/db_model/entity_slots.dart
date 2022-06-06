@@ -65,8 +65,7 @@ class EntitySlots {
   static List<Slot> convertToSlotsFromJson(List<dynamic> slotsJson) {
     List<Slot> slots = [];
 
-    for (Map<String, dynamic> json
-        in slotsJson as Iterable<Map<String, dynamic>>) {
+    for (Map<String, dynamic> json in slotsJson) {
       Slot? sl = Slot.fromJson(json);
       slots.add(sl!);
     }
@@ -76,7 +75,7 @@ class EntitySlots {
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
     List<String> days = [];
 
-    for (String day in daysJson as Iterable<String>) {
+    for (String day in daysJson) {
       days.add(day);
     }
     return days;

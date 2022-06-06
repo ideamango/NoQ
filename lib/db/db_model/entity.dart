@@ -307,8 +307,7 @@ class Entity {
     List<Employee> users = [];
     if (usersJson == null) return users;
 
-    for (Map<String, dynamic> json
-        in usersJson as Iterable<Map<String, dynamic>>) {
+    for (Map<String, dynamic> json in usersJson) {
       Employee? emp = Employee.fromJson(json);
       users.add(emp!);
     }
@@ -320,8 +319,7 @@ class Entity {
     List<MetaEntity> metaEntities = [];
     if (metaEntityJson == null) return metaEntities;
 
-    for (Map<String, dynamic> json
-        in metaEntityJson as Iterable<Map<String, dynamic>>) {
+    for (Map<String, dynamic> json in metaEntityJson) {
       MetaEntity? metaEnt = MetaEntity.fromJson(json);
       metaEntities.add(metaEnt!);
     }
@@ -334,7 +332,7 @@ class Entity {
     if (metaFormJson == null) return metaForms;
 
     for (Map<String, dynamic> json
-        in metaFormJson as Iterable<Map<String, dynamic>>) {
+        in metaFormJson ) {
       MetaForm metaEnt = MetaForm.fromJson(json);
       metaForms.add(metaEnt);
     }
@@ -345,7 +343,7 @@ class Entity {
     List<String> days = [];
     if (daysJson == null) return days;
 
-    for (String day in daysJson as Iterable<String>) {
+    for (String day in daysJson) {
       days.add(day);
     }
     return days;

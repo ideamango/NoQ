@@ -235,7 +235,7 @@ class Utils {
                   ),
                 ),
               ],
-            )) as FutureOr<bool>);
+            )));
 
     if (returnVal) {
       print("in true, opening app settings");
@@ -1034,7 +1034,7 @@ class Utils {
     String? image;
 
     switch (type) {
-      case EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER:
+      case EntityType.PLACE_TYPE_VACCINATION_CENTER:
         icon = Icons.local_hospital;
         break;
       case EntityType.PLACE_TYPE_MALL:
@@ -1142,8 +1142,8 @@ class Utils {
     String? displayName;
 
     switch (type) {
-      case EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER:
-        displayName = PLACE_TYPE_COVID19_VACCINATION_CENTER;
+      case EntityType.PLACE_TYPE_VACCINATION_CENTER:
+        displayName = PLACE_TYPE_VACCINATION_CENTER;
         break;
       case EntityType.PLACE_TYPE_MALL:
         displayName = PLACE_TYPE_MALL;

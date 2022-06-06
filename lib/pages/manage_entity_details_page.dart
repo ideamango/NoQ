@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'dart:io';
 import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/db/exceptions/entity_deletion_denied_child_exists_exception.dart';
@@ -303,8 +304,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       if (isBookable) {
         validateMandatoryFieldsForBookable();
       }
-      _nameController.text = entity!.name!;
-      _descController.text = entity!.description!;
+      _nameController.text = ((entity?.name != null) ? entity!.name : "")!;
+      _descController.text =
+          ((entity?.description != null) ? entity!.description : "")!;
 
       if (entity!.startTimeHour != null && entity!.startTimeMinute != null)
         _openTimeController.text =
@@ -1809,11 +1811,11 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             return null;
         },
         onChanged: (String value) {
-          entity!.address!.address = value;
+          entity?.address?.address = value;
           print("changed address");
         },
         onSaved: (String? value) {
-          entity!.address!.address = value;
+          entity?.address?.address = value;
           print("saved address");
         },
       );
@@ -1838,7 +1840,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           print("changed landmark");
         },
         onSaved: (String? value) {
-          entity!.address!.landmark = value;
+          entity?.address?.landmark = value;
           print("saved landmark");
         },
       );
@@ -1973,7 +1975,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             return null;
         },
         onChanged: (String value) {
-          entity!.address!.zipcode = value;
+          entity?.address?.zipcode = value;
           print("saved address");
         },
         onSaved: (String? value) {
@@ -2045,9 +2047,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
           _entityDetailsFormKey.currentState!.save();
 
-          //TODO: this hardcoding is to be removed, BookingFORM should be assigned dynamically by the Admin (either create or choose existing form)
-          if (entity!.type ==
-                  EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER &&
+          //Smita-May2022-TODO: this hardcoding is to be removed, BookingFORM should be assigned dynamically by the Admin (either create or choose existing form)
+          if (entity!.type == EntityType.PLACE_TYPE_VACCINATION_CENTER &&
               Utils.isNullOrEmpty(entity!.forms)) {
             MetaForm mForm = MetaForm(
                 id: COVID_VACCINATION_BOOKING_FORM_ID_OLD,
@@ -2057,9 +2058,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             }
             entity!.forms!.add(mForm);
           }
-
+//Smita-May2022-TODO end
           upsertEntity(entity!, _regNumController.text).then((value) {
-            if (value) {
+            if (value != null) {
               // Assign admins to newly upserted entity
               assignAdminsFromList(entity!.entityId, adminsList).then((value) {
                 if (!value) {
@@ -2298,7 +2299,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       ),
                     ),
                   ],
-                )) as FutureOr<bool>);
+                )));
 
         if (returnVal) {
           setState(() {
@@ -2354,9 +2355,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             ),
             showProgressIndicator: true,
             progressIndicatorBackgroundColor: Colors.blueGrey[900],
-            progressIndicatorValueColor:
-                new AlwaysStoppedAnimation<Color?>(Colors.cyan[500])
-                    as Animation<Color>?,
+            //progressIndicatorValueColor: Animation<Color>(Colors.cyan[500]),
+
             routeBlur: 10.0,
             titleText: Text(
               "Are you sure you want to leave this page?",
@@ -2639,7 +2639,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           } else {
                                             isBookable = value;
                                             if (value) {
-                                              showConfirmationDialog();
+                                              showConfirmationDialog().then(
+                                                  (value) =>
+                                                      print("in dialog"));
                                               //Check if all mandatory fields for being bookable are not empty.
                                               String? errMsg =
                                                   validateMandatoryFieldsForBookable();

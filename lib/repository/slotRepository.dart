@@ -20,10 +20,9 @@ Future<Tuple<EntitySlots, List<Slot>>> getSlotsListForEntity(
     MetaEntity entity, DateTime dateTime) async {
   EntitySlots? entitySlots;
 
-  GlobalState gs =
-      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState? gs = await (GlobalState.getGlobalState());
   entitySlots =
-      await gs.getTokenService()!.getEntitySlots(entity.entityId!, dateTime);
+      await gs?.getTokenService()!.getEntitySlots(entity.entityId!, dateTime);
   List<Slot> slots = Utils.getSlots(entitySlots, entity, dateTime);
 
   return new Tuple(item1: entitySlots, item2: slots);

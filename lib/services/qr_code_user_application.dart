@@ -138,13 +138,14 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
       RenderRepaintBoundary boundary =
           globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       var image = await boundary.toImage();
-      ByteData byteData = await (image.toByteData(format: ImageByteFormat.png) as FutureOr<ByteData>);
-      Uint8List pngBytes = byteData.buffer.asUint8List();
+      ByteData? byteData =
+          await (image.toByteData(format: ImageByteFormat.png));
+      Uint8List? pngBytes = byteData?.buffer.asUint8List();
       tempDir = await getTemporaryDirectory();
       // final file =
       //     await new File('${tempDir.path}/qrcodeForShare.png').create();
       final file = new File('${tempDir.path}/qrcodeForShare.png');
-      await file.writeAsBytes(pngBytes);
+      await file.writeAsBytes(pngBytes!);
       // final channel = const MethodChannel('channel:me.sukoon.share/share');
       // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
       final RenderBox? box = context.findRenderObject() as RenderBox?;

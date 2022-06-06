@@ -2300,7 +2300,7 @@ class DBTest {
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, lon);
     Entity entity = new Entity(
         entityId: Covid_Vacination_Center,
-        name: "Selenium Covid Vacination Center",
+        name: "Selenium Vacination Center",
         address: adrs,
         advanceDays: 7,
         isPublic: true,
@@ -2316,7 +2316,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER,
+        type: EntityType.PLACE_TYPE_VACCINATION_CENTER,
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_VERIFIED,

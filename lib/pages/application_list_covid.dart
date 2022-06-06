@@ -24,7 +24,7 @@
 
 // // import '../tuple.dart';
 
-// // class ApplicationsListCovid extends StatefulWidget {
+// // class ApplicationsList extends StatefulWidget {
 // //   final MetaEntity metaEntity;
 // //   final String bookingFormId;
 // //   final ApplicationStatus status;

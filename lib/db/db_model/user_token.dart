@@ -108,8 +108,7 @@ class UserTokens {
     List<UserToken> toks = [];
     if (toksJson == null) return toks;
 
-    for (Map<String, dynamic> json
-        in toksJson as Iterable<Map<String, dynamic>>) {
+    for (Map<String, dynamic> json in toksJson) {
       UserToken sl = UserToken.fromJson(json)!;
       toks.add(sl);
     }

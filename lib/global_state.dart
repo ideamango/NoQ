@@ -43,7 +43,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 class GlobalState {
   AppUser? _currentUser;
   Configurations? _conf;
-  List<Tuple<UserToken, DocumentSnapshot>>? bookings;
+  List<Tuple<UserToken, DocumentSnapshot>>? bookings = [];
   String? lastSearchName;
   EntityType? lastSearchType;
   List<Entity>? lastSearchResults;
@@ -878,14 +878,17 @@ class GlobalState {
     tokens = triplet!.item1;
 
     UserToken? newToken;
-    bool matched;
+    bool matched = false;
+
     if (tokens != null) {
       for (UserToken tok in tokens.tokens!) {
         matched = false;
-        for (Tuple<UserToken, DocumentSnapshot> ut in bookings!) {
-          if (ut.item1!.getID() == tok.getID()) {
-            matched = true;
-            break;
+        if (bookings != null) {
+          for (Tuple<UserToken, DocumentSnapshot> ut in bookings!) {
+            if (ut.item1!.getID() == tok.getID()) {
+              matched = true;
+              break;
+            }
           }
         }
 

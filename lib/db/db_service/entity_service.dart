@@ -1065,7 +1065,7 @@ class EntityService {
     try {
       for (DocumentSnapshot ds in await stream.first) {
         Entity me = Entity.fromJson(ds.data() as Map<String, dynamic>)!;
-        me.distance = center.distance(
+        me.distance = center.kmDistance(
             lat: me.coordinates!.geopoint!.latitude,
             lng: me.coordinates!.geopoint!.longitude);
         entities.add(me);

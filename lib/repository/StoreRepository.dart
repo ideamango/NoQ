@@ -10,11 +10,10 @@ import '../enum/entity_role.dart';
 
 // Get list of Stores from Server
 
-Future<bool> upsertEntity(Entity entity, String regNum) async {
+Future<bool?> upsertEntity(Entity entity, String regNum) async {
   entity.regNum = regNum;
-  GlobalState gs =
-      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
-  return await gs.putEntity(entity, true);
+  GlobalState? gs = await (GlobalState.getGlobalState() as Future<GlobalState?>);
+  return await gs?.putEntity(entity, true);
 }
 
 // Future<bool> deleteEntity(String entityId) async {
@@ -50,25 +49,22 @@ Future<bool> assignAdminsFromList(
 }
 
 Future<EntityPrivate?> fetchAdmins(String entityId) async {
-  GlobalState gs =
-      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState? gs = await GlobalState.getGlobalState();
   EntityPrivate? entityPrivateList =
-      await gs.getEntityService()!.getEntityPrivate(entityId);
+      await gs?.getEntityService()!.getEntityPrivate(entityId);
 
   return entityPrivateList;
 }
 
 Future<bool> removeAdmin(String? entityId, String? phone) async {
-  GlobalState gs =
-      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState gs = await (GlobalState.getGlobalState() as Future<GlobalState>);
   bool status = await gs.removeEmployee(entityId, phone);
   return status;
 }
 
 Future<String?> fetchRegNum(String entityId) async {
   String? regNum;
-  GlobalState gs =
-      await (GlobalState.getGlobalState() as FutureOr<GlobalState>);
+  GlobalState gs = await (GlobalState.getGlobalState() as Future<GlobalState>);
   EntityPrivate? entityPrivateList =
       await gs.getEntityService()!.getEntityPrivate(entityId);
   if (entityPrivateList != null) {

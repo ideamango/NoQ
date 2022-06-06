@@ -62,7 +62,7 @@ const WEEK_DAY_FRIDAY = 'friday';
 const WEEK_DAY_SATURDAY = 'saturday';
 
 const PLACE_TYPE_REALSTATE = "Real Estate";
-const PLACE_TYPE_COVID19_VACCINATION_CENTER = "Covid-19 Vaccination Center";
+const PLACE_TYPE_VACCINATION_CENTER = "Covid-19 Vaccination Center";
 const PLACE_TYPE_MALL = "Mall";
 const PLACE_TYPE_SUPERMARKET = "Super Market";
 const PLACE_TYPE_APARTMENT = "Apartment";
@@ -338,7 +338,7 @@ String giveLocationPermission =
     "Open location settings and give permissions to access current location.";
 
 String shareWithFriends =
-    "Share with your Friends & Family to bring them into Safety net.";
+    "Share with your Friends & Family to bring the joy to them too.";
 
 String shareWithOwners =
     "You can also Share with people who manage Businesses such as Pop-Shop, Shops, Sport Centers, etc.";
