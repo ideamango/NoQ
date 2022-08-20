@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/db/exceptions/access_denied_exception.dart';
 import 'package:LESSs/db/exceptions/slot_full_exception.dart';
@@ -1215,6 +1216,9 @@ class Utils {
         displayName = PLACE_TYPE_LAPTOP_SERVICE;
         break;
       case EntityType.PLACE_TYPE_OTHERS:
+        displayName = PLACE_TYPE_OTHERS;
+        break;
+      case null:
         displayName = PLACE_TYPE_OTHERS;
         break;
     }

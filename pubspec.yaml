@@ -47,7 +47,7 @@ dependencies:
   google_sign_in: ^5.2.4
   intl: ^0.17.0
   json_annotation: ^4.4.0
-  map_launcher: ^2.2.1+1
+  map_launcher: ^2.3.0+1
   pinput: ^1.2.2
   path_provider: ^2.0.9
   #Replace this as non-null not supported

@@ -464,8 +464,9 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
 
   void _addNewContactRow() {
     Employee contact = new Employee();
-    var uuid = new Uuid();
-    contact.id = uuid.v1();
+    //SMITA commented on august19
+    // var uuid = new Uuid();
+    // contact.id = uuid.v1();
     managersList.add(contact);
 
     List<Widget> newList = [];

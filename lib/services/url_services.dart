@@ -17,7 +17,7 @@ launchURL(String? title, String? addr, double lat, double long) async {
   print(availableMaps);
 
   if (Platform.isIOS) {
-    if (await (MapLauncher.isMapAvailable(MapType.google) as FutureOr<bool>)) {
+    if (await (MapLauncher.isMapAvailable(MapType.google) as Future<bool>)) {
       await MapLauncher.launchMap(
         mapType: MapType.google,
         coords: coords,

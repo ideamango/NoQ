@@ -17,7 +17,7 @@ import '../style.dart';
 import 'package:flutter/foundation.dart';
 import '../utils.dart';
 import '../widget/weekday_selector.dart';
-
+import 'package:uuid/uuid.dart';
 import '../enum/entity_role.dart';
 
 class ContactRow extends StatefulWidget {
@@ -81,7 +81,7 @@ class ContactRowState extends State<ContactRow> {
   }
 
   void initializeContactDetails() {
-    if (contact != null) {
+    if (contact?.id != null) {
       _ctNameController.text = contact!.name!;
       _ctEmpIdController.text = contact!.employeeId!;
       _ctPhn1controller.text =
@@ -100,11 +100,14 @@ class ContactRowState extends State<ContactRow> {
                 Utils.formatTime(contact!.shiftEndMinute.toString());
       _daysOff = (contact!.daysOff) ?? [];
     }
+    var uuid = new Uuid();
+    contact?.id = uuid.v1();
+
     // if (_daysOff.length == 0) {
     //   _daysOff.add('days.sunday');
     // }
-    _closedOnDays = [];
-    _closedOnDays = Utils.convertStringsToDays(_daysOff!);
+    _closedOnDays =
+        _daysOff != null ? Utils.convertStringsToDays(_daysOff!) : [];
   }
 
   String? validateText(String? value) {
@@ -427,13 +430,13 @@ class ContactRowState extends State<ContactRow> {
                 return;
               } else {
                 print("Days off: " + days.toString());
-                _daysOff!.clear();
+                _daysOff?.clear();
                 days!.forEach((element) {
                   var day = element.toString().substring(5);
-                  _daysOff!.add(day);
+                  _daysOff?.add(day);
                 });
                 contact!.daysOff = _daysOff;
-                print(_daysOff!.length);
+                print(_daysOff?.length);
                 print(_daysOff.toString());
               }
             },
@@ -609,7 +612,8 @@ class ContactRowState extends State<ContactRow> {
                                                         null,
                                                         removeThisId);
                                                   });
-                                                }).onError((dynamic error, stackTrace) {
+                                                }).onError((dynamic error,
+                                                        stackTrace) {
                                                   handleRemoveEmployee(error);
                                                 });
                                               } else {
@@ -699,7 +703,8 @@ class ContactRowState extends State<ContactRow> {
                                                         null,
                                                         removeThisId);
                                                   });
-                                                }).onError((dynamic error, stackTrace) {
+                                                }).onError((dynamic error,
+                                                        stackTrace) {
                                                   handleRemoveEmployee(error);
                                                 });
                                               } else {
@@ -851,7 +856,8 @@ class ContactRowState extends State<ContactRow> {
                                                   "",
                                                   successGreenSnackBar);
                                             }
-                                          }).onError((dynamic error, stackTrace) {
+                                          }).onError(
+                                                  (dynamic error, stackTrace) {
                                             setState(() {
                                               showLoading = false;
                                             });

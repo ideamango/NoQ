@@ -786,6 +786,7 @@ class GlobalState {
   List<EntityType?> getActiveChildEntityTypes(EntityType? parentType) {
     List<EntityType?> types = [];
     if (_conf == null) return types;
+    if (parentType == null) return types;
 
     if (!_conf!.typeToChildType!
         .containsKey(EnumToString.convertToString(parentType))) {
