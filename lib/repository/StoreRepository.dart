@@ -12,7 +12,8 @@ import '../enum/entity_role.dart';
 
 Future<bool?> upsertEntity(Entity entity, String regNum) async {
   entity.regNum = regNum;
-  GlobalState? gs = await (GlobalState.getGlobalState() as Future<GlobalState?>);
+  GlobalState? gs =
+      await (GlobalState.getGlobalState() as Future<GlobalState?>);
   return await gs?.putEntity(entity, true);
 }
 

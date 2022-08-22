@@ -53,7 +53,7 @@ class ContactRowState extends State<ContactRow> {
   final GlobalKey<FormFieldState> phn1Key = new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> phn2Key = new GlobalKey<FormFieldState>();
 
-  List<String>? _daysOff;
+  List<String>? _daysOff = [];
   bool _initCompleted = false;
   List<days>? _closedOnDays;
   Entity? _entity;
@@ -81,6 +81,7 @@ class ContactRowState extends State<ContactRow> {
   }
 
   void initializeContactDetails() {
+    //this called for adding new executive
     if (contact?.id != null) {
       _ctNameController.text = contact!.name!;
       _ctEmpIdController.text = contact!.employeeId!;
@@ -431,11 +432,12 @@ class ContactRowState extends State<ContactRow> {
               } else {
                 print("Days off: " + days.toString());
                 _daysOff?.clear();
+
                 days!.forEach((element) {
                   var day = element.toString().substring(5);
-                  _daysOff?.add(day);
+                  _daysOff!.add(day);
                 });
-                contact!.daysOff = _daysOff;
+                contact?.daysOff = _daysOff;
                 print(_daysOff?.length);
                 print(_daysOff.toString());
               }
