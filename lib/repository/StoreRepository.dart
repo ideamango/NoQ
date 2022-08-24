@@ -58,9 +58,9 @@ Future<EntityPrivate?> fetchAdmins(String entityId) async {
 }
 
 Future<bool> removeAdmin(String? entityId, String? phone) async {
-  GlobalState gs = await (GlobalState.getGlobalState() as Future<GlobalState>);
-  bool status = await gs.removeEmployee(entityId, phone);
-  return status;
+  GlobalState? gs = await GlobalState.getGlobalState();
+  bool? status = await gs?.removeEmployee(entityId, phone);
+  return status ?? false;
 }
 
 Future<String?> fetchRegNum(String entityId) async {

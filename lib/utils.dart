@@ -854,9 +854,9 @@ class Utils {
       throw Exception("LocAccessDeniedForever");
     }
 
-    // if (permission == LocationPermission.denied) {
-    //   permission = await requestPermission();
-    // }
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
 
     Position? pos;
     try {
@@ -1281,7 +1281,7 @@ class Utils {
                           ),
                           "Logging off.. ",
                           "Hope to see you soon!!");
-                      Navigator.of(context, rootNavigator: true).pop();
+                      // Navigator.of(context, rootNavigator: true).pop();
                       Future.delayed(Duration(seconds: 2)).then((value) {
                         GlobalState.getGlobalState().then((value) {
                           value!.getAuthService()!.signOut(context);

@@ -218,7 +218,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           drawer: CustomDrawer(
-            phone: _state!.getCurrentUser()!.ph,
+            phone: _state!.getCurrentUser()?.ph,
           ),
           appBar: widget.showAppBar
               ? CustomAppBarWithBackButton(
